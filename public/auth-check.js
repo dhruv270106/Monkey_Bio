@@ -1,5 +1,38 @@
 
 (function() {
+    // Inject premium round avatar styles
+    const style = document.createElement('style');
+    style.innerHTML = `
+        #auth-buttons { opacity: 0; transition: opacity 0.5s ease; }
+        .user-avatar-container {
+            width: 44px;
+            height: 44px;
+            border-radius: 50% !important;
+            border: 3px solid #43E660 !important;
+            padding: 2px;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+            background: white !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .user-avatar-container:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(67,230,96,0.3);
+            border-color: #2ecf4a !important;
+        }
+        .user-avatar-img {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            display: block !important;
+        }
+    `;
+    document.head.appendChild(style);
+
     const supabaseRef = 'esngrodyozljdjkfcocp';
     const storageKey = `sb-${supabaseRef}-auth-token`;
 
@@ -7,7 +40,7 @@
         const authContainer = document.getElementById('auth-buttons');
         if (!authContainer) return;
 
-        // Fast path: check localStorage synchronously
+        // 1. Fast path: check localStorage
         const rawToken = localStorage.getItem(storageKey);
         if (rawToken) {
             try {
@@ -18,39 +51,47 @@
             } catch (e) {}
         }
 
+        // 2. Verified path: check Supabase client
         const client = window.supabaseClient || window.supabase || (window.supabasejs && window.supabasejs.createClient ? window.supabasejs : null);
         if (!client) {
-            setTimeout(updateAuthUI, 100);
+            setTimeout(updateAuthUI, 200);
             return;
         }
 
-        const { data: { session } } = await client.auth.getSession();
-        if (session && session.user) {
-            renderLoggedInUI(authContainer, session.user);
-        } else {
+        try {
+            const { data: { session } } = await client.auth.getSession();
+            if (session && session.user) {
+                renderLoggedInUI(authContainer, session.user);
+            } else {
+                authContainer.style.opacity = '1';
+            }
+        } catch (err) {
             authContainer.style.opacity = '1';
         }
     }
 
     function renderLoggedInUI(container, user) {
-        // Use absolute path /dashboard.html
+        const avatarUrl = user.user_metadata?.avatar_url || 'https://i.pravatar.cc/150?u=' + user.id;
+        
         container.innerHTML = `
-            <a href="/dashboard.html" class="block">
+            <a href="/dashboard.html" class="block" title="Dashboard">
                 <div class="user-avatar-container">
-                    <img src="${user.user_metadata?.avatar_url || 'https://i.pravatar.cc/150?u=' + user.id}" alt="Profile" class="user-avatar-img">
+                    <img src="${avatarUrl}" alt="Profile" class="user-avatar-img">
                 </div>
             </a>
         `;
         container.style.opacity = '1';
     }
 
+    // Initialize
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', updateAuthUI);
     } else {
         updateAuthUI();
     }
 
-    function setupListener() {
+    // Listen for state changes
+    window.addEventListener('load', () => {
         const client = window.supabaseClient || window.supabase;
         if (client && client.auth) {
             client.auth.onAuthStateChange((event) => {
@@ -58,9 +99,9 @@
                     updateAuthUI();
                 }
             });
-        } else {
-            setTimeout(setupListener, 500);
         }
-    }
-    setupListener();
+    });
+
+    // Final safety check after 2 seconds
+    setTimeout(updateAuthUI, 2000);
 })();
