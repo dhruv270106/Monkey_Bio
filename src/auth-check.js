@@ -5,12 +5,14 @@
         if (!authContainer) return;
 
         // Ensure supabaseClient is available
-        if (!window.supabaseClient) {
+        const client = window.supabaseClient || window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
+        
+        if (!client) {
             console.error('Supabase client not found');
             return;
         }
 
-        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        const { data: { session } } = await client.auth.getSession();
 
         if (session && session.user) {
             // Determine path to root
@@ -20,11 +22,10 @@
 
             // User is logged in
             authContainer.innerHTML = `
-                <a href="${pathToRoot}dashboard.html" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border-2 border-primary cursor-pointer hover:shadow-lg transition-shadow">
+                <a href="${pathToRoot}dashboard.html" class="block">
+                    <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border-2 border-primary cursor-pointer hover:shadow-lg transition-shadow transform hover:scale-105">
                         <img src="${session.user.user_metadata.avatar_url || 'https://i.pravatar.cc/150?u=' + session.user.id}" alt="Profile" class="w-full h-full object-cover">
                     </div>
-                    <span class="hidden sm:block text-sm font-bold text-secondary group-hover:text-primary transition-colors">Dashboard</span>
                 </a>
             `;
         }
@@ -42,8 +43,9 @@
     }
 
     // Also listen for auth state changes
-    if (window.supabaseClient) {
-        window.supabaseClient.auth.onAuthStateChange((event, session) => {
+    const client = window.supabaseClient || window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
+    if (client) {
+        client.auth.onAuthStateChange((event, session) => {
             updateAuthUI();
         });
     }

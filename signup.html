@@ -35,7 +35,7 @@
     <script>
       const supabaseUrl = 'https://esngrodyozljdjkfcocp.supabase.co';
       const supabaseKey = 'sb_publishable_6DOFYKjxL3o2U1rs5Gd4cw_SitIaPwy';
-      window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+      window.supabaseClient = (window.supabasejs || window.supabase).createClient(supabaseUrl, supabaseKey);
 
       // Redirect if already logged in
       window.supabaseClient.auth.getSession().then(({ data: { session } }) => {
