@@ -140,17 +140,17 @@
                   if (error) throw error;
                   window.location.href = 'dashboard.html';
                 } else {
-                  // Registration
-                  const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+                  // Registration (if reachable)
+                  const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({ email, password });
                   if (authError) throw authError;
 
-                  if (authData.user && username) {
-                    const { error: profileError } = await supabase
+                  if (authData.user && typeof username !== 'undefined') {
+                    const { error: profileError } = await window.supabaseClient
                       .from('monkey_bio')
                       .insert([{ id: authData.user.id, username: username.toLowerCase(), display_name: username }]);
                     if (profileError) throw profileError;
                   }
-                  alert('Registered successfully! Check your email if verification is required.');
+                  alert('Registered successfully!');
                   window.location.href = 'login.html';
                 }
               } catch (err) {
