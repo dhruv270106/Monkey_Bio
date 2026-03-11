@@ -35,8 +35,15 @@
     <script>
       const supabaseUrl = 'https://esngrodyozljdjkfcocp.supabase.co';
       const supabaseKey = 'sb_publishable_6DOFYKjxL3o2U1rs5Gd4cw_SitIaPwy';
-      // Ensure we use the correct global and store it on the window
       window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+      
+      // Redirect if already logged in
+      window.supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          window.location.href = 'dashboard.html';
+        }
+      });
+
     </script>
     <style>
        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
