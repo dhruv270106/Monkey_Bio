@@ -1,21 +1,25 @@
+
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { readdirSync } from 'fs';
+import { globSync } from 'tinyglobby';
 
-// Get all .html files in the root directory
-const root = resolve(__dirname, './');
-const htmlFiles = readdirSync(root).filter(file => file.endsWith('.html'));
+// Get all .html files recursively
+const htmlFiles = globSync('**/*.html', { 
+  ignore: ['node_modules/**', 'dist/**'] 
+});
 
 const input = {};
 htmlFiles.forEach(file => {
-  const name = file.replace('.html', '');
-  input[name] = resolve(root, file);
+  // Create a unique key for each file
+  const name = file.replace(/\//g, '_').replace('.html', '');
+  input[name] = resolve(__dirname, file);
 });
 
 export default defineConfig({
-  root,
+  root: './',
   build: {
     outDir: 'dist',
+    emptyOutDir: true,
     rollupOptions: {
       input,
     },
