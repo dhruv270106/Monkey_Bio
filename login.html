@@ -35,7 +35,8 @@
     <script>
       const supabaseUrl = 'https://esngrodyozljdjkfcocp.supabase.co';
       const supabaseKey = 'sb_publishable_6DOFYKjxL3o2U1rs5Gd4cw_SitIaPwy';
-      const supabase = supabasejs.createClient(supabaseUrl, supabaseKey);
+      // Ensure we use the correct global and store it on the window
+      window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
     </script>
     <style>
        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
@@ -99,7 +100,11 @@
          <script>
             async function signInWithGoogle() {
               try {
-                const { error } = await supabase.auth.signInWithOAuth({
+                if (!window.supabaseClient) {
+                   alert("Supabase client not initialized. Please refresh the page.");
+                   return;
+                }
+                const { error } = await window.supabaseClient.auth.signInWithOAuth({
                   provider: 'google',
                   options: {
                     redirectTo: window.location.origin + '/dashboard.html'
@@ -119,13 +124,12 @@
 
               const email = document.getElementById('email').value;
               const password = document.getElementById('password').value;
-              const username = document.getElementById('username')?.value;
               
-              const isLogin = 'login.html' === 'login.html';
+              const isLogin = true;
 
               try {
                 if (isLogin) {
-                  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                  const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
                   if (error) throw error;
                   window.location.href = 'dashboard.html';
                 } else {
