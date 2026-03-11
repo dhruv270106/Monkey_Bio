@@ -1,5 +1,7 @@
 
 (function() {
+    let originalButtonsHTML = '';
+    
     // Inject premium round avatar styles
     const style = document.createElement('style');
     style.innerHTML = `
@@ -40,6 +42,11 @@
         const authContainer = document.getElementById('auth-buttons');
         if (!authContainer) return;
 
+        // Save original buttons if we haven't yet
+        if (!originalButtonsHTML && !authContainer.querySelector('.user-avatar-container')) {
+            originalButtonsHTML = authContainer.innerHTML;
+        }
+
         // 1. Fast path: check localStorage
         const rawToken = localStorage.getItem(storageKey);
         if (rawToken) {
@@ -63,6 +70,10 @@
             if (session && session.user) {
                 renderLoggedInUI(authContainer, session.user);
             } else {
+                // Return to original buttons if logged out
+                if (originalButtonsHTML) {
+                    authContainer.innerHTML = originalButtonsHTML;
+                }
                 authContainer.style.opacity = '1';
             }
         } catch (err) {
@@ -94,7 +105,8 @@
     window.addEventListener('load', () => {
         const client = window.supabaseClient || window.supabase;
         if (client && client.auth) {
-            client.auth.onAuthStateChange((event) => {
+            client.auth.onAuthStateChange((event, session) => {
+                console.log('Auth event:', event);
                 if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
                     updateAuthUI();
                 }
