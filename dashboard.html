@@ -158,10 +158,15 @@
            </div>
 
            <!-- Footer tools -->
-           <div class="p-4 border-t border-gray-100 flex items-center justify-between">
-               <div class="text-gray-400 hover:text-secondary cursor-pointer"><i data-lucide="help-circle" class="w-5 h-5"></i></div>
-               <div class="text-gray-400 hover:text-secondary cursor-pointer"><i data-lucide="log-out" class="w-5 h-4" onclick="handleLogout()"></i></div>
-           </div>
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-gray-100">
+                <button onclick="handleLogout()" class="w-full flex items-center gap-3 p-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all group">
+                    <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </div>
+                    Sign out
+                </button>
+            </div>
         </aside>
 
         <!-- Main Content (Links Editor) -->
