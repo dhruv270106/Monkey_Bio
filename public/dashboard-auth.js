@@ -279,11 +279,11 @@ const cropperModal = document.getElementById('cropper-modal');
 const cropperImage = document.getElementById('cropper-image');
 const avatarUploadInput = document.getElementById('avatar-upload');
 
-function triggerAvatarUpload() {
+window.triggerAvatarUpload = function() {
     avatarUploadInput.click();
-}
+};
 
-function handleFileSelect(event) {
+window.handleFileSelect = function(event) {
     const file = event.target.files[0];
     if (file) {
         if (!file.type.startsWith('image/')) {
@@ -316,15 +316,15 @@ function handleFileSelect(event) {
         };
         reader.readAsDataURL(file);
     }
-}
+};
 
-function closeCropper() {
+window.closeCropper = function() {
     cropperModal.classList.add('hidden');
     if (cropper) cropper.destroy();
     avatarUploadInput.value = '';
-}
+};
 
-async function saveCroppedImage() {
+window.saveCroppedImage = async function() {
     if (!cropper) return;
 
     const saveBtn = document.getElementById('save-crop-btn');
@@ -372,7 +372,7 @@ async function saveCroppedImage() {
         if (dashboardAvatar) dashboardAvatar.src = publicUrl;
         
         alert('Profile picture updated successfully!');
-        closeCropper();
+        window.closeCropper();
         location.reload(); // Refresh to update all instances
     } catch (err) {
         alert(err.message);
@@ -381,12 +381,18 @@ async function saveCroppedImage() {
         saveBtn.disabled = false;
         saveBtn.innerHTML = 'Save Changes';
     }
-}
+};
 
-async function handleLogout() {
+window.handleLogout = async function() {
+    console.log('Logging out...');
     const client = window.supabaseClient || window.supabase;
     if (client && client.auth) {
-        await client.auth.signOut();
+        try {
+            await client.auth.signOut();
+            console.log('Logged out successfully');
+        } catch (err) {
+            console.error('Logout error:', err);
+        }
     }
-    window.location.href = '/index.html';
-}
+    window.location.href = 'index.html';
+};
