@@ -55,7 +55,7 @@
 
     <div class="fixed top-0 left-0 right-0 p-6 flex justify-between items-center z-50">
         <div class="flex items-center gap-4">
-            <button id="btn-back" onclick="backStep()" class="hidden w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:text-secondary hover:bg-gray-50 transition-all shadow-sm">
+            <button id="btn-back" onclick="backStep()" class="hidden w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:text-secondary hover:bg-gray-50 transition-all">
                 <i data-lucide="chevron-left" class="w-5 h-5"></i>
             </button>
             <div class="flex items-center gap-2">
@@ -63,8 +63,8 @@
                 <span class="font-bold text-2xl tracking-tight text-secondary">Monkey</span>
             </div>
         </div>
-        <button id="btn-skip" onclick="skipStep()" class="group flex items-center gap-1.5 text-gray-400 hover:text-secondary font-bold text-sm transition-all bg-gray-50/50 px-4 py-2 rounded-full border border-transparent hover:border-gray-100">
-            Skip <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
+        <button id="btn-skip" onclick="skipStep()" class="text-gray-400 hover:text-secondary font-medium flex items-center gap-1">
+            Skip <i data-lucide="chevron-right" class="w-4 h-4"></i>
         </button>
     </div>
 
@@ -631,13 +631,12 @@
         }
 
         function skipStep() {
+            // Logic for skipping
             if (currentStep === 1) {
-                const val = document.getElementById('username-input').value.trim();
-                finalUsername = val || 'user' + Math.floor(Math.random() * 10000);
+                // If skipping username, we might need a default
+                if (!finalUsername) finalUsername = 'user' + Math.floor(Math.random() * 1000);
             }
-            if (currentStep < 7) {
-                goToStep(currentStep + 1);
-            }
+            if (currentStep < 7) goToStep(currentStep + 1);
         }
 
         function goToStep(step) {
@@ -1005,13 +1004,12 @@
                 if (error) throw error;
                 
                 console.log("Onboarding successful, redirecting...");
-                btn.innerHTML = '<span class="flex items-center gap-2"><i data-lucide="party-popper" class="w-5 h-5"></i> All set! Redirecting...</span>';
+                btn.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i> Redirecting...';
                 lucide.createIcons();
                 
                 setTimeout(() => {
-                    // Force absolute path redirect to avoid any relative issues
-                    window.location.replace('./dashboard.html');
-                }, 1200);
+                    window.location.href = 'dashboard.html';
+                }, 1000);
             } catch (err) {
                 console.error("Finish failed:", err);
                 alert('Save failed: ' + err.message);

@@ -11,7 +11,7 @@
         const { data: { session } } = await client.auth.getSession();
 
         if (!session) {
-            window.location.href = '/login.html';
+            window.location.href = 'login.html';
             return;
         }
 
@@ -25,7 +25,7 @@
         // If no profile or onboarding not completed, redirect to onboarding
         // We also check if we are already on onboarding.html to avoid infinite loop
         if ((!profile || !profile.onboarding_completed) && !window.location.pathname.includes('onboarding.html')) {
-            window.location.href = '/onboarding.html';
+            window.location.href = 'onboarding.html';
             return;
         }
 
