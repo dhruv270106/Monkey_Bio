@@ -29,29 +29,15 @@
             return;
         }
 
-        const user = session.user;
-        let username = 'User';
-        let displayName = user.user_metadata?.full_name || user.email.split('@')[0];
-
-        // Try to fetch custom profile from monkey_bio
-        try {
-            const { data: profile } = await client
-                .from('monkey_bio')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-            
-            if (profile) {
-                username = profile.username;
-                displayName = profile.display_name || username;
-            }
-        } catch (err) {
-            console.error('Error fetching profile:', err);
-        }
-
         // State Management
+        console.log('Final Profile for Dashboard:', profile);
+        
+        const username = profile?.username || 'User';
+        const displayName = profile?.display_name || username;
         let userLinks = profile?.links || [];
         const socialLinks = profile?.social_links || {};
+        const savedTheme = profile?.theme || 'black';
+        const bioText = profile?.bio || '';
 
         // 1. Sidebar & Header
         const sidebarUserName = document.getElementById('sidebar-username-text');
@@ -204,31 +190,107 @@
         // 4. Mockup Sync Logic
         function updateMockup() {
             const mockupName = document.getElementById('mockup-preview-username');
-            if (mockupName) mockupName.textContent = username;
+            if (mockupName) mockupName.textContent = '@' + username;
 
             const mockupLinks = document.getElementById('mockup-preview-links');
             if (!mockupLinks) return;
             mockupLinks.innerHTML = '';
 
-            // Add links
+            // 1. Add Social Links as Boxes (User Request)
+            Object.entries(socialLinks).forEach(([platform, handle]) => {
+                if (handle) {
+                    const pb = platforms.find(p => p.id === platform);
+                    const btn = document.createElement('div');
+                    btn.className = 'w-full py-4 px-6 bg-white/90 backdrop-blur-sm text-secondary text-xs font-bold rounded-2xl flex items-center shadow-md border border-gray-100/50 hover:scale-[1.02] transition-all cursor-pointer group mb-3';
+                    btn.innerHTML = `
+                        <div class="w-8 h-8 ${pb?.color || 'bg-gray-100'} ${pb?.iconColor || 'text-gray-400'} rounded-lg flex items-center justify-center mr-3">
+                            <i data-lucide="${pb?.icon || 'link'}" class="w-4 h-4"></i>
+                        </div>
+                        <span class="flex-1">${pb?.name || platform}</span>
+                        <i data-lucide="more-vertical" class="w-3.5 h-3.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                    `;
+                    mockupLinks.appendChild(btn);
+                }
+            });
+
+            // 2. Add Custom Links
             userLinks.filter(l => l.active && l.title && l.url).forEach(link => {
                 const btn = document.createElement('div');
-                btn.className = 'w-full py-3.5 px-4 bg-white text-secondary text-[10px] font-bold rounded-xl flex items-center justify-center text-center shadow-lg border border-gray-100 animate-fade-in hover:scale-[1.02] transition-transform';
+                btn.className = 'w-full py-4 px-6 bg-white/95 text-secondary text-xs font-bold rounded-2xl flex items-center justify-center text-center shadow-lg border border-gray-100 hover:scale-[1.02] transition-all cursor-pointer mb-3';
                 btn.innerText = link.title;
                 mockupLinks.appendChild(btn);
             });
 
-            // Add social icons at the bottom of the content
+            // Social Icons at bottom (if any handles exist)
             if (Object.keys(socialLinks).length > 0) {
                 const row = document.createElement('div');
-                row.className = 'flex items-center justify-center gap-4 mt-8';
+                row.className = 'flex items-center justify-center gap-5 mt-8 mb-4';
                 Object.keys(socialLinks).forEach(p => {
-                    row.innerHTML += `<i data-lucide="${p}" class="w-5 h-5 text-gray-400"></i>`;
+                    const pb = platforms.find(pl => pl.id === p);
+                    row.innerHTML += `<i data-lucide="${pb?.icon || p}" class="w-5 h-5 text-gray-400 hover:text-secondary transition-colors cursor-pointer"></i>`;
                 });
                 mockupLinks.appendChild(row);
-                if (window.lucide) lucide.createIcons();
+            }
+            
+            if (window.lucide) lucide.createIcons();
+            
+            console.log('Applying theme to mockup:', savedTheme);
+            applyThemeToMockup(savedTheme);
+        }
+
+        function applyThemeToMockup(theme) {
+            const mockup = document.getElementById('mockup-iframe-container');
+            const usernameEl = document.getElementById('mockup-preview-username');
+            
+            if (!mockup || !usernameEl) {
+                console.warn('Mockup elements not found for theme application');
+                return;
+            }
+
+            const currentTheme = theme || savedTheme;
+
+            // Reset
+            mockup.style.background = '';
+            mockup.style.backgroundImage = '';
+            mockup.style.backgroundColor = 'white';
+            mockup.style.border = '10px solid #020617'; // Standard phone border
+            usernameEl.className = 'font-bold text-sm mb-6 ';
+            
+            // Themes Logic (Sync with onboarding.html)
+            if (currentTheme === 'black') { mockup.style.backgroundColor = 'black'; usernameEl.classList.add('text-white'); }
+            else if (currentTheme === 'gradient-peach') { mockup.style.background = 'linear-gradient(to bottom, #bfdbfe, #fdba74)'; usernameEl.classList.add('text-secondary'); }
+            else if (currentTheme === 'grid') { mockup.style.backgroundColor = '#451a03'; usernameEl.classList.add('text-white'); mockup.style.backgroundImage = 'radial-gradient(#ffffff11 1px, transparent 0)'; mockup.style.backgroundSize = '20px 20px'; }
+            else if (currentTheme === 'gold') { mockup.style.backgroundColor = '#171717'; usernameEl.classList.add('text-yellow-600'); }
+            else if (currentTheme === 'floral') { mockup.style.backgroundImage = "url('https://images.unsplash.com/photo-1523348837742-82da744db91d?auto=format&fit=crop&w=800&q=80')"; mockup.style.backgroundSize = "cover"; usernameEl.classList.add('text-pink-800'); }
+            else if (currentTheme === 'cartoon-vibes') { mockup.style.backgroundColor = '#facc15'; mockup.style.border = '10px solid black'; usernameEl.classList.add('text-black', 'uppercase', 'font-black'); }
+            else if (currentTheme === 'love-hearts') { mockup.style.backgroundColor = "#ffe4e6"; mockup.style.backgroundImage = "url('https://www.transparenttextures.com/patterns/heart.png')"; usernameEl.classList.add('text-rose-600'); }
+            else if (currentTheme === 'waves') { mockup.style.backgroundColor = "#06b6d4"; mockup.style.backgroundImage = "url('https://www.transparenttextures.com/patterns/waves.png')"; usernameEl.classList.add('text-white'); }
+            else if (currentTheme === 'space') { mockup.style.backgroundImage = "url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=800&q=80')"; mockup.style.backgroundSize = "cover"; usernameEl.classList.add('text-white'); }
+            else if (currentTheme === 'retro') { mockup.style.background = "linear-gradient(180deg, #f97316 0%, #ef4444 50%, #a855f7 100%)"; usernameEl.classList.add('text-white'); }
+            else if (currentTheme === 'cyber') { mockup.style.backgroundColor = 'black'; mockup.style.backgroundImage = "radial-gradient(circle,rgba(6,182,212,0.1) 1px,transparent 1px)"; mockup.style.backgroundSize = "20px 20px"; usernameEl.classList.add('text-cyan-400', 'uppercase', 'tracking-widest'); }
+            else if (currentTheme === 'dots') { mockup.style.backgroundColor = "white"; mockup.style.backgroundImage = "radial-gradient(#6366f1 2px, transparent 0)"; mockup.style.backgroundSize = "30px 30px"; usernameEl.classList.add('text-indigo-600'); }
+            else if (currentTheme === 'lava') { mockup.style.backgroundImage = "linear-gradient(180deg, #f43f5e 0%, #fb923c 100%)"; usernameEl.classList.add('text-white'); }
+            else if (currentTheme === 'midnight') { mockup.style.backgroundColor = "#020617"; usernameEl.classList.add('text-slate-400'); }
+            else if (currentTheme === 'lavender') { mockup.style.backgroundColor = "#faf5ff"; usernameEl.classList.add('text-purple-600'); }
+            else if (currentTheme === 'sky') { mockup.style.backgroundImage = "url('https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?auto=format&fit=crop&w=800&q=80')"; mockup.style.backgroundSize = "cover"; usernameEl.classList.add('text-sky-900'); }
+            else if (currentTheme === 'graffiti') { mockup.style.backgroundImage = "url('https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80')"; mockup.style.backgroundSize = "cover"; usernameEl.classList.add('text-white', 'italic'); }
+            else if (currentTheme === 'soft') { mockup.style.backgroundColor = '#f3f4f6'; usernameEl.classList.add('text-blue-500'); }
+            
+            // Default fallback
+            if (!mockup.style.backgroundColor && !mockup.style.backgroundImage) {
+                mockup.style.backgroundColor = 'white';
             }
         }
+
+        const platforms = [
+            { id: 'instagram', name: 'Instagram', color: 'bg-pink-100', icon: 'instagram', iconColor: 'text-pink-500' },
+            { id: 'whatsapp', name: 'WhatsApp', color: 'bg-green-100', icon: 'phone', iconColor: 'text-green-500' },
+            { id: 'tiktok', name: 'TikTok', color: 'bg-black', icon: 'music', iconColor: 'text-white' },
+            { id: 'youtube', name: 'YouTube', color: 'bg-red-100', icon: 'youtube', iconColor: 'text-red-500' },
+            { id: 'website', name: 'Website', color: 'bg-blue-100', icon: 'globe', iconColor: 'text-blue-500' },
+            { id: 'spotify', name: 'Spotify', color: 'bg-green-50', icon: 'music', iconColor: 'text-green-600' },
+            { id: 'x', name: 'X', color: 'bg-gray-200', icon: 'twitter', iconColor: 'text-black' }
+        ];
 
         // 5. Auto-save Utility
         let saveTimeout;
@@ -261,7 +323,10 @@
             if (el) {
                 el.src = avatarUrl || defaultAvatar;
                 el.classList.remove('hidden');
-                if (el.id === 'sidebar-avatar') el.nextElementSibling?.classList.add('hidden');
+                if (el.id === 'sidebar-avatar') {
+                    el.nextElementSibling?.classList.add('hidden');
+                    el.classList.add('w-10', 'h-10');
+                }
             }
         });
     }
