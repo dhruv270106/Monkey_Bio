@@ -205,7 +205,7 @@
 
                   <!-- Add Link Button -->
                   <div class="sticky top-[64px] z-50 bg-white pb-6">
-                      <button id="btn-add-link" class="w-full py-5 bg-purple-600 text-white font-bold rounded-full text-xl hover:bg-purple-700 transition-all shadow-lg shadow-purple-100 flex items-center justify-center gap-3 group">
+                      <button id="btn-add-link" class="w-full py-5 bg-purple-600 text-white font-bold rounded-full text-xl hover:bg-purple-700 transition-all shadow-[0_8px_20px_rgba(147,51,234,0.3)] flex items-center justify-center gap-3 group" onclick="openAddLinkModal()">
                           <i data-lucide="plus" class="w-6 h-6 group-hover:rotate-90 transition-all"></i> Add Link
                       </button>
                   </div>
@@ -333,40 +333,60 @@
             </div>
         </div>
     </div>
-    <!-- Social Icon Modal -->
-    <div id="social-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-[32px] w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in flex flex-col max-h-[90vh]">
-            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                <h3 class="font-bold text-xl">Add Social Icon</h3>
-                <button onclick="closeSocialModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+    <!-- Add Link / Apps Modal -->
+    <div id="add-link-modal" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] p-4 sm:p-6 opacity-0 transition-opacity duration-200">
+        <div class="bg-white rounded-[24px] w-full max-w-[840px] h-[85vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.12)] overflow-hidden relative scale-95 transition-transform duration-200" id="add-link-modal-content">
+            <!-- Header -->
+            <div class="px-6 py-4 flex justify-between items-center bg-white shrink-0">
+                <h3 class="font-bold text-xl text-secondary">Add</h3>
+                <button onclick="closeAddLinkModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             
-            <div class="p-6 overflow-y-auto space-y-6">
-                <!-- Search -->
+            <!-- Search bar -->
+            <div class="px-6 pb-4 shrink-0 border-b border-gray-100">
                 <div class="relative">
                     <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="social-search" placeholder="Search platforms..." class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-purple-500 transition-all font-medium" onkeyup="filterSocials()">
+                    <input type="text" id="add-link-search" placeholder="Paste or search a link" class="w-full pl-11 pr-4 py-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-[16px] outline-none focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-500/10 transition-all font-medium text-[15px] text-secondary placeholder-gray-500" onkeyup="filterAddLink()">
                 </div>
-                
-                <!-- Platform List -->
-                <div id="social-platform-list" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <!-- Injected via JS -->
+            </div>
+
+            <!-- Body -->
+            <div class="flex flex-1 overflow-hidden bg-white">
+                <!-- Sidebar Tabs -->
+                <div class="w-[220px] border-r border-gray-100 overflow-y-auto no-scrollbar shrink-0 py-2 hidden sm:block" id="add-modal-sidebar">
+                    <div class="space-y-0.5 px-3">
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all bg-purple-50 text-purple-700 font-bold text-[14px]" data-tab="suggested" onclick="selectAddTab('suggested')">
+                            <i data-lucide="lightbulb" class="w-4 h-4"></i> Suggested
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="commerce" onclick="selectAddTab('commerce')">
+                            <i data-lucide="store" class="w-4 h-4"></i> Commerce
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="social" onclick="selectAddTab('social')">
+                            <i data-lucide="heart" class="w-4 h-4"></i> Social
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="media" onclick="selectAddTab('media')">
+                            <i data-lucide="play-circle" class="w-4 h-4"></i> Media
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="contact" onclick="selectAddTab('contact')">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i> Contact
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="events" onclick="selectAddTab('events')">
+                            <i data-lucide="calendar" class="w-4 h-4"></i> Events
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="text" onclick="selectAddTab('text')">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> Text
+                        </button>
+                    </div>
+                    <div class="px-3 mt-4 pt-2 border-t border-gray-100">
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="all" onclick="selectAddTab('all')">
+                            <i data-lucide="more-horizontal" class="w-4 h-4 text-gray-400"></i> View all
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Input Area (Hidden initially) -->
-                <div id="social-input-area" class="hidden space-y-4 pt-4 border-t border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div id="selected-social-icon" class="w-10 h-10 rounded-xl flex items-center justify-center text-white"></div>
-                        <h4 id="selected-social-name" class="font-bold text-lg"></h4>
-                    </div>
-                    <div class="flex bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-purple-500 transition-all">
-                        <span id="social-input-prefix" class="px-4 py-3 text-gray-400 font-bold border-r border-gray-200">@</span>
-                        <input type="text" id="social-handle-input" placeholder="username" class="flex-1 bg-transparent px-4 py-3 outline-none font-bold text-secondary">
-                    </div>
-                    <div class="flex gap-3 pt-2">
-                        <button onclick="resetSocialSelection()" class="flex-1 py-3 px-4 border border-gray-200 font-bold rounded-xl hover:bg-gray-50 transition-all text-gray-600">Back</button>
-                        <button onclick="saveSocialLink()" class="flex-1 py-3 px-4 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-all shadow-lg">Add to Profile</button>
-                    </div>
+                <!-- Content Area -->
+                <div class="flex-1 overflow-y-auto p-6 bg-white space-y-6" id="add-modal-main-content">
+                    <!-- Cards will be injected here via JS -->
                 </div>
             </div>
         </div>

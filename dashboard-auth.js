@@ -189,97 +189,260 @@
             debouncedSave();
         };
 
-        window.openSocialModal = () => {
-            const modal = document.getElementById('social-modal');
+        const linkApps = [
+            // Commerce
+            { id: 'coaching', title: 'Coaching & bookings', desc: 'Sell 1:1 sessions, consultations, and private coaching', cat: 'commerce', group: 'Digital products', icon: 'calendar', color: 'text-purple-500 bg-purple-50' },
+            { id: 'digital_products', title: 'Digital products', desc: 'Sell documents, PDFs, guides, templates, and other content', cat: 'commerce', group: 'Digital products', icon: 'file-text', color: 'text-blue-500 bg-blue-50' },
+            { id: 'courses', title: 'Courses', desc: 'Sell online courses and lessons to your audience', cat: 'commerce', group: 'Digital products', icon: 'graduation-cap', color: 'text-green-500 bg-green-50' },
+            { id: 'affiliate', title: 'Affiliate products', desc: 'Promote products you sell with Product links.', cat: 'commerce', group: 'Affiliate products', icon: 'tag', color: 'text-yellow-600 bg-yellow-50' },
+            
+            { id: 'shopify', title: 'Shopify', desc: 'Display the best of your Shopify store.', cat: 'commerce', group: 'Physical products', icon: 'shopping-bag', color: 'text-green-600 bg-green-50' },
+            { id: 'fourthwall', title: 'Fourthwall', desc: 'Make & sell premium merch or your own goods.', cat: 'commerce', group: 'Physical products', icon: 'shirt', color: 'text-black bg-gray-100' },
+            { id: 'amaze', title: 'Amaze', desc: 'Create a store with Amaze and display it.', cat: 'commerce', group: 'Physical products', icon: 'shopping-cart', color: 'text-indigo-500 bg-indigo-50' },
+            { id: 'books', title: 'Books', desc: 'Sell more books by promoting them on Linktree.', cat: 'commerce', group: 'Physical products', icon: 'book', color: 'text-amber-700 bg-amber-50' },
+            { id: 'bonfire', title: 'Bonfire', desc: 'Sell products from your Bonfire store.', cat: 'commerce', group: 'Physical products', icon: 'flame', color: 'text-red-500 bg-red-50' },
+            
+            { id: 'community_channels', title: 'Community Channels', desc: 'Offer access to your WhatsApp, Discord or Slack communities.', cat: 'commerce', group: 'Communities', icon: 'users', color: 'text-blue-500 bg-blue-50' },
+            { id: 'discord', title: 'Discord servers', desc: 'Add members to your Discord server.', cat: 'commerce', group: 'Communities', icon: 'message-square', color: 'text-indigo-500 bg-indigo-50' },
+            { id: 'whatsapp_group', title: 'WhatsApp groups', desc: 'Add members to your WhatsApp group.', cat: 'commerce', group: 'Communities', icon: 'phone', color: 'text-green-500 bg-green-50' },
+            { id: 'slack', title: 'Slack workspaces', desc: 'Add members to your Slack workspace.', cat: 'commerce', group: 'Communities', icon: 'hash', color: 'text-purple-600 bg-purple-50' },
+            
+            { id: 'discount_code', title: 'Discount Code', desc: 'Displays a discount code for visitors.', cat: 'commerce', group: 'Promotions', icon: 'percent', color: 'text-pink-500 bg-pink-50' },
+            { id: 'gleam', title: 'Gleam', desc: 'Grow your audience with giveaways and content.', cat: 'commerce', group: 'Promotions', icon: 'gift', color: 'text-teal-500 bg-teal-50' },
+            
+            { id: 'gofundme', title: 'GoFundMe', desc: 'Advocate for local fundraisers and global emergencies.', cat: 'commerce', group: 'Fundraising', icon: 'heart', color: 'text-green-600 bg-green-50' },
+            
+            { id: 'sendowl', title: 'SendOwl', desc: 'Sell digital goods by showcasing them with SendOwl.', cat: 'commerce', group: 'Other digital', icon: 'download', color: 'text-blue-600 bg-blue-50' },
+            { id: 'mobile_app', title: 'Mobile App', desc: 'Easily market your mobile app and drive downloads.', cat: 'commerce', group: 'Other digital', icon: 'smartphone', color: 'text-gray-700 bg-gray-100' },
+
+            // Social
+            { id: 'instagram', title: 'Instagram', desc: 'Display up to six of your Instagram posts and reels.', cat: 'social', group: '', icon: 'instagram', color: 'text-pink-600 bg-pink-50' },
+            { id: 'tiktok', title: 'TikTok', desc: 'Share your TikToks directly to gain exposure and followers.', cat: 'social', group: '', icon: 'music', color: 'text-black bg-gray-100' },
+            { id: 'tiktok_profile', title: 'TikTok Profile', desc: 'Share TikTok profiles with your audience.', cat: 'social', group: '', icon: 'user', color: 'text-black bg-gray-100' },
+            { id: 'x', title: 'X', desc: 'Select your own (or favorite) posts to display on your Linktree.', cat: 'social', group: '', icon: 'twitter', color: 'text-black bg-gray-100' },
+            { id: 'threads', title: 'Threads', desc: 'Driving your audience to follow you on Threads just got easier.', cat: 'social', group: '', icon: 'at-sign', color: 'text-black bg-gray-100' },
+            { id: 'reviews', title: 'Reviews', desc: 'Showcase your Google reviews on your profile.', cat: 'social', group: '', icon: 'star', color: 'text-yellow-500 bg-yellow-50' },
+            { id: 'facebook', title: 'Facebook', desc: 'Show your visitors any Facebook video, right on your Linktree.', cat: 'social', group: '', icon: 'facebook', color: 'text-blue-600 bg-blue-50' },
+            { id: 'snapchat', title: 'Snapchat', desc: 'Create content, grow your audience and build your business.', cat: 'social', group: '', icon: 'camera', color: 'text-yellow-500 bg-yellow-50' },
+            { id: 'pinterest', title: 'Pinterest', desc: 'Share what you love on Pinterest so visitors can get inspired.', cat: 'social', group: '', icon: 'map-pin', color: 'text-red-500 bg-red-50' },
+            { id: 'twitch', title: 'Twitch', desc: 'Show your live Twitch stream and let visitors chat with you.', cat: 'social', group: '', icon: 'play', color: 'text-purple-500 bg-purple-50' },
+            { id: 'reddit', title: 'Reddit', desc: 'Add a preview of your Reddit profile, right on your Linktree.', cat: 'social', group: '', icon: 'message-circle', color: 'text-orange-500 bg-orange-50' },
+            { id: 'rss', title: 'RSS Feed', desc: 'Share RSS feeds with your audience.', cat: 'social', group: '', icon: 'rss', color: 'text-orange-500 bg-orange-50' },
+            { id: 'cameo', title: 'Cameo', desc: 'Help fans celebrate special moments like birthdays.', cat: 'social', group: '', icon: 'video', color: 'text-pink-500 bg-pink-50' },
+            { id: 'clubhouse', title: 'Clubhouse', desc: 'A place to listen in on fascinating voice conversations.', cat: 'social', group: '', icon: 'mic', color: 'text-yellow-600 bg-yellow-50' },
+
+            // Media
+            { id: 'video_generic', title: 'Video', desc: 'Watch videos you share without leaving your Linktree.', cat: 'media', group: 'Video', icon: 'video', color: 'text-indigo-500 bg-indigo-50' },
+            { id: 'youtube', title: 'YouTube', desc: 'Show your visitors any YouTube video, right on your Linktree.', cat: 'media', group: 'Video', icon: 'youtube', color: 'text-red-500 bg-red-50' },
+            { id: 'tiktok_video', title: 'TikTok Video', desc: 'Highlight one of your TikToks or share a TikTok from another creator.', cat: 'media', group: 'Video', icon: 'film', color: 'text-black bg-gray-100' },
+            { id: 'vimeo', title: 'Vimeo', desc: 'Share Vimeo videos with your visitors and let them watch.', cat: 'media', group: 'Video', icon: 'play-circle', color: 'text-blue-500 bg-blue-50' },
+            
+            { id: 'pdf', title: 'PDF display', desc: 'Display downloadable PDF files from food menus to event invitations.', cat: 'media', group: 'Document', icon: 'file', color: 'text-red-500 bg-red-50' },
+            
+            { id: 'music_generic', title: 'Music', desc: 'Connect more fans with your music.', cat: 'media', group: 'Audio', icon: 'music', color: 'text-purple-500 bg-purple-50' },
+            { id: 'podcasts', title: 'Podcasts', desc: 'Get more podcast listeners and subscribers.', cat: 'media', group: 'Audio', icon: 'mic', color: 'text-purple-600 bg-purple-50' },
+            { id: 'spotify', title: 'Spotify', desc: 'Curated playlists, artists, and podcasts you love.', cat: 'media', group: 'Audio', icon: 'play', color: 'text-green-500 bg-green-50' },
+            { id: 'apple_music', title: 'Apple Music', desc: 'Gets your listeners closer to the songs, albums and artists they love.', cat: 'media', group: 'Audio', icon: 'headphones', color: 'text-red-500 bg-red-50' },
+            { id: 'soundcloud', title: 'SoundCloud', desc: 'Upload and share your tracks with millions of listeners.', cat: 'media', group: 'Audio', icon: 'cloud', color: 'text-orange-500 bg-orange-50' },
+            { id: 'music_presave', title: 'Music Presave', desc: 'Build excitement for your upcoming music release.', cat: 'media', group: 'Audio', icon: 'calendar-check', color: 'text-blue-500 bg-blue-50' },
+            { id: 'audiomack', title: 'Audiomack', desc: 'Artist-first music streaming and audio discovery platform.', cat: 'media', group: 'Audio', icon: 'speaker', color: 'text-yellow-600 bg-yellow-50' },
+
+            // Contact
+            { id: 'form', title: 'Form', desc: 'Add a Contact Form so visitors can send you their contact details.', cat: 'contact', group: 'Forms', icon: 'align-left', color: 'text-blue-500 bg-blue-50' },
+            { id: 'contact_form', title: 'Contact Form', desc: 'Collect info with a form customized to your needs.', cat: 'contact', group: 'Forms', icon: 'form-input', color: 'text-blue-600 bg-blue-50' },
+            { id: 'email_signup', title: 'Email signup', desc: 'Collect emails for a direct line to your audience.', cat: 'contact', group: 'Forms', icon: 'mail', color: 'text-purple-500 bg-purple-50' },
+            { id: 'sms_signup', title: 'SMS signup', desc: 'Collect phone numbers to connect with followers.', cat: 'contact', group: 'Forms', icon: 'smartphone', color: 'text-green-500 bg-green-50' },
+            { id: 'typeform', title: 'Typeform', desc: 'Create forms, surveys, and quizzes seamlessly.', cat: 'contact', group: 'Forms', icon: 'check-square', color: 'text-black bg-gray-100' },
+            { id: 'laylo', title: 'Laylo', desc: 'Build your fan list, reward your audience, and connect with fans.', cat: 'contact', group: 'Forms', icon: 'bell', color: 'text-yellow-500 bg-yellow-50' },
+            { id: 'umg_signup', title: 'UMG Signup', desc: 'Show a simple greeting on your profile.', cat: 'contact', group: 'Forms', icon: 'user-plus', color: 'text-blue-500 bg-blue-50' },
+            { id: 'community_sms', title: 'Community SMS', desc: 'Make it easy for visitors to text your Community number.', cat: 'contact', group: 'Forms', icon: 'message-square', color: 'text-indigo-500 bg-indigo-50' },
+
+            { id: 'maps', title: 'Maps', desc: 'Display a map on your profile for business or events.', cat: 'contact', group: 'Details', icon: 'map-pin', color: 'text-red-500 bg-red-50' },
+            { id: 'contact_details', title: 'Contact Details', desc: 'Add a virtual contact card right to your Linktree.', cat: 'contact', group: 'Details', icon: 'contact', color: 'text-purple-500 bg-purple-50' },
+            { id: 'faqs', title: 'FAQs', desc: 'Display your most frequently asked questions.', cat: 'contact', group: 'Details', icon: 'help-circle', color: 'text-blue-500 bg-blue-50' },
+            { id: 'chatbot', title: 'Chatbot', desc: 'Engage your audience with an interactive chatbot.', cat: 'contact', group: 'Details', icon: 'bot', color: 'text-indigo-500 bg-indigo-50' },
+            { id: 'email_to', title: 'Email', desc: 'Link to send an email to a specific email address.', cat: 'contact', group: 'Details', icon: 'mail', color: 'text-gray-700 bg-gray-100' },
+            { id: 'stats', title: 'Stats', desc: 'Showcase important statistics about yourself or your business.', cat: 'contact', group: 'Details', icon: 'bar-chart', color: 'text-green-600 bg-green-50' },
+
+            // Events
+            { id: 'calendly', title: 'Calendly', desc: 'Visitors can book services or schedule time with you.', cat: 'events', group: 'Scheduling', icon: 'calendar', color: 'text-blue-500 bg-blue-50' },
+            { id: 'tour_events', title: 'Tour and Events', desc: 'Promote your upcoming shows from your artist profile.', cat: 'events', group: 'Events', icon: 'map', color: 'text-purple-600 bg-purple-50' },
+            { id: 'seated', title: 'Seated', desc: 'Promote your upcoming shows from your artist profile.', cat: 'events', group: 'Events', icon: 'ticket', color: 'text-green-600 bg-green-50' },
+            { id: 'bandsintown', title: 'Bands In Town', desc: 'Promote your upcoming shows from your artist profile.', cat: 'events', group: 'Events', icon: 'music', color: 'text-cyan-600 bg-cyan-50' },
+
+            // Text
+            { id: 'text_block', title: 'Text', desc: 'Display custom text, complete with an optional CTA.', cat: 'text', group: '', icon: 'type', color: 'text-gray-700 bg-gray-100' },
+            { id: 'header_block', title: 'Header', desc: 'Make it easy to navigate with Link Headers.', cat: 'text', group: '', icon: 'heading', color: 'text-indigo-600 bg-indigo-50' }
+        ];
+
+        let activeTab = 'suggested';
+
+        window.openAddLinkModal = (tab = 'suggested') => {
+            const modal = document.getElementById('add-link-modal');
             if (modal) {
                 modal.classList.remove('hidden');
-                document.getElementById('social-search').value = '';
-                resetSocialSelection();
-                renderPlatformList();
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    document.getElementById('add-link-modal-content').classList.remove('scale-95');
+                }, 10);
+                document.getElementById('add-link-search').value = '';
+                selectAddTab(tab);
             }
         };
 
-        window.closeSocialModal = () => {
-            document.getElementById('social-modal').classList.add('hidden');
+        window.openSocialModal = () => openAddLinkModal('social');
+
+        window.closeAddLinkModal = () => {
+            const modal = document.getElementById('add-link-modal');
+            modal.classList.add('opacity-0');
+            document.getElementById('add-link-modal-content').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
         };
 
-        let activeSocialPlatform = null;
-
-        window.renderPlatformList = (filter = '') => {
-            const list = document.getElementById('social-platform-list');
-            if (!list) return;
-            list.innerHTML = '';
+        window.selectAddTab = (tab) => {
+            activeTab = tab;
             
-            platforms.forEach(p => {
-                if (filter && !p.name.toLowerCase().includes(filter.toLowerCase())) return;
-                
-                // Hide if already added
-                if (socialLinks[p.id]) return;
-
-                const btn = document.createElement('button');
-                btn.className = 'flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-all font-bold text-sm text-secondary shadow-sm hover:shadow-md group';
-                btn.onclick = () => selectSocialPlatform(p);
-                btn.innerHTML = `
-                    <div class="w-12 h-12 ${p.color} ${p.iconColor} rounded-xl flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-                        <i data-lucide="${p.icon}" class="w-6 h-6"></i>
-                    </div>
-                    ${p.name}
-                `;
-                list.appendChild(btn);
+            // Update sidebar UI classes
+            document.querySelectorAll('.add-tab-btn').forEach(btn => {
+                const isSelected = btn.getAttribute('data-tab') === tab;
+                if (isSelected) {
+                    btn.classList.add('bg-purple-50', 'text-purple-700');
+                    btn.classList.remove('text-gray-700', 'hover:bg-gray-50');
+                } else {
+                    btn.classList.remove('bg-purple-50', 'text-purple-700');
+                    btn.classList.add('text-gray-700', 'hover:bg-gray-50');
+                }
             });
-            if (window.lucide) lucide.createIcons();
+
+            renderAddModalContent();
         };
 
-        window.filterSocials = () => {
-            const val = document.getElementById('social-search').value;
-            renderPlatformList(val);
+        window.filterAddLink = () => {
+            renderAddModalContent();
         };
 
-        window.selectSocialPlatform = (platform) => {
-            activeSocialPlatform = platform;
-            document.getElementById('social-search').closest('.relative').classList.add('hidden');
-            document.getElementById('social-platform-list').classList.add('hidden');
+        function renderAddModalContent() {
+            const container = document.getElementById('add-modal-main-content');
+            if (!container) return;
+            container.innerHTML = '';
             
-            const inputArea = document.getElementById('social-input-area');
-            inputArea.classList.remove('hidden');
-            inputArea.classList.add('animate-fade-in');
+            const searchVal = document.getElementById('add-link-search').value.toLowerCase();
             
-            const iconContainer = document.getElementById('selected-social-icon');
-            iconContainer.className = `w-12 h-12 rounded-xl flex items-center justify-center text-white ${platform.iconColor.replace('text-', 'bg-')} shadow-md`;
-            iconContainer.innerHTML = `<i data-lucide="${platform.icon}" class="w-6 h-6"></i>`;
-            
-            document.getElementById('selected-social-name').innerText = `Add ${platform.name}`;
-            
-            const prefix = platform.id === 'website' ? 'https://' : '@';
-            document.getElementById('social-input-prefix').innerText = prefix;
-            
-            const input = document.getElementById('social-handle-input');
-            input.placeholder = platform.id === 'website' ? 'yourwebsite.com' : 'username';
-            input.value = '';
-            input.focus();
-            
-            if (window.lucide) lucide.createIcons();
-        };
-
-        window.resetSocialSelection = () => {
-            activeSocialPlatform = null;
-            document.getElementById('social-search').closest('.relative').classList.remove('hidden');
-            document.getElementById('social-platform-list').classList.remove('hidden');
-            document.getElementById('social-input-area').classList.add('hidden');
-        };
-
-        window.saveSocialLink = () => {
-            if (!activeSocialPlatform) return;
-            const handle = document.getElementById('social-handle-input').value.trim();
-            if (!handle) {
-                alert('Please enter a username or URL');
-                return;
+            // Show top squircle cards only on 'suggested' and no search
+            if (activeTab === 'suggested' && !searchVal) {
+                container.innerHTML += `
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02]" onclick="handleAddAppClick({title: 'Collection', isApp: false})">
+                            <i data-lucide="layout-grid" class="w-7 h-7 text-purple-600"></i>
+                            <span class="text-xs font-bold text-secondary">Collection</span>
+                        </button>
+                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02]" onclick="addLink(); closeAddLinkModal()">
+                            <i data-lucide="link" class="w-7 h-7 text-purple-600"></i>
+                            <span class="text-xs font-bold text-secondary">Link</span>
+                        </button>
+                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02]" onclick="handleAddAppClick({title: 'Product', isApp: false})">
+                            <i data-lucide="tag" class="w-7 h-7 text-purple-600"></i>
+                            <span class="text-xs font-bold text-secondary">Product</span>
+                        </button>
+                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02]" onclick="handleAddAppClick({title: 'Form', isApp: false})">
+                            <i data-lucide="message-square" class="w-7 h-7 text-purple-600"></i>
+                            <span class="text-xs font-bold text-secondary">Form</span>
+                        </button>
+                    </div>
+                    <div class="text-[13px] font-bold text-secondary mb-4">Suggested</div>
+                `;
+            } else if (searchVal) {
+                container.innerHTML += `<div class="text-[13px] font-bold text-gray-500 mb-4 uppercase tracking-widest">Search results</div>`;
             }
+
+            let filteredList = [];
             
-            socialLinks[activeSocialPlatform.id] = handle;
-            renderSocials();
-            debouncedSave();
-            closeSocialModal();
+            if (searchVal) {
+                filteredList = linkApps.filter(app => app.title.toLowerCase().includes(searchVal) || app.desc.toLowerCase().includes(searchVal));
+            } else if (activeTab === 'all') {
+                filteredList = linkApps;
+            } else if (activeTab === 'suggested') {
+                const suggestedIds = ['instagram', 'tiktok', 'youtube', 'spotify', 'pdf'];
+                filteredList = linkApps.filter(a => suggestedIds.includes(a.id));
+            } else {
+                filteredList = linkApps.filter(a => a.cat === activeTab);
+            }
+
+            if (filteredList.length === 0) {
+                container.innerHTML += `<div class="text-center py-10 text-gray-400 font-medium">No apps found.</div>`;
+            } else {
+                // Grouping logic
+                const groups = {};
+                filteredList.forEach(app => {
+                    const g = app.group || 'General';
+                    if (!groups[g]) groups[g] = [];
+                    groups[g].push(app);
+                });
+
+                Object.keys(groups).forEach(groupName => {
+                    // Don't show group name if it's 'General' or if we are filtering or in suggested
+                    if (groupName !== 'General' && !searchVal && activeTab !== 'suggested' && activeTab !== 'all') {
+                        container.innerHTML += `<div class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-6 mb-3">${groupName}</div>`;
+                    }
+                    
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = "flex flex-col gap-1";
+                    
+                    groups[groupName].forEach(app => {
+                        const btn = document.createElement('button');
+                        btn.className = "w-full text-left flex items-center gap-4 p-4 hover:bg-gray-50 rounded-2xl transition-all group border border-transparent hover:border-gray-100";
+                        btn.onclick = () => handleAddAppClick(app);
+                        btn.innerHTML = `
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${app.color} group-hover:scale-105 transition-transform">
+                                <i data-lucide="${app.icon}" class="w-6 h-6"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-[15px] text-secondary">${app.title}</h4>
+                                <p class="text-[13px] text-gray-500 font-medium truncate pr-4">${app.desc}</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        `;
+                        groupDiv.appendChild(btn);
+                    });
+                    
+                    container.appendChild(groupDiv);
+                });
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        window.handleAddAppClick = (app) => {
+            if (activeTab === 'social' || (app.cat === 'social' && activeTab === 'all')) {
+                // Determine platform ID based on title to match existing platforms obj
+                let mappedPlatform = platforms.find(p => p.name.toLowerCase() === app.title.toLowerCase());
+                if (!mappedPlatform) {
+                     // Add dummy to platforms if not exists to let the social logic work
+                     mappedPlatform = { id: app.id || app.title.toLowerCase().replace(/\s+/g, ''), name: app.title, color: app.color.split(' ')[1] || 'bg-gray-100', icon: app.icon || 'link', iconColor: app.color.split(' ')[0] || 'text-gray-500' };
+                     platforms.push(mappedPlatform);
+                }
+                
+                // Show Social Handle Prompt
+                const val = prompt(`Enter username/ID for ${app.title}:`);
+                if (val && val.trim() !== '') {
+                    socialLinks[mappedPlatform.id] = val.trim();
+                    renderSocials();
+                    debouncedSave();
+                }
+            } else {
+                // Normal link
+                userLinks.unshift({ title: app.title, url: '', active: true, clicks: 0, id: Date.now() });
+                renderLinks();
+                
+                // Focus on URL of new link
+                setTimeout(() => {
+                    const inputs = linksListContainer.querySelectorAll('input');
+                    if (inputs.length > 1) inputs[1].focus(); // [0] is Title, [1] is URL
+                }, 100);
+            }
+            closeAddLinkModal();
         };
 
 
