@@ -15,6 +15,20 @@
             return;
         }
 
+        // Check if onboarding is completed
+        const { data: profile } = await client
+            .from('monkey_bio')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+        // If no profile or onboarding not completed, redirect to onboarding
+        // We also check if we are already on onboarding.html to avoid infinite loop
+        if ((!profile || !profile.onboarding_completed) && !window.location.pathname.includes('onboarding.html')) {
+            window.location.href = '/onboarding.html';
+            return;
+        }
+
         const user = session.user;
         let username = 'User';
         let displayName = user.user_metadata?.full_name || user.email.split('@')[0];
@@ -35,36 +49,142 @@
             console.error('Error fetching profile:', err);
         }
 
-        // Update UI Elements
-        const welcomeMsg = document.getElementById('welcome-message');
-        if (welcomeMsg) {
-            welcomeMsg.textContent = `Welcome back, ${displayName}! 🐵`;
+        // Populate Sidebar
+        const sidebarUserName = document.querySelector('aside .text-sm.font-bold');
+        if (sidebarUserName) {
+            sidebarUserName.innerHTML = `${username} <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i>`;
         }
 
-        const userDisplay = document.getElementById('user-display-username');
-        if (userDisplay) {
-            userDisplay.textContent = `monkey.link/${username}`;
+        // Populate Main Profile Header
+        const mainDisplayName = document.querySelector('h2.text-2xl.font-bold');
+        if (mainDisplayName) {
+            mainDisplayName.innerHTML = `${displayName} <i data-lucide="check-circle" class="w-4 h-4 text-blue-500 fill-blue-500/10"></i>`;
         }
 
-        const profileLink = document.getElementById('user-profile-link');
-        if (profileLink) {
-            profileLink.href = `./profile-demo.html?u=${username}`;
+        // Populate Social Badges in Header
+        const socialBadgesContainer = document.querySelector('.flex.items-center.gap-4.mt-2');
+        if (socialBadgesContainer && profile && profile.social_links) {
+            socialBadgesContainer.innerHTML = ''; // Clear hardcoded
+            Object.entries(profile.social_links).forEach(([platform, handle]) => {
+                const badge = document.createElement('div');
+                badge.className = 'flex items-center gap-1.5 text-xs text-secondary font-bold px-2 py-1 bg-gray-100 rounded-md';
+                badge.innerHTML = `<i data-lucide="${platform}" class="w-3.5 h-3.5 text-purple-500"></i> @${handle}`;
+                socialBadgesContainer.appendChild(badge);
+            });
+            const minusBtn = document.createElement('div');
+            minusBtn.className = 'w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 cursor-pointer hover:bg-gray-200 transition-all';
+            minusBtn.innerHTML = '<i data-lucide="minus" class="w-4 h-4"></i>';
+            socialBadgesContainer.appendChild(minusBtn);
         }
 
-        // Update preview iframe
-        const previewIframe = document.querySelector('iframe[src*="profile-demo.html"]');
-        if (previewIframe) {
-            previewIframe.src = `./profile-demo.html?u=${username}`;
+        // Update Linktr.ee URL in Preview Top
+        const linktreeUrlText = document.querySelector('.bg-gray-100 .text-\\[10px\\].font-bold');
+        if (linktreeUrlText) {
+            linktreeUrlText.textContent = `linktr.ee/${username}`;
         }
 
-        // Update profile images
-        const profileImages = document.querySelectorAll('img[alt="Profile"], img[alt="Profile Image"]');
+        // Update Mockup Preview (Center Section)
+        const mockupName = document.querySelector('h3.text-white.font-bold.text-sm');
+        if (mockupName) mockupName.textContent = username;
+
+        const mockupContainer = document.querySelector('.w-full.max-w-\\[300px\\].aspect-\\[9\\/18\\.5\\]');
+        if (mockupContainer && profile && profile.theme) {
+            // Apply simple theme background colors
+            const themeMap = {
+                'black': 'bg-black',
+                'grid': 'bg-[#451a03]',
+                'dark-green': 'bg-[#064e3b]',
+                'clean': 'bg-[#fff7ed]',
+                'soft': 'bg-[#f3f4f6]'
+            };
+            // Clear existing bg classes
+            Object.values(themeMap).forEach(cls => mockupContainer.classList.remove(cls));
+            mockupContainer.classList.add(themeMap[profile.theme] || 'bg-black');
+            
+            // Adjust text color for light themes
+            if (profile.theme === 'clean' || profile.theme === 'soft') {
+                if (mockupName) {
+                    mockupName.classList.remove('text-white');
+                    mockupName.classList.add('text-secondary');
+                }
+            } else {
+                if (mockupName) {
+                    mockupName.classList.remove('text-secondary');
+                    mockupName.classList.add('text-white');
+                }
+            }
+        }
+
+        const mockupLinksContainer = document.querySelector('.mt-auto.mb-4.w-full.flex.flex-col.items-center.gap-3')?.previousElementSibling;
+        if (mockupLinksContainer && profile && profile.social_links) {
+            mockupLinksContainer.innerHTML = ''; // Clear hardcoded
+            Object.entries(profile.social_links).forEach(([platform, handle]) => {
+                const btn = document.createElement('div');
+                btn.className = 'w-full py-4 bg-[#fde68a] text-secondary text-[11px] font-bold rounded-xl flex items-center justify-center relative overflow-hidden group cursor-pointer shadow-sm';
+                btn.innerText = platform.charAt(0).toUpperCase() + platform.slice(1);
+                mockupLinksContainer.appendChild(btn);
+            });
+        }
+
+        // Populate Link Cards in Main Area
+        const linksContainerBase = document.querySelector('.max-w-xl.mx-auto.space-y-8');
+        const addBtn = document.querySelector('.max-w-xl.mx-auto.space-y-8 button.bg-purple-600');
+        const footerInfo = document.querySelector('.max-w-xl.mx-auto.space-y-8 .pt-10.border-t');
+        
+        if (linksContainerBase && profile && profile.social_links) {
+            // Remove existing hardcoded link cards
+            const existingCards = linksContainerBase.querySelectorAll('.relative.group:not(.mb-12)');
+            existingCards.forEach(card => {
+                if (!card.querySelector('img')) card.remove(); // Keep profile header
+            });
+
+            // Insert new cards after the "Add Collection" row
+            const insertAfter = footerInfo;
+            
+            Object.entries(profile.social_links).forEach(([platform, handle]) => {
+                const card = document.createElement('div');
+                card.className = 'relative group';
+                card.innerHTML = `
+                    <div class="absolute inset-y-0 -left-6 flex items-center text-gray-200 group-hover:text-gray-400 transition-colors cursor-grab">
+                        <i data-lucide="grip-vertical" class="w-6 h-6"></i>
+                    </div>
+                    <div class="bg-white border-2 border-gray-100 rounded-[32px] p-6 shadow-sm hover:shadow-md transition-all">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-bold flex items-center gap-2">${platform.charAt(0).toUpperCase() + platform.slice(1)} <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-300"></i></p>
+                                <p class="text-sm text-gray-500 mt-1 flex items-center gap-2">@${handle} <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-300"></i></p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button class="text-gray-300 hover:text-secondary"><i data-lucide="share-2" class="w-5 h-5"></i></button>
+                                <div class="w-12 h-6 bg-green-500 rounded-full relative p-1 cursor-pointer">
+                                    <div class="w-4 h-4 bg-white rounded-full absolute right-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-6 mt-6 pt-4 border-t border-gray-50">
+                            <button class="flex items-center gap-1.5 text-xs font-bold text-purple-600"><i data-lucide="${platform}" class="w-4 h-4"></i></button>
+                            <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="image" class="w-4 h-4"></i></button>
+                            <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="star" class="w-4 h-4"></i></button>
+                            <span class="flex items-center gap-1.5 text-xs font-bold text-gray-400 ml-auto mr-4"><i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> 0 clicks</span>
+                            <button class="text-gray-300 hover:text-red-500 transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                `;
+                linksContainerBase.insertBefore(card, footerInfo.nextSibling);
+            });
+        }
+
+        // Update profile images everywhere
+        const profileImages = document.querySelectorAll('img[src*="ui-avatars.com"], #dashboard-avatar, #main-avatar-img');
         const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=6cf383&color=0F172A&bold=true`;
         
         profileImages.forEach(img => {
             const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url;
             img.src = avatarUrl || defaultAvatar;
         });
+
+        // Re-initialize icons for dynamic elements
+        if (window.lucide) lucide.createIcons();
     }
 
     if (document.readyState === 'loading') {

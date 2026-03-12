@@ -56,138 +56,255 @@
 </head>
 <body class="bg-gray-50 text-secondary min-h-screen flex flex-col bg-gray-50">
   
+      <!-- Top Banner -->
+      <div class="bg-[#1e293b] text-white py-2 px-8 flex justify-center items-center gap-4 text-sm font-medium sticky top-0 z-[100]">
+          <span>Unlock more tools to grow your audience faster.</span>
+          <button class="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 px-3 py-1 rounded-full flex items-center gap-2 transition-all">
+              <i data-lucide="zap" class="w-3 h-3 fill-primary"></i> Claim free week
+          </button>
+      </div>
+
       <!-- Dashboard Layout -->
-      <div class="min-h-screen flex bg-[#F5F7FA]">
+      <div class="flex-1 flex bg-white overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col flex-shrink-0 h-screen sticky top-0 shadow-sm z-20">
-           <div class="h-20 flex items-center px-6 border-b border-gray-100 mb-4">
-              <a href="./index.html" class="flex items-center gap-2">
-                <span class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-secondary font-bold text-xl">M</span>
-                <span class="font-bold text-2xl tracking-tight text-secondary">Monkey</span>
-              </a>
+        <aside class="w-64 bg-[#f8fafc] border-r border-gray-100 hidden md:flex flex-col flex-shrink-0 relative">
+           <!-- User Selector -->
+           <div class="p-6">
+               <div class="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-2xl cursor-pointer transition-all group">
+                   <div class="w-10 h-10 rounded-full bg-gray-200 border border-gray-100 overflow-hidden">
+                       <img src="https://ui-avatars.com/api/?name=dhruv485" class="w-full h-full object-cover">
+                   </div>
+                   <div class="flex-1">
+                       <p class="text-sm font-bold text-secondary flex items-center gap-1">dhruv485 <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i></p>
+                   </div>
+                   <div class="p-2 text-gray-400 group-hover:text-secondary"><i data-lucide="bell" class="w-4 h-4"></i></div>
+               </div>
            </div>
-           <nav class="px-4 flex-1 overflow-y-auto space-y-1 pb-4">
-             <a href="./dashboard.html" class="flex items-center gap-3 px-4 py-3 bg-gray-100 text-secondary font-bold rounded-xl transition-all"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Overview</a>
-             <a href="./dashboard/links.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="list" class="w-5 h-5"></i> Links</a>
-             <a href="./dashboard/appearance.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="palette" class="w-5 h-5"></i> Appearance</a>
-             <a href="./dashboard/analytics.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="bar-chart-2" class="w-5 h-5"></i> Analytics</a>
-             <a href="./dashboard/monetization.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="dollar-sign" class="w-5 h-5"></i> Monetization</a>
-             <a href="./dashboard/integrations.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="blocks" class="w-5 h-5"></i> Integrations</a>
-             <div class="my-6 border-t border-gray-100"></div>
-             <a href="./dashboard/settings.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="settings" class="w-5 h-5"></i> Settings</a>
-             <a href="./dashboard/billing.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="credit-card" class="w-5 h-5"></i> Billing</a>
-             <a href="javascript:void(0)" onclick="handleLogout()" class="flex items-center gap-3 px-4 py-3 text-red-500 font-medium hover:bg-red-50 hover:text-red-600 rounded-xl transition-all mt-6"><i data-lucide="log-out" class="w-5 h-5"></i> Logout</a>
-           </nav>
-        </aside>
-        <script src="/dashboard-auth.js"></script>
 
-
-        <!-- Main Content -->
-        <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
-           <!-- Topbar -->
-           <header class="h-20 bg-white/80 backdrop-blur border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 z-10 absolute top-0 w-full shadow-[0_4px_30px_rgba(0,0,0,0.02)]">
-             <h2 class="text-xl font-bold tracking-tight text-secondary">Dashboard Overview</h2>
-             <div class="flex items-center gap-4">
-                <a href="./profile-demo.html" id="user-profile-link" target="_blank" class="text-sm font-bold flex items-center gap-2 bg-[#F5F7FA] px-4 py-2 rounded-full hover:bg-gray-200 transition-colors text-secondary">
-                  <i data-lucide="external-link" class="w-4 h-4 text-gray-400"></i> <span id="user-display-username">monkey.link/alex</span>
-                </a>
-                <div class="relative group">
-                    <div id="avatar-container" class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border-2 border-primary cursor-pointer hover:shadow-lg transition-all relative">
-                        <img id="dashboard-avatar" src="https://ui-avatars.com/api/?name=User&background=6cf383&color=0F172A&bold=true" alt="Profile" class="w-full h-full object-cover">
-                        <div onclick="triggerAvatarUpload()" class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i data-lucide="pencil" class="w-4 h-4 text-white"></i>
-                        </div>
-                    </div>
-                </div>
-                <input type="file" id="avatar-upload" class="hidden" accept="image/*" onchange="handleFileSelect(event)">
-             </div>
-           </header>
-           
-           <div class="flex-1 overflow-y-auto p-8 pt-28 relative">
-              <!-- Animated ambient block for empty state/onboarding vibe in dashboard -->
-              <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-                  <div class="spline-orb" style="width: 600px; height: 600px; background: #6cf383; top: -20%; left: 30%; opacity: 0.15;"></div>
-                  <div class="spline-orb" style="width: 400px; height: 400px; background: #60a5fa; bottom: -10%; left: -10%; opacity: 0.1;"></div>
+           <!-- Nav Items -->
+           <nav class="px-4 flex-1 space-y-1 overflow-y-auto">
+              <div>
+                  <button class="w-full flex items-center justify-between px-4 py-2 text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-1">
+                      My Linktree <i data-lucide="chevron-up" class="w-3 h-3"></i>
+                  </button>
+                  <div class="space-y-1">
+                      <a href="#" class="flex items-center gap-3 px-4 py-2.5 bg-white text-secondary font-bold rounded-xl shadow-sm border border-gray-100 transition-all">
+                          <i data-lucide="link" class="w-4 h-4 text-purple-500"></i> Links
+                      </a>
+                      <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                          <i data-lucide="shopping-bag" class="w-4 h-4"></i> Shop
+                      </a>
+                      <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                          <i data-lucide="palette" class="w-4 h-4"></i> Design
+                      </a>
+                  </div>
               </div>
 
-              <div class="max-w-4xl mx-auto relative z-10 w-full animate-fade-in opacity-0" style="animation-delay: 0.1s;">
-                 
-                   <!-- Dashboard Overview Content -->
-                   <div class="bg-primary/10 border border-primary/20 rounded-3xl p-8 mb-8 flex items-center justify-between shadow-sm">
+              <div class="pt-4">
+                  <button class="w-full flex items-center justify-between px-4 py-2 text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-1">
+                      Earn <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                  </button>
+                  <div class="space-y-1">
+                      <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                          <i data-lucide="layout" class="w-4 h-4"></i> Overview
+                      </a>
+                      <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                          <i data-lucide="dollar-sign" class="w-4 h-4"></i> Earnings ($0.00)
+                      </a>
+                  </div>
+              </div>
+
+              <div class="pt-4">
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                    <i data-lucide="users" class="w-4 h-4"></i> Audience
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Insights
+                </a>
+              </div>
+
+              <div class="pt-8 text-gray-400 font-bold text-[10px] uppercase tracking-widest px-4 mb-2">Tools</div>
+              <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                   <i data-lucide="calendar" class="w-4 h-4"></i> Social planner
+              </a>
+              <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                   <i data-lucide="message-circle" class="w-4 h-4"></i> Instagram auto-reply
+              </a>
+              <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                   <i data-lucide="scissors" class="w-4 h-4"></i> Link shortener
+              </a>
+              <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                   <i data-lucide="lightbulb" class="w-4 h-4"></i> Post ideas
+              </a>
+           </nav>
+
+           <!-- Checklist Card -->
+           <div class="p-4 mt-auto">
+               <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm space-y-3">
+                   <div class="flex items-center justify-between">
+                       <div class="w-12 h-12 rounded-full border-4 border-gray-50 relative flex items-center justify-center">
+                            <svg class="w-full h-full -rotate-90">
+                                <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-gray-50" />
+                                <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-purple-500" stroke-dasharray="125" stroke-dashoffset="83" />
+                            </svg>
+                            <span class="absolute text-[10px] font-bold text-gray-700">33%</span>
+                       </div>
+                   </div>
+                   <p class="text-xs font-bold text-gray-700 leading-tight">Your setup checklist</p>
+                   <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">2 of 6 complete</p>
+                   <button class="w-full py-2 bg-purple-600 text-white font-bold text-xs rounded-full hover:bg-purple-700 transition-all">Finish setup</button>
+               </div>
+           </div>
+
+           <!-- Footer tools -->
+           <div class="p-4 border-t border-gray-100 flex items-center justify-between">
+               <div class="text-gray-400 hover:text-secondary cursor-pointer"><i data-lucide="help-circle" class="w-5 h-5"></i></div>
+               <div class="text-gray-400 hover:text-secondary cursor-pointer"><i data-lucide="log-out" class="w-5 h-4" onclick="handleLogout()"></i></div>
+           </div>
+        </aside>
+
+        <!-- Main Content (Links Editor) -->
+        <main class="flex-1 flex flex-col bg-white overflow-hidden">
+           <!-- Page Toolbar -->
+           <div class="h-16 px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0">
+               <h1 class="font-bold text-xl">Links</h1>
+               <div class="flex items-center gap-3">
+                   <button class="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-50">
+                       <i data-lucide="sparkles" class="w-4 h-4 text-purple-500"></i> Enhance
+                   </button>
+                   <button class="p-2 border border-gray-200 rounded-full hover:bg-gray-50"><i data-lucide="settings" class="w-5 h-5 text-gray-400"></i></button>
+               </div>
+           </div>
+
+           <div class="flex-1 overflow-y-auto p-12 bg-white">
+              <div class="max-w-xl mx-auto space-y-8">
+                  
+                  <!-- Profile Header -->
+                  <div class="flex items-center gap-6 mb-12">
+                      <div class="relative group">
+                          <div class="w-24 h-24 rounded-full bg-gray-100 overflow-hidden border-2 border-white shadow-sm cursor-pointer" onclick="triggerAvatarUpload()">
+                              <img src="https://ui-avatars.com/api/?name=dhruv485" id="main-avatar-img" class="w-full h-full object-cover">
+                              <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-white">
+                                  <i data-lucide="camera" class="w-6 h-6"></i>
+                              </div>
+                          </div>
+                      </div>
                       <div>
-                        <h3 class="text-2xl font-bold text-secondary mb-2" id="welcome-message">Welcome back to Monkey! 🐵</h3>
-                        <p class="text-gray-600 font-medium">Your link is optimized and performing well. Check your latest insights below.</p>
+                          <h2 class="text-2xl font-bold flex items-center gap-2">dhruv485 <i data-lucide="check-circle" class="w-4 h-4 text-blue-500 fill-blue-500/10"></i></h2>
+                          <div class="flex items-center gap-4 mt-2">
+                               <div class="flex items-center gap-1.5 text-xs text-secondary font-bold px-2 py-1 bg-gray-100 rounded-md">
+                                   <i data-lucide="instagram" class="w-3.5 h-3.5 text-pink-500"></i> @dhruv_r_2006
+                               </div>
+                               <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 cursor-pointer hover:bg-gray-200 transition-all"><i data-lucide="minus" class="w-4 h-4"></i></div>
+                          </div>
                       </div>
-                      <button class="bg-primary text-secondary font-bold px-6 py-3 rounded-full hover:bg-primary-dark transition-all transform hover:scale-105 shadow-md">Add new link</button>
-                   </div>
-                 
-                   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                     <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
-                        <div class="flex justify-between items-start mb-4">
-                           <p class="text-gray-400 font-bold text-xs uppercase tracking-widest">Page Views</p>
-                           <span class="text-primary font-bold text-xs">+12%</span>
-                        </div>
-                        <h3 class="text-3xl font-black">24.5k</h3>
-                     </div>
-                     <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
-                        <div class="flex justify-between items-start mb-4">
-                           <p class="text-gray-400 font-bold text-xs uppercase tracking-widest">Link Clicks</p>
-                           <span class="text-primary font-bold text-xs">+5.4%</span>
-                        </div>
-                        <h3 class="text-3xl font-black">18.2k</h3>
-                     </div>
-                     <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
-                        <div class="flex justify-between items-start mb-4">
-                           <p class="text-gray-400 font-bold text-xs uppercase tracking-widest">Total Earned</p>
-                           <span class="text-primary font-bold text-xs">Ready</span>
-                        </div>
-                        <h3 class="text-3xl font-black">$1,420</h3>
-                     </div>
-                   </div>
-                   
-                   <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm min-h-[300px]">
-                      <div class="flex justify-between items-center mb-8">
-                         <h4 class="font-bold text-lg">Top Performing Links</h4>
-                         <a href="dashboard/links.html" class="text-sm font-bold text-primary hover:underline">View all</a>
+                  </div>
+
+                  <!-- Add Link Button -->
+                  <button class="w-full py-5 bg-purple-600 text-white font-bold rounded-full text-xl hover:bg-purple-700 transition-all shadow-lg shadow-purple-100 flex items-center justify-center gap-3 group">
+                      <i data-lucide="plus" class="w-6 h-6 group-hover:rotate-90 transition-all"></i> Add
+                  </button>
+
+                  <div class="flex items-center justify-between pt-10 border-t border-gray-50">
+                       <button class="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary"><i data-lucide="plus-square" class="w-5 h-5"></i> Add collection</button>
+                       <button class="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary">View archive <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                  </div>
+
+                  <!-- Link Card (Instagram) -->
+                  <div class="relative group">
+                      <div class="absolute inset-y-0 -left-6 flex items-center text-gray-200 group-hover:text-gray-400 transition-colors cursor-grab">
+                          <i data-lucide="grip-vertical" class="w-6 h-6"></i>
                       </div>
-                      <div class="space-y-4">
-                         <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-                            <div class="flex items-center gap-4">
-                               <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-red-500 shadow-sm"><i data-lucide="youtube" class="w-5 h-5"></i></div>
-                               <p class="font-bold">Latest Video</p>
-                            </div>
-                            <p class="font-medium text-gray-500">4,203 clicks</p>
-                         </div>
-                         <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-                            <div class="flex items-center gap-4">
-                               <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-500 shadow-sm"><i data-lucide="twitter" class="w-5 h-5"></i></div>
-                               <p class="font-bold">Twitter Profile</p>
-                            </div>
-                            <p class="font-medium text-gray-500">2,150 clicks</p>
-                         </div>
+                      <div class="bg-white border-2 border-blue-100 rounded-[32px] p-6 shadow-sm hover:shadow-md transition-all">
+                          <div class="flex justify-between items-start mb-2">
+                              <div>
+                                  <p class="font-bold flex items-center gap-2">Instagram <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-300"></i></p>
+                                  <p class="text-sm text-gray-500 mt-1 flex items-center gap-2">https://www.instagram.com/dhruv_r_2006 <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-300"></i></p>
+                              </div>
+                              <div class="flex items-center gap-4">
+                                  <button class="text-gray-300 hover:text-secondary"><i data-lucide="share-2" class="w-5 h-5"></i></button>
+                                  <div class="w-12 h-6 bg-green-500 rounded-full relative p-1 cursor-pointer">
+                                      <div class="w-4 h-4 bg-white rounded-full absolute right-1"></div>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="flex items-center gap-6 mt-6 pt-4 border-t border-gray-50">
+                              <button class="flex items-center gap-1.5 text-xs font-bold text-purple-600"><i data-lucide="instagram" class="w-4 h-4"></i></button>
+                              <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                              <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="image" class="w-4 h-4"></i></button>
+                              <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="star" class="w-4 h-4"></i></button>
+                              <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="clock" class="w-4 h-4"></i></button>
+                              <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="lock" class="w-4 h-4"></i></button>
+                              <span class="flex items-center gap-1.5 text-xs font-bold text-gray-400 ml-auto mr-4"><i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> 0 clicks</span>
+                              <button class="text-gray-300 hover:text-red-500 transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                          </div>
                       </div>
-                   </div>
-                 
+                      <div class="mt-4 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50 flex items-center justify-between">
+                          <p class="text-[11px] font-bold text-gray-500 flex items-center gap-2">Looking for a more visual display? <a href="#" class="text-secondary underline">Connect your Instagram</a></p>
+                          <i data-lucide="info" class="w-4 h-4 text-gray-300"></i>
+                      </div>
+                  </div>
+
+                  <!-- Linktree Footer -->
+                  <div class="bg-gray-50/50 border border-gray-100 rounded-2xl p-6 flex items-center justify-between">
+                      <p class="font-bold">Linktree footer</p>
+                      <div class="w-12 h-6 bg-green-500 rounded-full relative p-1 cursor-pointer">
+                          <div class="w-4 h-4 bg-white rounded-full absolute right-1"></div>
+                      </div>
+                  </div>
+                  <div class="flex items-center gap-2 font-black text-xl px-2">Linktree <span class="text-primary text-2xl">*</span></div>
+
               </div>
            </div>
         </main>
         
         <!-- Preview Mockup Panel -->
-        <aside class="w-[450px] bg-white border-l border-gray-200 hidden lg:flex flex-col items-center py-12 px-10 overflow-y-auto relative z-20 shadow-[-10px_0_30px_-15px_rgba(0,0,0,0.1)]">
-           <div class="w-full flex justify-between items-center mb-6">
-             <span class="font-bold text-gray-400 text-sm">LIVE PREVIEW</span>
-             <div class="flex gap-2">
-               <button class="bg-gray-100 p-2 rounded-lg hover:bg-gray-200 text-secondary"><i data-lucide="copy" class="w-4 h-4"></i></button>
-               <button class="bg-gray-100 p-2 rounded-lg hover:bg-gray-200 text-secondary"><i data-lucide="share" class="w-4 h-4"></i></button>
-             </div>
+        <aside class="w-[480px] bg-white border-l border-gray-100 hidden lg:flex flex-col items-center flex-shrink-0 relative overflow-hidden">
+           
+           <div class="w-full p-8 flex items-center justify-center gap-3">
+               <div class="bg-gray-100 flex items-center rounded-xl p-1 w-full max-w-sm">
+                   <span class="px-4 text-[10px] font-bold text-gray-400 truncate">linktr.ee/dhruv485</span>
+                   <button class="p-2 bg-white rounded-lg shadow-sm ml-auto"><i data-lucide="upload" class="w-4 h-4 scale-x-[-1]"></i></button>
+               </div>
+               <button class="p-2 border border-gray-200 rounded-xl hover:bg-gray-50 flex-shrink-0"><i data-lucide="refresh-cw" class="w-4 h-4 text-gray-400"></i></button>
            </div>
            
-           <div class="w-full max-w-[340px] rounded-[52px] border-[12px] border-[#020617] shadow-xl h-[700px] overflow-hidden relative bg-black transform transition-transform hover:scale-[1.02] duration-300">
-              <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-[#020617] rounded-b-[20px] z-50"></div>
-              <iframe src="./profile-demo.html" class="w-full h-full border-0 absolute inset-0 rounded-[40px] z-10 pointer-events-none"></iframe>
+           <div class="flex-1 w-full flex items-center justify-center p-12 relative">
+               <div class="w-full max-w-[300px] aspect-[9/18.5] rounded-[48px] border-[10px] border-[#020617] shadow-2xl relative overflow-hidden bg-[#451a03] p-8 flex flex-col items-center">
+                  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-[#020617] rounded-b-[16px] z-50"></div>
+                  <!-- Preview Mockup content -->
+                  <div class="w-4 h-4 p-1 bg-white/20 rounded-full absolute top-6 left-6 flex items-center justify-center">
+                       <i data-lucide="sparkles" class="w-3 h-3 text-white fill-white"></i>
+                  </div>
+
+                  <div class="w-16 h-16 rounded-full bg-gray-200 border-2 border-white/20 mb-4 mt-10 overflow-hidden shadow-lg">
+                      <img src="https://ui-avatars.com/api/?name=dhruv485" class="w-full h-full object-cover">
+                  </div>
+                  <h3 class="text-white font-bold text-sm mb-2">dhruv485</h3>
+                  <i data-lucide="instagram" class="w-4 h-4 text-white mb-8"></i>
+
+                  <div class="w-full space-y-3">
+                      <div class="w-full py-4 bg-[#fde68a] text-secondary text-[11px] font-bold rounded-xl flex items-center justify-center relative overflow-hidden group cursor-pointer shadow-sm">
+                          Instagram
+                          <i data-lucide="more-vertical" class="w-3 h-3 absolute right-3 opacity-40"></i>
+                      </div>
+                  </div>
+
+                  <div class="mt-auto mb-4 w-full flex flex-col items-center gap-3">
+                      <button class="px-3 py-1.5 bg-white text-secondary text-[10px] font-bold rounded-full shadow-lg">Join dhruv485 on Linktree</button>
+                      <div class="text-[8px] font-bold text-white/40 flex items-center gap-3">
+                          <span>Report</span>
+                          <span class="w-1 h-1 bg-white/20 rounded-full"></span>
+                          <span>Privacy</span>
+                      </div>
+                  </div>
+               </div>
+               
+               <!-- Preview blob -->
+               <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-primary/10 blur-[100px] rounded-full"></div>
            </div>
         </aside>
-      </div>
+      </div>iv>
     
   <!-- Mock Spline/Interactive background simulation logic -->
   <script>
