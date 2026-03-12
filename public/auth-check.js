@@ -43,7 +43,6 @@
         if (!authContainer) return;
 
         // Save original buttons if we haven't yet
-        // We look for any of the original button classes or just the lack of avatar
         if (!originalButtonsHTML && !authContainer.querySelector('.user-avatar-container')) {
             originalButtonsHTML = authContainer.innerHTML;
         }
@@ -55,27 +54,22 @@
                 const tokenData = JSON.parse(rawToken);
                 if (tokenData && tokenData.user) {
                     renderLoggedInUI(authContainer, tokenData.user);
+                    return; // Stop here if we found it in storage
                 }
             } catch (e) {}
         }
 
         // 2. Verified path: check Supabase client
         let client = window.supabaseClient;
-        
-        // If supabaseClient is not set, try to find it or create it if the library is available
         if (!client) {
             const lib = window.supabase || window.supabasejs;
-            if (lib && typeof lib.createClient === 'function') {
-                // Try to use existing global config if possible, else we wait
-                if (window.supabaseUrl && window.supabaseKey) {
-                    window.supabaseClient = lib.createClient(window.supabaseUrl, window.supabaseKey);
-                    client = window.supabaseClient;
-                }
+            if (lib && typeof lib.createClient === 'function' && window.supabaseUrl && window.supabaseKey) {
+                window.supabaseClient = lib.createClient(window.supabaseUrl, window.supabaseKey);
+                client = window.supabaseClient;
             }
         }
 
         if (!client || !client.auth) {
-            // If we don't have a client yet, try again in a bit
             setTimeout(updateAuthUI, 200);
             return;
         }
@@ -87,19 +81,11 @@
             if (session && session.user) {
                 renderLoggedInUI(authContainer, session.user);
             } else {
-                // Return to original buttons if logged out
-                if (originalButtonsHTML) {
-                    authContainer.innerHTML = originalButtonsHTML;
-                }
-                authContainer.style.opacity = '1';
+                renderLoggedOutUI(authContainer);
             }
         } catch (err) {
-            console.error('Auth check error:', err);
-            // On error, revert to original buttons as safety
-            if (originalButtonsHTML) {
-                authContainer.innerHTML = originalButtonsHTML;
-            }
-            authContainer.style.opacity = '1';
+            console.error('Auth verification error:', err);
+            renderLoggedOutUI(authContainer);
         }
     }
 
@@ -118,6 +104,19 @@
         container.style.opacity = '1';
     }
 
+    function renderLoggedOutUI(container) {
+        if (originalButtonsHTML) {
+            container.innerHTML = originalButtonsHTML;
+        } else {
+            // Fallback hardcoded buttons if originalButtonsHTML was never captured
+            container.innerHTML = `
+                <a href="/login.html" class="text-sm font-semibold text-gray-800 hover:text-black hidden sm:block bg-gray-100 hover:bg-gray-200 px-6 py-3 rounded-full transition-colors">Log in</a>
+                <a href="/signup.html" class="text-sm font-semibold bg-secondary text-white hover:bg-gray-800 px-6 py-3 rounded-full transition-all shadow-md transform hover:scale-105">Sign up free</a>
+            `;
+        }
+        container.style.opacity = '1';
+    }
+
     // Initialize
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', updateAuthUI);
@@ -130,7 +129,7 @@
         const client = window.supabaseClient || window.supabase;
         if (client && client.auth) {
             client.auth.onAuthStateChange((event, session) => {
-                if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+                if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
                     updateAuthUI();
                 }
             });
