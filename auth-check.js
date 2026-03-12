@@ -54,7 +54,7 @@
                 const tokenData = JSON.parse(rawToken);
                 if (tokenData && tokenData.user) {
                     renderLoggedInUI(authContainer, tokenData.user);
-                    return; // Stop here if we found it in storage
+                    // No return here - we still verify with the client
                 }
             } catch (e) {}
         }
@@ -108,10 +108,12 @@
         if (originalButtonsHTML) {
             container.innerHTML = originalButtonsHTML;
         } else {
-            // Fallback hardcoded buttons if originalButtonsHTML was never captured
+            // Fallback hardcoded buttons
             container.innerHTML = `
-                <a href="/login.html" class="text-sm font-semibold text-gray-800 hover:text-black hidden sm:block bg-gray-100 hover:bg-gray-200 px-6 py-3 rounded-full transition-colors">Log in</a>
-                <a href="/signup.html" class="text-sm font-semibold bg-secondary text-white hover:bg-gray-800 px-6 py-3 rounded-full transition-all shadow-md transform hover:scale-105">Sign up free</a>
+                <div class="flex items-center gap-4">
+                    <a href="/login.html" class="text-sm font-bold text-gray-600 hover:text-black transition-colors px-4 py-2">Log in</a>
+                    <a href="/signup.html" class="text-sm font-bold bg-secondary text-white hover:bg-black px-6 py-3 rounded-full transition-all shadow-lg hover:scale-105">Sign up free</a>
+                </div>
             `;
         }
         container.style.opacity = '1';
