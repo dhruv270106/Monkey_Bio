@@ -199,58 +199,51 @@
                   </div>
 
                   <!-- Add Link Button -->
-                  <button class="w-full py-5 bg-purple-600 text-white font-bold rounded-full text-xl hover:bg-purple-700 transition-all shadow-lg shadow-purple-100 flex items-center justify-center gap-3 group">
-                      <i data-lucide="plus" class="w-6 h-6 group-hover:rotate-90 transition-all"></i> Add
-                  </button>
+                  <div class="sticky top-[64px] z-50 bg-white pb-6">
+                      <button id="btn-add-link" class="w-full py-5 bg-purple-600 text-white font-bold rounded-full text-xl hover:bg-purple-700 transition-all shadow-lg shadow-purple-100 flex items-center justify-center gap-3 group">
+                          <i data-lucide="plus" class="w-6 h-6 group-hover:rotate-90 transition-all"></i> Add Link
+                      </button>
+                  </div>
 
+                  <!-- Link Settings Sections -->
+                  <div class="space-y-6" id="dashboard-content-area">
+                      
+                      <!-- Social Icons Section -->
+                      <div class="bg-gray-50/50 border border-gray-100 rounded-[32px] p-8">
+                          <div class="flex items-center justify-between mb-6">
+                              <div>
+                                  <h3 class="font-bold text-lg">Social Icons</h3>
+                                  <p class="text-xs text-gray-500">Pick which social icons to show on your profile</p>
+                              </div>
+                              <button id="btn-add-social" class="px-4 py-2 bg-white border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-50 transition-all">Add Social Icon</button>
+                          </div>
+                          <div id="social-icons-list" class="flex flex-wrap gap-3">
+                              <!-- Dynamic social icons will be here -->
+                              <div class="p-3 bg-white rounded-2xl border border-dashed border-gray-200 text-gray-400 text-xs flex items-center gap-2 cursor-pointer hover:border-purple-300 hover:text-purple-600 transition-all" onclick="document.getElementById('btn-add-social').click()">
+                                  <i data-lucide="plus-circle" class="w-4 h-4"></i> Add your first social icon
+                              </div>
+                          </div>
+                      </div>
+
+                      <!-- Links List -->
+                      <div id="links-list" class="space-y-4">
+                          <!-- Dynamic link cards will be injected here -->
+                          <div class="py-20 text-center space-y-4 text-gray-400">
+                               <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
+                                    <i data-lucide="link" class="w-8 h-8"></i>
+                               </div>
+                               <p class="font-medium">No links yet. Click "Add Link" to get started!</p>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Archive/Collections row -->
                   <div class="flex items-center justify-between pt-10 border-t border-gray-50">
                        <button class="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary"><i data-lucide="plus-square" class="w-5 h-5"></i> Add collection</button>
                        <button class="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary">View archive <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                   </div>
 
-                  <!-- Link Card (Instagram) -->
-                  <div class="relative group">
-                      <div class="absolute inset-y-0 -left-6 flex items-center text-gray-200 group-hover:text-gray-400 transition-colors cursor-grab">
-                          <i data-lucide="grip-vertical" class="w-6 h-6"></i>
-                      </div>
-                      <div class="bg-white border-2 border-blue-100 rounded-[32px] p-6 shadow-sm hover:shadow-md transition-all">
-                          <div class="flex justify-between items-start mb-2">
-                              <div>
-                                  <p class="font-bold flex items-center gap-2">Instagram <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-300"></i></p>
-                                  <p class="text-sm text-gray-500 mt-1 flex items-center gap-2">https://www.instagram.com/dhruv_r_2006 <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-300"></i></p>
-                              </div>
-                              <div class="flex items-center gap-4">
-                                  <button class="text-gray-300 hover:text-secondary"><i data-lucide="share-2" class="w-5 h-5"></i></button>
-                                  <div class="w-12 h-6 bg-green-500 rounded-full relative p-1 cursor-pointer">
-                                      <div class="w-4 h-4 bg-white rounded-full absolute right-1"></div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="flex items-center gap-6 mt-6 pt-4 border-t border-gray-50">
-                              <button class="flex items-center gap-1.5 text-xs font-bold text-purple-600"><i data-lucide="instagram" class="w-4 h-4"></i></button>
-                              <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="plus" class="w-4 h-4"></i></button>
-                              <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="image" class="w-4 h-4"></i></button>
-                              <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="star" class="w-4 h-4"></i></button>
-                              <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="clock" class="w-4 h-4"></i></button>
-                              <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="lock" class="w-4 h-4"></i></button>
-                              <span class="flex items-center gap-1.5 text-xs font-bold text-gray-400 ml-auto mr-4"><i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> 0 clicks</span>
-                              <button class="text-gray-300 hover:text-red-500 transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                          </div>
-                      </div>
-                      <div class="mt-4 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50 flex items-center justify-between">
-                          <p class="text-[11px] font-bold text-gray-500 flex items-center gap-2">Looking for a more visual display? <a href="#" class="text-secondary underline">Connect your Instagram</a></p>
-                          <i data-lucide="info" class="w-4 h-4 text-gray-300"></i>
-                      </div>
-                  </div>
-
-                  <!-- Linktree Footer -->
-                  <div class="bg-gray-50/50 border border-gray-100 rounded-2xl p-6 flex items-center justify-between">
-                      <p class="font-bold">Linktree footer</p>
-                      <div class="w-12 h-6 bg-green-500 rounded-full relative p-1 cursor-pointer">
-                          <div class="w-4 h-4 bg-white rounded-full absolute right-1"></div>
-                      </div>
-                  </div>
-                  <div class="flex items-center gap-2 font-black text-xl px-2">Linktree <span class="text-primary text-2xl">*</span></div>
+                  <div class="flex items-center gap-2 font-black text-xl px-2 opacity-50 grayscale mt-12 mb-20">Linktree <span class="text-primary text-2xl">*</span></div>
 
               </div>
            </div>
