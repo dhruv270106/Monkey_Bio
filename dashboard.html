@@ -357,15 +357,35 @@
                 <div id="social-input-area" class="hidden space-y-4 pt-4 border-t border-gray-100">
                     <div class="flex items-center gap-3">
                         <div id="selected-social-icon" class="w-10 h-10 rounded-xl flex items-center justify-center text-white"></div>
-                        <h4 id="selected-social-name" class="font-bold text-lg"></h4>
+                        <div>
+                            <h4 id="selected-social-name" class="font-bold text-lg"></h4>
+                            <p class="text-xs text-gray-500 font-medium">Connect your account securely</p>
+                        </div>
                     </div>
-                    <div class="flex bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-purple-500 transition-all">
-                        <span id="social-input-prefix" class="px-4 py-3 text-gray-400 font-bold border-r border-gray-200">@</span>
-                        <input type="text" id="social-handle-input" placeholder="username" class="flex-1 bg-transparent px-4 py-3 outline-none font-bold text-secondary">
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Username / ID</label>
+                            <div class="flex bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-purple-500 transition-all shadow-inner">
+                                <span id="social-input-prefix" class="px-4 py-3.5 text-gray-400 font-bold border-r border-gray-200 bg-white">@</span>
+                                <input type="text" id="social-handle-input" placeholder="username" class="flex-1 bg-transparent px-4 py-3.5 outline-none font-bold text-secondary">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Password or Access Token</label>
+                            <div class="flex bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-purple-500 transition-all shadow-inner">
+                                <span class="px-4 py-3.5 text-gray-400 border-r border-gray-200 bg-white"><i data-lucide="lock" class="w-5 h-5"></i></span>
+                                <input type="password" id="social-password-input" placeholder="••••••••••" class="flex-1 bg-transparent px-4 py-3.5 outline-none font-medium text-secondary tracking-widest" autocomplete="off">
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex gap-3 pt-2">
-                        <button onclick="resetSocialSelection()" class="flex-1 py-3 px-4 border border-gray-200 font-bold rounded-xl hover:bg-gray-50 transition-all text-gray-600">Back</button>
-                        <button onclick="saveSocialLink()" class="flex-1 py-3 px-4 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-all shadow-lg">Add to Profile</button>
+
+                    <div class="flex gap-3 pt-4">
+                        <button onclick="resetSocialSelection()" class="flex-1 py-3.5 px-4 border border-gray-200 font-bold rounded-xl hover:bg-gray-50 transition-all text-gray-600">Back</button>
+                        <button onclick="saveSocialLink()" class="flex-1 py-3.5 px-4 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-all shadow-[0_8px_20px_rgba(147,51,234,0.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                            <i data-lucide="link-2" class="w-5 h-5"></i> Connect Account
+                        </button>
                     </div>
                 </div>
             </div>

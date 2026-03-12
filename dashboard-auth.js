@@ -266,20 +266,34 @@
             document.getElementById('social-search').closest('.relative').classList.remove('hidden');
             document.getElementById('social-platform-list').classList.remove('hidden');
             document.getElementById('social-input-area').classList.add('hidden');
+            const passInput = document.getElementById('social-password-input');
+            if (passInput) passInput.value = '';
         };
 
         window.saveSocialLink = () => {
             if (!activeSocialPlatform) return;
             const handle = document.getElementById('social-handle-input').value.trim();
+            const passInput = document.getElementById('social-password-input');
+            const password = passInput ? passInput.value.trim() : '';
+
             if (!handle) {
-                alert('Please enter a username or URL');
+                alert('Please enter your username or ID');
                 return;
             }
+            if (passInput && !password) {
+                 alert('Authentication required. Please enter an access token or password.');
+                 return;
+            }
             
+            // In a real app we wouldn't save passwords in plaintext to the profile,
+            // so we ONLY save the handle to display on the linktree.
+            // The password acts as a UX gate to simulate "Connect Account"
             socialLinks[activeSocialPlatform.id] = handle;
+            
             renderSocials();
             debouncedSave();
             closeSocialModal();
+            if (passInput) passInput.value = '';
         };
 
 
