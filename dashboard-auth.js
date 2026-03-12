@@ -176,6 +176,7 @@
         window.addLink = () => {
             userLinks.unshift({ title: '', url: '', active: true, clicks: 0, id: Date.now() });
             renderLinks();
+            debouncedSave();
             // Focus on title of new link
             setTimeout(() => {
                 const firstInput = linksListContainer.querySelector('input');
@@ -435,6 +436,7 @@
                 // Normal link
                 userLinks.unshift({ title: app.title, url: '', active: true, clicks: 0, id: Date.now() });
                 renderLinks();
+                debouncedSave();
                 
                 // Focus on URL of new link
                 setTimeout(() => {
@@ -565,7 +567,6 @@
         }
 
         // Initialize state
-        document.getElementById('btn-add-link')?.addEventListener('click', addLink);
         document.getElementById('btn-add-social')?.addEventListener('click', openSocialModal);
         
         renderSocials();
