@@ -29,10 +29,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .step-container { display: none; }
         .step-container.active { display: flex; animation: fade-in 0.5s ease-out; }
+        
+        /* Cropper Styles */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .crop-container { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 500px; }
+        .crop-area { width: 100%; aspect-ratio: 1; background: #f0f0f0; margin-bottom: 20px; overflow: hidden; }
+        #crop-image { max-width: 100%; display: block; }
     </style>
 </head>
 <body class="bg-white text-secondary min-h-screen">
@@ -363,15 +372,28 @@
 
             <!-- Step 7: Final Preview -->
             <div id="step-final" class="step-container w-full max-w-lg flex-col items-center">
-                <h1 class="text-4xl font-extrabold mb-4 tracking-tight text-center">Looking good!</h1>
-                <p class="text-gray-500 mb-10 font-medium text-center">Your Linktree is off to a great start. Continue building to make it even better.</p>
+                <div class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mb-6">
+                    <i data-lucide="check" class="w-10 h-10 text-primary-dark"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold mb-4 tracking-tight text-center">Your Monkey is ready!</h1>
+                <p class="text-gray-500 mb-10 font-medium text-center">You've successfully set up your profile. Your unique link is ready to share with the world.</p>
                 
-                <div id="final-mockup-container" class="w-full max-w-sm aspect-[9/16] mb-12 transform scale-90 sm:scale-100 transition-all">
+                <div class="w-full bg-gray-50 p-6 rounded-3xl mb-12 flex items-center justify-between border-2 border-dashed border-gray-200">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Your Private Link</span>
+                        <span class="font-bold text-lg" id="final-link-text">monkey.link/username</span>
+                    </div>
+                    <button class="p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all text-secondary">
+                        <i data-lucide="copy" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <div id="final-mockup-container" class="hidden">
                     <!-- Preview iframe or mockup -->
                 </div>
 
-                <button id="btn-finish" class="w-full py-4 bg-purple-600 text-white font-bold rounded-full hover:bg-purple-700 transition-all shadow-lg shadow-purple-200">
-                    Continue building this Linktree
+                <button id="btn-finish" class="w-full py-5 bg-secondary text-white font-bold rounded-full hover:bg-black transition-all shadow-xl flex items-center justify-center gap-3">
+                    Go to my Dashboard <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </button>
             </div>
 
@@ -382,22 +404,22 @@
             <div class="relative w-full max-w-lg aspect-[5/6] bg-[#ef444400] z-10">
                 <!-- Simple mockup that evolves -->
                 <div id="phone-mockup" class="w-full h-full rounded-[60px] border-[12px] border-secondary bg-[#2D2A1F] shadow-2xl relative overflow-hidden p-10 flex flex-col items-center transition-all duration-500">
-                    <div class="w-24 h-24 rounded-full bg-primary mb-6 border-4 border-[#3D3A2F] overflow-hidden">
+                    <div class="w-24 h-24 rounded-full bg-primary mb-6 border-4 border-[#3D3A2F] overflow-hidden flex items-center justify-center">
                         <img id="mockup-avatar" src="https://ui-avatars.com/api/?background=6cf383&color=0F172A" class="w-full h-full object-cover">
                     </div>
                     <h2 class="text-white font-bold text-2xl mb-2" id="preview-username-top">@username</h2>
                     <p class="text-white/60 text-center text-sm mb-12 max-w-[240px]" id="preview-bio-top">Modern bio goes here</p>
                     
                     <div id="mockup-links" class="w-full space-y-4">
-                        <div class="w-full h-14 bg-white/10 rounded-2xl animate-pulse"></div>
-                        <div class="w-full h-14 bg-white/10 rounded-2xl animate-pulse"></div>
-                        <div class="w-full h-14 bg-white/10 rounded-2xl animate-pulse"></div>
+                        <div class="w-full h-14 bg-white/10 rounded-2xl"></div>
+                        <div class="w-full h-14 bg-white/10 rounded-2xl"></div>
+                        <div class="w-full h-14 bg-white/10 rounded-2xl"></div>
                     </div>
 
                     <div class="mt-auto flex gap-6 text-white/40" id="mockup-socials">
-                         <i data-lucide="instagram" class="w-6 h-6"></i>
-                         <i data-lucide="youtube" class="w-6 h-6"></i>
-                         <i data-lucide="twitter" class="w-6 h-6"></i>
+                          <i data-lucide="instagram" class="w-6 h-6"></i>
+                          <i data-lucide="youtube" class="w-6 h-6"></i>
+                          <i data-lucide="twitter" class="w-6 h-6"></i>
                     </div>
                 </div>
 
@@ -417,6 +439,20 @@
 
     </div>
 
+    <!-- Image Cropper Modal -->
+    <div id="crop-modal" class="modal-overlay">
+        <div class="crop-container slide-up">
+            <h3 class="text-xl font-bold mb-4">Adjust your profile picture</h3>
+            <div class="crop-area">
+                <img id="crop-image" src="">
+            </div>
+            <div class="flex gap-4">
+                <button onclick="closeCropper()" class="flex-1 py-3 border-2 border-gray-100 rounded-xl font-bold">Cancel</button>
+                <button onclick="applyCrop()" class="flex-1 py-3 bg-primary text-secondary font-bold rounded-xl">Apply Crop</button>
+            </div>
+        </div>
+    </div>
+
     <!-- LOGIC -->
     <script>
         let currentStep = 1;
@@ -427,6 +463,7 @@
         let userId = '';
         let profileImageUrl = '';
         let socialLinks = {};
+        let cropper = null;
 
         const platforms = [
             { id: 'instagram', name: 'Instagram', color: 'bg-pink-100', icon: 'instagram', iconColor: 'text-pink-500', url: 'https://instagram.com/' },
@@ -523,19 +560,25 @@
             const error = document.getElementById('username-error');
             
             if (val.length < 3) {
+                btn.innerHTML = 'Continue';
                 btn.classList.add('cursor-not-allowed', 'bg-gray-200', 'text-gray-400');
                 btn.classList.remove('bg-secondary', 'text-white', 'cursor-pointer');
                 return;
             }
 
+            btn.innerHTML = '<span class="flex items-center gap-2"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Checking...</span>';
+            lucide.createIcons();
+
             const { data } = await window.supabaseClient.from('monkey_bio').select('id').eq('username', val).neq('id', userId).single();
             
             if (data) {
                 error.classList.remove('hidden');
+                btn.innerHTML = 'Continue';
                 btn.classList.add('cursor-not-allowed', 'bg-gray-200', 'text-gray-400');
                 btn.classList.remove('bg-secondary', 'text-white', 'cursor-pointer', 'hover:bg-gray-800');
             } else {
                 error.classList.add('hidden');
+                btn.innerHTML = 'Continue';
                 btn.classList.remove('cursor-not-allowed', 'bg-gray-200', 'text-gray-400');
                 btn.classList.add('bg-secondary', 'text-white', 'cursor-pointer', 'hover:bg-gray-800');
                 btn.onclick = () => { finalUsername = val; goToStep(2); };
@@ -549,12 +592,39 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    document.getElementById('profile-preview-img').src = e.target.result;
-                    document.getElementById('mockup-avatar').src = e.target.result;
-                    profileImageUrl = e.target.result; // Temporarily base64
+                    const img = document.getElementById('crop-image');
+                    img.src = e.target.result;
+                    document.getElementById('crop-modal').classList.add('active');
+                    
+                    if (cropper) cropper.destroy();
+                    cropper = new Cropper(img, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        background: false,
+                        autoCropArea: 1,
+                        responsive: true
+                    });
                 };
                 reader.readAsDataURL(file);
             }
+        }
+
+        function closeCropper() {
+            document.getElementById('crop-modal').classList.remove('active');
+            if (cropper) cropper.destroy();
+        }
+
+        function applyCrop() {
+            if (!cropper) return;
+            const canvas = cropper.getCroppedCanvas({
+                width: 400,
+                height: 400
+            });
+            const croppedUrl = canvas.toDataURL('image/jpeg', 0.8);
+            document.getElementById('profile-preview-img').src = croppedUrl;
+            document.getElementById('mockup-avatar').src = croppedUrl;
+            profileImageUrl = croppedUrl;
+            closeCropper();
         }
 
         function goToStep(step) {
@@ -594,8 +664,7 @@
             btn.classList.add('bg-secondary', 'text-white', 'cursor-pointer', 'hover:bg-gray-800');
             
             btn.onclick = () => {
-                if (selectedGoal === 'creator') goToStep(3);
-                else goToStep(4);
+                goToStep(3); // Everyone goes to theme step now
             };
         }
 
@@ -621,14 +690,25 @@
              
              // Reset
              mockup.className = "w-full h-full rounded-[60px] border-[12px] border-secondary shadow-2xl relative overflow-hidden p-10 flex flex-col items-center transition-all duration-500 ";
+             mockup.style.backgroundImage = '';
+             mockup.style.backgroundSize = '';
              username.className = "font-bold text-2xl mb-2 ";
              bio.className = "text-center text-sm mb-12 max-w-[240px] ";
 
              if (theme === 'black') { mockup.classList.add('bg-black'); username.classList.add('text-white'); bio.classList.add('text-white/60'); }
+             if (theme === 'gradient-peach') { mockup.classList.add('bg-gradient-to-b', 'from-blue-200', 'to-orange-300'); username.classList.add('text-secondary'); bio.classList.add('text-secondary/60'); }
              if (theme === 'grid') { mockup.classList.add('bg-[#451a03]'); username.classList.add('text-white'); bio.classList.add('text-white/60'); mockup.style.backgroundImage = 'radial-gradient(#ffffff11 1px, transparent 0)'; mockup.style.backgroundSize = '20px 20px'; }
-             if (theme === 'dark-green') { mockup.classList.add('bg-[#064e3b]'); username.classList.add('text-white'); bio.classList.add('text-white/60'); }
              if (theme === 'clean') { mockup.classList.add('bg-[#fff7ed]'); username.classList.add('text-red-500'); bio.classList.add('text-red-500/60'); }
+             if (theme === 'dark-green') { mockup.classList.add('bg-[#064e3b]'); username.classList.add('text-white'); bio.classList.add('text-white/60'); }
+             if (theme === 'mono') { mockup.classList.add('bg-white', 'border-gray-200'); username.classList.add('text-secondary'); bio.classList.add('text-secondary/40'); }
+             if (theme === 'neon') { mockup.classList.add('bg-purple-900'); username.classList.add('text-pink-500'); bio.classList.add('text-pink-500/60'); }
              if (theme === 'soft') { mockup.classList.add('bg-[#f3f4f6]'); username.classList.add('text-blue-500'); bio.classList.add('text-blue-500/60'); }
+             if (theme === 'sunset') { mockup.classList.add('bg-gradient-to-tr', 'from-orange-500', 'to-rose-500'); username.classList.add('text-white'); bio.classList.add('text-white/60'); }
+             if (theme === 'lavender') { mockup.classList.add('bg-[#faf5ff]'); username.classList.add('text-purple-600'); bio.classList.add('text-purple-600/60'); }
+             if (theme === 'ocean') { mockup.classList.add('bg-[#0c4a6e]'); username.classList.add('text-sky-200'); bio.classList.add('text-sky-200/60'); }
+             if (theme === 'bubblegum') { mockup.classList.add('bg-[#fce7f3]'); username.classList.add('text-pink-500'); bio.classList.add('text-pink-500/60'); }
+             if (theme === 'slate') { mockup.classList.add('bg-[#334155]'); username.classList.add('text-slate-300'); bio.classList.add('text-slate-300/60'); }
+             if (theme === 'gold') { mockup.classList.add('bg-[#171717]'); username.classList.add('text-yellow-600'); bio.classList.add('text-yellow-600/60'); }
         }
 
         function togglePlatform(id, el) {
@@ -641,6 +721,8 @@
                 el.classList.add('border-black', 'bg-gray-50');
             }
             
+            updateMockupSocials();
+
             const btn = document.getElementById('btn-continue-platforms');
             if (selectedPlatforms.length > 0) {
                 btn.disabled = false;
@@ -652,6 +734,21 @@
                 btn.classList.add('cursor-not-allowed', 'bg-gray-200', 'text-gray-400');
                 btn.classList.remove('bg-secondary', 'text-white', 'cursor-pointer');
             }
+        }
+
+        function updateMockupSocials() {
+            const container = document.getElementById('mockup-socials');
+            container.innerHTML = '';
+            selectedPlatforms.forEach(pid => {
+                const p = platforms.find(x => x.id === pid);
+                if (p) {
+                    const icon = document.createElement('i');
+                    icon.setAttribute('data-lucide', p.icon);
+                    icon.className = 'w-6 h-6';
+                    container.appendChild(icon);
+                }
+            });
+            lucide.createIcons();
         }
 
         function renderSocialInputs() {
@@ -674,6 +771,15 @@
                 container.appendChild(div);
             });
             lucide.createIcons();
+
+            // Add live mockup updates
+            container.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', () => updateMockupLinks());
+            });
+            
+            document.querySelectorAll('.additional-link-input').forEach(input => {
+                input.addEventListener('input', () => updateMockupLinks());
+            });
             
             document.getElementById('btn-continue-links').onclick = () => {
                 const inputs = document.querySelectorAll('.social-input');
@@ -689,6 +795,47 @@
             };
         }
 
+        function updateMockupLinks() {
+            const mockupLinks = document.getElementById('phone-mockup').querySelector('#mockup-links');
+            mockupLinks.innerHTML = '';
+            
+            const inputs = document.querySelectorAll('.social-input');
+            const additional = document.querySelectorAll('.additional-link-input');
+            
+            let count = 0;
+            inputs.forEach(input => {
+                const val = input.value.trim();
+                const pid = input.getAttribute('data-pid');
+                if (val && count < 6) {
+                    const p = platforms.find(x => x.id === pid);
+                    const div = document.createElement('div');
+                    div.className = 'w-full h-12 bg-white/10 rounded-xl flex items-center px-4 gap-3 text-white font-medium text-sm';
+                    div.innerHTML = `<i data-lucide="${p.icon}" class="w-4 h-4"></i> ${p.name}`;
+                    mockupLinks.appendChild(div);
+                    count++;
+                }
+            });
+
+            additional.forEach(input => {
+                const val = input.value.trim();
+                if (val && count < 6) {
+                    const div = document.createElement('div');
+                    div.className = 'w-full h-12 bg-white/10 rounded-xl flex items-center px-4 gap-3 text-white font-medium text-sm';
+                    div.innerHTML = `<i data-lucide="link" class="w-4 h-4"></i> Website`;
+                    mockupLinks.appendChild(div);
+                    count++;
+                }
+            });
+
+            if (count === 0) {
+                mockupLinks.innerHTML = `
+                    <div class="w-full h-14 bg-white/10 rounded-2xl"></div>
+                    <div class="w-full h-14 bg-white/10 rounded-2xl"></div>
+                `;
+            }
+            lucide.createIcons();
+        }
+
         function renderFinalPreview() {
             const mockupClone = document.getElementById('phone-mockup').cloneNode(true);
             mockupClone.id = 'final-mockup';
@@ -697,22 +844,8 @@
             
             document.getElementById('final-mockup-container').innerHTML = '';
             document.getElementById('final-mockup-container').appendChild(mockupClone);
+            document.getElementById('final-link-text').innerText = 'monkey.link/' + finalUsername;
             
-            // Update cloned mockup links
-            const mockupLinks = mockupClone.querySelector('#mockup-links');
-            mockupLinks.innerHTML = '';
-            
-            selectedPlatforms.forEach(pid => {
-                 const p = platforms.find(x => x.id === pid);
-                 const btn = document.createElement('div');
-                 const textColor = selectedTheme === 'black' || selectedTheme === 'dark-green' || selectedTheme === 'grid' ? 'text-secondary' : 'text-white';
-                 const bgColor = selectedTheme === 'black' || selectedTheme === 'dark-green' ? 'bg-white' : (selectedTheme === 'clean' ? 'bg-red-500' : 'bg-blue-500');
-                 
-                 btn.className = `w-full h-14 ${bgColor} ${textColor} rounded-2xl flex items-center justify-center font-bold shadow-sm`;
-                 btn.innerText = p.name;
-                 mockupLinks.appendChild(btn);
-            });
-
             document.getElementById('btn-finish').onclick = finishOnboarding;
         }
 
