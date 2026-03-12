@@ -991,7 +991,11 @@
                 }
 
                 // 2. Update monkey_bio
-                const { error } = await window.supabaseClient.from('monkey_bio').update({
+                console.log("Updating profile with:", { finalUsername, selectedTheme, onboarding_completed: true });
+                
+                // 2. Upsert profile
+                const { data, error } = await window.supabaseClient.from('monkey_bio').upsert({
+                    id: userId,
                     username: finalUsername,
                     display_name: displayName,
                     bio: bio,
@@ -1000,18 +1004,27 @@
                     social_links: socialLinks, 
                     avatar_url: finalAvatarUrl || undefined,
                     onboarding_completed: true
-                }).eq('id', userId);
+                }).select();
 
-                if (error) throw error;
+                if (error) {
+                    console.error("Update error:", error);
+                    throw error;
+                }
                 
-                console.log("Onboarding successful, redirecting...");
+                // Verification Check
+                const { data: verify } = await window.supabaseClient.from('monkey_bio').select('onboarding_completed').eq('id', userId).single();
+                if (!verify || verify.onboarding_completed !== true) {
+                    throw new Error("Critical: 'onboarding_completed' column is missing or not saving. Please check your Supabase table columns.");
+                }
+
+                console.log("Onboarding record verified successfully:", verify);
                 btn.innerHTML = '<span class="flex items-center gap-2"><i data-lucide="party-popper" class="w-5 h-5"></i> All set! Redirecting...</span>';
                 lucide.createIcons();
                 
                 setTimeout(() => {
-                    // Force absolute path redirect to avoid any relative issues
-                    window.location.replace('./dashboard.html');
-                }, 1200);
+                    console.log("Redirecting to dashboard.html...");
+                    window.location.href = 'dashboard.html';
+                }, 1000);
             } catch (err) {
                 console.error("Finish failed:", err);
                 alert('Save failed: ' + err.message);

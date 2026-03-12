@@ -23,10 +23,16 @@
             .single();
 
         // If no profile or onboarding not completed, redirect to onboarding
-        // We also check if we are already on onboarding.html to avoid infinite loop
-        if ((!profile || !profile.onboarding_completed) && !window.location.pathname.includes('onboarding.html')) {
-            window.location.href = 'onboarding.html';
-            return;
+        if (!profile || profile.onboarding_completed !== true) {
+            console.log('Onboarding check failed. Profile:', profile);
+            if (!window.location.pathname.includes('onboarding.html')) {
+                console.warn('Redirecting to onboarding because onboarding_completed is not true.');
+                // Optional: alert('Your onboarding is not marked as complete. Redirecting...');
+                window.location.href = 'onboarding.html';
+                return;
+            }
+        } else {
+            console.log('Onboarding status: VERIFIED COMPLETE.');
         }
 
         // State Management
@@ -476,6 +482,6 @@ window.handleLogout = async function() {
         }
         
         console.log('Final redirection to home');
-        window.location.href = '/index.html';
+        window.location.href = 'index.html';
     }
 };
