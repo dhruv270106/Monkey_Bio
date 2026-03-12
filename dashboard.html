@@ -32,6 +32,8 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
       const supabaseUrl = 'https://esngrodyozljdjkfcocp.supabase.co';
       const supabaseKey = 'sb_publishable_6DOFYKjxL3o2U1rs5Gd4cw_SitIaPwy';
@@ -89,9 +91,15 @@
                 <a href="./profile-demo.html" id="user-profile-link" target="_blank" class="text-sm font-bold flex items-center gap-2 bg-[#F5F7FA] px-4 py-2 rounded-full hover:bg-gray-200 transition-colors text-secondary">
                   <i data-lucide="external-link" class="w-4 h-4 text-gray-400"></i> <span id="user-display-username">monkey.link/alex</span>
                 </a>
-                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border-2 border-primary cursor-pointer hover:shadow-lg transition-shadow">
-                   <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Profile" class="w-full h-full object-cover">
+                <div class="relative group">
+                    <div id="avatar-container" class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border-2 border-primary cursor-pointer hover:shadow-lg transition-all relative">
+                        <img id="dashboard-avatar" src="https://ui-avatars.com/api/?name=User&background=6cf383&color=0F172A&bold=true" alt="Profile" class="w-full h-full object-cover">
+                        <div onclick="triggerAvatarUpload()" class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i data-lucide="pencil" class="w-4 h-4 text-white"></i>
+                        </div>
+                    </div>
                 </div>
+                <input type="file" id="avatar-upload" class="hidden" accept="image/*" onchange="handleFileSelect(event)">
              </div>
            </header>
            
@@ -200,6 +208,27 @@
        // Initialize Lucide Icons
        lucide.createIcons();
     </script>
+
+    <!-- Cropper Modal -->
+    <div id="cropper-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[32px] w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="font-bold text-xl">Crop Profile Picture</h3>
+                <button onclick="closeCropper()" class="p-2 hover:bg-gray-100 rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="aspect-square w-full bg-gray-100 rounded-2xl overflow-hidden">
+                    <img id="cropper-image" class="max-w-full">
+                </div>
+            </div>
+            <div class="p-6 bg-gray-50 flex gap-4">
+                <button onclick="closeCropper()" class="flex-1 py-3 px-4 border border-gray-200 font-bold rounded-xl hover:bg-white transition-all text-gray-600">Cancel</button>
+                <button onclick="saveCroppedImage()" id="save-crop-btn" class="flex-1 py-3 px-4 bg-secondary text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg flex items-center justify-center gap-2">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
   
