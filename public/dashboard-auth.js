@@ -58,9 +58,17 @@
         }
 
         // Update profile images
-        const profileImages = document.querySelectorAll('img[alt="Profile"]');
+        const profileImages = document.querySelectorAll('img[alt="Profile"], img[alt="Profile Image"]');
+        const defaultAvatar = 'data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+        
         profileImages.forEach(img => {
-            img.src = user.user_metadata?.avatar_url || 'https://i.pravatar.cc/150?u=' + user.id;
+            const avatarUrl = user.user_metadata?.avatar_url;
+            if (avatarUrl) {
+                img.src = avatarUrl;
+            } else {
+                // Use a clean placeholder SVG instead of random people
+                img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=6cf383&color=0F172A&bold=true`;
+            }
         });
     }
 

@@ -81,8 +81,17 @@
                       .single();
                     
                     if (profile) {
-                      document.getElementById('profile-name').innerHTML = (profile.display_name || username) + ' <i data-lucide="badge-check" class="w-5 h-5 text-primary"></i>';
-                      document.getElementById('profile-img').src = 'https://i.pravatar.cc/150?u=' + profile.id;
+                      const finalDisplayName = profile.display_name || username;
+                      document.getElementById('profile-name').innerHTML = finalDisplayName + ' <i data-lucide="badge-check" class="w-5 h-5 text-primary"></i>';
+                      
+                      // Check for avatar, otherwise use clean name-based placeholder
+                      const avatarUrl = profile.avatar_url; // Not yet in DB but let's prepare
+                      if (avatarUrl) {
+                        document.getElementById('profile-img').src = avatarUrl;
+                      } else {
+                        document.getElementById('profile-img').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(finalDisplayName)}&background=6cf383&color=0F172A&bold=true`;
+                      }
+                      
                       // Refresh lucide icons for the newly added badge
                       if (window.lucide) window.lucide.createIcons();
                     }

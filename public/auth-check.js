@@ -82,12 +82,14 @@
     }
 
     function renderLoggedInUI(container, user) {
-        const avatarUrl = user.user_metadata?.avatar_url || 'https://i.pravatar.cc/150?u=' + user.id;
+        const displayName = user.user_metadata?.full_name || user.email.split('@')[0];
+        const avatarUrl = user.user_metadata?.avatar_url;
+        const finalImg = avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=6cf383&color=0F172A&bold=true`;
         
         container.innerHTML = `
             <a href="/dashboard.html" class="block" title="Dashboard">
                 <div class="user-avatar-container">
-                    <img src="${avatarUrl}" alt="Profile" class="user-avatar-img">
+                    <img src="${finalImg}" alt="Profile" class="user-avatar-img">
                 </div>
             </a>
         `;
