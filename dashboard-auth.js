@@ -190,8 +190,98 @@
         };
 
         window.openSocialModal = () => {
-            alert('Adding more social icons feature coming soon! For now, manage them in onboarding.');
+            const modal = document.getElementById('social-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.getElementById('social-search').value = '';
+                resetSocialSelection();
+                renderPlatformList();
+            }
         };
+
+        window.closeSocialModal = () => {
+            document.getElementById('social-modal').classList.add('hidden');
+        };
+
+        let activeSocialPlatform = null;
+
+        window.renderPlatformList = (filter = '') => {
+            const list = document.getElementById('social-platform-list');
+            if (!list) return;
+            list.innerHTML = '';
+            
+            platforms.forEach(p => {
+                if (filter && !p.name.toLowerCase().includes(filter.toLowerCase())) return;
+                
+                // Hide if already added
+                if (socialLinks[p.id]) return;
+
+                const btn = document.createElement('button');
+                btn.className = 'flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-all font-bold text-sm text-secondary shadow-sm hover:shadow-md group';
+                btn.onclick = () => selectSocialPlatform(p);
+                btn.innerHTML = `
+                    <div class="w-12 h-12 ${p.color} ${p.iconColor} rounded-xl flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                        <i data-lucide="${p.icon}" class="w-6 h-6"></i>
+                    </div>
+                    ${p.name}
+                `;
+                list.appendChild(btn);
+            });
+            if (window.lucide) lucide.createIcons();
+        };
+
+        window.filterSocials = () => {
+            const val = document.getElementById('social-search').value;
+            renderPlatformList(val);
+        };
+
+        window.selectSocialPlatform = (platform) => {
+            activeSocialPlatform = platform;
+            document.getElementById('social-search').closest('.relative').classList.add('hidden');
+            document.getElementById('social-platform-list').classList.add('hidden');
+            
+            const inputArea = document.getElementById('social-input-area');
+            inputArea.classList.remove('hidden');
+            inputArea.classList.add('animate-fade-in');
+            
+            const iconContainer = document.getElementById('selected-social-icon');
+            iconContainer.className = `w-12 h-12 rounded-xl flex items-center justify-center text-white ${platform.iconColor.replace('text-', 'bg-')} shadow-md`;
+            iconContainer.innerHTML = `<i data-lucide="${platform.icon}" class="w-6 h-6"></i>`;
+            
+            document.getElementById('selected-social-name').innerText = `Add ${platform.name}`;
+            
+            const prefix = platform.id === 'website' ? 'https://' : '@';
+            document.getElementById('social-input-prefix').innerText = prefix;
+            
+            const input = document.getElementById('social-handle-input');
+            input.placeholder = platform.id === 'website' ? 'yourwebsite.com' : 'username';
+            input.value = '';
+            input.focus();
+            
+            if (window.lucide) lucide.createIcons();
+        };
+
+        window.resetSocialSelection = () => {
+            activeSocialPlatform = null;
+            document.getElementById('social-search').closest('.relative').classList.remove('hidden');
+            document.getElementById('social-platform-list').classList.remove('hidden');
+            document.getElementById('social-input-area').classList.add('hidden');
+        };
+
+        window.saveSocialLink = () => {
+            if (!activeSocialPlatform) return;
+            const handle = document.getElementById('social-handle-input').value.trim();
+            if (!handle) {
+                alert('Please enter a username or URL');
+                return;
+            }
+            
+            socialLinks[activeSocialPlatform.id] = handle;
+            renderSocials();
+            debouncedSave();
+            closeSocialModal();
+        };
+
 
         // 4. Mockup Sync Logic
         function updateMockup() {

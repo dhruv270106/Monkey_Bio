@@ -333,6 +333,45 @@
             </div>
         </div>
     </div>
+    <!-- Social Icon Modal -->
+    <div id="social-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[32px] w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in flex flex-col max-h-[90vh]">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                <h3 class="font-bold text-xl">Add Social Icon</h3>
+                <button onclick="closeSocialModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto space-y-6">
+                <!-- Search -->
+                <div class="relative">
+                    <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="social-search" placeholder="Search platforms..." class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-purple-500 transition-all font-medium" onkeyup="filterSocials()">
+                </div>
+                
+                <!-- Platform List -->
+                <div id="social-platform-list" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <!-- Injected via JS -->
+                </div>
+
+                <!-- Input Area (Hidden initially) -->
+                <div id="social-input-area" class="hidden space-y-4 pt-4 border-t border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <div id="selected-social-icon" class="w-10 h-10 rounded-xl flex items-center justify-center text-white"></div>
+                        <h4 id="selected-social-name" class="font-bold text-lg"></h4>
+                    </div>
+                    <div class="flex bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-purple-500 transition-all">
+                        <span id="social-input-prefix" class="px-4 py-3 text-gray-400 font-bold border-r border-gray-200">@</span>
+                        <input type="text" id="social-handle-input" placeholder="username" class="flex-1 bg-transparent px-4 py-3 outline-none font-bold text-secondary">
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        <button onclick="resetSocialSelection()" class="flex-1 py-3 px-4 border border-gray-200 font-bold rounded-xl hover:bg-gray-50 transition-all text-gray-600">Back</button>
+                        <button onclick="saveSocialLink()" class="flex-1 py-3 px-4 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-all shadow-lg">Add to Profile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- External Scripts -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./dashboard-auth.js"></script>
