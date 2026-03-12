@@ -59,7 +59,7 @@
             <span class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-secondary font-bold text-xl">M</span>
             <span class="font-bold text-2xl tracking-tight text-secondary">Monkey</span>
         </div>
-        <button onclick="window.location.href='/dashboard.html'" class="text-gray-400 hover:text-secondary font-medium flex items-center gap-1">
+        <button onclick="window.location.href='./dashboard.html'" class="text-gray-400 hover:text-secondary font-medium flex items-center gap-1">
             Skip <i data-lucide="chevron-right" class="w-4 h-4"></i>
         </button>
     </div>
@@ -144,140 +144,133 @@
             <div id="step-theme" class="step-container w-full max-w-4xl flex-col">
                 <h1 class="text-4xl font-extrabold mb-4 tracking-tight text-center">Select a theme</h1>
                 <p class="text-gray-500 mb-10 font-medium text-center">Pick the style that feels right - you can add your content later</p>
-                
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                   <!-- Theme cards -->
-                   <div onclick="selectTheme('black')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-black flex flex-col items-center justify-center p-4">
-                        <div class="w-10 h-10 rounded-full bg-white/20 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-white/20 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-white/10 rounded-xl"></div>
-                             <div class="w-full h-8 bg-white/10 rounded-xl"></div>
-                             <div class="w-full h-8 bg-white/10 rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-white text-xs font-bold">Midnight</p>
-                   </div>
-                   <div onclick="selectTheme('gradient-peach')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-gradient-to-b from-blue-200 to-orange-300 flex flex-col items-center justify-center p-4">
-                        <div class="w-10 h-10 rounded-full bg-black/20 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-black/20 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-white/80 rounded-xl"></div>
-                             <div class="w-full h-8 bg-white/80 rounded-xl"></div>
-                             <div class="w-full h-8 bg-white/80 rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-secondary text-xs font-bold">Dawn</p>
-                   </div>
-                   <div onclick="selectTheme('grid')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#451a03] flex flex-col items-center justify-center p-4" style="background-image: radial-gradient(#ffffff11 1px, transparent 0); background-size: 20px 20px;">
-                        <div class="w-10 h-10 rounded-full bg-white/20 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-white/20 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-[#fef3c7] rounded-xl"></div>
-                             <div class="w-full h-8 bg-[#fef3c7] rounded-xl"></div>
-                             <div class="w-full h-8 bg-[#fef3c7] rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-white text-xs font-bold">Vintage</p>
-                   </div>
-                   <div onclick="selectTheme('clean')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#fff7ed] flex flex-col items-center justify-center p-4 border border-gray-100">
-                        <div class="w-10 h-10 rounded-full bg-red-100 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-red-100 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-white border border-red-100 rounded-xl"></div>
-                             <div class="w-full h-8 bg-white border border-red-100 rounded-xl"></div>
-                             <div class="w-full h-8 bg-white border border-red-100 rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-red-500 text-xs font-bold">Classic Red</p>
-                   </div>
-                   <div onclick="selectTheme('dark-green')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#064e3b] flex flex-col items-center justify-center p-4">
-                        <div class="w-10 h-10 rounded-full bg-white/20 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-white/20 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-white/10 rounded-full"></div>
-                             <div class="w-full h-8 bg-white/10 rounded-full"></div>
-                             <div class="w-full h-8 bg-white/10 rounded-full"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-white text-xs font-bold">Forest</p>
-                   </div>
-                   <div onclick="selectTheme('mono')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-white border border-gray-200 flex flex-col items-center justify-center p-4">
-                        <div class="w-10 h-10 rounded-full bg-gray-100 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-gray-100 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-gray-50 border border-gray-200 rounded-xl"></div>
-                             <div class="w-full h-8 bg-gray-50 border border-gray-200 rounded-xl"></div>
-                             <div class="w-full h-8 bg-gray-50 border border-gray-200 rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-gray-400 text-xs font-bold">Mono</p>
-                   </div>
-                   <div onclick="selectTheme('neon')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-purple-900 border border-purple-500/30 flex flex-col items-center justify-center p-4">
-                        <div class="w-10 h-10 rounded-full bg-pink-500/20 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-pink-500/20 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-pink-500/10 border border-pink-500/50 rounded-xl shadow-[0_0_15px_rgba(236,72,153,0.3)]"></div>
-                             <div class="w-full h-8 bg-pink-500/10 border border-pink-500/50 rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-pink-500 text-xs font-bold">Cyberpunk</p>
-                   </div>
-                   <div onclick="selectTheme('soft')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#f3f4f6] flex flex-col items-center justify-center p-4">
-                        <div class="w-10 h-10 rounded-full bg-blue-100 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-blue-100 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-white rounded-full"></div>
-                             <div class="w-full h-8 bg-white rounded-full"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-blue-400 text-xs font-bold">Cloud</p>
-                   </div>
-                   <div onclick="selectTheme('sunset')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-gradient-to-tr from-orange-500 to-rose-500 flex flex-col items-center justify-center p-4">
-                        <div class="w-10 h-10 rounded-full bg-white/30 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-white/30 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-white/20 rounded-xl"></div>
-                             <div class="w-full h-8 bg-white/20 rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-white text-xs font-bold">Sunset</p>
-                   </div>
-                   <div onclick="selectTheme('lavender')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#faf5ff] border border-purple-100 flex flex-col items-center justify-center p-4">
-                        <div class="w-10 h-10 rounded-full bg-purple-200 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-purple-200 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-white border border-purple-200 rounded-xl"></div>
-                             <div class="w-full h-8 bg-white border border-purple-200 rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-purple-600 text-xs font-bold">Lavender</p>
-                   </div>
-                   <div onclick="selectTheme('ocean')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#0c4a6e] flex flex-col items-center justify-center p-4">
-                        <div class="w-10 h-10 rounded-full bg-sky-400 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-sky-400 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-sky-900 border border-sky-400/50 rounded-xl"></div>
-                             <div class="w-full h-8 bg-sky-900 border border-sky-400/50 rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-sky-200 text-xs font-bold">Deep Ocean</p>
-                   </div>
-                   <div onclick="selectTheme('bubblegum')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#fce7f3] border border-pink-200 flex flex-col items-center justify-center p-4">
-                        <div class="w-10 h-10 rounded-full bg-pink-400 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-pink-400 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-white border border-pink-400 rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-pink-500 text-xs font-bold">Bubblegum</p>
-                   </div>
-                   <div onclick="selectTheme('slate')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#334155] flex flex-col items-center justify-center p-4">
+                <div id="theme-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 overflow-y-auto max-h-[500px] p-2 pr-4 custom-scrollbar">
+                    <div onclick="selectTheme('black')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-black flex flex-col items-center justify-center">
                         <div class="w-10 h-10 rounded-full bg-white/10 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-white/10 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-slate-800 rounded-xl"></div>
-                             <div class="w-full h-8 bg-slate-800 rounded-xl"></div>
-                        </div>
-                        <p class="absolute bottom-4 text-slate-300 text-xs font-bold">Slate</p>
-                   </div>
-                   <div onclick="selectTheme('gold')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#171717] border border-yellow-600/30 flex flex-col items-center justify-center p-4">
+                        <div class="w-1/2 h-4 bg-white/10 rounded"></div>
+                        <p class="absolute bottom-4 text-white/40 text-[10px] font-bold">Standard</p>
+                    </div>
+                    <div onclick="selectTheme('gradient-peach')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-gradient-to-b from-blue-200 to-orange-300 flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-secondary/40 text-[10px] font-bold">Peach</p>
+                    </div>
+                    <div onclick="selectTheme('gold')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#171717] border border-yellow-600/30 flex flex-col items-center justify-center p-4">
                         <div class="w-10 h-10 rounded-full bg-yellow-600/30 mb-2"></div>
-                        <div class="w-1/2 h-4 bg-yellow-600/30 rounded mb-4"></div>
-                        <div class="w-full space-y-2">
-                             <div class="w-full h-8 bg-yellow-600/10 border border-yellow-600/50 rounded-xl"></div>
-                             <div class="w-full h-8 bg-yellow-600/10 border border-yellow-600/50 rounded-xl"></div>
+                        <p class="absolute bottom-4 text-yellow-600 text-[10px] font-bold">Gold Edition</p>
+                    </div>
+                    <div onclick="selectTheme('floral')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-pink-50 flex flex-col items-center justify-center p-4" style="background-image: url('https://images.unsplash.com/photo-1523348837742-82da744db91d?auto=format&fit=crop&w=200&q=80'); background-size: cover;">
+                        <p class="absolute bottom-4 text-pink-600 text-[10px] font-bold bg-white/80 px-2 rounded">Floral</p>
+                    </div>
+                    <div onclick="selectTheme('cartoon-vibes')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-yellow-400 flex flex-col items-center justify-center p-4">
+                        <p class="text-black font-black text-xs">POW!</p>
+                        <p class="absolute bottom-4 text-black text-[10px] font-bold">Cartoon</p>
+                    </div>
+                    <div onclick="selectTheme('love-hearts')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-rose-100 flex flex-col items-center justify-center p-4" style="background-image: url('https://www.transparenttextures.com/patterns/heart.png'); background-color: #ffe4e6;">
+                        <p class="absolute bottom-4 text-rose-500 text-[10px] font-bold">Love</p>
+                    </div>
+                    <div onclick="selectTheme('sad-rain')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-slate-700 flex flex-col items-center justify-center p-4">
+                         <p class="z-10 text-white text-[10px] font-bold">Rainy</p>
+                    </div>
+                    <div onclick="selectTheme('happy-sun')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-amber-400 flex flex-col items-center justify-center p-4">
+                        <i data-lucide="sun" class="text-white w-6 h-6 mb-2"></i>
+                        <p class="absolute bottom-4 text-amber-900 text-[10px] font-bold">Happy</p>
+                    </div>
+                    <div onclick="selectTheme('waves')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-cyan-500 flex flex-col items-center justify-center p-4" style="background-image: url('https://www.transparenttextures.com/patterns/waves.png');">
+                        <p class="absolute bottom-4 text-white text-[10px] font-bold">Waves</p>
+                    </div>
+                    <div onclick="selectTheme('marble')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-white flex flex-col items-center justify-center p-4" style="background-image: url('https://images.unsplash.com/photo-1533134486753-c833f074868f?auto=format&fit=crop&w=200&q=80'); background-size: cover;">
+                        <p class="absolute bottom-4 text-gray-800 text-[10px] font-bold bg-white/80 px-2 rounded">Marble</p>
+                    </div>
+                    <div onclick="selectTheme('space')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#0a0a2e] flex flex-col items-center justify-center p-4" style="background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=200&q=80'); background-size: cover;">
+                        <p class="absolute bottom-4 text-white text-[10px] font-bold">Space</p>
+                    </div>
+                    <div onclick="selectTheme('retro')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-orange-500 flex flex-col items-center justify-center p-4">
+                        <div class="absolute inset-x-0 top-0 h-1/4 bg-orange-400"></div>
+                        <div class="absolute inset-x-0 top-1/4 h-1/4 bg-red-400"></div>
+                        <div class="absolute inset-x-0 top-2/4 h-1/4 bg-purple-400"></div>
+                        <p class="z-10 text-white text-[10px] font-bold">Retro</p>
+                    </div>
+                    <div onclick="selectTheme('forest-walk')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-emerald-900 flex flex-col items-center justify-center p-4" style="background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=200&q=80'); background-size: cover;">
+                        <p class="absolute bottom-4 text-white text-[10px] font-bold bg-black/40 px-2 rounded">Forest</p>
+                    </div>
+                    <div onclick="selectTheme('cyber')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-black flex flex-col items-center justify-center p-4 border border-cyan-500">
+                        <div class="absolute inset-0 bg-[radial-gradient(circle,rgba(6,182,212,0.1)_1px,transparent_1px)] bg-[size:10px_10px]"></div>
+                        <p class="z-10 text-cyan-400 text-[10px] font-bold">Cyber</p>
+                    </div>
+                    <div onclick="selectTheme('dots')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-white flex flex-col items-center justify-center p-4" style="background-image: radial-gradient(#6366f1 2px, transparent 0); background-size: 15px 15px;">
+                        <p class="absolute bottom-4 text-indigo-600 text-[10px] font-bold bg-white/80 px-2 rounded">Dots</p>
+                    </div>
+                    <div onclick="selectTheme('sky')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-sky-300 flex flex-col items-center justify-center p-4" style="background-image: url('https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?auto=format&fit=crop&w=200&q=80'); background-size: cover;">
+                        <p class="absolute bottom-4 text-sky-900 text-[10px] font-bold bg-white/60 px-2 rounded">Sky</p>
+                    </div>
+                    <div onclick="selectTheme('graffiti')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-gray-900 flex flex-col items-center justify-center p-4" style="background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=200&q=80'); background-size: cover;">
+                        <p class="absolute bottom-4 text-white text-[10px] font-bold">Graffiti</p>
+                    </div>
+                    <div onclick="selectTheme('pastel-blue')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-blue-50 flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-blue-300 text-[10px] font-bold">P-Blue</p>
+                    </div>
+                    <div onclick="selectTheme('dark-red')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-red-950 flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-red-500 text-[10px] font-bold">Crimson</p>
+                    </div>
+                    <div onclick="selectTheme('lemon-zest')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-yellow-100 flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-yellow-700 text-[10px] font-bold">Lemon</p>
+                    </div>
+                    
+                    <!-- More Themes -->
+                    <div onclick="selectTheme('mono')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-white border border-gray-200 flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-secondary text-[10px] font-bold">Mono</p>
+                    </div>
+                    <div onclick="selectTheme('neon')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-purple-900 flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-pink-500 text-[10px] font-bold">Neon</p>
+                    </div>
+                    <div onclick="selectTheme('sunset')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-gradient-to-tr from-orange-500 to-rose-500 flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-white text-[10px] font-bold">Sunset</p>
+                    </div>
+                    <div onclick="selectTheme('ocean')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#0c4a6e] flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-sky-200 text-[10px] font-bold">Ocean</p>
+                    </div>
+                    <div onclick="selectTheme('bubblegum')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#fce7f3] flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-pink-500 text-[10px] font-bold">Gum</p>
+                    </div>
+                    <div onclick="selectTheme('lava')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-red-600 flex flex-col items-center justify-center p-4" style="background-image: linear-gradient(180deg, #f43f5e 0%, #fb923c 100%);">
+                        <p class="absolute bottom-4 text-white text-[10px] font-bold">Lava</p>
+                    </div>
+                    <div onclick="selectTheme('mint')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-emerald-100 flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-emerald-700 text-[10px] font-bold">Mint</p>
+                    </div>
+                    <div onclick="selectTheme('coffee')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#3e2723] flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-[#d7ccc8] text-[10px] font-bold">Coffee</p>
+                    </div>
+                    <div onclick="selectTheme('midnight')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#020617] flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-slate-400 text-[10px] font-bold">Midnight</p>
+                    </div>
+                    <div onclick="selectTheme('lavender')" class="theme-card relative aspect-[9/16] rounded-3xl border-4 border-transparent hover:border-primary cursor-pointer transition-all overflow-hidden bg-[#faf5ff] flex flex-col items-center justify-center p-4">
+                         <p class="absolute bottom-4 text-purple-600 text-[10px] font-bold">Lavender</p>
+                    </div>
+
+                    <!-- Customize Theme Card (Last) -->
+                    <div onclick="triggerCustomTheme()" id="theme-custom-card" class="theme-card group relative aspect-[9/16] rounded-3xl border-4 border-dashed border-gray-300 hover:border-primary cursor-pointer transition-all flex flex-col items-center justify-center p-4 bg-gray-50">
+                         <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2 group-hover:bg-primary/20 transition-all">
+                              <i data-lucide="plus" class="w-6 h-6 text-gray-400 group-hover:text-primary transition-all"></i>
+                         </div>
+                         <p class="text-gray-500 font-bold text-xs">Customize</p>
+                         <p class="text-gray-400 text-[10px] text-center mt-1">Upload image</p>
+                         <input type="file" id="custom-theme-upload" class="hidden" accept="image/*" onchange="handleCustomThemeUpload(event)">
+                    </div>
+                </div>
+
+                <!-- Custom Theme Settings (Hidden by default) -->
+                <div id="custom-theme-settings" class="hidden mb-12 p-6 bg-gray-50 rounded-[32px] animate-fade-in border-2 border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-secondary">Custom Background Settings</h3>
+                        <button onclick="triggerCustomTheme()" class="text-xs font-bold text-purple-600 hover:underline">Change Image</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs font-bold text-gray-400 uppercase w-20">Opacity</span>
+                            <input type="range" id="custom-theme-opacity" min="0" max="100" value="100" class="flex-1 accent-purple-600" oninput="updateCustomOpacity(this.value)">
+                            <span id="opacity-val" class="text-xs font-bold text-gray-500 w-10">100%</span>
                         </div>
-                        <p class="absolute bottom-4 text-yellow-600 text-xs font-bold">Gold Edition</p>
-                   </div>
+                    </div>
                 </div>
 
                 <button id="btn-continue-theme" disabled class="w-full py-4 bg-gray-200 text-gray-400 font-bold rounded-full transition-all cursor-not-allowed">
@@ -388,8 +381,8 @@
                     </button>
                 </div>
 
-                <div id="final-mockup-container" class="hidden">
-                    <!-- Preview iframe or mockup -->
+                <div id="final-mockup-container" class="w-full max-w-[280px] aspect-[9/18] mb-12 transform scale-90 origin-top">
+                    <!-- Preview mockup injected here -->
                 </div>
 
                 <button id="btn-finish" class="w-full py-5 bg-secondary text-white font-bold rounded-full hover:bg-black transition-all shadow-xl flex items-center justify-center gap-3">
@@ -461,9 +454,10 @@
         let selectedPlatforms = [];
         let finalUsername = '';
         let userId = '';
-        let profileImageUrl = '';
         let socialLinks = {};
         let cropper = null;
+        let customBgUrl = '';
+        let customBgOpacity = 1;
 
         const platforms = [
             { id: 'instagram', name: 'Instagram', color: 'bg-pink-100', icon: 'instagram', iconColor: 'text-pink-500', url: 'https://instagram.com/' },
@@ -670,17 +664,61 @@
 
         function selectTheme(theme) {
             selectedTheme = theme;
-            document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('border-primary'));
-            event.currentTarget.classList.add('border-primary');
+            document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('border-primary', 'bg-primary/5'));
             
+            // Highlight card
+            if (theme === 'custom') {
+                 document.getElementById('theme-custom-card').classList.add('border-primary', 'bg-primary/5');
+            } else {
+                 const cards = document.querySelectorAll('.theme-card');
+                 cards.forEach(c => {
+                      if (c.getAttribute('onclick') && c.getAttribute('onclick').includes(`'${theme}'`)) {
+                           c.classList.add('border-primary', 'bg-primary/5');
+                      }
+                 });
+                 document.getElementById('custom-theme-settings').classList.add('hidden');
+            }
+            
+            applyThemeToMockup(theme);
+
             const btn = document.getElementById('btn-continue-theme');
             btn.disabled = false;
             btn.classList.remove('cursor-not-allowed', 'bg-gray-200', 'text-gray-400');
             btn.classList.add('bg-secondary', 'text-white', 'cursor-pointer', 'hover:bg-gray-800');
             btn.onclick = () => {
-                applyThemeToMockup(theme);
                 goToStep(4);
             };
+        }
+
+        function triggerCustomTheme() {
+            document.getElementById('custom-theme-upload').click();
+        }
+
+        function handleCustomThemeUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    customBgUrl = e.target.result;
+                    document.getElementById('custom-theme-settings').classList.remove('hidden');
+                    selectTheme('custom');
+                    
+                    // Preview in card
+                    const card = document.getElementById('theme-custom-card');
+                    card.style.backgroundImage = `url(${customBgUrl})`;
+                    card.style.backgroundSize = 'cover';
+                    card.innerHTML = `<div class="absolute inset-0 bg-black/20"></div><p class="z-10 text-white text-xs font-bold">Custom</p>`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateCustomOpacity(val) {
+            customBgOpacity = val / 100;
+            document.getElementById('opacity-val').innerText = val + '%';
+            if (selectedTheme === 'custom') {
+                applyThemeToMockup('custom');
+            }
         }
 
         function applyThemeToMockup(theme) {
@@ -688,13 +726,16 @@
              const username = document.getElementById('preview-username-top');
              const bio = document.getElementById('preview-bio-top');
              
-             // Reset
+             // Reset styles
              mockup.className = "w-full h-full rounded-[60px] border-[12px] border-secondary shadow-2xl relative overflow-hidden p-10 flex flex-col items-center transition-all duration-500 ";
              mockup.style.backgroundImage = '';
              mockup.style.backgroundSize = '';
+             mockup.style.backgroundColor = '';
+             mockup.style.opacity = '1';
              username.className = "font-bold text-2xl mb-2 ";
              bio.className = "text-center text-sm mb-12 max-w-[240px] ";
 
+             // Basic Themes
              if (theme === 'black') { mockup.classList.add('bg-black'); username.classList.add('text-white'); bio.classList.add('text-white/60'); }
              if (theme === 'gradient-peach') { mockup.classList.add('bg-gradient-to-b', 'from-blue-200', 'to-orange-300'); username.classList.add('text-secondary'); bio.classList.add('text-secondary/60'); }
              if (theme === 'grid') { mockup.classList.add('bg-[#451a03]'); username.classList.add('text-white'); bio.classList.add('text-white/60'); mockup.style.backgroundImage = 'radial-gradient(#ffffff11 1px, transparent 0)'; mockup.style.backgroundSize = '20px 20px'; }
@@ -704,11 +745,48 @@
              if (theme === 'neon') { mockup.classList.add('bg-purple-900'); username.classList.add('text-pink-500'); bio.classList.add('text-pink-500/60'); }
              if (theme === 'soft') { mockup.classList.add('bg-[#f3f4f6]'); username.classList.add('text-blue-500'); bio.classList.add('text-blue-500/60'); }
              if (theme === 'sunset') { mockup.classList.add('bg-gradient-to-tr', 'from-orange-500', 'to-rose-500'); username.classList.add('text-white'); bio.classList.add('text-white/60'); }
-             if (theme === 'lavender') { mockup.classList.add('bg-[#faf5ff]'); username.classList.add('text-purple-600'); bio.classList.add('text-purple-600/60'); }
              if (theme === 'ocean') { mockup.classList.add('bg-[#0c4a6e]'); username.classList.add('text-sky-200'); bio.classList.add('text-sky-200/60'); }
              if (theme === 'bubblegum') { mockup.classList.add('bg-[#fce7f3]'); username.classList.add('text-pink-500'); bio.classList.add('text-pink-500/60'); }
              if (theme === 'slate') { mockup.classList.add('bg-[#334155]'); username.classList.add('text-slate-300'); bio.classList.add('text-slate-300/60'); }
              if (theme === 'gold') { mockup.classList.add('bg-[#171717]'); username.classList.add('text-yellow-600'); bio.classList.add('text-yellow-600/60'); }
+             
+             // Artistic & Fun Themes
+             if (theme === 'floral') { mockup.style.backgroundImage = "url('https://images.unsplash.com/photo-1523348837742-82da744db91d?auto=format&fit=crop&w=800&q=80')"; mockup.style.backgroundSize = "cover"; username.classList.add('text-pink-800'); bio.classList.add('text-pink-800/60'); }
+             if (theme === 'cartoon-vibes') { mockup.classList.add('bg-yellow-400', 'border-[16px]', 'border-black'); username.classList.add('text-black', 'uppercase', 'font-black'); bio.classList.add('text-black', 'font-bold'); }
+             if (theme === 'love-hearts') { mockup.style.backgroundColor = "#ffe4e6"; mockup.style.backgroundImage = "url('https://www.transparenttextures.com/patterns/heart.png')"; username.classList.add('text-rose-600'); bio.classList.add('text-rose-600/60'); }
+             if (theme === 'sad-rain') { mockup.classList.add('bg-slate-900'); username.classList.add('text-blue-100'); bio.classList.add('text-blue-100/40'); mockup.style.backgroundImage = "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=400&q=80')"; mockup.style.backgroundSize = "cover"; }
+             if (theme === 'happy-sun') { mockup.classList.add('bg-amber-400'); username.classList.add('text-amber-900'); bio.classList.add('text-amber-900/60'); }
+             if (theme === 'waves') { mockup.style.backgroundColor = "#06b6d4"; mockup.style.backgroundImage = "url('https://www.transparenttextures.com/patterns/waves.png')"; username.classList.add('text-white'); bio.classList.add('text-white/60'); }
+             if (theme === 'marble') { mockup.style.backgroundImage = "url('https://images.unsplash.com/photo-1533134486753-c833f074868f?auto=format&fit=crop&w=800&q=80')"; mockup.style.backgroundSize = "cover"; username.classList.add('text-gray-900'); bio.classList.add('text-gray-900/60'); }
+             if (theme === 'space') { mockup.style.backgroundImage = "url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=800&q=80')"; mockup.style.backgroundSize = "cover"; username.classList.add('text-white'); bio.classList.add('text-white/80'); }
+             if (theme === 'retro') { mockup.style.background = "linear-gradient(180deg, #f97316 0%, #ef4444 50%, #a855f7 100%)"; username.classList.add('text-white'); bio.classList.add('text-white'); }
+             if (theme === 'forest-walk') { mockup.style.backgroundImage = "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80')"; mockup.style.backgroundSize = "cover"; username.classList.add('text-white'); bio.classList.add('text-white/60'); }
+             if (theme === 'cyber') { mockup.classList.add('bg-black'); mockup.style.backgroundImage = "radial-gradient(circle,rgba(6,182,212,0.1) 1px,transparent 1px)"; mockup.style.backgroundSize = "20px 20px"; username.classList.add('text-cyan-400', 'uppercase', 'tracking-[0.2em]'); bio.classList.add('text-cyan-400/60'); }
+             if (theme === 'dots') { mockup.style.backgroundColor = "white"; mockup.style.backgroundImage = "radial-gradient(#6366f1 2px, transparent 0)"; mockup.style.backgroundSize = "30px 30px"; username.classList.add('text-indigo-600'); bio.classList.add('text-indigo-600/60'); }
+             if (theme === 'sky') { mockup.style.backgroundImage = "url('https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?auto=format&fit=crop&w=800&q=80')"; mockup.style.backgroundSize = "cover"; username.classList.add('text-sky-900'); bio.classList.add('text-sky-900/60'); }
+             if (theme === 'graffiti') { mockup.style.backgroundImage = "url('https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80')"; mockup.style.backgroundSize = "cover"; username.classList.add('text-white', 'italic'); bio.classList.add('text-white'); }
+             
+             // Extra Variety Themes
+             if (theme === 'pastel-blue') { mockup.classList.add('bg-blue-50'); username.classList.add('text-blue-900'); bio.classList.add('text-blue-900/60'); }
+             if (theme === 'dark-red') { mockup.classList.add('bg-red-950'); username.classList.add('text-red-500'); bio.classList.add('text-red-500/60'); }
+             if (theme === 'lemon-zest') { mockup.classList.add('bg-yellow-100'); username.classList.add('text-yellow-700'); bio.classList.add('text-yellow-700/60'); }
+             if (theme === 'mint') { mockup.classList.add('bg-emerald-50'); username.classList.add('text-emerald-800'); bio.classList.add('text-emerald-800/60'); }
+             if (theme === 'coffee') { mockup.classList.add('bg-[#3e2723]'); username.classList.add('text-[#d7ccc8]'); bio.classList.add('text-[#d7ccc8]/80'); }
+             if (theme === 'midnight') { mockup.classList.add('bg-[#020617]'); username.classList.add('text-slate-400'); bio.classList.add('text-slate-400/60'); }
+             if (theme === 'lavender') { mockup.classList.add('bg-[#faf5ff]'); username.classList.add('text-purple-600'); bio.classList.add('text-purple-600/60'); }
+             if (theme === 'lava') { mockup.style.backgroundImage = "linear-gradient(180deg, #f43f5e 0%, #fb923c 100%)"; username.classList.add('text-white'); bio.classList.add('text-white/60'); }
+
+             // Custom Theme Handling
+             if (theme === 'custom' && customBgUrl) {
+                  mockup.style.backgroundImage = `url(${customBgUrl})`;
+                  mockup.style.backgroundSize = 'cover';
+                  mockup.style.opacity = customBgOpacity;
+                  username.classList.add('text-white'); 
+                  bio.classList.add('text-white/80');
+                  mockup.style.backgroundColor = 'black'; // Fallback
+             }
+
+             lucide.createIcons();
         }
 
         function togglePlatform(id, el) {
@@ -840,10 +918,13 @@
             const mockupClone = document.getElementById('phone-mockup').cloneNode(true);
             mockupClone.id = 'final-mockup';
             mockupClone.classList.remove('w-full', 'h-full');
-            mockupClone.classList.add('w-full', 'h-full', 'rounded-[40px]');
+            mockupClone.style.width = '100%';
+            mockupClone.style.height = '100%';
+            mockupClone.style.transform = 'none';
             
-            document.getElementById('final-mockup-container').innerHTML = '';
-            document.getElementById('final-mockup-container').appendChild(mockupClone);
+            const container = document.getElementById('final-mockup-container');
+            container.innerHTML = '';
+            container.appendChild(mockupClone);
             document.getElementById('final-link-text').innerText = 'monkey.link/' + finalUsername;
             
             document.getElementById('btn-finish').onclick = finishOnboarding;
@@ -851,13 +932,31 @@
 
         async function finishOnboarding() {
             const btn = document.getElementById('btn-finish');
-            btn.innerHTML = '<span class="animate-pulse">Finalizing...</span>';
+            btn.innerHTML = '<span class="flex items-center gap-2"><i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Finalizing...</span>';
             btn.disabled = true;
+            lucide.createIcons();
 
             try {
                 const displayName = document.getElementById('display-name-input').value || finalUsername;
                 const bio = document.getElementById('bio-input').value;
 
+                let finalAvatarUrl = '';
+                
+                // 1. Upload Profile Image if exists
+                if (profileImageUrl && profileImageUrl.startsWith('data:')) {
+                    const blob = await (await fetch(profileImageUrl)).blob();
+                    const fileName = `${userId}-${Date.now()}.jpg`;
+                    const { data: uploadData, error: uploadError } = await window.supabaseClient.storage
+                        .from('avatars')
+                        .upload(fileName, blob);
+                    
+                    if (!uploadError) {
+                        const { data: { publicUrl } } = window.supabaseClient.storage.from('avatars').getPublicUrl(fileName);
+                        finalAvatarUrl = publicUrl;
+                    }
+                }
+
+                // 2. Update monkey_bio
                 const { error } = await window.supabaseClient.from('monkey_bio').update({
                     username: finalUsername,
                     display_name: displayName,
@@ -865,19 +964,23 @@
                     goal: selectedGoal,
                     theme: selectedTheme,
                     social_links: socialLinks,
+                    avatar_url: finalAvatarUrl || undefined,
                     onboarding_completed: true
                 }).eq('id', userId);
 
                 if (error) throw error;
                 
-                // Add links to a 'links' table if you have one, or metadata
-                // We'll skip complex link saving for now and just set onboarding_completed
-                
-                window.location.href = '/dashboard.html';
+                console.log("Onboarding successful, redirecting...");
+                btn.innerHTML = 'Success! Redirecting...';
+                setTimeout(() => {
+                    window.location.href = './dashboard.html';
+                }, 800);
             } catch (err) {
+                console.error("Finish failed:", err);
                 alert('Save failed: ' + err.message);
-                btn.innerHTML = 'Continue';
+                btn.innerHTML = 'Go to my Dashboard <i data-lucide="arrow-right" class="w-5 h-5"></i>';
                 btn.disabled = false;
+                lucide.createIcons();
             }
         }
 
