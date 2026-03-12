@@ -152,17 +152,17 @@
                       .from('monkey_bio')
                       .insert([{ id: authData.user.id, username: username.toLowerCase(), display_name: username }]);
                     
-                    if (profileError) {
-                      if (profileError.message.includes('row-level security')) {
-                        console.error('RLS Error: You need to enable Insert permissions for the monkey_bio table in Supabase.');
-                        alert('Registration successful, but profile creation failed due to security settings. Please contact the administrator to enable RLS Insert permissions.');
-                      } else {
+                    if (profileError && !profileError.message.includes('row-level security')) {
                         throw profileError;
-                      }
                     }
                   }
-                  alert('Account created successfully! You can now log in.');
-                  window.location.href = 'login.html';
+                  
+                  // Force logout so they MUST login manually as requested
+                  await window.supabaseClient.auth.signOut();
+                  
+                  alert('Account created successfully! Please log in with your credentials.');
+                  // Pass email to login page to pre-fill it
+                  window.location.href = 'login.html?email=' + encodeURIComponent(email);
                 }
               } catch (err) {
                 alert(err.message || 'An error occurred');

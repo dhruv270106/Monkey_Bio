@@ -44,6 +44,15 @@
         }
       });
 
+      // Pre-fill email from URL if present
+      document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const emailParam = urlParams.get('email');
+        if (emailParam) {
+          const emailInput = document.getElementById('email');
+          if (emailInput) emailInput.value = emailParam;
+        }
+      });
     </script>
     <style>
        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }

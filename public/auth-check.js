@@ -106,7 +106,6 @@
         const client = window.supabaseClient || window.supabase;
         if (client && client.auth) {
             client.auth.onAuthStateChange((event, session) => {
-                console.log('Auth event:', event);
                 if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
                     updateAuthUI();
                 }
