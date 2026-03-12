@@ -50,46 +50,45 @@
         }
 
         // Populate Sidebar
-        const sidebarUserName = document.querySelector('aside .text-sm.font-bold');
+        const sidebarUserName = document.getElementById('sidebar-username-text');
         if (sidebarUserName) {
             sidebarUserName.innerHTML = `${username} <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i>`;
         }
 
         // Populate Main Profile Header
-        const mainDisplayName = document.querySelector('h2.text-2xl.font-bold');
+        const mainDisplayName = document.getElementById('main-display-name');
         if (mainDisplayName) {
             mainDisplayName.innerHTML = `${displayName} <i data-lucide="check-circle" class="w-4 h-4 text-blue-500 fill-blue-500/10"></i>`;
         }
 
         // Populate Social Badges in Header
-        const socialBadgesContainer = document.querySelector('.flex.items-center.gap-4.mt-2');
-        if (socialBadgesContainer && profile && profile.social_links) {
+        const socialBadgesContainer = document.getElementById('social-badges-container');
+        if (socialBadgesContainer) {
             socialBadgesContainer.innerHTML = ''; // Clear hardcoded
-            Object.entries(profile.social_links).forEach(([platform, handle]) => {
-                const badge = document.createElement('div');
-                badge.className = 'flex items-center gap-1.5 text-xs text-secondary font-bold px-2 py-1 bg-gray-100 rounded-md';
-                badge.innerHTML = `<i data-lucide="${platform}" class="w-3.5 h-3.5 text-purple-500"></i> @${handle}`;
-                socialBadgesContainer.appendChild(badge);
-            });
-            const minusBtn = document.createElement('div');
-            minusBtn.className = 'w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 cursor-pointer hover:bg-gray-200 transition-all';
-            minusBtn.innerHTML = '<i data-lucide="minus" class="w-4 h-4"></i>';
-            socialBadgesContainer.appendChild(minusBtn);
+            if (profile && profile.social_links && Object.keys(profile.social_links).length > 0) {
+                Object.entries(profile.social_links).forEach(([platform, handle]) => {
+                    const badge = document.createElement('div');
+                    badge.className = 'flex items-center gap-1.5 text-xs text-secondary font-bold px-2 py-1 bg-gray-100 rounded-md animate-fade-in';
+                    badge.innerHTML = `<i data-lucide="${platform}" class="w-3.5 h-3.5 text-purple-500"></i> @${handle}`;
+                    socialBadgesContainer.appendChild(badge);
+                });
+            } else {
+                socialBadgesContainer.innerHTML = '<p class="text-xs text-gray-400 italic">No social platforms linked yet.</p>';
+            }
         }
 
         // Update Linktr.ee URL in Preview Top
-        const linktreeUrlText = document.querySelector('.bg-gray-100 .text-\\[10px\\].font-bold');
+        const linktreeUrlText = document.getElementById('preview-url-text');
         if (linktreeUrlText) {
             linktreeUrlText.textContent = `linktr.ee/${username}`;
         }
 
-        // Update Mockup Preview (Center Section)
-        const mockupName = document.querySelector('h3.text-white.font-bold.text-sm');
+        // Update Mockup Preview
+        const mockupName = document.getElementById('mockup-preview-username');
         if (mockupName) mockupName.textContent = username;
 
-        const mockupContainer = document.querySelector('.w-full.max-w-\\[300px\\].aspect-\\[9\\/18\\.5\\]');
+        const mockupContainer = document.getElementById('mockup-iframe-container');
         if (mockupContainer && profile && profile.theme) {
-            // Apply simple theme background colors
             const themeMap = {
                 'black': 'bg-black',
                 'grid': 'bg-[#451a03]',
@@ -99,88 +98,100 @@
             };
             // Clear existing bg classes
             Object.values(themeMap).forEach(cls => mockupContainer.classList.remove(cls));
-            mockupContainer.classList.add(themeMap[profile.theme] || 'bg-black');
+            mockupContainer.classList.add(themeMap[profile.theme] || 'bg-white');
             
-            // Adjust text color for light themes
+            // Text color logic
             if (profile.theme === 'clean' || profile.theme === 'soft') {
-                if (mockupName) {
-                    mockupName.classList.remove('text-white');
-                    mockupName.classList.add('text-secondary');
-                }
+                mockupName?.classList.replace('text-white', 'text-secondary');
             } else {
-                if (mockupName) {
-                    mockupName.classList.remove('text-secondary');
-                    mockupName.classList.add('text-white');
-                }
+                mockupName?.classList.replace('text-secondary', 'text-white');
             }
         }
 
-        const mockupLinksContainer = document.querySelector('.mt-auto.mb-4.w-full.flex.flex-col.items-center.gap-3')?.previousElementSibling;
-        if (mockupLinksContainer && profile && profile.social_links) {
-            mockupLinksContainer.innerHTML = ''; // Clear hardcoded
-            Object.entries(profile.social_links).forEach(([platform, handle]) => {
-                const btn = document.createElement('div');
-                btn.className = 'w-full py-4 bg-[#fde68a] text-secondary text-[11px] font-bold rounded-xl flex items-center justify-center relative overflow-hidden group cursor-pointer shadow-sm';
-                btn.innerText = platform.charAt(0).toUpperCase() + platform.slice(1);
-                mockupLinksContainer.appendChild(btn);
-            });
+        const mockupLinksContainer = document.getElementById('mockup-preview-links');
+        if (mockupLinksContainer) {
+            mockupLinksContainer.innerHTML = ''; 
+            if (profile && profile.social_links && Object.keys(profile.social_links).length > 0) {
+                Object.entries(profile.social_links).forEach(([platform, handle]) => {
+                    const btn = document.createElement('div');
+                    btn.className = 'w-full py-3 bg-white/10 text-white text-[10px] font-bold rounded-xl flex items-center justify-center border border-white/20 shadow-sm';
+                    if (profile.theme === 'clean' || profile.theme === 'soft') {
+                        btn.className = 'w-full py-3 bg-secondary/5 text-secondary text-[10px] font-bold rounded-xl flex items-center justify-center border border-secondary/10 shadow-sm';
+                    }
+                    btn.innerText = platform.charAt(0).toUpperCase() + platform.slice(1);
+                    mockupLinksContainer.appendChild(btn);
+                });
+            } else {
+                // Placeholder links for empty state
+                mockupLinksContainer.innerHTML = `
+                    <div class="w-full py-3 bg-gray-100/50 rounded-xl"></div>
+                    <div class="w-full py-3 bg-gray-100/50 rounded-xl"></div>
+                `;
+            }
         }
 
         // Populate Link Cards in Main Area
         const linksContainerBase = document.querySelector('.max-w-xl.mx-auto.space-y-8');
-        const addBtn = document.querySelector('.max-w-xl.mx-auto.space-y-8 button.bg-purple-600');
-        const footerInfo = document.querySelector('.max-w-xl.mx-auto.space-y-8 .pt-10.border-t');
+        const footerInfo = linksContainerBase?.querySelector('.pt-10.border-t');
         
-        if (linksContainerBase && profile && profile.social_links) {
-            // Remove existing hardcoded link cards
-            const existingCards = linksContainerBase.querySelectorAll('.relative.group:not(.mb-12)');
-            existingCards.forEach(card => {
-                if (!card.querySelector('img')) card.remove(); // Keep profile header
-            });
+        if (linksContainerBase && profile) {
+            // Clear existing link cards (keep profile and buttons)
+            const cardsToRemove = linksContainerBase.querySelectorAll('.relative.group:not(:first-child)');
+            cardsToRemove.forEach(card => card.remove());
 
-            // Insert new cards after the "Add Collection" row
-            const insertAfter = footerInfo;
-            
-            Object.entries(profile.social_links).forEach(([platform, handle]) => {
-                const card = document.createElement('div');
-                card.className = 'relative group';
-                card.innerHTML = `
-                    <div class="absolute inset-y-0 -left-6 flex items-center text-gray-200 group-hover:text-gray-400 transition-colors cursor-grab">
-                        <i data-lucide="grip-vertical" class="w-6 h-6"></i>
-                    </div>
-                    <div class="bg-white border-2 border-gray-100 rounded-[32px] p-6 shadow-sm hover:shadow-md transition-all">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <p class="font-bold flex items-center gap-2">${platform.charAt(0).toUpperCase() + platform.slice(1)} <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-300"></i></p>
-                                <p class="text-sm text-gray-500 mt-1 flex items-center gap-2">@${handle} <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-300"></i></p>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <button class="text-gray-300 hover:text-secondary"><i data-lucide="share-2" class="w-5 h-5"></i></button>
-                                <div class="w-12 h-6 bg-green-500 rounded-full relative p-1 cursor-pointer">
-                                    <div class="w-4 h-4 bg-white rounded-full absolute right-1"></div>
+            if (profile.social_links && Object.keys(profile.social_links).length > 0) {
+                Object.entries(profile.social_links).forEach(([platform, handle]) => {
+                    const card = document.createElement('div');
+                    card.className = 'relative group animate-fade-in';
+                    card.innerHTML = `
+                        <div class="absolute inset-y-0 -left-6 flex items-center text-gray-200 group-hover:text-gray-400 transition-colors cursor-grab">
+                            <i data-lucide="grip-vertical" class="w-6 h-6"></i>
+                        </div>
+                        <div class="bg-white border-2 border-gray-100 rounded-[32px] p-6 shadow-sm hover:shadow-md transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <p class="font-bold flex items-center gap-2">${platform.charAt(0).toUpperCase() + platform.slice(1)} <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-300"></i></p>
+                                    <p class="text-sm text-gray-500 mt-1 flex items-center gap-2">@${handle} <i data-lucide="pencil" class="w-3.5 h-3.5 text-gray-300"></i></p>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <button class="text-gray-300 hover:text-secondary"><i data-lucide="share-2" class="w-5 h-5"></i></button>
+                                    <div class="w-12 h-6 bg-green-500 rounded-full relative p-1 cursor-pointer">
+                                        <div class="w-4 h-4 bg-white rounded-full absolute right-1"></div>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="flex items-center gap-6 mt-6 pt-4 border-t border-gray-50">
+                                <button class="flex items-center gap-1.5 text-xs font-bold text-purple-600"><i data-lucide="${platform}" class="w-4 h-4"></i></button>
+                                <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="image" class="w-4 h-4"></i></button>
+                                <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="star" class="w-4 h-4"></i></button>
+                                <span class="flex items-center gap-1.5 text-xs font-bold text-gray-400 ml-auto mr-4"><i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> 0 clicks</span>
+                                <button class="text-gray-300 hover:text-red-500 transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-6 mt-6 pt-4 border-t border-gray-50">
-                            <button class="flex items-center gap-1.5 text-xs font-bold text-purple-600"><i data-lucide="${platform}" class="w-4 h-4"></i></button>
-                            <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="image" class="w-4 h-4"></i></button>
-                            <button class="text-gray-400 hover:text-secondary transition-all"><i data-lucide="star" class="w-4 h-4"></i></button>
-                            <span class="flex items-center gap-1.5 text-xs font-bold text-gray-400 ml-auto mr-4"><i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> 0 clicks</span>
-                            <button class="text-gray-300 hover:text-red-500 transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    </div>
-                `;
-                linksContainerBase.insertBefore(card, footerInfo.nextSibling);
-            });
+                    `;
+                    linksContainerBase.appendChild(card);
+                });
+            }
         }
 
         // Update profile images everywhere
-        const profileImages = document.querySelectorAll('img[src*="ui-avatars.com"], #dashboard-avatar, #main-avatar-img');
+        const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url;
         const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=6cf383&color=0F172A&bold=true`;
         
-        profileImages.forEach(img => {
-            const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url;
-            img.src = avatarUrl || defaultAvatar;
+        const avatarElements = [
+            document.getElementById('sidebar-avatar'),
+            document.getElementById('main-avatar-img'),
+            document.getElementById('mockup-preview-avatar'),
+            document.getElementById('dashboard-avatar')
+        ];
+        
+        avatarElements.forEach(el => {
+            if (el) {
+                el.src = avatarUrl || defaultAvatar;
+                el.classList.remove('hidden');
+                // Hide icon if image is present (for sidebar)
+                if (el.id === 'sidebar-avatar') el.nextElementSibling?.classList.add('hidden');
+            }
         });
 
         // Re-initialize icons for dynamic elements
