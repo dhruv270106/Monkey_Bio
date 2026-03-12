@@ -386,13 +386,31 @@ window.saveCroppedImage = async function() {
 window.handleLogout = async function() {
     console.log('Logging out...');
     const client = window.supabaseClient || window.supabase;
-    if (client && client.auth) {
-        try {
+    const supabaseRef = 'esngrodyozljdjkfcocp';
+    const storageKey = `sb-${supabaseRef}-auth-token`;
+
+    try {
+        if (client && client.auth && typeof client.auth.signOut === 'function') {
             await client.auth.signOut();
-            console.log('Logged out successfully');
-        } catch (err) {
-            console.error('Logout error:', err);
+            console.log('Logged out successfully via client');
+        } else {
+            console.warn('Supabase client or auth.signOut not found, clearing storage manually');
         }
+    } catch (err) {
+        console.error('Logout error during signOut:', err);
+    } finally {
+        // Force manual cleanup as safety measure
+        localStorage.removeItem(storageKey);
+        // Clear anything else that might look like auth
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.includes('supabase') || key.includes('-auth-token'))) {
+                localStorage.removeItem(key);
+                i--; // adjust index after removal
+            }
+        }
+        
+        console.log('Final redirection to home');
+        window.location.href = '/index.html';
     }
-    window.location.href = 'index.html';
 };

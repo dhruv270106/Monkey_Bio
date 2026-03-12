@@ -43,6 +43,7 @@
         if (!authContainer) return;
 
         // Save original buttons if we haven't yet
+        // We look for any of the original button classes or just the lack of avatar
         if (!originalButtonsHTML && !authContainer.querySelector('.user-avatar-container')) {
             originalButtonsHTML = authContainer.innerHTML;
         }
@@ -59,14 +60,30 @@
         }
 
         // 2. Verified path: check Supabase client
-        const client = window.supabaseClient || window.supabase || (window.supabasejs && window.supabasejs.createClient ? window.supabasejs : null);
+        let client = window.supabaseClient;
+        
+        // If supabaseClient is not set, try to find it or create it if the library is available
         if (!client) {
+            const lib = window.supabase || window.supabasejs;
+            if (lib && typeof lib.createClient === 'function') {
+                // Try to use existing global config if possible, else we wait
+                if (window.supabaseUrl && window.supabaseKey) {
+                    window.supabaseClient = lib.createClient(window.supabaseUrl, window.supabaseKey);
+                    client = window.supabaseClient;
+                }
+            }
+        }
+
+        if (!client || !client.auth) {
+            // If we don't have a client yet, try again in a bit
             setTimeout(updateAuthUI, 200);
             return;
         }
 
         try {
-            const { data: { session } } = await client.auth.getSession();
+            const { data: { session }, error } = await client.auth.getSession();
+            if (error) throw error;
+
             if (session && session.user) {
                 renderLoggedInUI(authContainer, session.user);
             } else {
@@ -77,6 +94,11 @@
                 authContainer.style.opacity = '1';
             }
         } catch (err) {
+            console.error('Auth check error:', err);
+            // On error, revert to original buttons as safety
+            if (originalButtonsHTML) {
+                authContainer.innerHTML = originalButtonsHTML;
+            }
             authContainer.style.opacity = '1';
         }
     }
