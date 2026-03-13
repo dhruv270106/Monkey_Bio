@@ -1,5 +1,26 @@
-
 (function() {
+    window.openAddLinkModal = (tab = 'all') => {
+        const modal = document.getElementById('add-link-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                document.getElementById('add-link-modal-content').classList.remove('scale-95');
+            }, 10);
+            document.getElementById('add-link-search').value = '';
+            if (window.selectAddTab) window.selectAddTab(tab);
+        }
+    };
+
+    window.closeAddLinkModal = () => {
+        const modal = document.getElementById('add-link-modal');
+        if (modal) {
+            modal.classList.add('opacity-0');
+            document.getElementById('add-link-modal-content').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+    };
+
     async function checkDashboardAuth() {
         const client = window.supabaseClient || window.supabase || (window.supabasejs && window.supabasejs.createClient ? window.supabasejs : null);
         
@@ -116,20 +137,20 @@
                     </div>`;
             } else {
                 userLinks.forEach((link, index) => {
-                    const iconDisplay = link.iconClass ? `<i class="${link.iconClass} text-xl text-gray-400 mt-1 mr-3"></i>` : `<i data-lucide="link" class="w-5 h-5 text-gray-400 mt-1 mr-3"></i>`;
+                    const iconDisplay = link.iconClass ? `<i class="${link.iconClass} text-xl text-gray-400 mt-1 mr-3"></i>` : ``;
                     
                     const card = document.createElement('div');
-                    card.className = 'relative group animate-fade-in';
+                    card.className = 'relative group animate-fade-in mb-6';
                     card.innerHTML = `
                         <div class="absolute inset-y-0 -left-6 flex items-center text-gray-200 group-hover:text-gray-400 transition-colors cursor-grab">
                             <i data-lucide="grip-vertical" class="w-6 h-6"></i>
                         </div>
-                        <div class="bg-white border-2 ${link.active ? 'border-gray-100' : 'border-gray-50 opacity-60'} rounded-[32px] p-6 shadow-sm hover:shadow-md transition-all">
+                        <div class="bg-white border-2 border-gray-100 rounded-[32px] p-6 shadow-sm hover:shadow-md transition-all">
                             <div class="flex justify-between items-start mb-2">
                                 ${iconDisplay}
-                                <div class="flex-1 mr-4">
-                                    <input type="text" value="${link.title || ''}" class="font-bold text-secondary bg-transparent border-none p-0 focus:ring-0 w-full mb-1" placeholder="Title" oninput="updateLink(${index}, 'title', this.value)">
-                                    <input type="text" value="${link.url || ''}" class="text-sm text-gray-500 bg-transparent border-none p-0 focus:ring-0 w-full" placeholder="URL" oninput="updateLink(${index}, 'url', this.value)">
+                                <div class="flex-1 mr-4 space-y-2">
+                                    <input type="text" value="${link.title || ''}" class="font-bold text-[15px] text-secondary bg-transparent border-none p-0 focus:ring-0 w-full placeholder-gray-400 outline-none" placeholder="Title" oninput="updateLink(${index}, 'title', this.value)">
+                                    <input type="text" value="${link.url || ''}" class="text-sm text-gray-500 bg-transparent border-none p-0 focus:ring-0 w-full placeholder-gray-400 outline-none" placeholder="URL" oninput="updateLink(${index}, 'url', this.value)">
                                 </div>
                                 <div class="flex items-center gap-4">
                                     <button class="text-gray-300 hover:text-secondary"><i data-lucide="image" class="w-5 h-5"></i></button>
@@ -234,29 +255,7 @@
 
         let activeTab = 'all';
 
-        window.openAddLinkModal = (tab = 'all') => {
-            const modal = document.getElementById('add-link-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modal.classList.remove('opacity-0');
-                    document.getElementById('add-link-modal-content').classList.remove('scale-95');
-                }, 10);
-                document.getElementById('add-link-search').value = '';
-                selectAddTab(tab);
-            }
-        };
-
-        window.openSocialModal = () => openAddLinkModal('social');
-
-        window.closeAddLinkModal = () => {
-            const modal = document.getElementById('add-link-modal');
-            modal.classList.add('opacity-0');
-            document.getElementById('add-link-modal-content').classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 200);
-        };
+        window.openSocialModal = () => window.openAddLinkModal('social');
 
         window.selectAddTab = (tab) => {
             activeTab = tab;
