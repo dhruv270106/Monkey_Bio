@@ -1,25 +1,12 @@
 'use client'
 
 import { THEMES } from '@/data/themes'
+import { PLATFORMS } from '@/data/platforms'
 
 interface PreviewProps {
   userProfile: any
   links: any[]
   socialLinks: any
-}
-
-const PLATFORMS: Record<string, any> = {
-  instagram: { name: 'Instagram', icon: 'fi-brands-instagram' },
-  tiktok: { name: 'TikTok', icon: 'fi-brands-tiktok' },
-  youtube: { name: 'YouTube', icon: 'fi-brands-youtube' },
-  spotify: { name: 'Spotify', icon: 'fi-brands-spotify' },
-  twitter: { name: 'Twitter', icon: 'fi-brands-twitter' },
-  x: { name: 'X', icon: 'fi-brands-twitter' },
-  threads: { name: 'Threads', icon: 'fi-brands-threads' },
-  facebook: { name: 'Facebook', icon: 'fi-brands-facebook' },
-  snapchat: { name: 'Snapchat', icon: 'fi-brands-snapchat' },
-  twitch: { name: 'Twitch', icon: 'fi-brands-twitch' },
-  reddit: { name: 'Reddit', icon: 'fi-brands-reddit' },
 }
 
 export default function Preview({ userProfile, links, socialLinks }: PreviewProps) {
@@ -88,7 +75,7 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
 
                  {/* Regular Links (From Dashboard Add Link - Box Style) */}
                  <div className="w-full space-y-3">
-                    {links && links.filter(l => l.active).map((link, i) => (
+                    {links && links.filter((l: any) => l.active).map((link: any, i: number) => (
                       <a 
                         key={i} 
                         href={link.url}
@@ -103,7 +90,7 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                         </div>
                       </a>
                     ))}
-                    {(!links || links.filter(l => l.active).length === 0) && (
+                    {(!links || links.filter((l: any) => l.active).length === 0) && (
                       <div className="space-y-3 w-full opacity-10">
                         <div className={`w-full h-12 rounded-xl ${selectedTheme.button}`}></div>
                         <div className={`w-full h-12 rounded-xl ${selectedTheme.button}`}></div>

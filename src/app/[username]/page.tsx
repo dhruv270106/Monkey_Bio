@@ -5,20 +5,7 @@ import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { motion } from 'framer-motion'
 import { THEMES } from '@/data/themes'
-
-const PLATFORMS: Record<string, any> = {
-  instagram: { name: 'Instagram', icon: 'fi-brands-instagram' },
-  tiktok: { name: 'TikTok', icon: 'fi-brands-tiktok' },
-  youtube: { name: 'YouTube', icon: 'fi-brands-youtube' },
-  spotify: { name: 'Spotify', icon: 'fi-brands-spotify' },
-  twitter: { name: 'Twitter', icon: 'fi-brands-twitter' },
-  x: { name: 'X', icon: 'fi-brands-twitter' },
-  threads: { name: 'Threads', icon: 'fi-brands-threads' },
-  facebook: { name: 'Facebook', icon: 'fi-brands-facebook' },
-  snapchat: { name: 'Snapchat', icon: 'fi-brands-snapchat' },
-  twitch: { name: 'Twitch', icon: 'fi-brands-twitch' },
-  reddit: { name: 'Reddit', icon: 'fi-brands-reddit' },
-}
+import { PLATFORMS } from '@/data/platforms'
 
 export default function PublicProfile() {
   const { username } = useParams()
