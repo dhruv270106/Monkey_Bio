@@ -7,12 +7,12 @@ import { motion } from 'framer-motion'
 import { THEMES } from '@/data/themes'
 
 const PLATFORMS: Record<string, any> = {
-  instagram: { icon: 'fi-brands-instagram' },
-  youtube: { icon: 'fi-brands-youtube' },
-  tiktok: { icon: 'fi-brands-tiktok' },
-  twitter: { icon: 'fi-brands-twitter' },
-  linkedin: { icon: 'fi-brands-linkedin' },
-  facebook: { icon: 'fi-brands-facebook' },
+  instagram: { name: 'Instagram', icon: 'fi-brands-instagram' },
+  youtube: { name: 'YouTube', icon: 'fi-brands-youtube' },
+  tiktok: { name: 'TikTok', icon: 'fi-brands-tiktok' },
+  twitter: { name: 'X (Twitter)', icon: 'fi-brands-twitter' },
+  linkedin: { name: 'LinkedIn', icon: 'fi-brands-linkedin' },
+  facebook: { name: 'Facebook', icon: 'fi-brands-facebook' },
 }
 
 export default function PublicProfile() {
@@ -83,28 +83,36 @@ export default function PublicProfile() {
           {profile.display_name} 
           <i className="fi fi-sr-badge-check text-primary text-xl"></i>
         </h1>
-        <p className="text-sm font-bold opacity-70 mb-8">@{profile.username}</p>
+        <p className="text-sm font-bold opacity-70 mb-12">@{profile.username}</p>
         
-        {/* Social Icons Section */}
-        <div className="flex flex-wrap justify-center gap-6 mb-12">
+        {/* Social Cards Section - Large Boxes per User Request */}
+        <div className="w-full space-y-10 mb-12">
            {profile.social_links && Object.entries(profile.social_links).map(([platform, url]: [string, any]) => (
              url && (
-               <a 
-                 key={platform}
-                 href={url} 
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 className="text-3xl transition-transform hover:scale-125 hover:opacity-80"
-               >
-                 <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'}`}></i>
-               </a>
+               <div key={platform} className="flex flex-col items-center gap-6">
+                  {/* Platform Icon on Top */}
+                  <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'} text-4xl`}></i>
+                  
+                  {/* The Box Link */}
+                  <a 
+                    href={url} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`block w-full py-6 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 text-center relative group text-lg tracking-wide ${selectedTheme.button}`}
+                  >
+                    <span>{PLATFORMS[platform]?.name || platform}</span>
+                    <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-30 group-hover:opacity-100 transition-opacity">
+                       <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
+                    </div>
+                  </a>
+               </div>
              )
            ))}
         </div>
 
-        {profile.bio && <p className="text-center px-8 mb-10 font-bold max-w-md leading-relaxed opacity-90">{profile.bio}</p>}
+        {profile.bio && <p className="text-center px-8 mb-12 font-bold max-w-md leading-relaxed opacity-90">{profile.bio}</p>}
         
-        {/* Links */}
+        {/* Regular Links Section */}
         <div className="w-full space-y-4">
           {profile.links?.filter((l: any) => l.active).map((link: any, i: number) => (
             <a 
