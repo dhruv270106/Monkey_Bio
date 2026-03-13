@@ -23,57 +23,61 @@
         const { useState, useEffect, useMemo } = React;
 
         const FEATURE_CARDS = [
-            { id: 'collection', title: 'Collection', icon: 'fi fi-rr-layer-plus' },
-            { id: 'link', title: 'Link', icon: 'fi fi-rr-link' },
-            { id: 'product', title: 'Product', icon: 'fi fi-rr-shopping-bag' },
-            { id: 'form', title: 'Form', icon: 'fi fi-rr-comment-alt' },
+            { id: 'collection', title: 'Collection', icon: 'fi fi-rr-layer-plus', color: 'bg-blue-50 text-blue-600' },
+            { id: 'link', title: 'Link', icon: 'fi fi-rr-link', color: 'bg-indigo-50 text-indigo-600' },
+            { id: 'product', title: 'Product', icon: 'fi fi-rr-shopping-bag', color: 'bg-emerald-50 text-emerald-600' },
+            { id: 'form', title: 'Form', icon: 'fi fi-rr-comment-alt', color: 'bg-amber-50 text-amber-600' },
         ];
 
         const CATEGORIES = [
-            'Suggested', 'Commerce', 'Social', 'Media', 'Contact', 'Events', 'Text', 'View all'
+            'Suggested', 'Commerce', 'Social', 'Contact', 'Grow audience', 'Media', 'Events', 'Text & Content', 'View all'
         ];
 
         const APPS = [
+            // Suggested/Popular
+            { id: 'instagram', cat: 'Suggested', title: 'Instagram', desc: 'Display your posts and reels', icon: 'fi fi-brands-instagram', urlPrefix: 'https://instagram.com/' },
+            { id: 'tiktok', cat: 'Suggested', title: 'TikTok', desc: 'Share your TikToks directly', icon: 'fi fi-brands-tiktok', urlPrefix: 'https://tiktok.com/@' },
+            { id: 'youtube', cat: 'Suggested', title: 'YouTube', desc: 'Show your visitors any YouTube video', icon: 'fi fi-brands-youtube', urlPrefix: 'https://youtube.com/@' },
+            { id: 'spotify', cat: 'Suggested', title: 'Spotify', desc: 'Keep your visitors in touch with the sounds', icon: 'fi fi-brands-spotify', urlPrefix: 'https://open.spotify.com/user/' },
+
+            // Commerce
+            { id: 'shopify', cat: 'Commerce', title: 'Shopify', desc: 'Add your Shopify store', icon: 'fi fi-brands-shopify', urlPrefix: 'https://' },
+            { id: 'spring', cat: 'Commerce', title: 'Spring', desc: 'Sell your custom merch', icon: 'fi fi-rr-shopping-cart', urlPrefix: 'https://' },
+            { id: 'ebay', cat: 'Commerce', title: 'eBay', desc: 'Showcase your eBay listings', icon: 'fi fi-brands-ebay', urlPrefix: 'https://' },
+            { id: 'amazon', cat: 'Commerce', title: 'Amazon', desc: 'Link to your Amazon Influencer page', icon: 'fi fi-brands-amazon', urlPrefix: 'https://' },
+            { id: 'support', cat: 'Commerce', title: 'Support Me', desc: 'Collect tips and donations', icon: 'fi fi-rr-heart', urlPrefix: 'https://' },
+
             // Social
-            { id: 'instagram', cat: 'Social', title: 'Instagram', desc: 'Display your posts and reels', icon: 'fi fi-brands-instagram', urlPrefix: 'https://instagram.com/' },
-            { id: 'tiktok', cat: 'Social', title: 'TikTok', desc: 'Share your TikToks directly', icon: 'fi fi-brands-tiktok', urlPrefix: 'https://tiktok.com/@' },
-            { id: 'youtube', cat: 'Social', title: 'YouTube', desc: 'Show your visitors any YouTube video', icon: 'fi fi-brands-youtube', urlPrefix: 'https://youtube.com/@' },
-            { id: 'spotify', cat: 'Social', title: 'Spotify', desc: 'Keep your visitors in touch with the sounds', icon: 'fi fi-brands-spotify', urlPrefix: 'https://open.spotify.com/user/' },
+            { id: 'discord', cat: 'Social', title: 'Discord', desc: 'Build your community on Discord', icon: 'fi fi-brands-discord', urlPrefix: 'https://discord.gg/' },
             { id: 'x', cat: 'Social', title: 'X', desc: 'Use X app to select your own posts', icon: 'fi fi-brands-twitter-alt', urlPrefix: 'https://x.com/' },
             { id: 'threads', cat: 'Social', title: 'Threads', desc: 'Share your latest Threads', icon: 'fi fi-brands-threads', urlPrefix: 'https://threads.net/@' },
             { id: 'facebook', cat: 'Social', title: 'Facebook', desc: 'Show your visitors your Facebook page', icon: 'fi fi-brands-facebook', urlPrefix: 'https://facebook.com/' },
-            { id: 'snapchat', cat: 'Social', title: 'Snapchat', desc: 'Add your Snapchat Public Profile', icon: 'fi fi-brands-snapchat', urlPrefix: 'https://snapchat.com/add/' },
-            { id: 'pinterest', cat: 'Social', title: 'Pinterest', desc: 'Share what you love on Pinterest', icon: 'fi fi-brands-pinterest', urlPrefix: 'https://pinterest.com/' },
-            { id: 'twitch', cat: 'Social', title: 'Twitch', desc: 'Show your live Twitch stream', icon: 'fi fi-brands-twitch', urlPrefix: 'https://twitch.tv/' },
-            { id: 'reddit', cat: 'Social', title: 'Reddit', desc: 'Add a preview of your Reddit profile', icon: 'fi fi-brands-reddit', urlPrefix: 'https://reddit.com/user/' },
-
-            // Media
-            { id: 'video', cat: 'Media', title: 'Video', desc: 'Add videos from anywhere', icon: 'fi fi-rr-video-camera-alt', urlPrefix: 'https://' },
-            { id: 'youtube_video', cat: 'Media', title: 'YouTube', desc: 'Share a YouTube video', icon: 'fi fi-brands-youtube', urlPrefix: 'https://youtube.com/watch?v=' },
-            { id: 'tiktok_video', cat: 'Media', title: 'TikTok Video', desc: 'Highlight one of your TikToks', icon: 'fi fi-brands-tiktok', urlPrefix: 'https://tiktok.com/@user/video/' },
-            { id: 'vimeo', cat: 'Media', title: 'Vimeo', desc: 'Share Vimeo videos', icon: 'fi fi-brands-vimeo', urlPrefix: 'https://vimeo.com/' },
-            { id: 'pdf', cat: 'Media', title: 'PDF Display', desc: 'Display downloadable PDF files', icon: 'fi fi-rr-document', urlPrefix: 'https://' },
 
             // Contact
-            { id: 'contact_form_app', cat: 'Contact', title: 'Form', desc: 'Add a Contact Form', icon: 'fi fi-rr-form', urlPrefix: 'https://' },
             { id: 'contact_form', cat: 'Contact', title: 'Contact Form', desc: 'Collect info with a form', icon: 'fi fi-rr-address-book', urlPrefix: 'https://' },
             { id: 'email_signup', cat: 'Contact', title: 'Email Signup', desc: 'Collect emails', icon: 'fi fi-rr-envelope-open-text', urlPrefix: 'https://' },
             { id: 'sms_signup', cat: 'Contact', title: 'SMS Signup', desc: 'Collect phone numbers', icon: 'fi fi-rr-comment-sms', urlPrefix: 'https://' },
-            { id: 'typeform', cat: 'Contact', title: 'Typeform', desc: 'Create forms and surveys', icon: 'fi fi-rr-apps', urlPrefix: 'https://typeform.com/' },
+
+            // Grow audience
+            { id: 'newsletter', cat: 'Grow audience', title: 'Newsletter', desc: 'Get fans to sign up to your newsletter', icon: 'fi fi-rr-envelope', urlPrefix: 'https://' },
+            { id: 'community', cat: 'Grow audience', title: 'Community', desc: 'Text your audience directly', icon: 'fi fi-rr-users', urlPrefix: 'https://' },
+
+            // Media
+            { id: 'video', cat: 'Media', title: 'Video', desc: 'Add videos from anywhere', icon: 'fi fi-rr-video-camera-alt', urlPrefix: 'https://' },
+            { id: 'music', cat: 'Media', title: 'Music', desc: 'Share your music across platforms', icon: 'fi fi-rr-music', urlPrefix: 'https://' },
+            { id: 'podcasts', cat: 'Media', title: 'Podcasts', desc: 'Share your latest episodes', icon: 'fi fi-rr-microphone', urlPrefix: 'https://' },
 
             // Events
             { id: 'tour', cat: 'Events', title: 'Tour & Events', desc: 'Promote your upcoming shows', icon: 'fi fi-rr-map-marker', urlPrefix: 'https://' },
-            { id: 'seated', cat: 'Events', title: 'Seated', desc: 'Connect visitors to your events', icon: 'fi fi-rr-ticket', urlPrefix: 'https://seated.com/' },
-            { id: 'bandsintown', cat: 'Events', title: 'Bands in Town', desc: 'Connect visitors to your shows', icon: 'fi fi-rr-music', urlPrefix: 'https://bandsintown.com/' },
 
-            // Text
-            { id: 'text', cat: 'Text', title: 'Text', desc: 'Display custom text on your Linktree', icon: 'fi fi-rr-text', urlPrefix: '' },
-            { id: 'header', cat: 'Text', title: 'Header', desc: 'Add a header to organize your links', icon: 'fi fi-rr-heading', urlPrefix: '' }
+            // Text & Content
+            { id: 'text', cat: 'Text & Content', title: 'Text', desc: 'Display custom text on your Monkey', icon: 'fi fi-rr-text', urlPrefix: '' },
+            { id: 'header', cat: 'Text & Content', title: 'Header', desc: 'Add a header to organize your links', icon: 'fi fi-rr-heading', urlPrefix: '' }
         ];
 
         function ModalApp() {
             const [search, setSearch] = useState('');
-            const [activeCategory, setActiveCategory] = useState('View all');
+            const [activeCategory, setActiveCategory] = useState('Suggested');
             const [selectedApp, setSelectedApp] = useState(null);
             const [handleInput, setHandleInput] = useState('');
 
@@ -88,7 +92,6 @@
                 return () => window.removeEventListener('message', handleMessage);
             }, []);
 
-            // Send close message to parent window
             const closeModal = () => {
                 window.parent.postMessage({ type: 'CLOSE_MODAL' }, '*');
             };
@@ -103,7 +106,6 @@
                     finalUrl = selectedApp.urlPrefix + finalUrl;
                 }
 
-                // Send the link data to the parent dashboard
                 window.parent.postMessage({
                     type: 'ADD_LINK',
                     payload: {
@@ -121,7 +123,6 @@
                     return list.filter(app => app.title.toLowerCase().includes(lSearch) || app.desc.toLowerCase().includes(lSearch));
                 }
                 if (activeCategory === 'View all') return list;
-                if (activeCategory === 'Suggested') return list.filter(app => ['instagram', 'tiktok', 'youtube', 'spotify'].includes(app.id));
                 return list.filter(app => app.cat === activeCategory);
             }, [search, activeCategory]);
 
@@ -129,7 +130,7 @@
                 <div className="w-full h-full flex flex-col bg-white overflow-hidden relative">
                     
                     {/* Header */}
-                    <div className="px-6 py-4 flex justify-between items-center bg-white shrink-0">
+                    <div className="px-6 py-4 flex justify-between items-center bg-white shrink-0 border-b border-gray-100">
                         <h3 className="font-bold text-xl text-slate-900">Add Link or App</h3>
                         <button onClick={closeModal} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
                             <i className="fi fi-rr-cross-small text-xl leading-none"></i>
@@ -137,7 +138,7 @@
                     </div>
 
                     {/* Search Zone */}
-                    <div className="px-6 pb-4 shrink-0 border-b border-gray-100">
+                    <div className="px-6 py-4 shrink-0 bg-gray-50/50">
                         <div className="relative">
                             <i className="fi fi-rr-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 mt-0.5"></i>
                             <input 
@@ -145,17 +146,18 @@
                                 placeholder="Paste or search a link" 
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full pl-11 pr-4 py-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-2xl outline-none focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-500/10 transition-all font-medium text-[15px] text-slate-900 placeholder-gray-500"
+                                className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-2xl outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-[15px] text-slate-900 placeholder-gray-400 shadow-sm"
                             />
                         </div>
 
-                        {/* Top Feature Cards (Always visible if no search) */}
                         {!search && (
                             <div className="grid grid-cols-4 gap-4 mt-6">
                                 {FEATURE_CARDS.map(card => (
-                                    <button key={card.id} className="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[24px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:-translate-y-1 hover:shadow-md">
-                                        <i className={`${card.icon} text-2xl text-purple-600`}></i>
-                                        <span className="text-xs font-bold text-slate-900">{card.title}</span>
+                                    <button key={card.id} className="group flex flex-col items-center gap-2">
+                                        <div className={`aspect-square w-full ${card.color} rounded-[28px] border border-transparent group-hover:border-current flex items-center justify-center transition-all group-hover:-translate-y-1 group-hover:shadow-lg`}>
+                                            <i className={`${card.icon} text-2xl`}></i>
+                                        </div>
+                                        <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">{card.title}</span>
                                     </button>
                                 ))}
                             </div>
@@ -166,18 +168,18 @@
                     <div className="flex flex-1 overflow-hidden bg-white">
                         
                         {/* Sidebar Categories */}
-                        <div className="w-[220px] border-r border-gray-100 overflow-y-auto no-scrollbar shrink-0 py-2 hidden sm:block">
-                            <div className="space-y-0.5 px-3">
+                        <div className="w-[240px] border-r border-gray-100 overflow-y-auto no-scrollbar shrink-0 py-4 hidden sm:block">
+                            <div className="space-y-1 px-3">
                                 {CATEGORIES.map(cat => {
                                     const isActive = activeCategory === cat;
                                     return (
                                         <button 
                                             key={cat}
                                             onClick={() => setActiveCategory(cat)}
-                                            className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-xl transition-all font-semibold text-[14px] ${
+                                            className={`w-full flex items-center gap-3 px-4 py-3.5 text-left rounded-xl transition-all font-bold text-[14px] ${
                                                 isActive 
-                                                ? 'bg-purple-50 text-purple-700' 
-                                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                                ? 'bg-blue-50 text-blue-600' 
+                                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                                             }`}
                                         >
                                             {cat}
@@ -189,29 +191,36 @@
 
                         {/* List Area */}
                         <div className="flex-1 overflow-y-auto p-6 bg-white pb-20">
-                            {search && <div className="text-[13px] font-bold text-gray-500 mb-4 uppercase tracking-widest">Search results</div>}
+                            <div className="mb-6 flex items-center justify-between">
+                                <h4 className="font-bold text-lg text-slate-900">{search ? 'Search results' : activeCategory}</h4>
+                                {!search && <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{filteredApps.length} Apps</span>}
+                            </div>
                             
-                            <div className="flex flex-col gap-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {filteredApps.map(app => (
                                     <button 
                                         key={app.id}
                                         onClick={() => { setSelectedApp(app); setHandleInput(''); }}
-                                        className="w-full text-left flex items-center gap-4 p-4 hover:bg-gray-50 rounded-2xl transition-all group border border-transparent hover:border-gray-200 shadow-sm hover:shadow-md"
+                                        className="w-full text-left flex items-center gap-4 p-4 bg-white border border-gray-100 rounded-2xl transition-all group hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/5 relative overflow-hidden"
                                     >
-                                        <div className="w-12 h-12 rounded-[16px] flex items-center justify-center shrink-0 border border-gray-100 bg-white group-hover:scale-105 transition-transform text-2xl text-slate-800 shadow-sm">
+                                        <div className="w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 border border-gray-100 bg-gray-50 group-hover:bg-white group-hover:scale-110 transition-all text-2xl text-slate-800">
                                             <i className={app.icon}></i>
                                         </div>
-                                        <div className="flex-1">
-                                            <h4 className="font-bold text-[15px] text-slate-900">{app.title}</h4>
-                                            <p className="text-[13px] text-gray-500 font-medium truncate pr-4">{app.desc}</p>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-bold text-[15px] text-slate-900 group-hover:text-blue-600 transition-colors">{app.title}</h4>
+                                            <p className="text-[12px] text-gray-500 font-medium truncate">{app.desc}</p>
                                         </div>
-                                        <i className="fi fi-rr-angle-small-right text-gray-300 text-xl transition-transform group-hover:translate-x-1 group-hover:text-purple-500"></i>
+                                        <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-50 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                            <i className="fi fi-rr-plus-small text-xl leading-none"></i>
+                                        </div>
                                     </button>
                                 ))}
                                 {filteredApps.length === 0 && (
-                                    <div className="text-center py-10 text-gray-400 font-medium space-y-3">
-                                        <i className="fi fi-rr-search text-3xl"></i>
-                                        <p>No apps found.</p>
+                                    <div className="col-span-full text-center py-20 text-gray-400 font-medium space-y-4">
+                                        <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
+                                            <i className="fi fi-rr-search text-3xl"></i>
+                                        </div>
+                                        <p>No apps found in this category.</p>
                                     </div>
                                 )}
                             </div>
@@ -220,36 +229,47 @@
 
                     {/* Secondary Popup for Handle Entry */}
                     {selectedApp && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-white/60 backdrop-blur-md">
-                            <div className="bg-white rounded-[24px] w-full max-w-[480px] shadow-[0_30px_60px_rgba(0,0,0,0.15)] p-8 border border-gray-100 animate-fade-in relative">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="font-bold text-2xl text-slate-900 flex items-center gap-3">
-                                        <i className={`${selectedApp.icon} text-purple-600`}></i> Add {selectedApp.title}
-                                    </h3>
+                        <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+                            <div className="bg-white rounded-[32px] w-full max-w-[480px] shadow-2xl p-8 border border-white/20 relative">
+                                <div className="flex justify-between items-center mb-8">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-3xl">
+                                            <i className={selectedApp.icon}></i>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-2xl text-slate-900">Add {selectedApp.title}</h3>
+                                            <p className="text-sm font-medium text-gray-500">{selectedApp.desc}</p>
+                                        </div>
+                                    </div>
                                     <button onClick={() => setSelectedApp(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
                                         <i className="fi fi-rr-cross-small text-xl leading-none"></i>
                                     </button>
                                 </div>
                                 
-                                <div className="mb-6 space-y-2">
-                                    <label className="text-sm font-bold text-gray-700">Enter {selectedApp.title} Details</label>
-                                    <input 
-                                        type="text" 
-                                        autoFocus
-                                        placeholder={`@username or URL`}
-                                        value={handleInput}
-                                        onChange={(e) => setHandleInput(e.target.value)}
-                                        className="w-full px-4 py-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-[16px] outline-none focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-500/10 transition-all font-medium text-[15px] text-slate-900 placeholder-gray-500" 
-                                    />
-                                    {selectedApp.urlPrefix && (
-                                        <p className="text-xs text-gray-400 font-medium px-2 mt-2 break-all">
-                                            Saves as: {selectedApp.urlPrefix}<span className="text-purple-500">{handleInput || '...'}</span>
-                                        </p>
-                                    )}
+                                <div className="mb-8 space-y-3">
+                                    <label className="text-sm font-bold text-gray-700 ml-1 flex items-center gap-2">
+                                        Enter your {selectedApp.title} link <i className="fi fi-rr-info text-[10px] text-gray-300"></i>
+                                    </label>
+                                    <div className="relative">
+                                        <input 
+                                            type="text" 
+                                            autoFocus
+                                            placeholder={`@username or full URL`}
+                                            value={handleInput}
+                                            onChange={(e) => setHandleInput(e.target.value)}
+                                            className="w-full px-5 py-4.5 bg-gray-50 border-2 border-transparent focus:border-blue-600 rounded-2xl outline-none focus:bg-white focus:ring-8 focus:ring-blue-600/5 transition-all font-semibold text-[16px] text-slate-900 placeholder-gray-400" 
+                                        />
+                                    </div>
                                 </div>
-                                <div className="flex gap-3">
-                                    <button onClick={() => setSelectedApp(null)} className="flex-1 py-3.5 bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold rounded-[32px] transition-all">Cancel</button>
-                                    <button onClick={handleAddApp} className="flex-1 py-3.5 bg-[#8b3eff] hover:bg-[#7221e6] text-white font-bold rounded-[32px] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">Add to Dashboard</button>
+                                <div className="flex gap-4 pt-2">
+                                    <button onClick={() => setSelectedApp(null)} className="flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold rounded-2xl transition-all">Go back</button>
+                                    <button 
+                                        onClick={handleAddApp} 
+                                        disabled={!handleInput.trim()}
+                                        className="flex-1 py-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-2xl transition-all shadow-xl shadow-blue-600/20"
+                                    >
+                                        Add to Monkey
+                                    </button>
                                 </div>
                             </div>
                         </div>
