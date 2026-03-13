@@ -139,6 +139,10 @@ export default function OnboardingPage() {
   // --- Step 3: Social Links Logic ---
   const addSocialLink = () => {
     if (!activePlatform) return
+    if (socialLinks.length >= 5) {
+      setLinkError('Maximum 5 social links allowed only')
+      return
+    }
     const config = PLATFORMS[activePlatform]
     if (!config.pattern.test(tempLink)) {
       setLinkError(`Please enter a valid ${config.name} link`)
@@ -328,19 +332,28 @@ export default function OnboardingPage() {
 
                 <div className="space-y-6">
                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                      {Object.entries(PLATFORMS).map(([id, config]) => (
-                        <button 
-                          key={id}
-                          onClick={() => setActivePlatform(id)}
-                          className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${
-                            activePlatform === id ? 'border-primary bg-primary/5' : 'border-gray-50 bg-white hover:border-gray-200'
-                          }`}
-                        >
-                          <i className={`fi ${config.icon} text-2xl ${config.color}`}></i>
-                          <span className="text-[10px] font-bold text-gray-500">{config.name}</span>
-                        </button>
-                      ))}
+                      {Object.entries(PLATFORMS).map(([id, config]) => {
+                        const isSelected = socialLinks.some(link => link.platform === id)
+                        const isLimitReached = socialLinks.length >= 5
+                        
+                        return (
+                          <button 
+                            key={id}
+                            disabled={isLimitReached && !isSelected}
+                            onClick={() => setActivePlatform(id)}
+                            className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${
+                              activePlatform === id ? 'border-primary bg-primary/5' : 
+                              isSelected ? 'border-primary/30 bg-white' :
+                              'border-gray-50 bg-white hover:border-gray-200'
+                            } ${isLimitReached && !isSelected ? 'opacity-30 cursor-not-allowed' : ''}`}
+                          >
+                            <i className={`fi ${config.icon} text-2xl ${config.color}`}></i>
+                            <span className="text-[10px] font-bold text-gray-500">{config.name}</span>
+                          </button>
+                        )
+                      })}
                    </div>
+                   {socialLinks.length >= 5 && <p className="text-amber-500 text-xs font-bold text-center">Limit reached! You can only add up to 5 social icons.</p>}
 
                    {activePlatform && (
                      <div className="p-6 bg-white border border-gray-100 rounded-[32px] shadow-sm animate-fade-in">

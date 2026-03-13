@@ -72,63 +72,44 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                  <h3 className="font-black text-xl mb-1 tracking-tight">{userProfile?.display_name || 'Your Name'}</h3>
                  <h3 className="text-[10px] font-bold opacity-70 mb-4">@{userProfile?.username || 'username'}</h3>
 
-                 {/* Bio Area */}
-                 {userProfile?.bio && <p className="text-[10px] text-center px-4 mb-8 opacity-80 font-bold leading-relaxed line-clamp-3">{userProfile.bio}</p>}
+                 {/* Bio Area - Above Social Icons */}
+                 {userProfile?.bio && <p className="text-[10px] text-center px-4 mb-6 opacity-80 font-bold leading-relaxed line-clamp-3">{userProfile.bio}</p>}
 
-                 {/* Links List (Including Social Cards) */}
-                 <div className="w-full space-y-8">
-                    {links && links.filter(l => l.active).map((link, i) => {
-                      const isSocial = PLATFORMS[link.platform || ''];
-                      
-                      return (
-                        <div key={i} className="w-full flex flex-col items-center gap-4">
-                           {/* Only show icon on top if it's a social platform from the modal */}
-                           {isSocial && (
-                             <i className={`fi ${isSocial.icon} text-2xl`}></i>
-                           )}
-                           
-                           {/* The Card Box */}
-                           <div className={`w-full py-4 px-4 rounded-xl transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex items-center justify-between group ${selectedTheme.button}`}>
-                             <div className="w-4" />
-                             <span className="flex-1 text-center font-black tracking-wide truncate px-2">{link.title}</span>
-                             <div className="w-4 opacity-30">
-                                <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
-                             </div>
-                           </div>
-                        </div>
-                      )
-                    })}
-                    
-                    {/* Backward compatibility for social_links object if it still exists */}
-                    {(!links || links.length === 0) && socialLinks && Object.entries(socialLinks).map(([platform, url]: [string, any]) => (
+                 {/* Social Icons Row (From Onboarding - Max 5) */}
+                 <div className="flex flex-wrap justify-center gap-4 mb-10 w-full animate-fade-in">
+                    {socialLinks && Object.entries(socialLinks).slice(0, 5).map(([platform, url]: [string, any]) => (
                       url && (
-                        <div key={platform} className="w-full flex flex-col items-center gap-4">
+                        <a key={platform} href={url} target="_blank" rel="noreferrer" className="transition-transform hover:scale-125">
                            <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'} text-2xl`}></i>
-                           <div className={`w-full py-4 px-4 rounded-xl transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex items-center justify-between group ${selectedTheme.button}`}>
-                             <div className="w-4" />
-                             <span className="flex-1 text-center font-black tracking-wide">{PLATFORMS[platform]?.name || platform}</span>
-                             <div className="w-4 opacity-30">
-                                <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
-                             </div>
-                           </div>
-                        </div>
+                        </a>
                       )
                     ))}
                  </div>
 
-                 {/* Empty State */}
-                 {(!links || links.filter(l => l.active).length === 0) && (!socialLinks || Object.keys(socialLinks).length === 0) && (
-                   <div className="space-y-6 w-full opacity-10">
-                      <div className="flex flex-col items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-current opacity-40" />
+                 {/* Regular Links (From Dashboard Add Link - Box Style) */}
+                 <div className="w-full space-y-3">
+                    {links && links.filter(l => l.active).map((link, i) => (
+                      <a 
+                        key={i} 
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`w-full py-4 px-4 rounded-xl transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex items-center justify-between group ${selectedTheme.button}`}
+                      >
+                        <div className="w-4" />
+                        <span className="flex-1 text-center truncate px-2">{link.title}</span>
+                        <div className="w-4 opacity-30">
+                           <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
+                        </div>
+                      </a>
+                    ))}
+                    {(!links || links.filter(l => l.active).length === 0) && (
+                      <div className="space-y-3 w-full opacity-10">
+                        <div className={`w-full h-12 rounded-xl ${selectedTheme.button}`}></div>
                         <div className={`w-full h-12 rounded-xl ${selectedTheme.button}`}></div>
                       </div>
-                      <div className="flex flex-col items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-current opacity-40" />
-                        <div className={`w-full h-12 rounded-xl ${selectedTheme.button}`}></div>
-                      </div>
-                   </div>
-                 )}
+                    )}
+                 </div>
 
                  <div className="mt-auto pt-12 mb-2 w-full flex flex-col items-center gap-6">
                      <button className="px-6 py-2.5 bg-white text-secondary text-[10px] font-black rounded-full shadow-xl transform active:scale-95 transition-all">

@@ -65,6 +65,7 @@ export default function PublicProfile() {
         backgroundSize: '30px 30px'
       } : {}}
     >
+      {/* Top Left Icon */}
       <div className="fixed top-8 left-8 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 z-[100]">
         <span className="text-white text-lg font-black">*</span>
       </div>
@@ -87,55 +88,44 @@ export default function PublicProfile() {
           {profile.display_name} 
           <i className="fi fi-sr-badge-check text-primary text-xl"></i>
         </h1>
-        <p className="text-sm font-bold opacity-70 mb-12">@{profile.username}</p>
+        <p className="text-sm font-bold opacity-70 mb-10">@{profile.username}</p>
         
-        {profile.bio && <p className="text-center px-8 mb-16 font-bold max-w-md leading-relaxed opacity-90">{profile.bio}</p>}
+        {/* Bio Area */}
+        {profile.bio && <p className="text-center px-8 mb-8 font-bold max-w-md leading-relaxed opacity-90">{profile.bio}</p>}
 
-        {/* Links Section (Dynamic Icons + Box Style) */}
-        <div className="w-full space-y-12">
-          {profile.links?.filter((l: any) => l.active).map((link: any, i: number) => {
-            const isSocial = PLATFORMS[link.platform || ''];
-            
-            return (
-              <div key={i} className="flex flex-col items-center gap-6">
-                 {isSocial && (
-                   <i className={`fi ${isSocial.icon} text-4xl`}></i>
-                 )}
-                 
-                 <a 
-                   href={link.url} 
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   className={`block w-full py-6 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 text-center relative group text-lg tracking-wide ${selectedTheme.button}`}
-                 >
-                   <span>{link.title}</span>
-                   <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-30 group-hover:opacity-100 transition-opacity">
-                      <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
-                   </div>
-                 </a>
-              </div>
-            )
-          })}
-
-          {/* Fallback for old social_links object */}
-          {(!profile.links || profile.links.length === 0) && profile.social_links && Object.entries(profile.social_links).map(([platform, url]: [string, any]) => (
+        {/* Social Icons Row (From Onboarding - Max 5) */}
+        <div className="flex flex-wrap justify-center gap-8 mb-16 w-full">
+           {profile.social_links && Object.entries(profile.social_links).slice(0, 5).map(([platform, url]: [string, any]) => (
              url && (
-               <div key={platform} className="flex flex-col items-center gap-6">
-                  <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'} text-4xl`}></i>
-                  <a 
-                    href={url} 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`block w-full py-6 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 text-center relative group text-lg tracking-wide ${selectedTheme.button}`}
-                  >
-                    <span>{PLATFORMS[platform]?.name || platform}</span>
-                    <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-30 group-hover:opacity-100 transition-opacity">
-                       <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
-                    </div>
-                  </a>
-               </div>
+               <a 
+                 key={platform}
+                 href={url} 
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 className="text-4xl transition-transform hover:scale-125 hover:opacity-80"
+               >
+                 <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'}`}></i>
+               </a>
              )
            ))}
+        </div>
+
+        {/* Links Section (Only Cards/Boxes) */}
+        <div className="w-full space-y-4">
+          {profile.links?.filter((l: any) => l.active).map((link: any, i: number) => (
+            <a 
+              key={i}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`block w-full py-6 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 text-center relative group text-lg tracking-wide ${selectedTheme.button}`}
+            >
+              <span>{link.title}</span>
+              <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-30 group-hover:opacity-100 transition-opacity">
+                 <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
+              </div>
+            </a>
+          ))}
         </div>
         
         <div className="mt-24 flex flex-col items-center gap-8">
