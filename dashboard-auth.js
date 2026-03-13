@@ -1,22 +1,28 @@
 (function() {
     window.openAddLinkModal = (tab = 'all') => {
-        const modal = document.getElementById('add-link-modal');
+        const modal = document.getElementById('create-iframe-modal');
+        const container = document.getElementById('create-iframe-container');
         if (modal) {
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
-                document.getElementById('add-link-modal-content').classList.remove('scale-95');
+                if (container) container.classList.remove('scale-95');
             }, 10);
-            document.getElementById('add-link-search').value = '';
-            if (window.selectAddTab) window.selectAddTab(tab);
+            
+            // Optionally notify iframe of the tab
+            const iframe = document.getElementById('create-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ type: 'SET_TAB', tab }, '*');
+            }
         }
     };
 
     window.closeAddLinkModal = () => {
-        const modal = document.getElementById('add-link-modal');
+        const modal = document.getElementById('create-iframe-modal');
+        const container = document.getElementById('create-iframe-container');
         if (modal) {
             modal.classList.add('opacity-0');
-            document.getElementById('add-link-modal-content').classList.add('scale-95');
+            if (container) container.classList.add('scale-95');
             setTimeout(() => modal.classList.add('hidden'), 200);
         }
     };
@@ -58,6 +64,27 @@
 
         // State Management
         console.log('Final Profile for Dashboard:', profile);
+
+        // Listen for messages from standard create.html popup
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'CLOSE_MODAL') {
+                window.closeAddLinkModal();
+            }
+            if (event.data.type === 'ADD_LINK') {
+                const { title, url, icon } = event.data.payload;
+                userLinks.unshift({ 
+                    title, 
+                    url, 
+                    active: true, 
+                    clicks: 0, 
+                    id: Date.now(), 
+                    iconClass: icon 
+                });
+                renderLinks();
+                debouncedSave();
+                window.closeAddLinkModal();
+            }
+        });
         
         const username = profile?.username || 'User';
         const displayName = profile?.display_name || username;
