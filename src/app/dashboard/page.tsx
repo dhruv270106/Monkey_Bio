@@ -15,8 +15,6 @@ interface Link {
   url: string
   active: boolean
   platform?: string
-  image_url?: string // Keep for backward compatibility
-  gallery_images?: string[] // New gallery support
   highlighted?: boolean
 }
 
@@ -82,40 +80,6 @@ export default function Dashboard() {
     }
   }
 
-  const handleImageUpload = async (linkId: string, file: File) => {
-    if (!profile) return
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${profile.id}/${linkId}-${Math.random()}.${fileExt}`
-    
-    const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(fileName, file)
-
-    if (!uploadError) {
-      const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(fileName)
-      
-      const newLinks = links.map(l => {
-        if (l.id === linkId) {
-          const currentGallery = l.gallery_images || []
-          return { ...l, gallery_images: [...currentGallery, publicUrl] }
-        }
-        return l
-      })
-      await updateLinks(newLinks)
-    }
-  }
-
-  const removeGalleryImage = async (linkId: string, imgUrl: string) => {
-    const newLinks = links.map(l => {
-        if (l.id === linkId) {
-            return { ...l, gallery_images: (l.gallery_images || []).filter(img => img !== imgUrl) }
-        }
-        return l
-    })
-    await updateLinks(newLinks)
-  }
 
   const toggleHighlight = async (id: string) => {
     const newLinks = links.map(l => l.id === id ? { ...l, highlighted: !l.highlighted } : l)
@@ -338,42 +302,9 @@ export default function Dashboard() {
                           </div>
                         </div>
 
-                        {/* Image Gallery - Below Title Area */}
-                        {link.gallery_images && link.gallery_images.length > 0 && (
-                          <div className="mt-4 px-14">
-                            <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-2">
-                               {link.gallery_images.map((img, idx) => (
-                                 <div key={idx} className="relative group/img flex-shrink-0">
-                                   <div className="w-16 h-16 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                                      <img src={img} alt="" className="w-full h-full object-cover" />
-                                   </div>
-                                   <button 
-                                     onClick={() => removeGalleryImage(link.id, img)}
-                                     className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity"
-                                   >
-                                     <i className="fi fi-rr-cross-small text-[10px]"></i>
-                                   </button>
-                                 </div>
-                               ))}
-                               <label className="w-16 h-16 rounded-2xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-300 hover:text-primary hover:border-primary/30 transition-all cursor-pointer flex-shrink-0">
-                                  <i className="fi fi-rr-plus text-xs"></i>
-                                  <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleImageUpload(link.id, e.target.files[0])} />
-                               </label>
-                            </div>
-                          </div>
-                        )}
                         
                         <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-300">
                             <div className="flex items-center gap-5 text-gray-400">
-                               <label className="hover:text-secondary flex items-center gap-2 text-[10px] font-bold cursor-pointer transition-colors">
-                                 <i className="fi fi-rr-picture"></i> Image
-                                 <input 
-                                   type="file" 
-                                   className="hidden" 
-                                   accept="image/*"
-                                   onChange={(e) => e.target.files?.[0] && handleImageUpload(link.id, e.target.files[0])}
-                                 />
-                               </label>
                                <button 
                                  onClick={() => toggleHighlight(link.id)}
                                  className={`${link.highlighted ? 'text-yellow-500' : 'hover:text-yellow-500'} flex items-center gap-2 text-[10px] font-bold transition-colors`}
