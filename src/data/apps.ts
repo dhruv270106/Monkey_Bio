@@ -32,12 +32,12 @@ export const APPS: AppConfig[] = [
   { id: 'coaching', title: 'Coaching & bookings', description: 'Sell 1:1 sessions, consultations, and private coaching', icon: 'fi-rr-calendar-check', color: 'text-blue-600', category: 'commerce', placeholder: 'Service link' },
   { id: 'digital-products', title: 'Digital products', description: 'Sell documents, PDFs, guides, templates, and other content', icon: 'fi-rr-box-open', color: 'text-indigo-600', category: 'commerce', placeholder: 'Product link' },
   { id: 'courses', title: 'Courses', description: 'Sell online courses and lessons to your audience', icon: 'fi-rr-graduation-cap', color: 'text-purple-600', category: 'commerce', placeholder: 'Course link' },
-  { id: 'affiliate', title: 'Affiliate products', description: 'Share the items you love or promote products you sell with Product links.', icon: 'fi-rr-tag', color: 'text-emerald-500', category: 'commerce', placeholder: 'Product URL' },
+  { id: 'affiliate', title: 'Affiliate products', description: 'Share the items you love or promote products you sell with Product links.', icon: 'fi-rr-shopping-cart', color: 'text-emerald-500', category: 'commerce', placeholder: 'Product URL' },
   { id: 'shopify', title: 'Shopify', description: 'Display your Shopify collections and products', icon: 'fi-brands-shopify', color: 'text-[#96BF48]', category: 'commerce', placeholder: 'Shopify store link' },
   { id: 'fourthwall', title: 'Fourthwall', description: 'Make & sell premium merch and custom goods', icon: 'fi-rr-shopping-bag', color: 'text-black', category: 'commerce', placeholder: 'Store link' },
   { id: 'amaze', title: 'Amaze', description: 'Create a store and display it on your Linktree', icon: 'fi-rr-shop', color: 'text-orange-500', category: 'commerce', placeholder: 'Amaze link' },
   { id: 'books', title: 'Books', description: 'Sell books from Amazon, Apple, and more', icon: 'fi-rr-book', color: 'text-amber-800', category: 'commerce', placeholder: 'Book link' },
-  { id: 'bonfire', title: 'Bonfire', description: 'Sell products from your Bonfire store directly', icon: 'fi-rr-fire', color: 'text-orange-600', category: 'commerce', placeholder: 'Store link' },
+  { id: 'bonfire', title: 'Bonfire', description: 'Sell products from your Bonfire store directly', icon: 'fi-rr-flame', color: 'text-orange-600', category: 'commerce', placeholder: 'Store link' },
 
   // COMMUNITIES
   { id: 'community-channels', title: 'Community Channels', description: 'Offer access to WhatsApp, Discord or Slack communities', icon: 'fi-rr-users-alt', color: 'text-blue-500', category: 'communities', placeholder: 'Community link' },
@@ -57,12 +57,12 @@ export const APPS: AppConfig[] = [
   { id: 'mobile-app', title: 'Mobile App', description: 'Market your app across Apple and Google stores', icon: 'fi-rr-apps', color: 'text-gray-700', category: 'other', placeholder: 'App store link' },
 
   // SOCIAL
-  { id: 'threads', title: 'Threads', description: 'Select your favorite Threads posts to display', icon: 'fi-rr-at', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://threads.net/@' },
+  { id: 'threads', title: 'Threads', description: 'Select your favorite Threads posts to display', icon: 'fi-brands-threads', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://threads.net/@' },
   { id: 'instagram', title: 'Instagram', description: 'Display your posts and reels', icon: 'fi-brands-instagram', color: 'text-[#E4405F]', category: 'social', placeholder: '@username', prefix: 'https://instagram.com/' },
   { id: 'facebook', title: 'Facebook', description: 'Show your visitors any Facebook video', icon: 'fi-brands-facebook', color: 'text-[#1877F2]', category: 'social', placeholder: 'Profile or Video link' },
   { id: 'youtube', title: 'YouTube', description: 'Show your visitors any YouTube video', icon: 'fi-brands-youtube', color: 'text-[#FF0000]', category: 'social', placeholder: 'Video link' },
   { id: 'x', title: 'X', description: 'Showcase what\'s new on your feed', icon: 'fi-brands-twitter', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://x.com/' },
-  { id: 'tiktok', title: 'TikTok', description: 'Share your latest TikTok videos', icon: 'fi-br-brand-tiktok', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://tiktok.com/@' },
+  { id: 'tiktok', title: 'TikTok', description: 'Share your latest TikTok videos', icon: 'fi-brands-tiktok', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://tiktok.com/@' },
   { id: 'whatsapp-direct', title: 'WhatsApp', description: 'Chat directly with your visitors', icon: 'fi-brands-whatsapp', color: 'text-[#25D366]', category: 'social', placeholder: 'Group or Direct link' },
   { id: 'snapchat', title: 'Snapchat', description: 'Drive audiences to your Public Stories', icon: 'fi-brands-snapchat', color: 'text-[#FFFC00]', category: 'social', placeholder: 'Username', prefix: 'https://snapchat.com/add/' },
   { id: 'pinterest', title: 'Pinterest', description: 'Share boards and individual Pins', icon: 'fi-brands-pinterest', color: 'text-[#BD081C]', category: 'social', placeholder: 'Pinterest link', prefix: 'https://pinterest.com/' },
@@ -76,7 +76,7 @@ export const APPS: AppConfig[] = [
 
   // MEDIA
   { id: 'youtube-media', title: 'YouTube', description: 'Show your visitors any YouTube video', icon: 'fi-brands-youtube', color: 'text-[#FF0000]', category: 'media', placeholder: 'Video link' },
-  { id: 'tiktok-video', title: 'TikTok Video', description: 'Highlight one of your TikToks directly', icon: 'fi-br-brand-tiktok', color: 'text-black', category: 'media', placeholder: 'TikTok Link' },
+  { id: 'tiktok-video', title: 'TikTok Video', description: 'Highlight one of your TikToks directly', icon: 'fi-brands-tiktok', color: 'text-black', category: 'media', placeholder: 'TikTok Link' },
   { id: 'vimeo', title: 'Vimeo', description: 'Share Vimeo videos with your visitors', icon: 'fi-brands-vimeo', color: 'text-[#1AB7EA]', category: 'media', placeholder: 'Vimeo link' },
   { id: 'pdf', title: 'PDF display', description: 'Display downloadable PDF files and CVs', icon: 'fi-rr-file-pdf', color: 'text-red-500', category: 'media', placeholder: 'PDF link' },
 
