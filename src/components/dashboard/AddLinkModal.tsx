@@ -16,12 +16,33 @@ export default function AddLinkModal({ isOpen, onClose, onAdd }: AddLinkModalPro
   const [selectedApp, setSelectedApp] = useState<AppConfig | null>(null)
   const [inputValue, setInputValue] = useState('')
 
-  const filteredApps = useMemo(() => {
-    let list = activeCategory === 'suggested' ? SUGGESTED_APPS : APPS.filter(a => a.category === activeCategory)
+  const filteredAppsGrouped = useMemo(() => {
     if (search) {
-      list = APPS.filter(a => a.title.toLowerCase().includes(search.toLowerCase()))
+      return [{
+        name: 'Search Results',
+        apps: APPS.filter(a => a.title.toLowerCase().includes(search.toLowerCase()))
+      }]
     }
-    return list
+
+    if (activeCategory === 'all') {
+      return CATEGORIES.filter(c => c.id !== 'suggested').map(cat => ({
+        name: cat.name,
+        apps: APPS.filter(a => a.category === cat.id)
+      }))
+    }
+
+    if (activeCategory === 'suggested') {
+      return [{
+        name: 'Suggested',
+        apps: SUGGESTED_APPS
+      }]
+    }
+
+    const cat = CATEGORIES.find(c => c.id === activeCategory)
+    return [{
+      name: cat?.name || '',
+      apps: APPS.filter(a => a.category === activeCategory)
+    }]
   }, [activeCategory, search])
 
   const handleAddLink = () => {
@@ -29,7 +50,6 @@ export default function AddLinkModal({ isOpen, onClose, onAdd }: AddLinkModalPro
     
     let finalUrl = inputValue
     if (selectedApp.prefix && !inputValue.startsWith('http')) {
-      // If it's just a username/handle, add the prefix
       finalUrl = selectedApp.prefix + inputValue.replace('@', '')
     }
 
@@ -103,7 +123,15 @@ export default function AddLinkModal({ isOpen, onClose, onAdd }: AddLinkModalPro
                 </button>
               ))}
               <div className="pt-4 mt-4 border-t border-gray-50">
-                <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-gray-400 hover:bg-gray-50">
+                <button 
+                  onClick={() => {
+                    setActiveCategory('all')
+                    setSearch('')
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
+                    activeCategory === 'all' && !search ? 'bg-primary/10 text-primary' : 'hover:bg-gray-50 text-gray-400'
+                  }`}
+                >
                   <i className="fi fi-rr-apps"></i>
                   <span>View all</span>
                 </button>
@@ -112,7 +140,7 @@ export default function AddLinkModal({ isOpen, onClose, onAdd }: AddLinkModalPro
 
             {/* List Content */}
             <div className="flex-1 overflow-y-auto p-8 bg-gray-50/30 auto-scrollbar">
-               {/* Quick Feature Cards (Only if no search) */}
+               {/* Quick Feature Cards (Only if suggested and no search) */}
                {!search && activeCategory === 'suggested' && (
                  <div className="grid grid-cols-4 gap-4 mb-10">
                     {[
@@ -131,30 +159,39 @@ export default function AddLinkModal({ isOpen, onClose, onAdd }: AddLinkModalPro
                  </div>
                )}
 
-               <div className="space-y-3">
-                 {filteredApps.map((app) => (
-                   <div 
-                    key={app.id} 
-                    onClick={() => setSelectedApp(app)}
-                    className="bg-white p-5 rounded-[24px] border border-gray-100 shadow-sm flex items-center justify-between hover:border-primary/30 hover:shadow-md transition-all cursor-pointer group"
-                   >
-                     <div className="flex items-center gap-5">
-                       <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center transition-transform group-hover:scale-110">
-                          <i className={`fi ${app.icon} text-2xl ${app.color}`}></i>
-                       </div>
-                       <div>
-                         <h4 className="font-black text-secondary group-hover:text-primary transition-colors">{app.title}</h4>
-                         <p className="text-xs font-bold text-gray-400">{app.description}</p>
-                       </div>
+               <div className="space-y-12">
+                 {filteredAppsGrouped.map((group, groupIdx) => (
+                   <div key={groupIdx} className="space-y-4">
+                     {group.name && (
+                       <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 px-2">{group.name}</h3>
+                     )}
+                     <div className="space-y-3">
+                       {group.apps.map((app) => (
+                         <div 
+                          key={app.id} 
+                          onClick={() => setSelectedApp(app)}
+                          className="bg-white p-5 rounded-[24px] border border-gray-100 shadow-sm flex items-center justify-between hover:border-primary/30 hover:shadow-md transition-all cursor-pointer group"
+                         >
+                           <div className="flex items-center gap-5">
+                             <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center transition-transform group-hover:scale-110">
+                                <i className={`fi ${app.icon} text-2xl ${app.color}`}></i>
+                             </div>
+                             <div>
+                               <h4 className="font-black text-secondary group-hover:text-primary transition-colors">{app.title}</h4>
+                               <p className="text-xs font-bold text-gray-400">{app.description}</p>
+                             </div>
+                           </div>
+                           <i className="fi fi-rr-angle-small-right text-gray-300 group-hover:text-primary transition-colors text-xl"></i>
+                         </div>
+                       ))}
                      </div>
-                     <i className="fi fi-rr-angle-small-right text-gray-300 group-hover:text-primary transition-colors text-xl"></i>
                    </div>
                  ))}
                  
-                 {filteredApps.length === 0 && (
+                 {filteredAppsGrouped.every(g => g.apps.length === 0) && (
                    <div className="py-20 text-center">
                      <i className="fi fi-rr-search text-4xl text-gray-200 mb-4 inline-block"></i>
-                     <p className="text-gray-400 font-bold">No apps found for "{search}"</p>
+                     <p className="text-gray-400 font-bold">No apps found</p>
                    </div>
                  )}
                </div>
@@ -162,7 +199,7 @@ export default function AddLinkModal({ isOpen, onClose, onAdd }: AddLinkModalPro
           </div>
         </motion.div>
 
-        {/* SUB MODAL: ADD SPECIFIC APP */}
+        {/* SUB MODAL */}
         <AnimatePresence>
           {selectedApp && (
             <motion.div 
@@ -195,8 +232,7 @@ export default function AddLinkModal({ isOpen, onClose, onAdd }: AddLinkModalPro
                    <div className="relative">
                      {selectedApp.prefix && inputValue && !inputValue.startsWith('http') && (
                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 font-bold text-sm pointer-events-none">
-                         {selectedApp.id === 'instagram' ? 'instagram.com/' : 
-                          selectedApp.id === 'tiktok' ? 'tiktok.com/@' : ''}
+                         {selectedApp.prefix.replace('https://', '')}
                        </span>
                      )}
                      <input 
@@ -217,7 +253,10 @@ export default function AddLinkModal({ isOpen, onClose, onAdd }: AddLinkModalPro
                      Add Link
                    </button>
                     <button 
-                     onClick={() => setSelectedApp(null)}
+                     onClick={() => {
+                        setInputValue('')
+                        setSelectedApp(null)
+                     }}
                      className="w-full py-4 text-gray-400 font-bold hover:text-secondary transition-all"
                    >
                      Cancel
