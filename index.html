@@ -35,7 +35,7 @@
     <script>
       const supabaseUrl = 'https://esngrodyozljdjkfcocp.supabase.co';
       const supabaseKey = 'sb_publishable_6DOFYKjxL3o2U1rs5Gd4cw_SitIaPwy';
-      window.supabaseClient = (window.supabasejs || window.supabase).createClient(supabaseUrl, supabaseKey);
+      const supabase = supabasejs.createClient(supabaseUrl, supabaseKey);
     </script>
     <style>
        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
@@ -98,12 +98,10 @@
               </div>
             </nav>
           </div>
-          <div class="flex items-center gap-4" id="auth-buttons">
+          <div class="flex items-center gap-4">
              <a href="./login.html" class="text-sm font-semibold text-gray-800 hover:text-black hidden sm:block bg-gray-100 hover:bg-gray-200 px-6 py-3 rounded-full transition-colors">Log in</a>
              <a href="./signup.html" class="text-sm font-semibold bg-secondary text-white hover:bg-gray-800 px-6 py-3 rounded-full transition-all shadow-md transform hover:scale-105">Sign up free</a>
           </div>
-          <script src="./auth-check.js"></script>
-
         </div>
       </div>
     </header>

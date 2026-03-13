@@ -35,15 +35,7 @@
     <script>
       const supabaseUrl = 'https://esngrodyozljdjkfcocp.supabase.co';
       const supabaseKey = 'sb_publishable_6DOFYKjxL3o2U1rs5Gd4cw_SitIaPwy';
-      window.supabaseClient = (window.supabasejs || window.supabase).createClient(supabaseUrl, supabaseKey);
-
-      // Redirect if already logged in
-      window.supabaseClient.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          window.location.href = 'dashboard.html';
-        }
-      });
-
+      const supabase = supabasejs.createClient(supabaseUrl, supabaseKey);
     </script>
     <style>
        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
@@ -74,7 +66,7 @@
               <p class="text-gray-500 mb-8 font-medium">Claim your unique link today.</p>
               
               <div class="space-y-4">
-                 <button onclick="signInWithGoogle()" class="w-full py-3.5 px-4 rounded-xl font-bold bg-[#F5F7FA] text-secondary hover:bg-[#EAEFF4] transition-colors flex items-center justify-center gap-3">
+                 <button onclick="supabase.auth.signInWithOAuth({provider: 'google'})" class="w-full py-3.5 px-4 rounded-xl font-bold bg-[#F5F7FA] text-secondary hover:bg-[#EAEFF4] transition-colors flex items-center justify-center gap-3">
                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google"> Continue with Google
                  </button>
                  <div class="relative flex items-center py-4">
@@ -107,24 +99,6 @@
          </div>
 
          <script>
-            async function signInWithGoogle() {
-              try {
-                if (!window.supabaseClient) {
-                   alert("Supabase client not initialized. Please refresh the page.");
-                   return;
-                }
-                const { error } = await window.supabaseClient.auth.signInWithOAuth({
-                  provider: 'google',
-                  options: {
-                    redirectTo: window.location.origin + '/dashboard.html'
-                  }
-                });
-                if (error) throw error;
-              } catch (err) {
-                alert(err.message);
-              }
-            }
-
             document.getElementById('authForm').addEventListener('submit', async (e) => {
               e.preventDefault();
               const submitBtn = document.getElementById('submitBtn');
@@ -135,34 +109,26 @@
               const password = document.getElementById('password').value;
               const username = document.getElementById('username')?.value;
               
-              const isLogin = false;
+              const isLogin = 'signup.html' === 'login.html';
 
               try {
                 if (isLogin) {
-                  const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
+                  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                   if (error) throw error;
                   window.location.href = 'dashboard.html';
                 } else {
                   // Registration
-                  const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({ email, password });
+                  const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
                   if (authError) throw authError;
 
                   if (authData.user && username) {
-                    const { error: profileError } = await window.supabaseClient
+                    const { error: profileError } = await supabase
                       .from('monkey_bio')
                       .insert([{ id: authData.user.id, username: username.toLowerCase(), display_name: username }]);
-                    
-                    if (profileError && !profileError.message.includes('row-level security')) {
-                        throw profileError;
-                    }
+                    if (profileError) throw profileError;
                   }
-                  
-                  // Force logout so they MUST login manually as requested
-                  await window.supabaseClient.auth.signOut();
-                  
-                  alert('Account created successfully! Please log in with your credentials.');
-                  // Pass email to login page to pre-fill it
-                  window.location.href = 'login.html?email=' + encodeURIComponent(email);
+                  alert('Registered successfully! Check your email if verification is required.');
+                  window.location.href = 'login.html';
                 }
               } catch (err) {
                 alert(err.message || 'An error occurred');

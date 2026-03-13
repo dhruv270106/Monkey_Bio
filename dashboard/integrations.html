@@ -35,7 +35,7 @@
     <script>
       const supabaseUrl = 'https://esngrodyozljdjkfcocp.supabase.co';
       const supabaseKey = 'sb_publishable_6DOFYKjxL3o2U1rs5Gd4cw_SitIaPwy';
-      window.supabaseClient = (window.supabasejs || window.supabase).createClient(supabaseUrl, supabaseKey);
+      const supabase = supabasejs.createClient(supabaseUrl, supabaseKey);
     </script>
     <style>
        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
@@ -74,11 +74,9 @@
              <div class="my-6 border-t border-gray-100"></div>
              <a href="../dashboard/settings.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="settings" class="w-5 h-5"></i> Settings</a>
              <a href="../dashboard/billing.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="credit-card" class="w-5 h-5"></i> Billing</a>
-             <a href="javascript:void(0)" onclick="handleLogout()" class="flex items-center gap-3 px-4 py-3 text-red-500 font-medium hover:bg-red-50 hover:text-red-600 rounded-xl transition-all mt-6"><i data-lucide="log-out" class="w-5 h-5"></i> Logout</a>
+             <a href="../index.html" class="flex items-center gap-3 px-4 py-3 text-red-500 font-medium hover:bg-red-50 hover:text-red-600 rounded-xl transition-all mt-6"><i data-lucide="log-out" class="w-5 h-5"></i> Logout</a>
            </nav>
         </aside>
-        <script src="/dashboard-auth.js"></script>
-
 
         <!-- Main Content -->
         <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
