@@ -47,24 +47,24 @@ export default function Dashboard() {
       return
     }
 
-    const [linksRes, profileRes] = await Promise.all([
-      supabase.from('monkey_bio').select('links').eq('id', session.user.id).single(),
-      supabase.from('monkey_bio').select('*').eq('id', session.user.id).single()
-    ])
+    const { data: profileData } = await supabase
+      .from('monkey_bio')
+      .select('*')
+      .eq('id', session.user.id)
+      .single()
 
-    if (profileRes.data) {
-      if (!profileRes.data.onboarding_completed) {
+    if (profileData) {
+      if (!profileData.onboarding_completed) {
         window.location.href = '/onboarding'
         return
       }
-      setProfile(profileRes.data)
-      setLinks(profileRes.data.links || [])
+      setProfile(profileData)
+      setLinks(profileData.links || [])
     }
     setLoading(false)
   }
 
   const updateLinks = async (newLinks: Link[]) => {
-    // Sort links: highlighted ones first, otherwise keep their relative order
     const sortedLinks = [...newLinks].sort((a, b) => {
       if (a.highlighted && !b.highlighted) return -1
       if (!a.highlighted && b.highlighted) return 1
@@ -72,12 +72,14 @@ export default function Dashboard() {
     })
     
     setLinks(sortedLinks)
-    if (profile) {
-      setProfile({ ...profile, links: sortedLinks } as any)
+    setProfile(prev => prev ? { ...prev, links: sortedLinks } : null)
+    
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session) {
       await supabase
         .from('monkey_bio')
         .update({ links: sortedLinks })
-        .eq('id', profile.id)
+        .eq('id', session.user.id)
     }
   }
 
