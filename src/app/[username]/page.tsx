@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { motion } from 'framer-motion'
 import { THEMES } from '@/data/themes'
 import { PLATFORMS } from '@/data/platforms'
+import { APPS } from '@/data/apps'
 
 export default function PublicProfile() {
   const { username } = useParams()
@@ -105,10 +106,13 @@ export default function PublicProfile() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`block w-full py-6 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 text-center relative group text-lg tracking-wide ${selectedTheme.button}`}
+              className={`block w-full py-6 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 flex items-center justify-between group text-lg tracking-wide ${selectedTheme.button}`}
             >
-              <span>{link.title}</span>
-              <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-30 group-hover:opacity-100 transition-opacity">
+              <div className="w-8 flex items-center justify-center">
+                 <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-2xl opacity-80`}></i>
+              </div>
+              <span className="flex-1 text-center truncate px-4">{link.title}</span>
+              <div className="w-8 opacity-30 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                  <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
               </div>
             </a>

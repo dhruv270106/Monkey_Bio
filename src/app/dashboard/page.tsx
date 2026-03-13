@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/dashboard/Sidebar'
 import Preview from '@/components/dashboard/Preview'
 import AddLinkModal from '@/components/dashboard/AddLinkModal'
+import ManageLinksModal from '@/components/dashboard/ManageLinksModal'
+import { APPS } from '@/data/apps'
 
 interface Link {
   id: string
@@ -30,6 +32,8 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isManageModalOpen, setIsManageModalOpen] = useState(false)
+  const [errorHeader, setErrorHeader] = useState<string | null>(null)
 
   useEffect(() => {
     fetchData()
@@ -69,6 +73,10 @@ export default function Dashboard() {
   }
 
   const handleAddNewLink = async (linkData: { title: string; url: string; platform: string }) => {
+    if (links.length >= 20) {
+      alert('Maximum 20 links allowed!')
+      return
+    }
     const newLink: Link = {
       id: Math.random().toString(36).substr(2, 9),
       title: linkData.title,
@@ -104,6 +112,14 @@ export default function Dashboard() {
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
         onAdd={handleAddNewLink}
+        linksCount={links.length}
+      />
+
+      <ManageLinksModal
+        isOpen={isManageModalOpen}
+        onClose={() => setIsManageModalOpen(false)}
+        links={links}
+        onUpdate={updateLinks}
       />
 
       {/* Top Banner */}
@@ -172,37 +188,50 @@ export default function Dashboard() {
                   </button>
               </div>
 
-              {/* Social Icons Section (Keeping this for the large box cards) */}
-              <div className="bg-[#fdf2e3] border border-[#e8dcc8] rounded-[40px] p-8">
+               {/* Social Icons Section (Now showing Link Cards from Add Link Button) */}
+               <div className="bg-[#fdf2e3] border border-[#e8dcc8] rounded-[40px] p-8">
                   <div className="flex items-center justify-between mb-6">
                       <div>
                           <h3 className="font-black text-xl text-secondary">Social Cards</h3>
-                          <p className="text-sm text-secondary/60">Large display cards for your main socials</p>
+                          <p className="text-sm text-secondary/60">Manage your link cards ({links.length}/20)</p>
                       </div>
-                      <button className="px-5 py-2.5 bg-white border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-100 transition-all shadow-sm">
-                         <i className="fi fi-rr-add mr-2"></i> Manage
+                      <button 
+                        onClick={() => setIsManageModalOpen(true)}
+                        className="px-5 py-2.5 bg-white border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-100 transition-all shadow-sm"
+                      >
+                         <i className="fi fi-rr-settings-sliders mr-2"></i> Manage
                       </button>
                   </div>
                   <div className="flex flex-wrap gap-4">
-                      {profile?.social_links && Object.entries(profile.social_links).map(([platform, url]: [string, any]) => (
-                        url && (
-                          <div key={platform} className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4 group hover:-translate-y-1 transition-all cursor-pointer">
+                      {links.map((link) => {
+                        const appConfig = APPS.find(a => a.id === link.platform)
+                        return (
+                          <a 
+                            key={link.id} 
+                            href={link.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="bg-white p-4 pr-12 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4 group hover:-translate-y-1 hover:shadow-md transition-all cursor-pointer relative"
+                          >
                              <div className="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center">
-                                <i className={`fi fi-brands-${platform === 'x' ? 'twitter' : platform} text-xl`}></i>
+                                <i className={`fi ${appConfig?.icon || 'fi-rr-link'} text-xl ${appConfig?.color || 'text-secondary'}`}></i>
                              </div>
                              <div>
-                                <p className="text-xs font-black capitalize">{platform}</p>
+                                <p className="text-xs font-black truncate max-w-[120px]">{link.title}</p>
                              </div>
-                          </div>
+                             <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i className="fi fi-rr-arrow-up-right text-[10px] text-primary"></i>
+                             </div>
+                          </a>
                         )
-                      ))}
-                      {Object.keys(profile?.social_links || {}).length === 0 && (
+                      })}
+                      {links.length === 0 && (
                         <div className="w-full p-6 bg-white/50 rounded-3xl border border-dashed border-secondary/10 flex flex-col items-center justify-center text-center">
-                           <p className="text-xs font-bold text-secondary/40">No social cards added.</p>
+                           <p className="text-xs font-bold text-secondary/40">No link cards added yet.</p>
                         </div>
                       )}
                   </div>
-              </div>
+               </div>
 
               {/* Reorderable Links List */}
               <div className="space-y-4">
@@ -226,7 +255,7 @@ export default function Dashboard() {
                              <i className="fi fi-rr-grip-vertical text-lg"></i>
                           </div>
                           <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center flex-shrink-0">
-                             <i className={`fi ${link.platform?.startsWith('fi-') ? link.platform : `fi-brands-${link.platform || 'link'}`} text-xl text-secondary`}></i>
+                             <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-xl text-secondary`}></i>
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-2">

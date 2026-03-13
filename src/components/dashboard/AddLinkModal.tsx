@@ -8,9 +8,10 @@ interface AddLinkModalProps {
   isOpen: boolean
   onClose: () => void
   onAdd: (linkData: { title: string; url: string; platform: string }) => void
+  linksCount: number
 }
 
-export default function AddLinkModal({ isOpen, onClose, onAdd }: AddLinkModalProps) {
+export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: AddLinkModalProps) {
   const [activeCategory, setActiveCategory] = useState('suggested')
   const [search, setSearch] = useState('')
   const [selectedApp, setSelectedApp] = useState<AppConfig | null>(null)
@@ -47,6 +48,11 @@ export default function AddLinkModal({ isOpen, onClose, onAdd }: AddLinkModalPro
 
   const handleAddLink = () => {
     if (!selectedApp || !inputValue) return
+    
+    if (linksCount >= 20) {
+      alert('Maximum 20 links reached!')
+      return
+    }
     
     let finalUrl = inputValue
     if (selectedApp.prefix && !inputValue.startsWith('http')) {

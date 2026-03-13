@@ -1,9 +1,9 @@
 {
   "/_not-found": "app/_not-found.js",
-  "/[username]/page": "app/[username]/page.js",
   "/auth/callback/page": "app/auth/callback/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
+  "/[username]/page": "app/[username]/page.js",
   "/login/page": "app/login/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
   "/onboarding/page": "app/onboarding/page.js",
   "/page": "app/page.js",
   "/signup/page": "app/signup/page.js"
