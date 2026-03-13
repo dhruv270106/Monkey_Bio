@@ -8,11 +8,16 @@ import { THEMES } from '@/data/themes'
 
 const PLATFORMS: Record<string, any> = {
   instagram: { name: 'Instagram', icon: 'fi-brands-instagram' },
-  youtube: { name: 'YouTube', icon: 'fi-brands-youtube' },
   tiktok: { name: 'TikTok', icon: 'fi-brands-tiktok' },
-  twitter: { name: 'X (Twitter)', icon: 'fi-brands-twitter' },
-  linkedin: { name: 'LinkedIn', icon: 'fi-brands-linkedin' },
+  youtube: { name: 'YouTube', icon: 'fi-brands-youtube' },
+  spotify: { name: 'Spotify', icon: 'fi-brands-spotify' },
+  twitter: { name: 'Twitter', icon: 'fi-brands-twitter' },
+  x: { name: 'X', icon: 'fi-brands-twitter' },
+  threads: { name: 'Threads', icon: 'fi-brands-threads' },
   facebook: { name: 'Facebook', icon: 'fi-brands-facebook' },
+  snapchat: { name: 'Snapchat', icon: 'fi-brands-snapchat' },
+  twitch: { name: 'Twitch', icon: 'fi-brands-twitch' },
+  reddit: { name: 'Reddit', icon: 'fi-brands-reddit' },
 }
 
 export default function PublicProfile() {
@@ -60,7 +65,6 @@ export default function PublicProfile() {
         backgroundSize: '30px 30px'
       } : {}}
     >
-      {/* Top Left Icon */}
       <div className="fixed top-8 left-8 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 z-[100]">
         <span className="text-white text-lg font-black">*</span>
       </div>
@@ -85,16 +89,39 @@ export default function PublicProfile() {
         </h1>
         <p className="text-sm font-bold opacity-70 mb-12">@{profile.username}</p>
         
-        {/* Bio moved above social cards */}
-        {profile.bio && <p className="text-center px-8 mb-12 font-bold max-w-md leading-relaxed opacity-90">{profile.bio}</p>}
+        {profile.bio && <p className="text-center px-8 mb-16 font-bold max-w-md leading-relaxed opacity-90">{profile.bio}</p>}
 
-        {/* Social Cards Section */}
-        <div className="w-full space-y-10 mb-12">
-           {profile.social_links && Object.entries(profile.social_links).map(([platform, url]: [string, any]) => (
+        {/* Links Section (Dynamic Icons + Box Style) */}
+        <div className="w-full space-y-12">
+          {profile.links?.filter((l: any) => l.active).map((link: any, i: number) => {
+            const isSocial = PLATFORMS[link.platform || ''];
+            
+            return (
+              <div key={i} className="flex flex-col items-center gap-6">
+                 {isSocial && (
+                   <i className={`fi ${isSocial.icon} text-4xl`}></i>
+                 )}
+                 
+                 <a 
+                   href={link.url} 
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className={`block w-full py-6 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 text-center relative group text-lg tracking-wide ${selectedTheme.button}`}
+                 >
+                   <span>{link.title}</span>
+                   <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-30 group-hover:opacity-100 transition-opacity">
+                      <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
+                   </div>
+                 </a>
+              </div>
+            )
+          })}
+
+          {/* Fallback for old social_links object */}
+          {(!profile.links || profile.links.length === 0) && profile.social_links && Object.entries(profile.social_links).map(([platform, url]: [string, any]) => (
              url && (
                <div key={platform} className="flex flex-col items-center gap-6">
                   <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'} text-4xl`}></i>
-                  
                   <a 
                     href={url} 
                     target="_blank"
@@ -109,24 +136,6 @@ export default function PublicProfile() {
                </div>
              )
            ))}
-        </div>
-
-        {/* Regular Links Section */}
-        <div className="w-full space-y-4">
-          {profile.links?.filter((l: any) => l.active).map((link: any, i: number) => (
-            <a 
-              key={i}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`block w-full py-5 px-6 rounded-2xl font-bold shadow-md hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 text-center relative group ${selectedTheme.button}`}
-            >
-              <span>{link.title}</span>
-              <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-30 group-hover:opacity-100 transition-opacity">
-                 <i className="fi fi-rr-menu-dots-vertical text-sm"></i>
-              </div>
-            </a>
-          ))}
         </div>
         
         <div className="mt-24 flex flex-col items-center gap-8">

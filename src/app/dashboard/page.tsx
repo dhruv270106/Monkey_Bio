@@ -5,6 +5,7 @@ import { motion, Reorder } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/dashboard/Sidebar'
 import Preview from '@/components/dashboard/Preview'
+import AddLinkModal from '@/components/dashboard/AddLinkModal'
 
 interface Link {
   id: string
@@ -28,6 +29,7 @@ export default function Dashboard() {
   const [links, setLinks] = useState<Link[]>([])
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -66,6 +68,18 @@ export default function Dashboard() {
     }
   }
 
+  const handleAddNewLink = async (linkData: { title: string; url: string; platform: string }) => {
+    const newLink: Link = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: linkData.title,
+      url: linkData.url,
+      active: true,
+      platform: linkData.platform
+    }
+    const newLinks = [newLink, ...links]
+    await updateLinks(newLinks)
+  }
+
   const toggleLink = async (id: string) => {
     const newLinks = links.map(l => l.id === id ? { ...l, active: !l.active } : l)
     await updateLinks(newLinks)
@@ -86,6 +100,12 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      <AddLinkModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        onAdd={handleAddNewLink}
+      />
+
       {/* Top Banner */}
       <div className="bg-[#1e293b] text-white py-2 px-8 flex justify-center items-center gap-4 text-sm font-medium sticky top-0 z-[100]">
           <span>Unlock more tools to grow your audience faster.</span>
@@ -142,22 +162,25 @@ export default function Dashboard() {
                   </div>
               </div>
 
-              {/* Purple Add Link Button */}
+              {/* Purple Add Link Button - Now triggers the modal */}
               <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md pb-6 pt-4">
-                  <button className="w-full py-5 bg-[#8b3eff] text-white font-black rounded-[40px] text-lg hover:bg-[#7221e6] transition-all flex items-center justify-center gap-2 group shadow-xl">
+                  <button 
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="w-full py-5 bg-[#8b3eff] text-white font-black rounded-[40px] text-lg hover:bg-[#7221e6] transition-all flex items-center justify-center gap-2 group shadow-xl active:scale-95"
+                  >
                       <i className="fi fi-rr-plus text-sm"></i> Add Link
                   </button>
               </div>
 
-              {/* Social Icons Section */}
+              {/* Social Icons Section (Keeping this for the large box cards) */}
               <div className="bg-[#fdf2e3] border border-[#e8dcc8] rounded-[40px] p-8">
                   <div className="flex items-center justify-between mb-6">
                       <div>
                           <h3 className="font-black text-xl text-secondary">Social Cards</h3>
-                          <p className="text-sm text-secondary/60">Manage your prominent social links</p>
+                          <p className="text-sm text-secondary/60">Large display cards for your main socials</p>
                       </div>
                       <button className="px-5 py-2.5 bg-white border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-100 transition-all shadow-sm">
-                         <i className="fi fi-rr-add mr-2"></i> Add Platform
+                         <i className="fi fi-rr-add mr-2"></i> Manage
                       </button>
                   </div>
                   <div className="flex flex-wrap gap-4">
@@ -169,16 +192,13 @@ export default function Dashboard() {
                              </div>
                              <div>
                                 <p className="text-xs font-black capitalize">{platform}</p>
-                                <p className="text-[10px] text-gray-400 truncate max-w-[100px]">{url}</p>
                              </div>
-                             <i className="fi fi-rr-menu-dots-vertical text-[10px] text-gray-300 ml-2 group-hover:text-secondary"></i>
                           </div>
                         )
                       ))}
                       {Object.keys(profile?.social_links || {}).length === 0 && (
                         <div className="w-full p-6 bg-white/50 rounded-3xl border border-dashed border-secondary/10 flex flex-col items-center justify-center text-center">
-                           <i className="fi fi-rr-apps text-2xl text-secondary/20 mb-2"></i>
-                           <p className="text-xs font-bold text-secondary/40">No social cards added yet.</p>
+                           <p className="text-xs font-bold text-secondary/40">No social cards added.</p>
                         </div>
                       )}
                   </div>
@@ -205,8 +225,11 @@ export default function Dashboard() {
                           <div className="cursor-grab active:cursor-grabbing text-gray-300 hover:text-secondary transition-colors">
                              <i className="fi fi-rr-grip-vertical text-lg"></i>
                           </div>
+                          <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center flex-shrink-0">
+                             <i className={`fi ${link.platform?.startsWith('fi-') ? link.platform : `fi-brands-${link.platform || 'link'}`} text-xl text-secondary`}></i>
+                          </div>
                           <div className="flex-1">
-                            <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center justify-between mb-2">
                                <input 
                                  type="text" 
                                  value={link.title}
@@ -250,12 +273,6 @@ export default function Dashboard() {
                     ))}
                   </Reorder.Group>
                 )}
-              </div>
-
-              {/* Archive row */}
-              <div className="flex items-center justify-between pt-10 border-t border-gray-100">
-                   <button className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary whitespace-nowrap"><i className="fi fi-rr-square-plus"></i> Add collection</button>
-                   <button className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary whitespace-nowrap">View link archive <i className="fi fi-rr-angle-small-right pt-0.5"></i></button>
               </div>
 
               <div className="flex items-center gap-2 font-black text-2xl px-2 opacity-50 grayscale mt-20 mb-32 text-secondary">
