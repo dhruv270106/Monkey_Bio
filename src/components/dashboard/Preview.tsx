@@ -82,19 +82,36 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                         href={link.url}
                         target="_blank"
                         rel="noreferrer"
-                        className={`w-full py-3 px-4 rounded-xl transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex items-center group ${selectedTheme.button}`}
+                        className={`w-full py-3 px-4 rounded-xl transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex flex-col group ${selectedTheme.button}`}
                       >
-                        <div className="w-5 h-5 rounded-md flex items-center justify-center overflow-hidden flex-shrink-0 border border-black/5">
-                           {link.image_url ? (
-                             <img src={link.image_url} alt="" className="w-full h-full object-cover" />
-                           ) : (
-                             <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-[10px] opacity-70`}></i>
-                           )}
+                        <div className="w-full flex items-center justify-between">
+                          <div className="w-5 h-5 rounded-md flex items-center justify-center overflow-hidden flex-shrink-0 border border-black/5">
+                             {link.gallery_images && link.gallery_images.length > 0 ? (
+                               <img src={link.gallery_images[0]} alt="" className="w-full h-full object-cover" />
+                             ) : link.image_url ? (
+                               <img src={link.image_url} alt="" className="w-full h-full object-cover" />
+                             ) : (
+                               <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-[10px] opacity-70`}></i>
+                             )}
+                          </div>
+                          <span className="flex-1 text-center truncate px-2">{link.title}</span>
+                          <div className="w-5 opacity-30 flex items-center justify-center">
+                             <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
+                          </div>
                         </div>
-                        <span className="flex-1 text-center truncate px-2">{link.title}</span>
-                        <div className="w-5 opacity-30 flex items-center justify-center">
-                           <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
-                        </div>
+
+                        {/* Gallery Section */}
+                        {link.gallery_images && link.gallery_images.length > 0 && (
+                          <div className="w-full mt-3 overflow-x-auto no-scrollbar">
+                             <div className="flex items-center gap-2 pb-1">
+                                {link.gallery_images.map((img: string, idx: number) => (
+                                  <div key={idx} className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-black/5 shadow-sm">
+                                     <img src={img} alt="" className="w-full h-full object-cover" />
+                                  </div>
+                                ))}
+                             </div>
+                          </div>
+                        )}
                       </a>
                     ))}
                     {(!links || links.filter((l: any) => l.active).length === 0) && (

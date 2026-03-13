@@ -106,19 +106,36 @@ export default function PublicProfile() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`block w-full py-5 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 flex items-center group text-lg tracking-wide ${selectedTheme.button}`}
+              className={`block w-full py-5 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 flex flex-col group text-lg tracking-wide ${selectedTheme.button}`}
             >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 border border-black/5 bg-white/10">
-                 {link.image_url ? (
-                   <img src={link.image_url} alt="" className="w-full h-full object-cover" />
-                 ) : (
-                   <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-2xl opacity-80`}></i>
-                 )}
+              <div className="w-full flex items-center justify-between">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 border border-black/5 bg-white/10">
+                   {link.gallery_images && link.gallery_images.length > 0 ? (
+                     <img src={link.gallery_images[0]} alt="" className="w-full h-full object-cover" />
+                   ) : link.image_url ? (
+                     <img src={link.image_url} alt="" className="w-full h-full object-cover" />
+                   ) : (
+                     <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-2xl opacity-80`}></i>
+                   )}
+                </div>
+                <span className="flex-1 text-center truncate px-4">{link.title}</span>
+                <div className="w-10 opacity-30 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                   <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
+                </div>
               </div>
-              <span className="flex-1 text-center truncate px-4">{link.title}</span>
-              <div className="w-10 opacity-30 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                 <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
-              </div>
+
+              {/* Gallery Section */}
+              {link.gallery_images && link.gallery_images.length > 0 && (
+                <div className="w-full mt-6 overflow-x-auto no-scrollbar scroll-smooth">
+                   <div className="flex items-center gap-4 pb-2 px-2">
+                      {link.gallery_images.map((img: string, idx: number) => (
+                        <div key={idx} className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-black/5 shadow-md hover:scale-105 transition-transform duration-300">
+                           <img src={img} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                   </div>
+                </div>
+              )}
             </a>
           ))}
         </div>
