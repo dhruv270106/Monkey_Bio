@@ -1,13 +1,13 @@
 'use client'
 
 export const PLATFORMS: Record<string, any> = {
-  threads: { name: 'Threads', icon: 'fi-brands-threads', color: 'text-black', pattern: /^https?:\/\/(www\.)?threads\.net\/@/ },
+  threads: { name: 'Threads', icon: 'fi-rr-at', color: 'text-black', pattern: /^https?:\/\/(www\.)?threads\.net\/@/ },
   instagram: { name: 'Instagram', icon: 'fi-brands-instagram', color: 'text-[#E4405F]', pattern: /^https?:\/\/(www\.)?instagram\.com\// },
   email: { name: 'Email', icon: 'fi-rr-envelope', color: 'text-gray-500', pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
   facebook: { name: 'Facebook', icon: 'fi-brands-facebook', color: 'text-[#1877F2]', pattern: /^https?:\/\/(www\.)?facebook\.com\// },
   youtube: { name: 'YouTube', icon: 'fi-brands-youtube', color: 'text-[#FF0000]', pattern: /^https?:\/\/(www\.)?youtube\.com\// },
   twitter: { name: 'X', icon: 'fi-brands-twitter', color: 'text-black', pattern: /^https?:\/\/(www\.)?(twitter\.com|x\.com)\// },
-  tiktok: { name: 'TikTok', icon: 'fi-brands-tiktok', color: 'text-black', pattern: /^https?:\/\/(www\.)?tiktok\.com\/@/ },
+  tiktok: { name: 'TikTok', icon: 'fi-br-brand-tiktok', color: 'text-black', pattern: /^https?:\/\/(www\.)?tiktok\.com\/@/ },
   whatsapp: { name: 'WhatsApp', icon: 'fi-brands-whatsapp', color: 'text-[#25D366]', pattern: /^https?:\/\/(wa\.me|api\.whatsapp\.com)\// },
   whatsapp_channel: { name: 'WhatsApp Channel', icon: 'fi-brands-whatsapp', color: 'text-[#075E54]', pattern: /^https?:\/\/(www\.)?whatsapp\.com\/channel\// },
   snapchat: { name: 'Snapchat', icon: 'fi-brands-snapchat', color: 'text-[#FFFC00]', pattern: /^https?:\/\/(www\.)?snapchat\.com\/add\// },
