@@ -85,14 +85,8 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                         className={`w-full py-3 px-4 rounded-xl transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex flex-col group ${selectedTheme.button}`}
                       >
                         <div className="w-full flex items-center justify-between">
-                          <div className="w-5 h-5 rounded-md flex items-center justify-center overflow-hidden flex-shrink-0 border border-black/5">
-                             {link.gallery_images && link.gallery_images.length > 0 ? (
-                               <img src={link.gallery_images[0]} alt="" className="w-full h-full object-cover" />
-                             ) : link.image_url ? (
-                               <img src={link.image_url} alt="" className="w-full h-full object-cover" />
-                             ) : (
-                               <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-[10px] opacity-70`}></i>
-                             )}
+                          <div className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 border border-black/5">
+                             <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-[10px] opacity-70`}></i>
                           </div>
                           <span className="flex-1 text-center truncate px-2">{link.title}</span>
                           <div className="w-5 opacity-30 flex items-center justify-center">

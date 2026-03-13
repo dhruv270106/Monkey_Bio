@@ -304,14 +304,8 @@ export default function Dashboard() {
                           <div className="cursor-grab active:cursor-grabbing text-gray-300 hover:text-secondary transition-colors p-1">
                              <i className="fi fi-rr-grip-vertical text-sm"></i>
                           </div>
-                          <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0 overflow-hidden border border-gray-100">
-                             {link.gallery_images && link.gallery_images.length > 0 ? (
-                               <img src={link.gallery_images[0]} alt="" className="w-full h-full object-cover" />
-                             ) : link.image_url ? (
-                               <img src={link.image_url} alt="" className="w-full h-full object-cover" />
-                             ) : (
-                               <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-lg text-secondary opacity-70`}></i>
-                             )}
+                          <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100">
+                             <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-lg text-secondary opacity-70`}></i>
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-1">
