@@ -85,15 +85,16 @@ export default function PublicProfile() {
         </h1>
         <p className="text-sm font-bold opacity-70 mb-12">@{profile.username}</p>
         
-        {/* Social Cards Section - Large Boxes per User Request */}
+        {/* Bio moved above social cards */}
+        {profile.bio && <p className="text-center px-8 mb-12 font-bold max-w-md leading-relaxed opacity-90">{profile.bio}</p>}
+
+        {/* Social Cards Section */}
         <div className="w-full space-y-10 mb-12">
            {profile.social_links && Object.entries(profile.social_links).map(([platform, url]: [string, any]) => (
              url && (
                <div key={platform} className="flex flex-col items-center gap-6">
-                  {/* Platform Icon on Top */}
                   <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'} text-4xl`}></i>
                   
-                  {/* The Box Link */}
                   <a 
                     href={url} 
                     target="_blank"
@@ -110,8 +111,6 @@ export default function PublicProfile() {
            ))}
         </div>
 
-        {profile.bio && <p className="text-center px-8 mb-12 font-bold max-w-md leading-relaxed opacity-90">{profile.bio}</p>}
-        
         {/* Regular Links Section */}
         <div className="w-full space-y-4">
           {profile.links?.filter((l: any) => l.active).map((link: any, i: number) => (

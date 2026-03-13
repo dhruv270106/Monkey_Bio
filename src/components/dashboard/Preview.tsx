@@ -67,17 +67,17 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                  <h3 className="font-black text-xl mb-1 tracking-tight">{userProfile?.display_name || 'Your Name'}</h3>
                  <h3 className="text-[10px] font-bold opacity-70 mb-4">@{userProfile?.username || 'username'}</h3>
 
-                 {/* Social Section - Box Style as per User Request */}
+                 {/* Bio moved above social links */}
+                 {userProfile?.bio && <p className="text-[10px] text-center px-4 mb-8 opacity-80 font-bold leading-relaxed line-clamp-3">{userProfile.bio}</p>}
+
+                 {/* Social Section */}
                  <div className="w-full space-y-6 mb-8 mt-2">
                     {socialLinks && Object.entries(socialLinks).map(([platform, url]: [string, any]) => (
                       url && (
                         <div key={platform} className="w-full flex flex-col items-center gap-4">
-                           {/* Centered Icon on Top */}
                            <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'} text-2xl`}></i>
-                           
-                           {/* Box UI */}
                            <div className={`w-full py-4 px-4 rounded-xl transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex items-center justify-between group ${selectedTheme.button}`}>
-                             <div className="w-4" /> {/* Spacer */}
+                             <div className="w-4" />
                              <span className="flex-1 text-center font-black tracking-wide">{PLATFORMS[platform]?.name || platform}</span>
                              <div className="w-4 opacity-30">
                                 <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
@@ -88,8 +88,6 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                     ))}
                  </div>
 
-                 {userProfile?.bio && <p className="text-[10px] text-center px-2 mb-8 opacity-80 font-bold leading-relaxed line-clamp-3">{userProfile.bio}</p>}
-
                  {/* Regular Links */}
                  <div className="w-full space-y-3">
                     {links && links.filter(l => l.active).map((link, i) => (
@@ -97,19 +95,13 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                         key={i} 
                         className={`w-full py-4 px-4 rounded-xl transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex items-center justify-between group ${selectedTheme.button}`}
                       >
-                        <div className="w-4" /> {/* Spacer */}
+                        <div className="w-4" />
                         <span className="flex-1 text-center">{link.title}</span>
                         <div className="w-4 opacity-30">
                            <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
                         </div>
                       </div>
                     ))}
-                    {(!links || links.filter(l => l.active).length === 0) && (!socialLinks || Object.keys(socialLinks).length === 0) && (
-                      <div className="space-y-3 w-full opacity-10">
-                        <div className={`w-full h-12 rounded-xl ${selectedTheme.button}`}></div>
-                        <div className={`w-full h-12 rounded-xl ${selectedTheme.button}`}></div>
-                      </div>
-                    )}
                  </div>
 
                  <div className="mt-auto pt-12 mb-2 w-full flex flex-col items-center gap-6">
