@@ -9,27 +9,20 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
-    
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
-      setError(error.message)
+      alert(error.message)
       setLoading(false)
     } else {
       window.location.href = '/dashboard'
     }
   }
 
-  const handleGoogleLogin = async () => {
+  const loginWithGoogle = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -39,91 +32,103 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2">
-      <div className="flex flex-col items-center justify-center p-8 lg:p-24 bg-white">
+    <div className="min-h-screen flex bg-[#F5F7FA] selection:bg-primary/30">
+      {/* Left Column: Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-white relative z-10 rounded-r-[40px] shadow-2xl overflow-hidden">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
           className="w-full max-w-md"
         >
-          <Link href="/" className="inline-block mb-12 font-black text-2xl tracking-tighter">
-            Monkey <span className="text-primary">*</span>
+          <Link href="/" className="flex items-center gap-2 mb-12">
+            <span className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-secondary font-bold text-xl">M</span>
+            <span className="font-bold text-3xl tracking-tight text-secondary">Monkey</span>
           </Link>
-
-          <h1 className="text-4xl font-black text-secondary mb-2">Welcome back</h1>
-          <p className="text-gray-500 font-medium mb-10">Log in to your Monkey account</p>
-
-          <button 
-            onClick={handleGoogleLogin}
-            className="w-full py-4 px-6 border-2 border-gray-100 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-gray-50 transition-all mb-4 group"
-          >
-            <i className="fi fi-brands-google text-gray-400 group-hover:text-red-500 transition-colors"></i>
-            Continue with Google
-          </button>
-
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-gray-100" /></div>
-            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-4 text-gray-400 font-bold tracking-widest">OR</span></div>
-          </div>
-
-          <form onSubmit={handleEmailLogin} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-secondary ml-1">Email</label>
-              <div className="relative">
-                <i className="fi fi-rr-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          
+          <h1 className="text-4xl font-bold mb-4 tracking-tight text-secondary">Login</h1>
+          <p className="text-gray-500 mb-8 font-medium">Welcome back, creators!</p>
+          
+          <div className="space-y-4">
+            <button 
+              onClick={loginWithGoogle}
+              className="w-full py-3.5 px-4 rounded-xl font-bold bg-[#F5F7FA] text-secondary hover:bg-[#EAEFF4] transition-colors flex items-center justify-center gap-3"
+            >
+              <i className="fi fi-brands-google text-lg"></i> Continue with Google
+            </button>
+            
+            <div className="relative flex items-center py-4">
+              <div className="flex-grow border-t border-gray-100"></div>
+              <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium uppercase tracking-widest">or with email</span>
+              <div className="flex-grow border-t border-gray-100"></div>
+            </div>
+            
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div>
+                <label className="block text-sm font-bold text-secondary mb-1 uppercase tracking-widest text-[10px]">Email</label>
                 <input 
                   type="email" 
-                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@example.com"
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent focus:border-primary/50 rounded-2xl outline-none font-medium transition-all"
+                  className="w-full border border-gray-200 bg-gray-50 rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-primary focus:bg-white outline-none font-medium transition-all shadow-sm" 
+                  placeholder="you@example.com" 
+                  required 
                 />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-secondary ml-1">Password</label>
-              <div className="relative">
-                <i className="fi fi-rr-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <div>
+                <label className="block text-sm font-bold text-secondary mb-1 uppercase tracking-widest text-[10px]">Password</label>
                 <input 
                   type="password" 
-                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min. 8 characters"
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent focus:border-primary/50 rounded-2xl outline-none font-medium transition-all"
+                  className="w-full border border-gray-200 bg-gray-50 rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-primary focus:bg-white outline-none font-medium transition-all shadow-sm" 
+                  placeholder="••••••••" 
+                  required 
                 />
               </div>
-            </div>
-
-            {error && (
-              <p className="text-red-500 text-sm font-bold bg-red-50 p-3 rounded-lg border border-red-100">{error}</p>
-            )}
-
-            <button 
-              disabled={loading}
-              className="w-full py-4 bg-secondary text-white font-black rounded-full hover:bg-gray-800 transition-all shadow-lg flex items-center justify-center gap-2 mt-4"
-            >
-              {loading ? <i className="fi fi-rr-spinner animate-spin text-xl"></i> : <>Log in <i className="fi fi-rr-arrow-right"></i></>}
-            </button>
-          </form>
-
-          <p className="text-center mt-8 text-sm font-medium text-gray-500">
-            Don't have an account? <Link href="/signup" className="text-secondary font-bold hover:underline">Sign up</Link>
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="w-full py-4 px-4 bg-secondary text-white font-bold rounded-xl hover:bg-gray-800 transition-all transform hover:scale-[1.02] shadow-xl mt-2 flex items-center justify-center gap-2"
+              >
+                {loading ? <i className="fi fi-rr-spinner animate-spin"></i> : 'Log in'}
+              </button>
+            </form>
+          </div>
+          
+          <p className="mt-8 text-center text-sm font-medium text-gray-500">
+            Don&apos;t have an account? <Link href="/signup" className="text-secondary font-bold hover:underline">Sign up</Link>
           </p>
         </motion.div>
       </div>
 
-      <div className="hidden lg:flex bg-primary flex-col items-center justify-center p-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-dark opacity-50" />
-        <div className="relative z-10 text-center">
-          <h2 className="text-5xl font-black text-secondary leading-tight mb-6">Create and customize your profile in minutes</h2>
-          <p className="text-xl text-secondary/60 font-bold max-w-md mx-auto">Connect your TikTok, Instagram, Twitter, website, store, videos, music, podcast, events and more. It all comes together in a link in bio engineered to inform.</p>
+      {/* Right Column: Decorative */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#F5F7FA] items-center justify-center">
+        <div className="absolute inset-0 z-0 transition-transform duration-200">
+            <div className="absolute rounded-full filter blur-[80px] opacity-40 animate-blob" style={{ width: '500px', height: '500px', background: '#43E660', top: '10%', right: '10%' }}></div>
+            <div className="absolute rounded-full filter blur-[80px] opacity-30 animate-blob" style={{ width: '600px', height: '600px', background: '#60a5fa', bottom: '-5%', left: '0', animationDelay: '-3s' }}></div>
         </div>
-        {/* Abstract shapes for premium feel */}
-        <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-white/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -top-20 -left-20 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse delay-700" />
+        
+        {/* Glass Mockup */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="relative z-10 bg-white/40 backdrop-blur-2xl border border-white p-8 rounded-[40px] shadow-2xl max-w-sm"
+        >
+           <div className="flex items-center gap-4 mb-8">
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg"><i className="fi fi-rr-bolt text-2xl text-secondary"></i></div>
+              <div>
+                <h3 className="font-bold text-2xl text-secondary leading-tight">One Link.</h3>
+                <p className="font-medium text-gray-600">Infinite Possibilities.</p>
+              </div>
+           </div>
+           <div className="space-y-4">
+              <div className="h-16 w-full bg-white/80 rounded-2xl shadow-sm border border-white/40"></div>
+              <div className="h-16 w-full bg-white/80 rounded-2xl shadow-sm border border-white/40"></div>
+              <div className="h-16 w-full bg-white/80 rounded-2xl shadow-sm border border-white/40"></div>
+           </div>
+        </motion.div>
       </div>
     </div>
   )

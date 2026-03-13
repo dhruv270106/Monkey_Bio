@@ -1,0 +1,192 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Monkey Linktree</title>
+    <!-- We inject tailwindcss script for simple rapid preview execution here -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: { DEFAULT: '#6cf383', dark: '#43E660' },
+              secondary: { DEFAULT: '#0F172A' },
+            },
+            fontFamily: { sans: ['Inter', 'sans-serif'] },
+            animation: {
+              'fade-in': 'fadeIn 0.7s ease-out forwards',
+              'bounce-slow': 'bounce 4s infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      const supabaseUrl = 'https://esngrodyozljdjkfcocp.supabase.co';
+      const supabaseKey = 'sb_publishable_6DOFYKjxL3o2U1rs5Gd4cw_SitIaPwy';
+      window.supabaseClient = (window.supabase || window.supabasejs).createClient(supabaseUrl, supabaseKey);
+    </script>
+    <style>
+       body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+       .spline-bg-container {
+           position: absolute; inset: 0; z-index: -1; overflow: hidden; background: #fafafa;
+       }
+       .spline-orb {
+           position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6;
+           animation: floatOrb 10s infinite alternate ease-in-out;
+       }
+       @keyframes floatOrb {
+           0% { transform: translate(0,0) scale(1); }
+           100% { transform: translate(50px, 60px) scale(1.05); }
+       }
+    </style>
+</head>
+<body class="bg-gray-50 text-secondary min-h-screen flex flex-col ">
+  
+      <!-- Auth Layout -->
+      <div class="min-h-screen flex bg-[#F5F7FA]">
+         <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-white relative z-10 rounded-r-[40px] shadow-2xl overflow-hidden">
+            <div class="w-full max-w-md animate-fade-in opacity-0" style="animation-delay: 0.2s;">
+              <a href="./index.html" class="flex items-center gap-2 mb-12">
+                <span class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-secondary font-bold text-xl">M</span>
+                <span class="font-bold text-3xl tracking-tight text-secondary">Monkey</span>
+              </a>
+              <h1 class="text-4xl font-bold mb-4 tracking-tight">Sign Up</h1>
+              <p class="text-gray-500 mb-8 font-medium">Claim your unique link today.</p>
+              
+              <div class="space-y-4">
+                 <button onclick="window.supabaseClient.auth.signInWithOAuth({provider: 'google', options: { queryParams: { prompt: 'select_account' }, redirectTo: window.location.origin + '/onboarding.html' }})" class="w-full py-3.5 px-4 rounded-xl font-bold bg-[#F5F7FA] text-secondary hover:bg-[#EAEFF4] transition-colors flex items-center justify-center gap-3">
+                   <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google"> Continue with Google
+                 </button>
+                 <div class="relative flex items-center py-4">
+                   <div class="flex-grow border-t border-gray-100"></div>
+                   <span class="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">OR WITH EMAIL</span>
+                   <div class="flex-grow border-t border-gray-100"></div>
+                 </div>
+                 
+                 <form class="space-y-5" id="authForm">
+                   
+                   <div><label class="block text-sm font-bold text-secondary mb-1">Username</label><div class="flex shadow-sm rounded-xl focus-within:ring-2 focus-within:ring-primary overflow-hidden border border-gray-200"><span class="inline-flex items-center px-4 bg-gray-50 text-gray-500 font-medium">monkey.link/</span><input type="text" id="username" class="flex-1 block w-full py-3.5 px-4 outline-none font-medium text-secondary" placeholder="username"></div></div>
+                   
+                   <div>
+                     <label class="block text-sm font-bold text-secondary mb-1">Email</label>
+                     <input type="email" id="email" class="w-full border border-gray-200 bg-gray-50 rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-primary focus:bg-white outline-none font-medium transition-all shadow-sm" placeholder="you@example.com" required>
+                   </div>
+                   <div class="pb-2">
+                     <label class="block text-sm font-bold text-secondary mb-1">Password</label>
+                     <input type="password" id="password" class="w-full border border-gray-200 bg-gray-50 rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-primary focus:bg-white outline-none font-medium transition-all shadow-sm" placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó" required>
+                   </div>
+                   <button type="submit" id="submitBtn" class="w-full py-4 px-4 bg-secondary text-white font-bold rounded-xl hover:bg-gray-800 transition-all transform hover:scale-[1.02] shadow-xl mt-2">
+                     Create account
+                   </button>
+                 </form>
+              </div>
+              <p class="mt-8 text-center text-sm font-medium text-gray-500">
+                Already have an account? <a href="login.html" class="text-secondary font-bold hover:underline">Log in</a>
+              </p>
+            </div>
+         </div>
+
+         <script>
+            document.getElementById('authForm').addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const submitBtn = document.getElementById('submitBtn');
+              submitBtn.disabled = true;
+              submitBtn.innerHTML = 'Processing...';
+
+              const email = document.getElementById('email').value;
+              const password = document.getElementById('password').value;
+              const username = document.getElementById('username')?.value;
+              
+              const isLogin = 'signup.html' === 'login.html';
+
+              try {
+                if (isLogin) {
+                  const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
+                  if (error) throw error;
+                  window.location.href = 'onboarding.html';
+                } else {
+                  // Registration
+                  const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({ email, password });
+                  if (authError) throw authError;
+
+                  if (authData.session && authData.user && username) {
+                    const { error: profileError } = await window.supabaseClient
+                      .from('monkey_bio')
+                      .insert([{ id: authData.user.id, username: username.toLowerCase(), display_name: username }]);
+                    if (profileError) throw profileError;
+                  }
+                  
+                  if (authData.session) {
+                    window.location.href = 'onboarding.html';
+                  } else {
+                    alert('Registered successfully! Check your email if verification is required.');
+                    window.location.href = 'login.html';
+                  }
+                }
+              } catch (err) {
+                alert(err.message || 'An error occurred');
+              } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = isLogin ? 'Log in' : 'Create account';
+              }
+            });
+         </script>
+
+         <!-- Spline-style side background -->
+         <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#F5F7FA] items-center justify-center">
+            <div id="spline-bg" class="absolute inset-0 z-0 transition-transform duration-200">
+                <div class="spline-orb" style="width: 500px; height: 500px; background: #43E660; top: 10%; right: 10%; opacity: 0.4;"></div>
+                <div class="spline-orb" style="width: 600px; height: 600px; background: #60a5fa; bottom: -5%; left: 0; opacity: 0.3; animation-delay: -3s;"></div>
+            </div>
+            <!-- Glass Mockup overlapping -->
+            <div class="relative z-10 bg-white/40 backdrop-blur-2xl border border-white p-8 rounded-[40px] shadow-2xl max-w-sm animate-fade-in opacity-0" style="animation-delay: 0.4s;">
+               <div class="flex items-center gap-4 mb-8">
+                  <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg"><i data-lucide="zap" class="w-8 h-8 text-secondary"></i></div>
+                  <div>
+                    <h3 class="font-bold text-2xl text-secondary">One Link.</h3>
+                    <p class="font-medium text-gray-600">Infinite Possibilities.</p>
+                  </div>
+               </div>
+               <div class="space-y-4">
+                  <div class="h-16 w-full bg-white/80 rounded-2xl shadow-sm"></div>
+                  <div class="h-16 w-full bg-white/80 rounded-2xl shadow-sm"></div>
+                  <div class="h-16 w-full bg-white/80 rounded-2xl shadow-sm"></div>
+               </div>
+            </div>
+         </div>
+      </div>
+    
+  <!-- Mock Spline/Interactive background simulation logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const bg = document.getElementById('spline-bg');
+      if (bg) {
+        window.addEventListener('mousemove', (e) => {
+             const x = e.clientX / window.innerWidth;
+             const y = e.clientY / window.innerHeight;
+             // Slow elegant motion mapping
+             bg.style.transform = "translate(-" + (x * 30) + "px, -" + (y * 30) + "px) scale(1.05)";
+        });
+      }
+    });
+  </script>
+
+    <script>
+       // Initialize Lucide Icons
+       lucide.createIcons();
+    </script>
+</body>
+</html>
+  
