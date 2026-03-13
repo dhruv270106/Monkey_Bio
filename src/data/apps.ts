@@ -32,12 +32,12 @@ export const APPS: AppConfig[] = [
   { id: 'coaching', title: 'Coaching & bookings', description: 'Sell 1:1 sessions, consultations, and private coaching', icon: 'fi-rr-calendar-check', color: 'text-blue-600', category: 'commerce', placeholder: 'Service link' },
   { id: 'digital-products', title: 'Digital products', description: 'Sell documents, PDFs, guides, templates, and other content', icon: 'fi-rr-box-open', color: 'text-indigo-600', category: 'commerce', placeholder: 'Product link' },
   { id: 'courses', title: 'Courses', description: 'Sell online courses and lessons to your audience', icon: 'fi-rr-graduation-cap', color: 'text-purple-600', category: 'commerce', placeholder: 'Course link' },
-  { id: 'affiliate', title: 'Affiliate products', description: 'Share the items you love or promote products you sell', icon: 'fi-rr-tag', color: 'text-emerald-600', category: 'commerce', placeholder: 'Product URL' },
+  { id: 'affiliate', title: 'Affiliate products', description: 'Share the items you love or promote products you sell with Product links.', icon: 'fi-rr-tags', color: 'text-emerald-500', category: 'commerce', placeholder: 'Product URL' },
   { id: 'shopify', title: 'Shopify', description: 'Display your Shopify collections and products', icon: 'fi-brands-shopify', color: 'text-[#96BF48]', category: 'commerce', placeholder: 'Shopify store link' },
   { id: 'fourthwall', title: 'Fourthwall', description: 'Make & sell premium merch and custom goods', icon: 'fi-rr-shopping-bag', color: 'text-black', category: 'commerce', placeholder: 'Store link' },
   { id: 'amaze', title: 'Amaze', description: 'Create a store and display it on your Linktree', icon: 'fi-rr-shop', color: 'text-orange-500', category: 'commerce', placeholder: 'Amaze link' },
   { id: 'books', title: 'Books', description: 'Sell books from Amazon, Apple, and more', icon: 'fi-rr-book', color: 'text-amber-800', category: 'commerce', placeholder: 'Book link' },
-  { id: 'bonfire', title: 'Bonfire', description: 'Sell products from your Bonfire store directly', icon: 'fi-rr-fire', color: 'text-orange-600', category: 'commerce', placeholder: 'Store link' },
+  { id: 'bonfire', title: 'Bonfire', description: 'Sell products from your Bonfire store directly', icon: 'fi-rr-flame', color: 'text-orange-600', category: 'commerce', placeholder: 'Store link' },
 
   // COMMUNITIES
   { id: 'community-channels', title: 'Community Channels', description: 'Offer access to WhatsApp, Discord or Slack communities', icon: 'fi-rr-users-alt', color: 'text-blue-500', category: 'communities', placeholder: 'Community link' },
@@ -91,6 +91,15 @@ export const APPS: AppConfig[] = [
   { id: 'sms-signup', title: 'SMS signup', description: 'Collect phone numbers to connect', icon: 'fi-rr-comments', color: 'text-teal-500', category: 'contact', placeholder: 'Service Link' },
   { id: 'maps', title: 'Maps', description: 'Display a map location on your profile', icon: 'fi-rr-map-marker', color: 'text-red-500', category: 'contact', placeholder: 'Google Maps link' },
   { id: 'faqs', title: 'FAQs', description: 'Provide answers to common questions', icon: 'fi-rr-interrogation', color: 'text-blue-400', category: 'contact', placeholder: 'FAQ Title' },
+
+  // EVENTS
+  { id: 'tour', title: 'Tour and Events', description: 'Promote your upcoming shows from your artist profile right on your Linktree.', icon: 'fi-rr-ticket', color: 'text-rose-500', category: 'events', placeholder: 'Events profile link' },
+  { id: 'seated', title: 'Seated', description: 'Promote your upcoming shows and drive ticket sales via Seated.', icon: 'fi-rr-chair', color: 'text-blue-600', category: 'events', placeholder: 'Seated link' },
+  { id: 'bandsintown', title: 'Bands In Town', description: 'Connect your Linktree visitors to your events via Bandsintown.', icon: 'fi-rr-music', color: 'text-blue-400', category: 'events', placeholder: 'Bandsintown link' },
+
+  // TEXT
+  { id: 'text', title: 'Text', description: 'Display custom text on your Linktree, complete with an optional call-to-action button.', icon: 'fi-rr-text', color: 'text-gray-700', category: 'text', placeholder: 'Enter text content' },
+  { id: 'header', title: 'Header', description: 'Make it easy to navigate with Link Headers helping visitors find what they need fast.', icon: 'fi-rr-text-size', color: 'text-slate-600', category: 'text', placeholder: 'Header text' },
 ]
 
 export const SUGGESTED_APPS = APPS.filter(a => ['instagram', 'tiktok', 'youtube', 'spotify', 'shopify'].includes(a.id))
