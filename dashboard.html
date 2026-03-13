@@ -32,10 +32,12 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
       const supabaseUrl = 'https://esngrodyozljdjkfcocp.supabase.co';
       const supabaseKey = 'sb_publishable_6DOFYKjxL3o2U1rs5Gd4cw_SitIaPwy';
-      const supabase = supabasejs.createClient(supabaseUrl, supabaseKey);
+      window.supabaseClient = (window.supabasejs || window.supabase).createClient(supabaseUrl, supabaseKey);
     </script>
     <style>
        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
@@ -54,130 +56,239 @@
 </head>
 <body class="bg-gray-50 text-secondary min-h-screen flex flex-col bg-gray-50">
   
-      <!-- Dashboard Layout -->
-      <div class="min-h-screen flex bg-[#F5F7FA]">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col flex-shrink-0 h-screen sticky top-0 shadow-sm z-20">
-           <div class="h-20 flex items-center px-6 border-b border-gray-100 mb-4">
-              <a href="./index.html" class="flex items-center gap-2">
-                <span class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-secondary font-bold text-xl">M</span>
-                <span class="font-bold text-2xl tracking-tight text-secondary">Monkey</span>
-              </a>
-           </div>
-           <nav class="px-4 flex-1 overflow-y-auto space-y-1 pb-4">
-             <a href="./dashboard.html" class="flex items-center gap-3 px-4 py-3 bg-gray-100 text-secondary font-bold rounded-xl transition-all"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Overview</a>
-             <a href="./dashboard/links.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="list" class="w-5 h-5"></i> Links</a>
-             <a href="./dashboard/appearance.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="palette" class="w-5 h-5"></i> Appearance</a>
-             <a href="./dashboard/analytics.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="bar-chart-2" class="w-5 h-5"></i> Analytics</a>
-             <a href="./dashboard/monetization.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="dollar-sign" class="w-5 h-5"></i> Monetization</a>
-             <a href="./dashboard/integrations.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="blocks" class="w-5 h-5"></i> Integrations</a>
-             <div class="my-6 border-t border-gray-100"></div>
-             <a href="./dashboard/settings.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="settings" class="w-5 h-5"></i> Settings</a>
-             <a href="./dashboard/billing.html" class="flex items-center gap-3 px-4 py-3 text-gray-500 font-medium hover:bg-gray-50 hover:text-secondary rounded-xl transition-all"><i data-lucide="credit-card" class="w-5 h-5"></i> Billing</a>
-             <a href="./index.html" class="flex items-center gap-3 px-4 py-3 text-red-500 font-medium hover:bg-red-50 hover:text-red-600 rounded-xl transition-all mt-6"><i data-lucide="log-out" class="w-5 h-5"></i> Logout</a>
-           </nav>
-        </aside>
+      <!-- Top Banner -->
+      <div class="bg-[#1e293b] text-white py-2 px-8 flex justify-center items-center gap-4 text-sm font-medium sticky top-0 z-[100]">
+          <span>Unlock more tools to grow your audience faster.</span>
+          <button class="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 px-3 py-1 rounded-full flex items-center gap-2 transition-all">
+              <i data-lucide="zap" class="w-3 h-3 fill-primary"></i> Claim free week
+          </button>
+      </div>
 
-        <!-- Main Content -->
-        <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
-           <!-- Topbar -->
-           <header class="h-20 bg-white/80 backdrop-blur border-b border-gray-100 flex items-center justify-between px-8 flex-shrink-0 z-10 absolute top-0 w-full shadow-[0_4px_30px_rgba(0,0,0,0.02)]">
-             <h2 class="text-xl font-bold tracking-tight text-secondary">Dashboard Overview</h2>
-             <div class="flex items-center gap-4">
-                <a href="./profile-demo.html" target="_blank" class="text-sm font-bold flex items-center gap-2 bg-[#F5F7FA] px-4 py-2 rounded-full hover:bg-gray-200 transition-colors text-secondary">
-                  <i data-lucide="external-link" class="w-4 h-4 text-gray-400"></i> monkey.link/alex 
-                </a>
-                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border-2 border-primary cursor-pointer hover:shadow-lg transition-shadow">
-                   <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="Profile" class="w-full h-full object-cover">
-                </div>
-             </div>
-           </header>
-           
-           <div class="flex-1 overflow-y-auto p-8 pt-28 relative">
-              <!-- Animated ambient block for empty state/onboarding vibe in dashboard -->
-              <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-                  <div class="spline-orb" style="width: 600px; height: 600px; background: #6cf383; top: -20%; left: 30%; opacity: 0.15;"></div>
-                  <div class="spline-orb" style="width: 400px; height: 400px; background: #60a5fa; bottom: -10%; left: -10%; opacity: 0.1;"></div>
+      <!-- Dashboard Layout -->
+      <div class="flex-1 flex bg-white overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[#f8fafc] border-r border-gray-100 hidden md:flex flex-col flex-shrink-0 relative">
+           <!-- User Selector -->
+           <div class="p-6">
+               <div class="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-2xl cursor-pointer transition-all group">
+                   <div class="w-10 h-10 rounded-full bg-primary/20 border border-primary/10 overflow-hidden flex items-center justify-center">
+                       <img id="sidebar-avatar" src="" class="w-full h-full object-cover hidden">
+                       <i data-lucide="user" class="w-5 h-5 text-primary"></i>
+                   </div>
+                   <div class="flex-1">
+                       <p id="sidebar-username-text" class="text-sm font-bold text-secondary flex items-center gap-1">User <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i></p>
+                   </div>
+                   <div class="p-2 text-gray-400 group-hover:text-secondary"><i data-lucide="bell" class="w-4 h-4"></i></div>
+               </div>
+           </div>
+
+           <!-- Nav Items -->
+           <nav class="px-4 flex-1 space-y-1 overflow-y-auto">
+              <div>
+                  <button class="w-full flex items-center justify-between px-4 py-2 text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-1">
+                      My Linktree <i data-lucide="chevron-up" class="w-3 h-3"></i>
+                  </button>
+                  <div class="space-y-1">
+                      <a href="#" class="flex items-center gap-3 px-4 py-2.5 bg-white text-secondary font-bold rounded-xl shadow-sm border border-gray-100 transition-all">
+                          <i data-lucide="link" class="w-4 h-4 text-purple-500"></i> Links
+                      </a>
+                      <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                          <i data-lucide="shopping-bag" class="w-4 h-4"></i> Shop
+                      </a>
+                      <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                          <i data-lucide="palette" class="w-4 h-4"></i> Design
+                      </a>
+                  </div>
               </div>
 
-              <div class="max-w-4xl mx-auto relative z-10 w-full animate-fade-in opacity-0" style="animation-delay: 0.1s;">
-                 
-                   <!-- Dashboard Overview Content -->
-                   <div class="bg-primary/10 border border-primary/20 rounded-3xl p-8 mb-8 flex items-center justify-between shadow-sm">
+              <div class="pt-4">
+                  <button class="w-full flex items-center justify-between px-4 py-2 text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-1">
+                      Earn <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                  </button>
+                  <div class="space-y-1">
+                      <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                          <i data-lucide="layout" class="w-4 h-4"></i> Overview
+                      </a>
+                      <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                          <i data-lucide="dollar-sign" class="w-4 h-4"></i> Earnings ($0.00)
+                      </a>
+                  </div>
+              </div>
+
+              <div class="pt-4">
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                    <i data-lucide="users" class="w-4 h-4"></i> Audience
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Insights
+                </a>
+              </div>
+
+              <div class="pt-8 text-gray-400 font-bold text-[10px] uppercase tracking-widest px-4 mb-2">Tools</div>
+              <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                   <i data-lucide="calendar" class="w-4 h-4"></i> Social planner
+              </a>
+              <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                   <i data-lucide="message-circle" class="w-4 h-4"></i> Instagram auto-reply
+              </a>
+              <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                   <i data-lucide="scissors" class="w-4 h-4"></i> Link shortener
+              </a>
+              <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl">
+                   <i data-lucide="lightbulb" class="w-4 h-4"></i> Post ideas
+              </a>
+           </nav>
+
+           <!-- Checklist Card -->
+           <div class="p-4 mt-auto">
+               <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm space-y-3">
+                   <div class="flex items-center justify-between">
+                       <div class="w-12 h-12 rounded-full border-4 border-gray-50 relative flex items-center justify-center">
+                            <svg class="w-full h-full -rotate-90">
+                                <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-gray-50" />
+                                <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-purple-500" stroke-dasharray="125" stroke-dashoffset="83" />
+                            </svg>
+                            <span class="absolute text-[10px] font-bold text-gray-700">33%</span>
+                       </div>
+                   </div>
+                   <p class="text-xs font-bold text-gray-700 leading-tight">Your setup checklist</p>
+                   <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">2 of 6 complete</p>
+                   <button class="w-full py-2 bg-purple-600 text-white font-bold text-xs rounded-full hover:bg-purple-700 transition-all">Finish setup</button>
+               </div>
+           </div>
+
+           <!-- Footer tools -->
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-gray-100">
+                <button onclick="handleLogout()" class="w-full flex items-center gap-3 p-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all group">
+                    <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </div>
+                    Sign out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content (Links Editor) -->
+        <main class="flex-1 flex flex-col bg-white overflow-hidden">
+           <!-- Page Toolbar -->
+           <div class="h-16 px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0">
+               <h1 class="font-bold text-xl">Links</h1>
+               <div class="flex items-center gap-3">
+                   <button class="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-50">
+                       <i data-lucide="sparkles" class="w-4 h-4 text-purple-500"></i> Enhance
+                   </button>
+                   <button class="p-2 border border-gray-200 rounded-full hover:bg-gray-50"><i data-lucide="settings" class="w-5 h-5 text-gray-400"></i></button>
+               </div>
+           </div>
+
+           <div class="flex-1 overflow-y-auto p-12 bg-white">
+              <div class="max-w-xl mx-auto space-y-8">
+                  
+                  <!-- Profile Header -->
+                  <div class="flex items-center gap-6 mb-12">
+                      <div class="relative group">
+                          <div class="w-24 h-24 rounded-full bg-gray-50 overflow-hidden border-2 border-white shadow-sm cursor-pointer" onclick="triggerAvatarUpload()">
+                              <img src="" id="main-avatar-img" class="w-full h-full object-cover">
+                              <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-white">
+                                  <i data-lucide="camera" class="w-6 h-6"></i>
+                              </div>
+                          </div>
+                      </div>
                       <div>
-                        <h3 class="text-2xl font-bold text-secondary mb-2">Welcome back to Monkey! 🐵</h3>
-                        <p class="text-gray-600 font-medium">Your link is optimized and performing well. Check your latest insights below.</p>
+                          <h2 id="main-display-name" class="text-2xl font-bold flex items-center gap-2">User <i data-lucide="check-circle" class="w-4 h-4 text-blue-500 fill-blue-500/10"></i></h2>
+                          <div id="social-badges-container" class="flex items-center gap-4 mt-2">
+                               <!-- Dynamic badges -->
+                          </div>
                       </div>
-                      <button class="bg-primary text-secondary font-bold px-6 py-3 rounded-full hover:bg-primary-dark transition-all transform hover:scale-105 shadow-md">Add new link</button>
-                   </div>
-                 
-                   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                     <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
-                        <div class="flex justify-between items-start mb-4">
-                           <p class="text-gray-400 font-bold text-xs uppercase tracking-widest">Page Views</p>
-                           <span class="text-primary font-bold text-xs">+12%</span>
-                        </div>
-                        <h3 class="text-3xl font-black">24.5k</h3>
-                     </div>
-                     <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
-                        <div class="flex justify-between items-start mb-4">
-                           <p class="text-gray-400 font-bold text-xs uppercase tracking-widest">Link Clicks</p>
-                           <span class="text-primary font-bold text-xs">+5.4%</span>
-                        </div>
-                        <h3 class="text-3xl font-black">18.2k</h3>
-                     </div>
-                     <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
-                        <div class="flex justify-between items-start mb-4">
-                           <p class="text-gray-400 font-bold text-xs uppercase tracking-widest">Total Earned</p>
-                           <span class="text-primary font-bold text-xs">Ready</span>
-                        </div>
-                        <h3 class="text-3xl font-black">$1,420</h3>
-                     </div>
-                   </div>
-                   
-                   <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm min-h-[300px]">
-                      <div class="flex justify-between items-center mb-8">
-                         <h4 class="font-bold text-lg">Top Performing Links</h4>
-                         <a href="dashboard/links.html" class="text-sm font-bold text-primary hover:underline">View all</a>
+                  </div>
+
+                  <!-- Add Link Button -->
+                  <div class="sticky top-[64px] z-40 bg-white pb-6 pt-4">
+                      <button id="btn-add-link" class="w-full py-4 bg-[#8b3eff] text-white font-bold rounded-[32px] text-[15px] hover:bg-[#7221e6] transition-all flex items-center justify-center gap-2 group" onclick="openAddLinkModal()">
+                          <i data-lucide="plus" class="w-5 h-5 transition-all"></i> Add Link
+                      </button>
+                  </div>
+
+                  <!-- Link Settings Sections -->
+                  <div class="space-y-6" id="dashboard-content-area">
+                      
+                      <!-- Social Icons Section -->
+                      <div class="bg-gray-50/50 border border-gray-100 rounded-[32px] p-8">
+                          <div class="flex items-center justify-between mb-6">
+                              <div>
+                                  <h3 class="font-bold text-lg">Social Icons</h3>
+                                  <p class="text-xs text-gray-500">Pick which social icons to show on your profile</p>
+                              </div>
+                              <button id="btn-add-social" class="px-4 py-2 bg-white border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-50 transition-all">Add Social Icon</button>
+                          </div>
+                          <div id="social-icons-list" class="flex flex-wrap gap-3">
+                              <!-- Dynamic social icons will be here -->
+                              <div class="p-3 bg-white rounded-2xl border border-dashed border-gray-200 text-gray-400 text-xs flex items-center gap-2 cursor-pointer hover:border-purple-300 hover:text-purple-600 transition-all" onclick="document.getElementById('btn-add-social').click()">
+                                  <i data-lucide="plus-circle" class="w-4 h-4"></i> Add your first social icon
+                              </div>
+                          </div>
                       </div>
-                      <div class="space-y-4">
-                         <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-                            <div class="flex items-center gap-4">
-                               <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-red-500 shadow-sm"><i data-lucide="youtube" class="w-5 h-5"></i></div>
-                               <p class="font-bold">Latest Video</p>
-                            </div>
-                            <p class="font-medium text-gray-500">4,203 clicks</p>
-                         </div>
-                         <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-                            <div class="flex items-center gap-4">
-                               <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-500 shadow-sm"><i data-lucide="twitter" class="w-5 h-5"></i></div>
-                               <p class="font-bold">Twitter Profile</p>
-                            </div>
-                            <p class="font-medium text-gray-500">2,150 clicks</p>
-                         </div>
+
+                      <!-- Links List -->
+                      <div id="links-list" class="space-y-4">
+                          <!-- Dynamic link cards will be injected here -->
+                          <div class="py-20 text-center space-y-4 text-gray-400">
+                               <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
+                                    <i data-lucide="link" class="w-8 h-8"></i>
+                               </div>
+                               <p class="font-medium">No links yet. Click "Add Link" to get started!</p>
+                          </div>
                       </div>
-                   </div>
-                 
+                  </div>
+
+                  <!-- Archive/Collections row -->
+                  <div class="flex items-center justify-between pt-10 border-t border-gray-50">
+                       <button class="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary"><i data-lucide="plus-square" class="w-5 h-5"></i> Add collection</button>
+                       <button class="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary">View archive <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                  </div>
+
+                  <div class="flex items-center gap-2 font-black text-xl px-2 opacity-50 grayscale mt-12 mb-20">Linktree <span class="text-primary text-2xl">*</span></div>
+
               </div>
            </div>
         </main>
         
         <!-- Preview Mockup Panel -->
-        <aside class="w-[450px] bg-white border-l border-gray-200 hidden lg:flex flex-col items-center py-12 px-10 overflow-y-auto relative z-20 shadow-[-10px_0_30px_-15px_rgba(0,0,0,0.1)]">
-           <div class="w-full flex justify-between items-center mb-6">
-             <span class="font-bold text-gray-400 text-sm">LIVE PREVIEW</span>
-             <div class="flex gap-2">
-               <button class="bg-gray-100 p-2 rounded-lg hover:bg-gray-200 text-secondary"><i data-lucide="copy" class="w-4 h-4"></i></button>
-               <button class="bg-gray-100 p-2 rounded-lg hover:bg-gray-200 text-secondary"><i data-lucide="share" class="w-4 h-4"></i></button>
-             </div>
+        <aside class="w-[480px] bg-white border-l border-gray-100 hidden lg:flex flex-col items-center flex-shrink-0 relative overflow-hidden h-screen sticky top-0">
+           
+           <div class="w-full p-8 flex items-center justify-center gap-3">
+               <div class="bg-gray-100 flex items-center rounded-xl p-1 w-full max-w-sm">
+                   <span id="preview-url-text" class="px-4 text-[10px] font-bold text-gray-400 truncate">linktr.ee/user</span>
+                   <button class="p-2 bg-white rounded-lg shadow-sm ml-auto"><i data-lucide="upload" class="w-4 h-4 scale-x-[-1]"></i></button>
+               </div>
+               <button class="p-2 border border-gray-200 rounded-xl hover:bg-gray-50 flex-shrink-0" onclick="location.reload()"><i data-lucide="refresh-cw" class="w-4 h-4 text-gray-400"></i></button>
            </div>
            
-           <div class="w-full max-w-[340px] rounded-[52px] border-[12px] border-[#020617] shadow-xl h-[700px] overflow-hidden relative bg-black transform transition-transform hover:scale-[1.02] duration-300">
-              <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-[#020617] rounded-b-[20px] z-50"></div>
-              <iframe src="./profile-demo.html" class="w-full h-full border-0 absolute inset-0 rounded-[40px] z-10 pointer-events-none"></iframe>
+           <div class="flex-1 w-full flex items-center justify-center p-8 relative overflow-hidden">
+               <div id="mockup-iframe-container" class="w-full max-w-[280px] aspect-[9/18.5] rounded-[44px] border-[10px] border-[#020617] shadow-2xl relative overflow-hidden bg-white flex flex-col items-center transform scale-90 xxl:scale-100 transition-transform origin-center">
+                  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-[#020617] rounded-b-[16px] z-50"></div>
+                  
+                  <div class="w-full h-full overflow-y-auto no-scrollbar flex flex-col items-center p-8 pt-12">
+                      <div class="w-16 h-16 rounded-full bg-gray-100 border-2 border-white/20 mb-4 overflow-hidden shadow-lg flex-shrink-0">
+                          <img id="mockup-preview-avatar" src="" class="w-full h-full object-cover">
+                      </div>
+                      <h3 id="mockup-preview-username" class="text-secondary font-bold text-sm mb-6">@username</h3>
+
+                      <div id="mockup-preview-links" class="w-full space-y-3">
+                          <!-- Links injected here -->
+                          <div class="w-full py-3 bg-gray-50 rounded-xl animate-pulse"></div>
+                          <div class="w-full py-3 bg-gray-50 rounded-xl animate-pulse"></div>
+                      </div>
+
+                      <div class="mt-auto pt-10 mb-4 w-full flex flex-col items-center gap-3">
+                          <button class="px-3 py-1.5 bg-white border border-gray-100 text-secondary text-[8px] font-bold rounded-full shadow-lg">Join us on Monkey</button>
+                      </div>
+                  </div>
+               </div>
            </div>
         </aside>
-      </div>
+      </div>iv>
     
   <!-- Mock Spline/Interactive background simulation logic -->
   <script>
@@ -198,6 +309,92 @@
        // Initialize Lucide Icons
        lucide.createIcons();
     </script>
+
+    <!-- Hidden Avatar Input -->
+    <input type="file" id="avatar-upload" class="hidden" accept="image/*" onchange="window.handleFileSelect(event)">
+
+    <!-- Cropper Modal -->
+    <div id="cropper-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[32px] w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="font-bold text-xl">Crop Profile Picture</h3>
+                <button onclick="closeCropper()" class="p-2 hover:bg-gray-100 rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="aspect-square w-full bg-gray-100 rounded-2xl overflow-hidden">
+                    <img id="cropper-image" class="max-w-full">
+                </div>
+            </div>
+            <div class="p-6 bg-gray-50 flex gap-4">
+                <button onclick="closeCropper()" class="flex-1 py-3 px-4 border border-gray-200 font-bold rounded-xl hover:bg-white transition-all text-gray-600">Cancel</button>
+                <button onclick="saveCroppedImage()" id="save-crop-btn" class="flex-1 py-3 px-4 bg-secondary text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg flex items-center justify-center gap-2">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Add Link / Apps Modal -->
+    <div id="add-link-modal" class="fixed inset-0 z-[200] hidden flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] p-4 sm:p-6 opacity-0 transition-opacity duration-200">
+        <div class="bg-white rounded-[24px] w-full max-w-[840px] h-[85vh] flex flex-col shadow-[0_30px_60px_rgba(0,0,0,0.12)] overflow-hidden relative scale-95 transition-transform duration-200" id="add-link-modal-content">
+            <!-- Header -->
+            <div class="px-6 py-4 flex justify-between items-center bg-white shrink-0">
+                <h3 class="font-bold text-xl text-secondary">Add</h3>
+                <button onclick="closeAddLinkModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <!-- Search bar -->
+            <div class="px-6 pb-4 shrink-0 border-b border-gray-100">
+                <div class="relative">
+                    <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="add-link-search" placeholder="Paste or search a link" class="w-full pl-11 pr-4 py-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-[16px] outline-none focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-500/10 transition-all font-medium text-[15px] text-secondary placeholder-gray-500" onkeyup="filterAddLink()">
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="flex flex-1 overflow-hidden bg-white">
+                <!-- Sidebar Tabs -->
+                <div class="w-[220px] border-r border-gray-100 overflow-y-auto no-scrollbar shrink-0 py-2 hidden sm:block" id="add-modal-sidebar">
+                    <div class="space-y-0.5 px-3">
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all bg-purple-50 text-purple-700 font-bold text-[14px]" data-tab="suggested" onclick="selectAddTab('suggested')">
+                            <i data-lucide="lightbulb" class="w-4 h-4"></i> Suggested
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="commerce" onclick="selectAddTab('commerce')">
+                            <i data-lucide="store" class="w-4 h-4"></i> Commerce
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="social" onclick="selectAddTab('social')">
+                            <i data-lucide="heart" class="w-4 h-4"></i> Social
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="media" onclick="selectAddTab('media')">
+                            <i data-lucide="play-circle" class="w-4 h-4"></i> Media
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="contact" onclick="selectAddTab('contact')">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i> Contact
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="events" onclick="selectAddTab('events')">
+                            <i data-lucide="calendar" class="w-4 h-4"></i> Events
+                        </button>
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="text" onclick="selectAddTab('text')">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> Text
+                        </button>
+                    </div>
+                    <div class="px-3 mt-4 pt-2 border-t border-gray-100">
+                        <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="all" onclick="selectAddTab('all')">
+                            <i data-lucide="more-horizontal" class="w-4 h-4 text-gray-400"></i> View all
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="flex-1 overflow-y-auto p-6 bg-white space-y-6" id="add-modal-main-content">
+                    <!-- Cards will be injected here via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./dashboard-auth.js"></script>
 </body>
 </html>
   

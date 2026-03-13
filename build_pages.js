@@ -58,7 +58,6 @@ const pages = [
   { path: 'marketplace/whatsapp.html', title: 'WhatsApp Integration' },
 
   // Dashboard Routes
-  { path: 'dashboard.html', title: 'Dashboard Overview' },
   { path: 'dashboard/links.html', title: 'Manage Links' },
   { path: 'dashboard/analytics.html', title: 'Your Analytics' },
   { path: 'dashboard/appearance.html', title: 'Customize Appearance' },
