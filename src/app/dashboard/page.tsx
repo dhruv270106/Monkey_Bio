@@ -15,6 +15,8 @@ interface Link {
   url: string
   active: boolean
   platform?: string
+  image_url?: string
+  highlighted?: boolean
 }
 
 interface Profile {
@@ -63,13 +65,44 @@ export default function Dashboard() {
   }
 
   const updateLinks = async (newLinks: Link[]) => {
-    setLinks(newLinks)
+    // Sort links: highlighted ones first, otherwise keep their relative order
+    const sortedLinks = [...newLinks].sort((a, b) => {
+      if (a.highlighted && !b.highlighted) return -1
+      if (!a.highlighted && b.highlighted) return 1
+      return 0
+    })
+    
+    setLinks(sortedLinks)
     if (profile) {
       await supabase
         .from('monkey_bio')
-        .update({ links: newLinks })
+        .update({ links: sortedLinks })
         .eq('id', profile.id)
     }
+  }
+
+  const handleImageUpload = async (linkId: string, file: File) => {
+    if (!profile) return
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${profile.id}/${linkId}-${Math.random()}.${fileExt}`
+    
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(fileName, file)
+
+    if (!uploadError) {
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName)
+      
+      const newLinks = links.map(l => l.id === linkId ? { ...l, image_url: publicUrl } : l)
+      await updateLinks(newLinks)
+    }
+  }
+
+  const toggleHighlight = async (id: string) => {
+    const newLinks = links.map(l => l.id === id ? { ...l, highlighted: !l.highlighted } : l)
+    await updateLinks(newLinks)
   }
 
   const handleAddNewLink = async (linkData: { title: string; url: string; platform: string }) => {
@@ -248,21 +281,25 @@ export default function Dashboard() {
                       <Reorder.Item 
                         key={link.id} 
                         value={link} 
-                        className="bg-white border border-gray-100 rounded-[40px] p-8 shadow-sm hover:shadow-lg transition-all group relative border-l-[6px] border-l-primary"
+                        className={`bg-white border border-gray-100 rounded-[32px] p-5 shadow-sm hover:shadow-lg transition-all group relative border-l-[6px] ${link.highlighted ? 'border-l-yellow-400' : 'border-l-primary'}`}
                       >
-                        <div className="flex items-center gap-6">
-                          <div className="cursor-grab active:cursor-grabbing text-gray-300 hover:text-secondary transition-colors">
-                             <i className="fi fi-rr-grip-vertical text-lg"></i>
+                        <div className="flex items-center gap-4">
+                          <div className="cursor-grab active:cursor-grabbing text-gray-300 hover:text-secondary transition-colors p-1">
+                             <i className="fi fi-rr-grip-vertical text-sm"></i>
                           </div>
-                          <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center flex-shrink-0">
-                             <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-xl text-secondary`}></i>
+                          <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0 overflow-hidden border border-gray-100">
+                             {link.image_url ? (
+                               <img src={link.image_url} alt="" className="w-full h-full object-cover" />
+                             ) : (
+                               <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-lg text-secondary opacity-70`}></i>
+                             )}
                           </div>
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between mb-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
                                <input 
                                  type="text" 
                                  value={link.title}
-                                 className="font-black text-xl text-secondary bg-transparent outline-none focus:border-b-2 border-primary w-full mr-4"
+                                 className="font-black text-lg text-secondary bg-transparent outline-none focus:border-b border-primary w-full mr-4 truncate"
                                  onChange={(e) => {
                                    const newLinks = links.map(l => l.id === link.id ? { ...l, title: e.target.value } : l)
                                    setLinks(newLinks)
@@ -270,15 +307,15 @@ export default function Dashboard() {
                                  onBlur={() => updateLinks(links)}
                                />
                                <div className="flex items-center gap-4">
-                                  <button onClick={() => toggleLink(link.id)} className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${link.active ? 'bg-primary' : 'bg-gray-200'}`}>
-                                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${link.active ? 'translate-x-6' : 'translate-x-1'}`} />
+                                  <button onClick={() => toggleLink(link.id)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${link.active ? 'bg-primary' : 'bg-gray-200'}`}>
+                                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${link.active ? 'translate-x-6' : 'translate-x-1'}`} />
                                   </button>
                                </div>
                             </div>
                             <input 
                               type="text" 
                               value={link.url}
-                              className="text-sm font-medium text-gray-400 bg-transparent outline-none block w-full hover:text-secondary transition-colors"
+                              className="text-xs font-medium text-gray-400 bg-transparent outline-none block w-full hover:text-secondary transition-colors truncate"
                               onChange={(e) => {
                                 const newLinks = links.map(l => l.id === link.id ? { ...l, url: e.target.value } : l)
                                 setLinks(newLinks)
@@ -288,14 +325,29 @@ export default function Dashboard() {
                           </div>
                         </div>
                         
-                        <div className="mt-6 pt-6 border-t border-gray-50 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-300">
-                            <div className="flex items-center gap-6 text-gray-400">
-                               <button className="hover:text-secondary flex items-center gap-2 text-xs font-bold"><i className="fi fi-rr-picture"></i> Image</button>
-                               <button className="hover:text-secondary flex items-center gap-2 text-xs font-bold"><i className="fi fi-rr-star"></i> Highlight</button>
-                               <button className="hover:text-secondary flex items-center gap-2 text-xs font-bold"><i className="fi fi-rr-stats"></i> Analytics</button>
+                        <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div className="flex items-center gap-5 text-gray-400">
+                               <label className="hover:text-secondary flex items-center gap-2 text-[10px] font-bold cursor-pointer transition-colors">
+                                 <i className="fi fi-rr-picture"></i> Image
+                                 <input 
+                                   type="file" 
+                                   className="hidden" 
+                                   accept="image/*"
+                                   onChange={(e) => e.target.files?.[0] && handleImageUpload(link.id, e.target.files[0])}
+                                 />
+                               </label>
+                               <button 
+                                 onClick={() => toggleHighlight(link.id)}
+                                 className={`${link.highlighted ? 'text-yellow-500' : 'hover:text-yellow-500'} flex items-center gap-2 text-[10px] font-bold transition-colors`}
+                               >
+                                 <i className={`fi ${link.highlighted ? 'fi-sr-star' : 'fi-rr-star'}`}></i> Highlight
+                               </button>
+                               <button className="hover:text-secondary flex items-center gap-2 text-[10px] font-bold opacity-40 cursor-not-allowed">
+                                 <i className="fi fi-rr-stats"></i> Analytics
+                               </button>
                             </div>
-                            <button onClick={() => deleteLink(link.id)} className="w-10 h-10 rounded-2xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center">
-                               <i className="fi fi-rr-trash"></i>
+                            <button onClick={() => deleteLink(link.id)} className="w-8 h-8 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm">
+                               <i className="fi fi-rr-trash text-xs"></i>
                             </button>
                         </div>
                       </Reorder.Item>
