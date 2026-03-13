@@ -116,6 +116,8 @@
                     </div>`;
             } else {
                 userLinks.forEach((link, index) => {
+                    const iconDisplay = link.iconClass ? `<i class="${link.iconClass} text-xl text-gray-400 mt-1 mr-3"></i>` : `<i data-lucide="link" class="w-5 h-5 text-gray-400 mt-1 mr-3"></i>`;
+                    
                     const card = document.createElement('div');
                     card.className = 'relative group animate-fade-in';
                     card.innerHTML = `
@@ -124,9 +126,10 @@
                         </div>
                         <div class="bg-white border-2 ${link.active ? 'border-gray-100' : 'border-gray-50 opacity-60'} rounded-[32px] p-6 shadow-sm hover:shadow-md transition-all">
                             <div class="flex justify-between items-start mb-2">
+                                ${iconDisplay}
                                 <div class="flex-1 mr-4">
-                                    <input type="text" value="${link.title}" class="font-bold text-secondary bg-transparent border-none p-0 focus:ring-0 w-full mb-1" placeholder="Title" oninput="updateLink(${index}, 'title', this.value)">
-                                    <input type="text" value="${link.url}" class="text-sm text-gray-500 bg-transparent border-none p-0 focus:ring-0 w-full" placeholder="URL" oninput="updateLink(${index}, 'url', this.value)">
+                                    <input type="text" value="${link.title || ''}" class="font-bold text-secondary bg-transparent border-none p-0 focus:ring-0 w-full mb-1" placeholder="Title" oninput="updateLink(${index}, 'title', this.value)">
+                                    <input type="text" value="${link.url || ''}" class="text-sm text-gray-500 bg-transparent border-none p-0 focus:ring-0 w-full" placeholder="URL" oninput="updateLink(${index}, 'url', this.value)">
                                 </div>
                                 <div class="flex items-center gap-4">
                                     <button class="text-gray-300 hover:text-secondary"><i data-lucide="image" class="w-5 h-5"></i></button>
@@ -191,88 +194,32 @@
         };
 
         const linkApps = [
-            // Commerce
-            { id: 'commerce', title: 'Commerce', desc: '', cat: 'commerce', group: 'Commerce', icon: 'store', color: 'text-purple-500 bg-purple-50' },
-            { id: 'digital_products', title: 'Digital products', desc: '', cat: 'digital_products', group: 'Digital products', icon: 'file-text', color: 'text-blue-500 bg-blue-50' },
-
-            // Digital products
-            { id: 'coaching_bookings', title: 'Coaching & bookings', desc: 'Sell 1:1 sessions, consultations, and private coaching', cat: 'digital_products', group: 'Digital products', icon: 'calendar', color: 'text-purple-500 bg-purple-50' },
-            { id: 'digital_products_docs', title: 'Digital products', desc: 'Sell documents, PDFs, guides, templates, and other content', cat: 'digital_products', group: 'Digital products', icon: 'file-text', color: 'text-blue-500 bg-blue-50' },
-            { id: 'courses', title: 'Courses', desc: 'Sell online courses and lessons to your audience', cat: 'digital_products', group: 'Digital products', icon: 'graduation-cap', color: 'text-green-500 bg-green-50' },
-            { id: 'affiliate_products', title: 'Affiliate products', desc: 'Share the items you love or promote products you sell with Product links. Paste in any product link and we’ll automatically find the details for you. When visitors click on the products, they’ll be taken to the external link to make a purchase.', cat: 'digital_products', group: 'Affiliate products', icon: 'tag', color: 'text-yellow-600 bg-yellow-50' },
-            
-            // Physical products
-            { id: 'shopify', title: 'Shopify', desc: 'When you create a store with Shopify, you can display the best of it on your Linktree. Successful, established brands and early, emerging creators alike run e-commerce businesses with Shopify, managing their stores with no coding or design skills needed. A Shopify Store on your Linktree means customers can shop your collections, sales, and most popular products right alongside your latest content.', cat: 'commerce', group: 'Physical products', icon: 'shopping-bag', color: 'text-green-600 bg-green-50' },
-            { id: 'fourthwall', title: 'Fourthwall', desc: 'Make & sell premium merch, design custom goods, or sell your own → With Fourthwall, creators launch beautiful, fully managed stores in minutes—no design or coding needed. Showcase your top products, drops, and collections right on your Linktree so fans can shop directly while engaging with your latest content.', cat: 'commerce', group: 'Physical products', icon: 'shirt', color: 'text-black bg-gray-100' },
-            { id: 'amaze', title: 'Amaze', desc: 'Create a store with Amaze and display it on your Linktree. Amaze is a simple, popular solution for selling products – helping creators monetize on their Linktree with no cost, no hassle and no risk. Adding the Amaze link app means your fans and followers can shop your products right alongside your latest content.', cat: 'commerce', group: 'Physical products', icon: 'shopping-cart', color: 'text-indigo-500 bg-indigo-50' },
-            { id: 'books', title: 'Books', desc: 'Sell more books by promoting them on your Linktree. Link to the largest booksellers so your fans and followers can buy from their preferred store. Add a book link from Amazon, Apple, or Barnes & Noble. Linktree will automatically link to all of these plus Better Works Books and Books-A-Million in every available format: hardcover, paperback, ebook, and audio. Your visitors will see the book cover, title, author, description, and price. Earn more money from book sales on Linktree with Pro: Upgrade to Pro to connect your affiliate accounts and earn affiliate revenue from book sales on Apple, Barnes and Noble, Better World, and Books-a-Million.', cat: 'commerce', group: 'Physical products', icon: 'book', color: 'text-amber-700 bg-amber-50' },
-            { id: 'bonfire', title: 'Bonfire', desc: 'Take your merch promotion to the next level by selling products from your Bonfire store directly in your Linktree. It\'s a fast and easy way to share your products and boost your sales. Bonfire is the best online platform for creators to design and sell premium custom products. We take care of printing and shipping, and you keep 100% of the profits.', cat: 'commerce', group: 'Physical products', icon: 'flame', color: 'text-red-500 bg-red-50' },
-            
-            // Communities
-            { id: 'community_channels', title: 'Community Channels', desc: 'Offer access to your WhatsApp, Discord or Slack communities directly from your Linktree and grow your highly-engaged audience.', cat: 'commerce', group: 'Communities', icon: 'users', color: 'text-blue-500 bg-blue-50' },
-            { id: 'discord_servers', title: 'Discord servers', desc: 'Add members to your Discord server and grow your online community', cat: 'commerce', group: 'Communities', icon: 'message-square', color: 'text-indigo-500 bg-indigo-50' },
-            { id: 'whatsapp_groups', title: 'WhatsApp groups', desc: 'Add members to your WhatsApp group and grow your online community', cat: 'commerce', group: 'Communities', icon: 'phone', color: 'text-green-500 bg-green-50' },
-            { id: 'slack_workspaces', title: 'Slack workspaces', desc: 'Add members to your Slack workspace and grow your online community', cat: 'commerce', group: 'Communities', icon: 'hash', color: 'text-purple-600 bg-purple-50' },
-            
-            // Promotions
-            { id: 'discount_code', title: 'Discount Code', desc: 'This app displays a discount code that the visitors can use to get a discount on your products or services. You can customize the discount code and the text that goes with it.', cat: 'commerce', group: 'Promotions', icon: 'percent', color: 'text-pink-500 bg-pink-50' },
-            { id: 'gleam', title: 'Gleam', desc: 'Gleam helps you grow your audience with giveaways, gated content, opt-in forms, coupon unlocks and more. Add Gleam to your Linktree to drive traffic to your promotional campaigns and increase participation.', cat: 'commerce', group: 'Promotions', icon: 'gift', color: 'text-teal-500 bg-teal-50' },
-            
-            // Fundraising
-            { id: 'gofundme', title: 'GoFundMe', desc: 'You don\'t have to choose between advocating for local fundraisers and global emergencies. Use the GoFundMe app to support and promote all of the causes you care about right on your Linktree. Paste in any GoFundMe fundraiser link to activate the app, display real-time details about funding efforts and create the easiest possible path for your visitors to make a contribution.', cat: 'commerce', group: 'Fundraising', icon: 'heart', color: 'text-green-600 bg-green-50' },
-            
-            // Other digital
-            { id: 'sendowl', title: 'SendOwl', desc: 'Sell digital goods by showcasing them on your Linktree with the SendOwl Link App. Creators and businesses of all sizes use SendOwl to sell and automatically deliver digital products like downloads, subscriptions, e-books, video, audio, PDFs, designs, access codes, online courses, and more. After a buyer completes checkout, SendOwl automatically emails them a secure link to retrieve their digital goods. SendOwl makes it easy to monetize your digital creations on your Linktree.', cat: 'digital_products', group: 'Other digital', icon: 'download', color: 'text-blue-600 bg-blue-50' },
-            { id: 'mobile_app', title: 'Mobile App', desc: 'Easily market your mobile app and drive downloads across app stores with a simplified app sharing experience. No more adding multiple app store links on your Linktree! Add a single app link from either the Apple App Store or Google Play Store. Linktree automatically finds the app in the other store and routes visitors to the right one based on the device they are using.', cat: 'digital_products', group: 'Other digital', icon: 'smartphone', color: 'text-gray-700 bg-gray-100' },
-
             // Social
-            { id: 'instagram', title: 'Instagram', desc: 'Display up to six of your Instagram posts and reels, right on your Linktree with the Instagram link app. Previewing Instagram content visually on your Linktree draws attention, and helps you grow your following by driving discovery from other platforms! In fact, you can see up to 3x more clicks using more visual link apps to promote your Instagram, compared to a regular link.', cat: 'social', group: 'Social', icon: 'instagram', color: 'text-pink-600 bg-pink-50' },
-            { id: 'tiktok', title: 'TikTok', desc: 'Share your TikToks directly on your Linktree to gain exposure and followers. Use TikTok Profile to make it easy for all your visitors to see your content, follow your account, and even connect for collaboration. Showcase your profile and up to six of your best or latest videos directly on your Linktree. Use TikTok Video to add a single TikTok from any profile directly on your Linktree. Highlight one of your own TikToks or a TikTok from one of your favorite creators.', cat: 'social', group: 'Social', icon: 'music', color: 'text-black bg-gray-100' },
-            { id: 'tiktok_profile', title: 'TikTok Profile', desc: 'Share TikTok profiles with your audience. Perfect for content creators who want to share their TikTok profile or other creators\' profiles to help grow their following.', cat: 'social', group: 'Social', icon: 'user', color: 'text-black bg-gray-100' },
-            { id: 'x', title: 'X', desc: 'Use X app to select your own (or your favorite) posts to display on your Linktree. If you\'re on a Pro plan on Linktree, you can showcase what\'s new on your feed automatically. Paste the X link, select \'Display this profile\'s latest post on my Linktree\', and you\'re good to go.', cat: 'social', group: 'Social', icon: 'twitter', color: 'text-black bg-gray-100' },
-            { id: 'threads', title: 'Threads', desc: 'Driving your audience to follow you on Threads just got easier, Select your own (or your favorite) Threads posts to display on your Linktree. If you\'re on a Pro plan, you can showcase what\'s new on your Threads feed automatically. Past the link to your profile, select \'Display this profile\'s latest Thread on my Linktree\', and you\'re good to go.', cat: 'social', group: 'Social', icon: 'at-sign', color: 'text-black bg-gray-100' },
-            { id: 'reviews', title: 'Reviews', desc: 'This link type allows you to showcase your Google reviews on your linktr.ee profile. This is a great way to let your customers know how awesome you are.', cat: 'social', group: 'Social', icon: 'star', color: 'text-yellow-500 bg-yellow-50' },
-            { id: 'facebook', title: 'Facebook', desc: 'Show your visitors any Facebook video, right on your Linktree. With this app, visitors can watch your Facebook videos in full, without opening another app, browser or tab.', cat: 'social', group: 'Social', icon: 'facebook', color: 'text-blue-600 bg-blue-50' },
-            { id: 'snapchat', title: 'Snapchat', desc: 'Create content, grow your audience and build your business on Snapchat. Add your Snapchat Public Profile link to your Linktree as a social icon or link to drive audiences to your Public Stories and grow your Snap Subscriber list. Then, put your Linktree on display in your Public Stories using Linktree\'s sharing menu.', cat: 'social', group: 'Social', icon: 'camera', color: 'text-yellow-500 bg-yellow-50' },
-            { id: 'pinterest', title: 'Pinterest', desc: 'Share what you love on Pinterest so visitors can get inspired and explore what\'s inspiring you. If you\'ve saved Pins to a board, you can share it on your Linktree. You can also share as many individual Pins as you like!', cat: 'social', group: 'Social', icon: 'map-pin', color: 'text-red-500 bg-red-50' },
-            { id: 'twitch', title: 'Twitch', desc: 'Show your live Twitch stream and let visitors chat with you, right in your Linktree. With this app, you can choose to show just your stream, your chat, or both!', cat: 'social', group: 'Social', icon: 'play', color: 'text-purple-500 bg-purple-50' },
-            { id: 'reddit', title: 'Reddit', desc: 'Add a preview of your Reddit profile, right on your Linktree. Use this app to make sure your Linktree visitors know where to find you on Reddit: the home of thousands of communities, endless conversation, and authentic human connection.', cat: 'social', group: 'Social', icon: 'message-circle', color: 'text-orange-500 bg-orange-50' },
-            { id: 'rss', title: 'RSS Feed', desc: 'Share RSS feeds with your audience. Perfect for bloggers, news sites, and content creators who want to share their RSS feeds for easy subscription and content syndication.', cat: 'social', group: 'Social', icon: 'rss', color: 'text-orange-500 bg-orange-50' },
-            { id: 'cameo', title: 'Cameo', desc: 'On Cameo, you can help fans celebrate special moments like birthdays, holidays, and weddings with personalized video messages they\'ll never forget-all while earning meaningful revenue. Cameo\'s Linktree App allows you to drive even more people to your Cameo profile by showcasing what you offer, right from your Linktree.', cat: 'social', group: 'Social', icon: 'video', color: 'text-pink-500 bg-pink-50' },
-            { id: 'clubhouse', title: 'Clubhouse', desc: 'Clubhouse is a place to listen in on fascinating voice conversations, talk with the world’s most amazing people, and make new friends from all walks of life. It\'s so much more than just social media or audio.', cat: 'social', group: 'Social', icon: 'mic', color: 'text-yellow-600 bg-yellow-50' },
+            { id: 'instagram', title: 'Instagram', desc: 'Display your posts and reels', cat: 'social', group: 'Social', icon: 'fi fi-brands-instagram', urlPrefix: 'https://instagram.com/' },
+            { id: 'tiktok', title: 'TikTok', desc: 'Share your TikToks directly', cat: 'social', group: 'Social', icon: 'fi fi-brands-tiktok', urlPrefix: 'https://tiktok.com/@' },
+            { id: 'youtube', title: 'YouTube', desc: 'Show your visitors any YouTube video', cat: 'social', group: 'Social', icon: 'fi fi-brands-youtube', urlPrefix: 'https://youtube.com/@' },
+            { id: 'spotify', title: 'Spotify', desc: 'Keep your visitors in touch with the sounds', cat: 'social', group: 'Social', icon: 'fi fi-brands-spotify', urlPrefix: 'https://open.spotify.com/user/' },
+            { id: 'x', title: 'X', desc: 'Use X app to select your own posts', cat: 'social', group: 'Social', icon: 'fi fi-brands-twitter-alt', urlPrefix: 'https://x.com/' },
+            { id: 'threads', title: 'Threads', desc: 'Share your latest Threads', cat: 'social', group: 'Social', icon: 'fi fi-brands-threads', urlPrefix: 'https://threads.net/@' },
+            { id: 'facebook', title: 'Facebook', desc: 'Show your visitors your Facebook page', cat: 'social', group: 'Social', icon: 'fi fi-brands-facebook', urlPrefix: 'https://facebook.com/' },
+            { id: 'snapchat', title: 'Snapchat', desc: 'Add your Snapchat Public Profile', cat: 'social', group: 'Social', icon: 'fi fi-brands-snapchat', urlPrefix: 'https://snapchat.com/add/' },
+            { id: 'pinterest', title: 'Pinterest', desc: 'Share what you love on Pinterest', cat: 'social', group: 'Social', icon: 'fi fi-brands-pinterest', urlPrefix: 'https://pinterest.com/' },
+            { id: 'twitch', title: 'Twitch', desc: 'Show your live Twitch stream', cat: 'social', group: 'Social', icon: 'fi fi-brands-twitch', urlPrefix: 'https://twitch.tv/' },
+            { id: 'reddit', title: 'Reddit', desc: 'Add a preview of your Reddit profile', cat: 'social', group: 'Social', icon: 'fi fi-brands-reddit', urlPrefix: 'https://reddit.com/user/' },
 
             // Media
-            { id: 'video_generic', title: 'Video', desc: 'Now visitors don\'t need to leave your Linktree to watch videos you share. Add videos from Twitch, Youtube, TikTok, Vimeo, or Facebook and even share your latest YouTube video automatically.', cat: 'media', group: 'Media', icon: 'video', color: 'text-indigo-500 bg-indigo-50' },
-            { id: 'youtube', title: 'YouTube', desc: 'Show your visitors any YouTube video, right on your Linktree. Visitors can stay on your Linktree and watch it in full, or click through to the Youtube profile to like, subscribe or leave a comment. You can also choose to automatically show your latest YouTube video.', cat: 'media', group: 'Media', icon: 'youtube', color: 'text-red-500 bg-red-50' },
-            { id: 'tiktok_video', title: 'TikTok Video', desc: 'Highlight one of your TikToks or share a TikTok from another creator. Add a single TikTok from any profile directly on your Linktree for your visitors to watch and enjoy.', cat: 'media', group: 'Media', icon: 'film', color: 'text-black bg-gray-100' },
-            { id: 'vimeo', title: 'Vimeo', desc: 'Share Vimeo videos with your visitors and let them watch right on your Linktree. Visitors can stay on your Linktree and watch it in full, or click through to your Vimeo to like, leave comments, follow your profile and forward your Vimeo to their friends.', cat: 'media', group: 'Media', icon: 'play-circle', color: 'text-blue-500 bg-blue-50' },
-            
-            { id: 'pdf', title: 'PDF display', desc: 'From food menus to event invitations and even your CV - you can display downloadable PDF files and descriptions right on your linktree with the PDF app.', cat: 'media', group: 'Media', icon: 'file', color: 'text-red-500 bg-red-50' },
-            
-            { id: 'music_generic', title: 'Music', desc: 'Connect more fans with your music by giving them one place to see everywhere it\'s available. Add Spotify, SoundCloud, and Audiomack players to let fans listen right on your Linktree. Point us to your music on one platform and we\'ll discover it everywhere it\'s available. Add, edit, hide, and re-order services to your liking.', cat: 'media', group: 'Media', icon: 'music', color: 'text-purple-500 bg-purple-50' },
-            { id: 'podcasts', title: 'Podcasts', desc: 'Get more podcast listeners and subscribers with Linktree\'s Podcast Link. Add a link to a podcast on a supported platform (Spotify, Stitcher, Apple or Google Podcasts) and Linktree will find and show your visitors everywhere it\'s available to stream as well as recent episodes. Now your visitors can find, listen and subscribe to the podcast on their preferred platform and even see recent episodes to jump straight to what they\'re interested in and get a glimpse of the podcast\'s topics.', cat: 'media', group: 'Media', icon: 'mic', color: 'text-purple-600 bg-purple-50' },
-            { id: 'spotify', title: 'Spotify', desc: 'Whether you\'re an artist ready to show your fans what\'s new, or a music tastemaker sharing what you\'re listening to: Spotify on Linktree keeps your visitors in touch with the sounds you\'re putting out there. On Spotify, you get access to the world of music, curated playlists, artists, and podcasts you love - so share your own (or your favorite) Spotify sounds on your Linktree.', cat: 'media', group: 'Media', icon: 'play', color: 'text-green-500 bg-green-50' },
-            { id: 'apple_music', title: 'Apple Music', desc: 'Whether you\'re an artist ready to show your fans what\'s new, or a music tastemaker sharing what you\'re listening to: the Apple Music app gets your listeners closer to the songs, albums and artists they love most on your Linktree. Share your own (or your favorite) ad-free Apple Music sounds on your Linktree.', cat: 'media', group: 'Media', icon: 'headphones', color: 'text-red-500 bg-red-50' },
-            { id: 'soundcloud', title: 'SoundCloud', desc: 'SoundCloud is the world\'s largest music streaming platform and community, where artists and fans can upload and share their tracks with millions of listeners. When you add the SoundCloud app to your Linktree, the music on your SoundCloud page can be heard everywhere your link is.', cat: 'media', group: 'Media', icon: 'cloud', color: 'text-orange-500 bg-orange-50' },
-            { id: 'music_presave', title: 'Music Presave', desc: 'Spread the word and build excitement for your upcoming music release across all your platforms.', cat: 'media', group: 'Media', icon: 'calendar-check', color: 'text-blue-500 bg-blue-50' },
-            { id: 'audiomack', title: 'Audiomack', desc: 'Audiomack is an artist-first music streaming and audio discovery platform where creators like you can share unlimited music and podcast content for free - and with this app, your visitors can listen to it right on your Linktree.', cat: 'media', group: 'Media', icon: 'speaker', color: 'text-yellow-600 bg-yellow-50' },
+            { id: 'video_generic', title: 'Video', desc: 'Add videos from anywhere', cat: 'media', group: 'Media', icon: 'fi fi-rr-video-camera-alt', label: 'Enter Video URL', placeholder: 'https://...', isUrl: true },
+            { id: 'yt_video', title: 'YouTube', desc: 'Share a YouTube video', cat: 'media', group: 'Media', icon: 'fi fi-brands-youtube', label: 'Enter YouTube URL', placeholder: 'https://youtube.com/watch?v=', isUrl: true },
+            { id: 'tiktok_video', title: 'TikTok Video', desc: 'Highlight one of your TikToks', cat: 'media', group: 'Media', icon: 'fi fi-brands-tiktok', label: 'Enter TikTok Video URL', placeholder: 'https://tiktok.com/@user/video/...', isUrl: true },
+            { id: 'vimeo', title: 'Vimeo', desc: 'Share Vimeo videos', cat: 'media', group: 'Media', icon: 'fi fi-brands-vimeo', label: 'Enter Vimeo URL', placeholder: 'https://vimeo.com/...', isUrl: true },
+            { id: 'pdf', title: 'PDF Display', desc: 'Display downloadable PDF files', cat: 'media', group: 'Media', icon: 'fi fi-rr-document', label: 'Enter PDF URL', placeholder: 'https://...', isUrl: true },
 
             // Contact
-            { id: 'form', title: 'Form', desc: 'Add a Contact Form so visitors can send you their contact details and a message. Add your own form description and thank-you message, and decide which info you\'d like your visitors to include in their message with optional name, email, mobile, and country fields.', cat: 'contact', group: 'Contact', icon: 'align-left', color: 'text-blue-500 bg-blue-50' },
-            { id: 'contact_form', title: 'Contact Form', desc: 'Collect info with a form customized to your needs Add your own form description and thank-you message, and decide which info you\'d like your visitors to include in their message with optional name, email, mobile, and country fields.', cat: 'contact', group: 'Contact', icon: 'form-input', color: 'text-blue-600 bg-blue-50' },
-            { id: 'email_signup', title: 'Email signup', desc: 'Collect emails for a direct line to your audience Add your own form description and thank-you message, and decide which info you\'d like your visitors to include in their message with optional name, email, mobile, and country fields.', cat: 'contact', group: 'Contact', icon: 'mail', color: 'text-purple-500 bg-purple-50' },
-            { id: 'sms_signup', title: 'SMS signup', desc: 'Collect phone numbers to connect with followers Add your own form description and thank-you message, and decide which info you\'d like your visitors to include in their message with optional name, email, mobile, and country fields.', cat: 'contact', group: 'Contact', icon: 'smartphone', color: 'text-green-500 bg-green-50' },
-            { id: 'typeform', title: 'Typeform', desc: 'Typeform helps you create forms, surveys, and quizzes that your visitors can enjoy answering seamlessly, right on your Linktree. Take advantage of Typeform\'s conversational experience to get higher completion rates, and more thoughtful responses. You can also choose whether your visitors complete the form on your Linktree, or in their own browser.', cat: 'contact', group: 'Contact', icon: 'check-square', color: 'text-black bg-gray-100' },
-            { id: 'laylo', title: 'Laylo', desc: 'Build your fan list, reward your audience, and make it easier for fans to connect with your music and tour with the Laylo link app. Display your Laylo Profile, Drop, or Tour multidrop directly within your Linktree.', cat: 'contact', group: 'Contact', icon: 'bell', color: 'text-yellow-500 bg-yellow-50' },
-            { id: 'umg_signup', title: 'UMG Signup', desc: 'The simple greeting link is an example link type which enables a user to to show a simple greeting on their linktr.ee profile. This example code acts as a base for experimenting with link type capabilities', cat: 'contact', group: 'Contact', icon: 'user-plus', color: 'text-blue-500 bg-blue-50' },
-            { id: 'community_sms', title: 'Community SMS', desc: 'Make it easy for visitors to text your Community number to join your SMS subscriber list. Community is an innovative text messaging platform that connects people, businesses, and brands to the conversations they want to be part of.', cat: 'contact', group: 'Contact', icon: 'message-square', color: 'text-indigo-500 bg-indigo-50' },
-
-            { id: 'maps', title: 'Maps', desc: 'The maps link type enables you to display a map on your Linktr.ee profile. This link type is useful for displaying the location of a business, event, or other location.', cat: 'contact', group: 'Contact', icon: 'map-pin', color: 'text-red-500 bg-red-50' },
-            { id: 'contact_details', title: 'Contact Details', desc: 'Add a virtual contact card right to your Linktree to make it easier for people to reach you. You can choose to include your name, occupation, phone number/s, email addresses, your street or postal address, and even your hours.', cat: 'contact', group: 'Contact', icon: 'contact', color: 'text-purple-500 bg-purple-50' },
-            { id: 'faqs', title: 'FAQs', desc: 'This link type enables you to display your most frequently asked questions on your linktr.ee profile. This is a great way to provide quick and easy answers to common questions, saving time for both you and your audience.', cat: 'contact', group: 'Contact', icon: 'help-circle', color: 'text-blue-500 bg-blue-50' },
-            { id: 'chatbot', title: 'Chatbot', desc: 'Engage your audience with an interactive chatbot directly on your Linktree. A chatbot can help answer common questions, provide information, or guide users through specific processes, enhancing user experience and reducing the need for direct human interaction.', cat: 'contact', group: 'Contact', icon: 'bot', color: 'text-indigo-500 bg-indigo-50' },
-            { id: 'email_to', title: 'Email', desc: 'Link to send an email to a specific email address, making it easy for visitors to contact you directly', cat: 'contact', group: 'Contact', icon: 'mail', color: 'text-gray-700 bg-gray-100' },
-            { id: 'stats', title: 'Stats', desc: 'Showcase important statistics about yourself or your business with customizable labels and values. Perfect for highlighting achievements, milestones, or key performance indicators in a clean, professional format that matches your Linktree style.', cat: 'contact', group: 'Contact', icon: 'bar-chart', color: 'text-green-600 bg-green-50' },
+            { id: 'form', title: 'Form', desc: 'Add a Contact Form', cat: 'contact', group: 'Contact', icon: 'fi fi-rr-form', label: 'Enter Form URL', placeholder: 'https://...', isUrl: true },
+            { id: 'contact_form', title: 'Contact Form', desc: 'Collect info with a form', cat: 'contact', group: 'Contact', icon: 'fi fi-rr-address-book', label: 'Enter Contact Form URL', placeholder: 'https://...', isUrl: true },
+            { id: 'email_signup', title: 'Email Signup', desc: 'Collect emails', cat: 'contact', group: 'Contact', icon: 'fi fi-rr-envelope-open-text', label: 'Enter Signup Page URL', placeholder: 'https://...', isUrl: true },
+            { id: 'sms_signup', title: 'SMS Signup', desc: 'Collect phone numbers', cat: 'contact', group: 'Contact', icon: 'fi fi-rr-comment-sms', label: 'Enter Signup Page URL', placeholder: 'https://...', isUrl: true },
+            { id: 'typeform', title: 'Typeform', desc: 'Create forms and surveys', cat: 'contact', group: 'Contact', icon: 'fi fi-rr-apps', label: 'Enter Typeform URL', placeholder: 'https://...', isUrl: true },
 
             // Events
             { id: 'calendly', title: 'Calendly', desc: 'With Calendly, visitors can book services or schedule time with you, directly on your Linktree. Linkers using the Calendly link app are generating 7x more bookings than those with a regular link out to another site. Reduce a step in your conversion flow by making your booking experience smoother for your followers.', cat: 'contact', group: 'Events', icon: 'calendar', color: 'text-blue-500 bg-blue-50' },
@@ -344,20 +291,20 @@
             if (activeTab === 'suggested' && !searchVal) {
                 container.innerHTML += `
                     <div class="grid grid-cols-4 gap-4 mb-6">
-                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02]" onclick="handleAddAppClick({title: 'Collection', isApp: false})">
-                            <i data-lucide="layout-grid" class="w-7 h-7 text-purple-600"></i>
+                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95" onclick="addLink(); closeAddLinkModal()">
+                            <i class="fi fi-rr-layer-plus text-[28px] text-purple-600"></i>
                             <span class="text-xs font-bold text-secondary">Collection</span>
                         </button>
-                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02]" onclick="addLink(); closeAddLinkModal()">
-                            <i data-lucide="link" class="w-7 h-7 text-purple-600"></i>
+                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95" onclick="addLink(); closeAddLinkModal()">
+                            <i class="fi fi-rr-link text-[28px] text-purple-600"></i>
                             <span class="text-xs font-bold text-secondary">Link</span>
                         </button>
-                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02]" onclick="handleAddAppClick({title: 'Product', isApp: false})">
-                            <i data-lucide="tag" class="w-7 h-7 text-purple-600"></i>
+                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95" onclick="addLink(); closeAddLinkModal()">
+                            <i class="fi fi-rr-shopping-bag text-[28px] text-purple-600"></i>
                             <span class="text-xs font-bold text-secondary">Product</span>
                         </button>
-                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02]" onclick="handleAddAppClick({title: 'Form', isApp: false})">
-                            <i data-lucide="message-square" class="w-7 h-7 text-purple-600"></i>
+                        <button class="aspect-square bg-gray-50 hover:bg-gray-100 rounded-[28px] border border-gray-100 flex flex-col items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95" onclick="addLink(); closeAddLinkModal()">
+                            <i class="fi fi-rr-comment-alt text-[28px] text-purple-600"></i>
                             <span class="text-xs font-bold text-secondary">Form</span>
                         </button>
                     </div>
@@ -405,14 +352,14 @@
                         btn.className = "w-full text-left flex items-center gap-4 p-4 hover:bg-gray-50 rounded-2xl transition-all group border border-transparent hover:border-gray-100";
                         btn.onclick = () => handleAddAppClick(app);
                         btn.innerHTML = `
-                            <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${app.color} group-hover:scale-105 transition-transform">
-                                <i data-lucide="${app.icon}" class="w-6 h-6"></i>
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border border-gray-100 bg-gray-50 group-hover:scale-105 transition-transform text-2xl text-gray-700">
+                                <i class="${app.icon}"></i>
                             </div>
                             <div class="flex-1">
                                 <h4 class="font-bold text-[15px] text-secondary">${app.title}</h4>
                                 <p class="text-[13px] text-gray-500 font-medium truncate pr-4">${app.desc}</p>
                             </div>
-                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 transition-opacity"></i>
                         `;
                         groupDiv.appendChild(btn);
                     });
@@ -424,39 +371,55 @@
             if (window.lucide) lucide.createIcons();
         }
 
-        window.handleAddAppClick = (app) => {
-            if (activeTab === 'social' || (app.cat === 'social' && activeTab === 'all')) {
-                // Determine platform ID based on title to match existing platforms obj
-                let mappedPlatform = platforms.find(p => p.name.toLowerCase() === app.title.toLowerCase());
-                if (!mappedPlatform) {
-                     // Add dummy to platforms if not exists to let the social logic work
-                     mappedPlatform = { id: app.id || app.title.toLowerCase().replace(/\s+/g, ''), name: app.title, color: app.color.split(' ')[1] || 'bg-gray-100', icon: app.icon || 'link', iconColor: app.color.split(' ')[0] || 'text-gray-500' };
-                     platforms.push(mappedPlatform);
-                }
-                
-                // Show Social Handle Prompt
-                const val = prompt(`Enter username/ID for ${app.title}:`);
-                if (val && val.trim() !== '') {
-                    socialLinks[mappedPlatform.id] = val.trim();
-                    renderSocials();
-                    debouncedSave();
-                }
-            } else {
-                // Normal link
-                userLinks.unshift({ title: app.title, url: '', active: true, clicks: 0, id: Date.now() });
-                renderLinks();
-                debouncedSave();
-                
-                // Focus on URL of new link
-                setTimeout(() => {
-                    const inputs = linksListContainer.querySelectorAll('input');
-                    if (inputs.length > 1) inputs[1].focus(); // [0] is Title, [1] is URL
-                }, 100);
-            }
-            closeAddLinkModal();
+        let currentSelectedApp = null;
+        
+        window.closeAddHandleModal = () => {
+            const modal = document.getElementById('add-handle-modal');
+            modal.classList.add('opacity-0');
+            document.getElementById('add-handle-modal-content').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
         };
 
+        window.handleAddAppClick = (app) => {
+            currentSelectedApp = app;
+            document.getElementById('add-handle-title').innerText = `Add ${app.title} Icon`;
+            
+            const handleInput = document.getElementById('add-handle-input');
+            handleInput.placeholder = app.placeholder || `Enter ${app.title} Username`;
+            handleInput.value = '';
+            
+            const handleLabelText = app.urlPrefix ? `Enter ${app.title} Username` : (app.label || 'Enter Link Details');
+            
+            closeAddLinkModal();
+            setTimeout(() => {
+                const modal = document.getElementById('add-handle-modal');
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    document.getElementById('add-handle-modal-content').classList.remove('scale-95');
+                    handleInput.focus();
+                }, 10);
+            }, 200);
+        };
 
+        document.getElementById('add-handle-btn')?.addEventListener('click', () => {
+            if (!currentSelectedApp) return;
+            const inputVal = document.getElementById('add-handle-input').value.trim();
+            if (!inputVal) return;
+            
+            let finalUrl = inputVal;
+            if (currentSelectedApp.urlPrefix) {
+                 finalUrl = currentSelectedApp.urlPrefix + inputVal;
+            } else if (currentSelectedApp.isUrl && !finalUrl.startsWith('http')) {
+                 finalUrl = 'https://' + finalUrl;
+            }
+            
+            userLinks.unshift({ title: currentSelectedApp.title, url: finalUrl, active: true, clicks: 0, id: Date.now(), iconClass: currentSelectedApp.icon });
+            renderLinks();
+            debouncedSave();
+            closeAddHandleModal();
+        });
+        
         // 4. Mockup Sync Logic
         function updateMockup() {
             const mockupName = document.getElementById('mockup-preview-username');
@@ -483,11 +446,19 @@
                 }
             });
 
-            // 2. Add Custom Links
+            // 2. Add Custom Links as Button Style Cards
             userLinks.filter(l => l.active && l.title && l.url).forEach(link => {
-                const btn = document.createElement('div');
-                btn.className = 'w-full py-4 px-6 bg-white/95 text-secondary text-xs font-bold rounded-2xl flex items-center justify-center text-center shadow-lg border border-gray-100 hover:scale-[1.02] transition-all cursor-pointer mb-3';
-                btn.innerText = link.title;
+                const btn = document.createElement('a');
+                btn.href = link.url;
+                btn.target = '_blank';
+                btn.className = 'w-full py-4 px-6 bg-white/95 text-secondary font-bold rounded-2xl flex items-center justify-between text-center shadow-lg border border-gray-100 hover:scale-[1.02] transition-all cursor-pointer mb-3 decoration-transparent group';
+                
+                const iconHtml = link.iconClass ? `<i class="${link.iconClass} text-xl text-gray-500 group-hover:text-purple-500 transition-colors"></i>` : `<span></span>`;
+                
+                btn.innerHTML = `
+                    ${iconHtml}
+                    <span class="text-sm mx-auto pr-6">${link.title}</span>
+                `;
                 mockupLinks.appendChild(btn);
             });
 

@@ -23,5 +23,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "@flaticon/flaticon-uicons": "^3.3.1"
+  }
 }

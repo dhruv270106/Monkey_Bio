@@ -7,6 +7,7 @@
     <title>Dashboard Overview | Monkey Linktree</title>
     <!-- We inject tailwindcss script for simple rapid preview execution here -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">import "@flaticon/flaticon-uicons/css/all/all.css";</script>
     <script>
       tailwind.config = {
         theme: {
@@ -235,7 +236,7 @@
                           <!-- Dynamic link cards will be injected here -->
                           <div class="py-20 text-center space-y-4 text-gray-400">
                                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
-                                    <i data-lucide="link" class="w-8 h-8"></i>
+                                    <i class="fi fi-rr-link text-2xl"></i>
                                </div>
                                <p class="font-medium">No links yet. Click "Add Link" to get started!</p>
                           </div>
@@ -356,30 +357,30 @@
                 <div class="w-[220px] border-r border-gray-100 overflow-y-auto no-scrollbar shrink-0 py-2 hidden sm:block" id="add-modal-sidebar">
                     <div class="space-y-0.5 px-3">
                         <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all bg-purple-50 text-purple-700 font-bold text-[14px]" data-tab="suggested" onclick="selectAddTab('suggested')">
-                            <i data-lucide="lightbulb" class="w-4 h-4"></i> Suggested
+                            <i class="fi fi-rr-lightbulb"></i> Suggested
                         </button>
                         <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="commerce" onclick="selectAddTab('commerce')">
-                            <i data-lucide="store" class="w-4 h-4"></i> Commerce
+                            <i class="fi fi-rr-shopping-cart-check"></i> Commerce
                         </button>
                         <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="social" onclick="selectAddTab('social')">
-                            <i data-lucide="heart" class="w-4 h-4"></i> Social
+                            <i class="fi fi-rr-heart"></i> Social
                         </button>
                         <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="media" onclick="selectAddTab('media')">
-                            <i data-lucide="play-circle" class="w-4 h-4"></i> Media
+                            <i class="fi fi-rr-play-alt"></i> Media
                         </button>
                         <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="contact" onclick="selectAddTab('contact')">
-                            <i data-lucide="user-plus" class="w-4 h-4"></i> Contact
+                            <i class="fi fi-rr-address-book"></i> Contact
                         </button>
                         <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="events" onclick="selectAddTab('events')">
-                            <i data-lucide="calendar" class="w-4 h-4"></i> Events
+                            <i class="fi fi-rr-calendar"></i> Events
                         </button>
                         <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="text" onclick="selectAddTab('text')">
-                            <i data-lucide="file-text" class="w-4 h-4"></i> Text
+                            <i class="fi fi-rr-text"></i> Text
                         </button>
                     </div>
                     <div class="px-3 mt-4 pt-2 border-t border-gray-100">
                         <button class="add-tab-btn w-full flex items-center gap-3 px-4 py-2.5 text-left rounded-xl transition-all hover:bg-gray-50 text-gray-700 font-medium text-[14px]" data-tab="all" onclick="selectAddTab('all')">
-                            <i data-lucide="more-horizontal" class="w-4 h-4 text-gray-400"></i> View all
+                            <i class="fi fi-rr-apps-sort"></i> View all
                         </button>
                     </div>
                 </div>
@@ -389,6 +390,20 @@
                     <!-- Cards will be injected here via JS -->
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Add App Handle Modal -->
+    <div id="add-handle-modal" class="fixed inset-0 z-[300] hidden flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] p-4 opacity-0 transition-opacity duration-200">
+        <div class="bg-white rounded-[24px] w-full max-w-[480px] shadow-[0_30px_60px_rgba(0,0,0,0.12)] p-6 relative scale-95 transition-transform duration-200" id="add-handle-modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-bold text-xl text-secondary" id="add-handle-title">Add Icon</h3>
+                <button onclick="closeAddHandleModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="mb-6">
+                <input type="text" id="add-handle-input" placeholder="@username" class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-[12px] outline-none focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-500/10 transition-all font-medium text-[15px] text-secondary placeholder-gray-500">
+            </div>
+            <button id="add-handle-btn" class="w-full py-3 bg-purple-600 text-white font-bold rounded-[32px] hover:bg-purple-700 transition-all">Add</button>
         </div>
     </div>
 
