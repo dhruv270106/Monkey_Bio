@@ -1,142 +1,101 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { THEMES } from '@/data/themes'
-import debounce from 'lodash.debounce'
-import ReactCrop, { Crop, centerCrop, makeAspectCrop, PixelCrop } from 'react-image-crop'
-import 'react-image-crop/dist/ReactCrop.css'
 
-// --- Types ---
-interface SocialLink {
-  platform: string
-  handle: string
-  url: string
+const PLATFORMS: Record<string, any> = {
+  threads: { name: 'Threads', icon: 'fi-brands-threads', color: 'text-black', pattern: /^https?:\/\/(www\.)?threads\.net\/@/ },
+  instagram: { name: 'Instagram', icon: 'fi-brands-instagram', color: 'text-[#E4405F]', pattern: /^https?:\/\/(www\.)?instagram\.com\// },
+  email: { name: 'Email', icon: 'fi-rr-envelope', color: 'text-gray-500', pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
+  facebook: { name: 'Facebook', icon: 'fi-brands-facebook', color: 'text-[#1877F2]', pattern: /^https?:\/\/(www\.)?facebook\.com\// },
+  youtube: { name: 'YouTube', icon: 'fi-brands-youtube', color: 'text-[#FF0000]', pattern: /^https?:\/\/(www\.)?youtube\.com\// },
+  twitter: { name: 'X', icon: 'fi-brands-twitter', color: 'text-black', pattern: /^https?:\/\/(www\.)?(twitter\.com|x\.com)\// },
+  tiktok: { name: 'TikTok', icon: 'fi-brands-tiktok', color: 'text-black', pattern: /^https?:\/\/(www\.)?tiktok\.com\/@/ },
+  whatsapp: { name: 'WhatsApp', icon: 'fi-brands-whatsapp', color: 'text-[#25D366]', pattern: /^https?:\/\/(wa\.me|api\.whatsapp\.com)\// },
+  whatsapp_channel: { name: 'WhatsApp Channel', icon: 'fi-brands-whatsapp', color: 'text-[#075E54]', pattern: /^https?:\/\/(www\.)?whatsapp\.com\/channel\// },
+  snapchat: { name: 'Snapchat', icon: 'fi-brands-snapchat', color: 'text-[#FFFC00]', pattern: /^https?:\/\/(www\.)?snapchat\.com\/add\// },
+  airchat: { name: 'Airchat', icon: 'fi-rr-microphone', color: 'text-orange-500', pattern: /^https?:\/\/(www\.)?airchat\.com\// },
+  amazon: { name: 'Amazon', icon: 'fi-brands-amazon', color: 'text-[#FF9900]', pattern: /^https?:\/\/(www\.)?amazon\./ },
+  playstore: { name: 'Play Store', icon: 'fi-brands-android', color: 'text-[#3DDC84]', pattern: /^https?:\/\/play\.google\.com\// },
+  appstore: { name: 'App Store', icon: 'fi-brands-apple', color: 'text-[#0070C9]', pattern: /^https?:\/\/apps\.apple\.com\// },
+  applemusic: { name: 'Apple Music', icon: 'fi-brands-apple', color: 'text-[#FA2D48]', pattern: /^https?:\/\/music\.apple\.com\// },
+  applepodcasts: { name: 'Apple Podcasts', icon: 'fi-brands-apple', color: 'text-[#872EC4]', pattern: /^https?:\/\/podcasts\.apple\.com\// },
+  bandcamp: { name: 'Bandcamp', icon: 'fi-brands-bandcamp', color: 'text-[#629AA9]', pattern: /^https?:\/\/.*\.bandcamp\.com\// },
+  bereal: { name: 'BeReal', icon: 'fi-rr-camera', color: 'text-black', pattern: /^https?:\/\/(www\.)?bereal\.com\// },
+  bluesky: { name: 'Bluesky', icon: 'fi-rr-cloud', color: 'text-[#0085FF]', pattern: /^https?:\/\/bsky\.app\// },
+  cameo: { name: 'Cameo', icon: 'fi-rr-star', color: 'text-[#FA2478]', pattern: /^https?:\/\/(www\.)?cameo\.com\// },
+  clubhouse: { name: 'Clubhouse', icon: 'fi-rr-microphone', color: 'text-[#705e57]', pattern: /^https?:\/\/(www\.)?clubhouse\.com\// },
+  discord: { name: 'Discord', icon: 'fi-brands-discord', color: 'text-[#5865F2]', pattern: /^https?:\/\/discord\.(gg|com)\// },
+  etsy: { name: 'Etsy', icon: 'fi-brands-etsy', color: 'text-[#F1641E]', pattern: /^https?:\/\/(www\.)?etsy\.com\// },
+  github: { name: 'Github', icon: 'fi-brands-github', color: 'text-black', pattern: /^https?:\/\/(www\.)?github\.com\// },
+  kick: { name: 'Kick', icon: 'fi-rr-play', color: 'text-[#53FC18]', pattern: /^https?:\/\/(www\.)?kick\.com\// },
+  linkedin: { name: 'LinkedIn', icon: 'fi-brands-linkedin', color: 'text-[#0A66C2]', pattern: /^https?:\/\/(www\.)?linkedin\.com\// },
+  mastodon: { name: 'Mastodon', icon: 'fi-brands-mastodon', color: 'text-[#6364FF]', pattern: /^https?:\/\/mastodon\./ },
+  patreon: { name: 'Patreon', icon: 'fi-brands-patreon', color: 'text-[#FF424D]', pattern: /^https?:\/\/(www\.)?patreon\.com\// },
+  payment: { name: 'Payment', icon: 'fi-rr-credit-card', color: 'text-emerald-500', pattern: /^https?:\/\// },
+  phone: { name: 'Phone', icon: 'fi-rr-phone-call', color: 'text-blue-500', pattern: /^\+?[0-9]{10,15}$/ },
+  pinterest: { name: 'Pinterest', icon: 'fi-brands-pinterest', color: 'text-[#BD081C]', pattern: /^https?:\/\/(www\.)?pinterest\.com\// },
+  poshmark: { name: 'Poshmark', icon: 'fi-rr-shopping-bag', color: 'text-[#96181F]', pattern: /^https?:\/\/(www\.)?poshmark\.com\// },
+  signal: { name: 'Signal', icon: 'fi-rr-comment', color: 'text-[#3E51B1]', pattern: /^https?:\/\// },
+  soundcloud: { name: 'SoundCloud', icon: 'fi-brands-soundcloud', color: 'text-[#FF3300]', pattern: /^https?:\/\/(www\.)?soundcloud\.com\// },
+  spotify: { name: 'Spotify', icon: 'fi-brands-spotify', color: 'text-[#1DB954]', pattern: /^https?:\/\/(open\.)?spotify\.com\// },
+  substack: { name: 'Substack', icon: 'fi-rr-layers', color: 'text-[#FF6719]', pattern: /^https?:\/\/.*\.substack\.com\// },
+  telegram: { name: 'Telegram', icon: 'fi-brands-telegram', color: 'text-[#229ED9]', pattern: /^https?:\/\/(t\.me|telegram\.me)\// },
+  twitch: { name: 'Twitch', icon: 'fi-brands-twitch', color: 'text-[#9146FF]', pattern: /^https?:\/\/(www\.)?twitch\.tv\// },
+  website: { name: 'Website', icon: 'fi-rr-world', color: 'text-gray-600', pattern: /^https?:\/\// },
+  rednote: { name: 'RedNote', icon: 'fi-rr-notebook', color: 'text-[#FE2C55]', pattern: /^https?:\/\// },
+  lemon8: { name: 'Lemon8', icon: 'fi-rr-leaf', color: 'text-[#FFD700]', pattern: /^https?:\/\// },
+  bandsintown: { name: 'Bandsintown', icon: 'fi-rr-music', color: 'text-[#00CBCB]', pattern: /^https?:\/\/(www\.)?bandsintown\.com\// },
 }
 
-interface PlatformConfig {
-  name: string
-  icon: string
-  color: string
-  pattern: RegExp
-  placeholder: string
-}
-
-const PLATFORMS: Record<string, PlatformConfig> = {
-  instagram: { name: 'Instagram', icon: 'fi-brands-instagram', color: 'text-pink-600', pattern: /instagram\.com\//, placeholder: 'https://instagram.com/yourname' },
-  youtube: { name: 'YouTube', icon: 'fi-brands-youtube', color: 'text-red-600', pattern: /youtube\.com\//, placeholder: 'https://youtube.com/@channel' },
-  tiktok: { name: 'TikTok', icon: 'fi-brands-tiktok', color: 'text-black', pattern: /tiktok\.com\//, placeholder: 'https://tiktok.com/@yourname' },
-  twitter: { name: 'X (Twitter)', icon: 'fi-brands-twitter', color: 'text-gray-900', pattern: /(twitter\.com|x\.com)\//, placeholder: 'https://x.com/yourname' },
-  linkedin: { name: 'LinkedIn', icon: 'fi-brands-linkedin', color: 'text-blue-700', pattern: /linkedin\.com\//, placeholder: 'https://linkedin.com/in/yourname' },
-  facebook: { name: 'Facebook', icon: 'fi-brands-facebook', color: 'text-blue-600', pattern: /facebook\.com\//, placeholder: 'https://facebook.com/yourname' },
-}
-
-// --- Helper for Profile Preview ---
-const ProfilePreview = ({ username, theme, avatar, bio, socialLinks, displayName }: any) => {
-  const selectedTheme = THEMES.find(t => t.id === theme) || THEMES[0]
-  
-  return (
-    <div className={`w-[280px] h-[550px] rounded-[3rem] border-[8px] border-secondary overflow-hidden flex flex-col items-center p-6 relative shadow-2xl transition-all duration-500 ${selectedTheme.bg} ${selectedTheme.text}`}>
-       {/* Notch */}
-       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-5 bg-secondary rounded-b-xl z-10" />
-       
-       <div className="mt-8 flex flex-col items-center w-full">
-          <div className="w-20 h-20 rounded-full border-2 border-primary/20 bg-gray-100 mb-4 overflow-hidden">
-             {avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-400"><i className="fi fi-rr-user text-2xl"></i></div>}
-          </div>
-          <h3 className="font-bold text-lg leading-tight text-center">{displayName || `@${username || 'username'}`}</h3>
-          <p className="text-[10px] opacity-70 mb-6">@{username || 'username'}</p>
-          
-          <div className="w-full space-y-3 px-2">
-             <div className={`w-full py-3 rounded-xl text-center text-xs font-bold shadow-sm ${selectedTheme.button}`}>Sample Link</div>
-             <div className={`w-full py-3 rounded-xl text-center text-xs font-bold shadow-sm ${selectedTheme.button}`}>Portfolio</div>
-          </div>
-          
-          {bio && <p className="mt-6 text-[10px] text-center px-4 leading-relaxed opacity-80">{bio}</p>}
-          
-          <div className="flex flex-wrap justify-center gap-3 mt-8">
-             {socialLinks.map((s: any, i: number) => (
-                <i key={i} className={`fi ${PLATFORMS[s.platform]?.icon} text-lg`}></i>
-             ))}
-          </div>
-       </div>
-
-       <div className="mt-auto mb-2 opacity-30 flex items-center gap-1">
-          <span className="text-[10px] font-black">Monkey</span>
-          <span className="text-primary text-xs">*</span>
-       </div>
-    </div>
-  )
-}
-
-export default function OnboardingPage() {
+export default function Onboarding() {
   const [step, setStep] = useState(1)
-  const [loading, setLoading] = useState(false)
-  const [userId, setUserId] = useState<string | null>(null)
-  
-  // States
   const [username, setUsername] = useState('')
-  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
+  const [isUsernameValid, setIsUsernameValid] = useState(false)
+  const [usernameError, setUsernameError] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
   
-  const [selectedTheme, setSelectedTheme] = useState(THEMES[0].id)
-  
-  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([])
+  const [selectedTheme, setSelectedTheme] = useState('grid-mocha')
+  const [socialLinks, setSocialLinks] = useState<{platform: string, url: string}[]>([])
   const [activePlatform, setActivePlatform] = useState<string | null>(null)
   const [tempLink, setTempLink] = useState('')
   const [linkError, setLinkError] = useState('')
-  
+
   const [displayName, setDisplayName] = useState('')
   const [bio, setBio] = useState('')
   const [avatar, setAvatar] = useState<string | null>(null)
-  const [crop, setCrop] = useState<Crop>()
-  const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
-  const [imgSrc, setImgSrc] = useState('')
-  const imgRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        window.location.href = '/login'
-        return
-      }
-      setUserId(session.user.id)
-      const name = session.user.user_metadata.full_name || session.user.user_metadata.name || ''
-      setDisplayName(name)
-      if (name) {
-        const base = name.toLowerCase().replace(/\s+/g, '')
-        setSuggestions([base, `${base}_${Math.floor(Math.random() * 99)}`, `${base}.${Math.floor(Math.random() * 999)}`])
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setDisplayName(user.user_metadata.full_name || '')
+        const base = user.user_metadata.full_name?.toLowerCase().replace(/\s/g, '_') || 'user'
+        setSuggestions([`${base}_123`, `${base}_pro`, `the_${base}`])
       }
     }
-    init()
+    fetchUser()
   }, [])
 
-  // --- Step 1: Username Logic ---
-  const checkUsername = useCallback(
-    debounce(async (val: string) => {
-      if (val.length < 3) {
-        setUsernameStatus('idle')
-        return
-      }
-      setUsernameStatus('checking')
-      const { data } = await supabase.from('monkey_bio').select('username').eq('username', val.toLowerCase()).single()
-      setUsernameStatus(data ? 'taken' : 'available')
-    }, 500),
-    []
-  )
-
-  const handleUsernameChange = (val: string) => {
-    const cleaned = val.replace(/[^a-zA-Z0-9_.]/g, '').toLowerCase()
-    setUsername(cleaned)
-    checkUsername(cleaned)
+  const checkUsername = async (val: string) => {
+    setUsername(val)
+    if (val.length < 3) {
+      setUsernameError('')
+      setIsUsernameValid(false)
+      return
+    }
+    const { data } = await supabase.from('monkey_bio').select('username').eq('username', val.toLowerCase())
+    if (data && data.length > 0) {
+      setUsernameError('Username already taken in English')
+      setIsUsernameValid(false)
+    } else {
+      setUsernameError('')
+      setIsUsernameValid(true)
+    }
   }
 
-  // --- Step 2: Theme Selection ---
-  // No complex logic, just state
-
-  // --- Step 3: Social Links Logic ---
   const addSocialLink = () => {
     if (!activePlatform) return
     if (socialLinks.length >= 5) {
@@ -148,190 +107,120 @@ export default function OnboardingPage() {
       setLinkError(`Please enter a valid ${config.name} link`)
       return
     }
-    const newLink: SocialLink = { platform: activePlatform, handle: '', url: tempLink }
-    setSocialLinks([...socialLinks, newLink])
-    setActivePlatform(null)
+    setSocialLinks([...socialLinks, { platform: activePlatform, url: tempLink }])
     setTempLink('')
+    setActivePlatform(null)
     setLinkError('')
   }
 
-  // --- Step 4: Profile & Bio Logic ---
-  const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader()
-      reader.addEventListener('load', () => setImgSrc(reader.result?.toString() || ''))
-      reader.readAsDataURL(e.target.files[0])
-    }
-  }
+  const completeOnboarding = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
 
-  const getCroppedImg = () => {
-    if (!completedCrop || !imgRef.current) return
-    const canvas = document.createElement('canvas')
-    const scaleX = imgRef.current.naturalWidth / imgRef.current.width
-    const scaleY = imgRef.current.naturalHeight / imgRef.current.height
-    canvas.width = completedCrop.width
-    canvas.height = completedCrop.height
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.drawImage(
-        imgRef.current,
-        completedCrop.x * scaleX,
-        completedCrop.y * scaleY,
-        completedCrop.width * scaleX,
-        completedCrop.height * scaleY,
-        0,
-        0,
-        completedCrop.width,
-        completedCrop.height
-      )
-      setAvatar(canvas.toDataURL('image/jpeg'))
-      setImgSrc('')
-    }
-  }
+    const socialLinksObj = socialLinks.reduce((acc, curr) => {
+      acc[curr.platform] = curr.url
+      return acc
+    }, {} as any)
 
-  const handleFinalSubmit = async () => {
-    if (!userId) return
-    setLoading(true)
-    
-    // Format social links object
-    const socialObj: Record<string, string> = {}
-    socialLinks.forEach(s => {
-      socialObj[s.platform] = s.url
+    const { error } = await supabase.from('monkey_bio').insert({
+      id: user.id,
+      username: username.toLowerCase(),
+      display_name: displayName,
+      bio: bio,
+      avatar_url: avatar,
+      theme: selectedTheme,
+      social_links: socialLinksObj,
+      onboarding_completed: true,
+      links: []
     })
 
-    const { error } = await supabase
-      .from('monkey_bio')
-      .upsert({
-        id: userId,
-        username: username,
-        display_name: displayName,
-        bio: bio,
-        avatar_url: avatar,
-        theme: selectedTheme,
-        social_links: socialObj,
-        onboarding_completed: true,
-        links: []
-      })
-
-    if (error) {
-      alert(error.message)
-      setLoading(false)
-    } else {
-      window.location.href = '/dashboard'
-    }
+    if (!error) window.location.href = '/dashboard'
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] flex flex-col lg:flex-row">
-      {/* LEFT: FORM SIDE */}
-      <div className="flex-1 p-8 lg:p-24 overflow-y-auto max-h-screen no-scrollbar">
-        <div className="max-w-xl mx-auto">
-          <div className="flex items-center gap-2 mb-16">
-            <span className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-secondary font-bold text-xl">M</span>
-            <span className="font-bold text-xl tracking-tight text-secondary">Monkey</span>
+    <div className="min-h-screen bg-[#fdf2e3] flex flex-col md:flex-row">
+      {/* Left Form */}
+      <div className="flex-1 p-8 md:p-24 overflow-y-auto max-h-screen no-scrollbar">
+        <div className="max-w-md mx-auto">
+          <div className="text-secondary font-black text-3xl mb-12 flex items-center gap-2">
+            Monkey <span className="text-primary text-4xl">*</span>
           </div>
 
           <AnimatePresence mode="wait">
-            {/* STEP 1: USERNAME */}
             {step === 1 && (
-              <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <h1 className="text-4xl font-black text-secondary mb-4">Choose your link name</h1>
-                <p className="text-gray-500 font-medium mb-12">This will be your unique URL on Monkey. You can change it later.</p>
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
+                <div>
+                   <h1 className="text-4xl font-black text-secondary leading-tight mb-4">Choose your unique username</h1>
+                   <p className="text-secondary/60 font-bold">You can always change this later</p>
+                </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div className="relative">
-                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">monkey.link/</span>
+                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary/30 font-bold">linktr.ee/</span>
                     <input 
                       type="text" 
                       value={username}
-                      onChange={(e) => handleUsernameChange(e.target.value)}
-                      className={`w-full pl-36 pr-6 py-5 bg-white border-2 rounded-[24px] outline-none font-bold text-lg transition-all shadow-sm ${
-                        usernameStatus === 'available' ? 'border-primary' : 
-                        usernameStatus === 'taken' ? 'border-red-400' : 'border-transparent focus:border-primary/50'
-                      }`}
+                      onChange={(e) => checkUsername(e.target.value)}
                       placeholder="username"
+                      className={`w-full pl-[92px] pr-6 py-5 bg-white rounded-3xl border-2 transition-all outline-none font-bold text-lg ${usernameError ? 'border-red-400' : isUsernameValid ? 'border-primary' : 'border-transparent focus:border-primary/50'}`}
                     />
-                    <div className="absolute right-6 top-1/2 -translate-y-1/2">
-                      {usernameStatus === 'checking' && <i className="fi fi-rr-spinner animate-spin text-gray-400"></i>}
-                      {usernameStatus === 'available' && <i className="fi fi-rr-check-circle text-primary text-xl"></i>}
-                      {usernameStatus === 'taken' && <i className="fi fi-rr-cross-circle text-red-400 text-xl"></i>}
-                    </div>
                   </div>
-
-                  {usernameStatus === 'taken' && (
-                    <p className="text-red-500 text-sm font-bold flex items-center gap-2 px-2">
-                       <i className="fi fi-rr-exclamation"></i> Username already taken in English
-                    </p>
-                  )}
-
-                  <div className="pt-4">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Suggestions</p>
-                    <div className="flex flex-wrap gap-3">
-                      {suggestions.map((s, i) => (
-                        <button 
-                          key={i} 
-                          onClick={() => handleUsernameChange(s)}
-                          className="px-4 py-2 bg-white border border-gray-100 rounded-full text-sm font-bold hover:border-primary transition-all shadow-sm"
-                        >
-                          @{s}
-                        </button>
-                      ))}
-                    </div>
+                  {usernameError && <p className="text-red-500 text-sm font-bold pl-2">{usernameError}</p>}
+                  
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {suggestions.map(s => (
+                      <button key={s} onClick={() => checkUsername(s)} className="px-4 py-2 bg-white rounded-full text-xs font-bold border border-secondary/5 hover:border-primary transition-all">
+                        {s}
+                      </button>
+                    ))}
                   </div>
-
-                  <button 
-                    disabled={usernameStatus !== 'available'}
-                    onClick={() => setStep(2)}
-                    className="w-full py-5 bg-secondary text-white font-black rounded-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-12 shadow-xl"
-                  >
-                    Next Step <i className="fi fi-rr-arrow-right ml-2"></i>
-                  </button>
                 </div>
+
+                <button 
+                  disabled={!isUsernameValid}
+                  onClick={() => setStep(2)}
+                  className="w-full py-5 bg-secondary text-white font-black rounded-full shadow-xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                >
+                  Continue
+                </button>
               </motion.div>
             )}
 
-            {/* STEP 2: THEMES */}
             {step === 2 && (
-              <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <h1 className="text-4xl font-black text-secondary mb-4">Pick a theme</h1>
-                <p className="text-gray-500 font-medium mb-12">Select from 50 unique styles to match your personality.</p>
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
+                <div>
+                   <h1 className="text-4xl font-black text-secondary leading-tight mb-4">Select a theme for your profile</h1>
+                   <p className="text-secondary/60 font-bold">50+ Premium themes available</p>
+                </div>
                 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto p-2 no-scrollbar border-b border-gray-100">
-                  {THEMES.map((theme) => (
+                <div className="grid grid-cols-2 gap-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  {THEMES.map(theme => (
                     <button 
                       key={theme.id}
                       onClick={() => setSelectedTheme(theme.id)}
-                      className={`relative aspect-[4/5] rounded-3xl overflow-hidden border-4 transition-all ${
-                        selectedTheme === theme.id ? 'border-primary ring-4 ring-primary/20 scale-95' : 'border-transparent'
-                      }`}
+                      className={`p-4 rounded-3xl border-4 transition-all flex flex-col items-center gap-3 ${selectedTheme === theme.id ? 'border-primary bg-white' : 'border-transparent bg-white/50 hover:bg-white'}`}
                     >
-                      <div className={`w-full h-full ${theme.bg} flex flex-col p-4`}>
-                         <div className={`w-full h-2 rounded-full mb-2 opacity-20 ${theme.button.includes('bg-white') ? 'bg-black' : 'bg-white'}`} />
-                         <div className={`w-full h-2 rounded-full mb-2 opacity-20 ${theme.button.includes('bg-white') ? 'bg-black' : 'bg-white'}`} style={{ width: '70%' }} />
-                         <div className="mt-auto flex gap-1">
-                            <div className="w-4 h-4 rounded-full border border-black/10" style={{ background: theme.accent }} />
-                            <span className="text-[8px] font-bold opacity-50 truncate">{theme.name}</span>
-                         </div>
-                      </div>
+                       <div className={`w-full h-24 rounded-2xl ${theme.bg} shadow-inner`}></div>
+                       <span className="font-bold text-sm">{theme.name}</span>
                     </button>
                   ))}
                 </div>
 
-                <div className="flex gap-4 mt-12">
-                   <button onClick={() => setStep(1)} className="flex-1 py-5 border-2 border-gray-100 font-black rounded-full hover:bg-white">Back</button>
-                   <button onClick={() => setStep(3)} className="flex-[2] py-5 bg-secondary text-white font-black rounded-full hover:bg-gray-800 shadow-xl">Continue <i className="fi fi-rr-arrow-right ml-2"></i></button>
+                <div className="flex gap-4">
+                  <button onClick={() => setStep(1)} className="flex-1 py-5 bg-white text-secondary font-black rounded-full border-2 border-secondary/5">Back</button>
+                  <button onClick={() => setStep(3)} className="flex-[2] py-5 bg-secondary text-white font-black rounded-full shadow-xl">Select Theme</button>
                 </div>
               </motion.div>
             )}
 
-            {/* STEP 3: SOCIAL MEDIA */}
             {step === 3 && (
-              <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <h1 className="text-4xl font-black text-secondary mb-4">Add your socials</h1>
-                <p className="text-gray-500 font-medium mb-12">Connect your other platforms to your Monkey profile.</p>
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
+                <div>
+                   <h1 className="text-4xl font-black text-secondary leading-tight mb-4">Add your social media (Max 5)</h1>
+                </div>
 
                 <div className="space-y-6">
-                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 max-h-[300px] overflow-y-auto p-2 no-scrollbar">
                       {Object.entries(PLATFORMS).map(([id, config]) => {
                         const isSelected = socialLinks.some(link => link.platform === id)
                         const isLimitReached = socialLinks.length >= 5
@@ -341,14 +230,14 @@ export default function OnboardingPage() {
                             key={id}
                             disabled={isLimitReached && !isSelected}
                             onClick={() => setActivePlatform(id)}
-                            className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${
+                            className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${
                               activePlatform === id ? 'border-primary bg-primary/5' : 
                               isSelected ? 'border-primary/30 bg-white' :
                               'border-gray-50 bg-white hover:border-gray-200'
                             } ${isLimitReached && !isSelected ? 'opacity-30 cursor-not-allowed' : ''}`}
                           >
-                            <i className={`fi ${config.icon} text-2xl ${config.color}`}></i>
-                            <span className="text-[10px] font-bold text-gray-500">{config.name}</span>
+                            <i className={`fi ${config.icon} text-xl ${config.color}`}></i>
+                            <span className="text-[8px] font-black text-gray-500 text-center truncate w-full">{config.name}</span>
                           </button>
                         )
                       })}
@@ -357,184 +246,114 @@ export default function OnboardingPage() {
 
                    {activePlatform && (
                      <div className="p-6 bg-white border border-gray-100 rounded-[32px] shadow-sm animate-fade-in">
-                        <div className="flex items-center gap-4 mb-4">
-                           <i className={`fi ${PLATFORMS[activePlatform].icon} text-3xl ${PLATFORMS[activePlatform].color}`}></i>
-                           <h4 className="font-bold">Add {PLATFORMS[activePlatform].name}</h4>
-                        </div>
-                        <div className="space-y-4">
-                           <input 
-                             type="url" 
-                             placeholder={PLATFORMS[activePlatform].placeholder}
-                             value={tempLink}
-                             onChange={(e) => setTempLink(e.target.value)}
-                             className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-primary/50 outline-none font-medium"
-                           />
-                           {linkError && <p className="text-red-500 text-xs font-bold px-2">{linkError}</p>}
-                           <div className="flex gap-3">
-                              <button onClick={() => setActivePlatform(null)} className="flex-1 py-3 text-sm font-bold text-gray-400">Cancel</button>
-                              <button onClick={addSocialLink} className="flex-1 py-3 bg-secondary text-white font-bold rounded-xl active:scale-95 transition-all">Add Link</button>
-                           </div>
-                        </div>
+                       <h3 className="font-black mb-4">Add {PLATFORMS[activePlatform].name}</h3>
+                       <input 
+                         type="text" 
+                         value={tempLink}
+                         onChange={(e) => setTempLink(e.target.value)}
+                         placeholder={`Paste ${PLATFORMS[activePlatform].name} link here`}
+                         className="w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-primary/20 mb-4 font-bold"
+                       />
+                       {linkError && <p className="text-red-500 text-xs font-bold mb-4">{linkError}</p>}
+                       <div className="flex gap-3">
+                         <button onClick={() => { setActivePlatform(null); setTempLink(''); }} className="flex-1 py-3 text-secondary font-bold">Cancel</button>
+                         <button onClick={addSocialLink} className="flex-[2] py-3 bg-primary text-secondary font-black rounded-full">Add Icon</button>
+                       </div>
                      </div>
                    )}
 
-                   <div className="space-y-3">
-                      {socialLinks.map((link, i) => (
-                        <div key={i} className="flex items-center justify-between p-4 bg-white border border-gray-50 rounded-2xl shadow-sm">
-                           <div className="flex items-center gap-3">
-                              <i className={`fi ${PLATFORMS[link.platform].icon} text-lg ${PLATFORMS[link.platform].color}`}></i>
-                              <span className="text-xs font-bold text-gray-600 truncate max-w-[200px]">{link.url}</span>
-                           </div>
-                           <button onClick={() => setSocialLinks(socialLinks.filter((_, idx) => idx !== i))} className="text-gray-300 hover:text-red-400 transition-colors"><i className="fi fi-rr-trash"></i></button>
-                        </div>
-                      ))}
+                   <div className="flex flex-wrap gap-3">
+                     {socialLinks.map((sl, i) => (
+                       <div key={i} className="px-4 py-2 bg-white rounded-full flex items-center gap-2 border border-primary/20">
+                         <i className={`fi ${PLATFORMS[sl.platform].icon} ${PLATFORMS[sl.platform].color}`}></i>
+                         <button onClick={() => setSocialLinks(socialLinks.filter((_, idx) => idx !== i))}>
+                           <i className="fi fi-rr-cross-small"></i>
+                         </button>
+                       </div>
+                     ))}
                    </div>
                 </div>
 
-                <div className="flex gap-4 mt-12">
-                   <button onClick={() => setStep(2)} className="flex-1 py-5 border-2 border-gray-100 font-black rounded-full hover:bg-white">Back</button>
-                   <button onClick={() => setStep(4)} className="flex-[2] py-5 bg-secondary text-white font-black rounded-full hover:bg-gray-800 shadow-xl">Continue <i className="fi fi-rr-arrow-right ml-2"></i></button>
+                <div className="flex gap-4">
+                  <button onClick={() => setStep(2)} className="flex-1 py-5 bg-white text-secondary font-black rounded-full border-2 border-secondary/5">Back</button>
+                  <button onClick={() => setStep(4)} className="flex-[2] py-5 bg-secondary text-white font-black rounded-full">Continue</button>
                 </div>
               </motion.div>
             )}
 
-            {/* STEP 4: PROFILE & BIO */}
             {step === 4 && (
-              <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <h1 className="text-4xl font-black text-secondary mb-4">Complete your profile</h1>
-                <p className="text-gray-500 font-medium mb-12">Add a face to your name and a short bio about what you do.</p>
-
-                <div className="space-y-8">
-                   <div className="flex flex-col items-center gap-6">
-                      <div className="relative group">
-                         <div className="w-32 h-32 rounded-full border-4 border-white shadow-xl bg-gray-100 overflow-hidden relative">
-                            {avatar ? <img src={avatar} className="w-full h-full object-cover" alt="" /> : <div className="w-full h-full flex items-center justify-center text-gray-300"><i className="fi fi-rr-user text-4xl"></i></div>}
-                            <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer text-white">
-                               <input type="file" accept="image/*" className="hidden" onChange={onSelectFile} />
-                               <i className="fi fi-rr-camera"></i>
-                            </label>
-                         </div>
-                      </div>
-                      <p className="text-xs font-bold text-gray-400">Click to upload & crop profile picture</p>
-                   </div>
-
-                   {imgSrc && (
-                     <div className="fixed inset-0 z-[100] bg-black/80 flex flex-col items-center justify-center p-8">
-                        <div className="bg-white rounded-[32px] p-8 max-w-lg w-full">
-                           <h3 className="font-bold text-xl mb-6">Crop Image</h3>
-                           <div className="max-h-[400px] overflow-hidden rounded-2xl bg-gray-100">
-                             <ReactCrop crop={crop} onChange={c => setCrop(c)} onComplete={c => setCompletedCrop(c)} aspect={1}>
-                                <img ref={imgRef} src={imgSrc} alt="Crop" onLoad={() => {
-                                  const { width, height } = imgRef.current!
-                                  const cropConfig = centerCrop(makeAspectCrop({ unit: '%', width: 90 }, 1, width, height), width, height)
-                                  setCrop(cropConfig)
-                                }} />
-                             </ReactCrop>
-                           </div>
-                           <div className="flex gap-4 mt-8">
-                              <button onClick={() => setImgSrc('')} className="flex-1 py-4 border-2 rounded-2xl font-bold">Cancel</button>
-                              <button onClick={getCroppedImg} className="flex-1 py-4 bg-secondary text-white rounded-2xl font-bold">Apply Crop</button>
-                           </div>
-                        </div>
-                     </div>
-                   )}
-
-                   <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2">Bio</label>
-                      <div className="relative">
-                        <textarea 
-                          value={bio}
-                          onChange={(e) => setBio(e.target.value)}
-                          className={`w-full p-6 bg-white border-2 rounded-[24px] outline-none font-medium text-lg transition-all shadow-sm h-32 no-scrollbar ${
-                            bio.length > 200 ? 'border-red-400' : 'border-transparent focus:border-primary/50'
-                          }`}
-                          placeholder="Tell us about yourself..."
-                        />
-                        <div className={`absolute bottom-6 right-6 text-xs font-bold ${bio.length > 200 ? 'text-red-500' : 'text-gray-300'}`}>
-                          {bio.length}/200
-                        </div>
-                      </div>
-                      {bio.length > 200 && <p className="text-red-500 text-xs font-bold px-2 mt-2">Maximum 200 characters only allowed</p>}
-                   </div>
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
+                <div>
+                   <h1 className="text-4xl font-black text-secondary leading-tight mb-4">Complete your profile</h1>
                 </div>
 
-                <div className="flex gap-4 mt-12">
-                   <button onClick={() => setStep(3)} className="flex-1 py-5 border-2 border-gray-100 font-black rounded-full hover:bg-white">Back</button>
-                   <button 
-                     disabled={bio.length > 200}
-                     onClick={() => setStep(5)} 
-                     className="flex-[2] py-5 bg-secondary text-white font-black rounded-full hover:bg-gray-800 shadow-xl disabled:opacity-50"
-                   >
-                     Continue <i className="fi fi-rr-arrow-right ml-2"></i>
-                   </button>
-                </div>
-              </motion.div>
-            )}
-
-            {/* STEP 5: REVIEW */}
-            {step === 5 && (
-              <motion.div key="step5" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <h1 className="text-4xl font-black text-secondary mb-4">You&apos;re ready!</h1>
-                <p className="text-gray-500 font-medium mb-12">Confirm your profile details and jump into your dashboard.</p>
-
-                <div className="p-8 bg-primary/10 rounded-[40px] border border-primary/20 space-y-6">
+                <div className="space-y-6">
                    <div className="flex items-center gap-6">
-                      <div className="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden">
-                        {avatar && <img src={avatar} className="w-full h-full object-cover" alt="" />}
+                      <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center border-4 border-white shadow-xl overflow-hidden group relative">
+                        {avatar ? <img src={avatar} className="w-full h-full object-cover" /> : <i className="fi fi-rr-user text-3xl text-gray-200"></i>}
+                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                             const reader = new FileReader()
+                             reader.onloadend = () => setAvatar(reader.result as string)
+                             reader.readAsDataURL(file)
+                          }
+                        }} />
                       </div>
-                      <div>
-                        <h3 className="text-xl font-bold">{displayName || username}</h3>
-                        <p className="text-gray-400 font-bold">@{username}</p>
+                      <div className="flex-1">
+                        <label className="text-xs font-black uppercase text-secondary/40 mb-2 block">Display Name</label>
+                        <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="w-full px-6 py-4 bg-white rounded-2xl outline-none border-2 border-transparent focus:border-primary/50 font-bold" />
                       </div>
                    </div>
 
-                   {bio && <p className="text-gray-600 font-medium italic border-l-4 border-primary pl-4">{bio}</p>}
-
-                   <div className="flex flex-wrap gap-2 pt-4">
-                      {socialLinks.map((s, i) => (
-                        <div key={i} className="px-3 py-1 bg-white rounded-full text-[10px] font-bold text-gray-500 border border-gray-100">
-                           {PLATFORMS[s.platform].name}
-                        </div>
-                      ))}
+                   <div>
+                      <label className="text-xs font-black uppercase text-secondary/40 mb-2 block">Bio (Max 200 chars)</label>
+                      <textarea maxLength={200} value={bio} onChange={(e) => setBio(e.target.value)} className="w-full px-6 py-4 bg-white rounded-3xl outline-none border-2 border-transparent focus:border-primary/50 font-bold h-32 resize-none" />
+                      <p className="text-right text-[10px] font-bold text-secondary/40">{bio.length}/200</p>
                    </div>
                 </div>
 
-                <button 
-                  disabled={loading}
-                  onClick={handleFinalSubmit}
-                  className="w-full py-5 bg-primary text-secondary font-black rounded-full hover:bg-primary-dark transition-all mt-12 shadow-[0_12px_40px_rgba(108,243,131,0.3)] flex items-center justify-center gap-2"
-                >
-                  {loading ? <i className="fi fi-rr-spinner animate-spin"></i> : 'Go to Dashboard'}
-                </button>
-                <button onClick={() => setStep(4)} className="w-full py-4 text-sm font-bold text-gray-400 mt-2">Back to edit profile</button>
+                <div className="flex gap-4">
+                  <button onClick={() => setStep(3)} className="flex-1 py-5 bg-white text-secondary font-black rounded-full border-2 border-secondary/5">Back</button>
+                  <button onClick={completeOnboarding} className="flex-[2] py-5 bg-primary text-secondary font-black rounded-full shadow-xl">Launch Profile</button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
       </div>
 
-      {/* RIGHT: PREVIEW SIDE */}
-      <div className="hidden lg:flex lg:w-[450px] bg-white border-l border-gray-100 items-center justify-center sticky top-0 h-screen overflow-hidden">
-         <div className="absolute inset-0 bg-[#fcfcfc] opacity-50" />
-         
-         <div className="relative">
-            <div className="absolute -top-4 -left-4 w-12 h-12 bg-primary/20 rounded-full animate-bounce-slow" />
-            <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-blue-100 rounded-full animate-pulse" />
-            
-            <ProfilePreview 
-              username={username}
-              theme={selectedTheme}
-              avatar={avatar}
-              bio={bio}
-              socialLinks={socialLinks}
-              displayName={displayName}
-            />
-         </div>
+      {/* Right Preview */}
+      <div className="hidden md:flex flex-1 bg-white border-l border-secondary/5 items-center justify-center p-12">
+        <div 
+          className={`w-[320px] h-[650px] rounded-[52px] border-[12px] border-secondary shadow-2xl relative overflow-hidden flex flex-col items-center p-8 transition-all duration-500 ${(THEMES.find(t => t.id === selectedTheme) || THEMES[0]).bg} ${(THEMES.find(t => t.id === selectedTheme) || THEMES[0]).text}`}
+          style={selectedTheme === 'grid-mocha' ? {
+            backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
+            backgroundSize: '30px 30px'
+          } : {}}
+        >
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-secondary rounded-b-3xl"></div>
+          
+          <div className="w-20 h-20 rounded-full border-4 border-white/20 mb-6 overflow-hidden mt-8">
+            {avatar ? <img src={avatar} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-primary/20" />}
+          </div>
+          
+          <h2 className="text-xl font-black mb-1">{displayName || 'Your Name'}</h2>
+          <p className="text-[10px] font-bold opacity-50 mb-6">@{username || 'username'}</p>
+          
+          {bio && <p className="text-[10px] text-center font-bold opacity-80 mb-6 line-clamp-3">{bio}</p>}
 
-         <div className="absolute top-8 right-8 px-4 py-2 bg-gray-50 rounded-full border border-gray-100 flex items-center gap-2 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Live Preview</span>
-         </div>
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {socialLinks.map((sl, i) => (
+              <i key={i} className={`fi ${PLATFORMS[sl.platform].icon} text-xl`}></i>
+            ))}
+          </div>
+
+          <div className="w-full space-y-3">
+             <div className={`w-full py-4 rounded-2xl opacity-50 ${(THEMES.find(t => t.id === selectedTheme) || THEMES[0]).button}`}></div>
+             <div className={`w-full py-4 rounded-2xl opacity-30 ${(THEMES.find(t => t.id === selectedTheme) || THEMES[0]).button}`}></div>
+          </div>
+        </div>
       </div>
     </div>
   )
