@@ -73,6 +73,7 @@ export default function Dashboard() {
     
     setLinks(sortedLinks)
     if (profile) {
+      setProfile({ ...profile, links: sortedLinks } as any)
       await supabase
         .from('monkey_bio')
         .update({ links: sortedLinks })
@@ -179,17 +180,22 @@ export default function Dashboard() {
                           </div>
                       </div>
                   </div>
-                  <div>
-                      <h2 className="text-2xl font-black flex items-center gap-2">
-                        {profile?.display_name || 'User'} 
-                        <i className="fi fi-sr-badge-check text-primary text-xl"></i>
-                      </h2>
-                      <div className="flex items-center gap-4 mt-2">
-                         <span className="text-xs text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                            <i className="fi fi-rr-link text-[10px]"></i> linktr.ee/{profile?.username}
-                         </span>
+                      <div>
+                          <h2 className="text-2xl font-black flex items-center gap-2">
+                            {profile?.display_name || 'User'} 
+                            <i className="fi fi-sr-badge-check text-primary text-xl"></i>
+                          </h2>
+                          {profile?.bio && (
+                            <p className="text-gray-400 text-sm font-bold mt-1 max-w-sm line-clamp-2">
+                              {profile.bio}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-4 mt-3">
+                             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                                <i className="fi fi-rr-link text-[10px]"></i> linktr.ee/{profile?.username}
+                             </span>
+                          </div>
                       </div>
-                  </div>
               </div>
 
               {/* Purple Add Link Button - Now triggers the modal */}
