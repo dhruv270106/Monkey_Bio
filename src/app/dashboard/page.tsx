@@ -116,9 +116,9 @@ export default function Dashboard() {
             <div className="max-w-xl mx-auto space-y-8">
               
               {/* Profile Header */}
-              <div className="flex items-center gap-6 mb-12">
+              <div className="flex items-center gap-6 mb-12 bg-gray-50/50 p-8 rounded-[40px] border border-gray-100">
                   <div className="relative group">
-                      <div className="w-24 h-24 rounded-full bg-gray-50 overflow-hidden border-2 border-white shadow-sm cursor-pointer relative">
+                      <div className="w-24 h-24 rounded-full bg-white overflow-hidden border-4 border-white shadow-xl cursor-pointer relative">
                           <img 
                             src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.display_name || 'User'}&background=random`} 
                             className="w-full h-full object-cover" 
@@ -130,9 +130,9 @@ export default function Dashboard() {
                       </div>
                   </div>
                   <div>
-                      <h2 className="text-2xl font-bold flex items-center gap-2">
+                      <h2 className="text-2xl font-black flex items-center gap-2">
                         {profile?.display_name || 'User'} 
-                        <i className="fi fi-sr-badge-check text-blue-500"></i>
+                        <i className="fi fi-sr-badge-check text-primary text-xl"></i>
                       </h2>
                       <div className="flex items-center gap-4 mt-2">
                          <span className="text-xs text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1">
@@ -143,25 +143,44 @@ export default function Dashboard() {
               </div>
 
               {/* Purple Add Link Button */}
-              <div className="sticky top-0 z-40 bg-white pb-6 pt-4">
-                  <button className="w-full py-4 bg-[#8b3eff] text-white font-bold rounded-[32px] text-[15px] hover:bg-[#7221e6] transition-all flex items-center justify-center gap-2 group">
-                      <i className="fi fi-rr-plus text-xs"></i> Add Link
+              <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md pb-6 pt-4">
+                  <button className="w-full py-5 bg-[#8b3eff] text-white font-black rounded-[40px] text-lg hover:bg-[#7221e6] transition-all flex items-center justify-center gap-2 group shadow-xl">
+                      <i className="fi fi-rr-plus text-sm"></i> Add Link
                   </button>
               </div>
 
               {/* Social Icons Section */}
-              <div className="bg-gray-50/50 border border-gray-100 rounded-[32px] p-8">
+              <div className="bg-[#fdf2e3] border border-[#e8dcc8] rounded-[40px] p-8">
                   <div className="flex items-center justify-between mb-6">
                       <div>
-                          <h3 className="font-bold text-lg">Social Icons</h3>
-                          <p className="text-xs text-gray-500">Pick which social icons to show on your profile</p>
+                          <h3 className="font-black text-xl text-secondary">Social Cards</h3>
+                          <p className="text-sm text-secondary/60">Manage your prominent social links</p>
                       </div>
-                      <button className="px-4 py-2 bg-white border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-100 transition-all">Add Social Icon</button>
+                      <button className="px-5 py-2.5 bg-white border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-100 transition-all shadow-sm">
+                         <i className="fi fi-rr-add mr-2"></i> Add Platform
+                      </button>
                   </div>
-                  <div className="flex flex-wrap gap-3">
-                      <div className="p-3 bg-white rounded-2xl border border-dashed border-gray-200 text-gray-400 text-xs flex items-center gap-2 cursor-pointer hover:border-purple-300 hover:text-purple-600 transition-all">
-                          <i className="fi fi-rr-add"></i> Add your first social icon
-                      </div>
+                  <div className="flex flex-wrap gap-4">
+                      {profile?.social_links && Object.entries(profile.social_links).map(([platform, url]: [string, any]) => (
+                        url && (
+                          <div key={platform} className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4 group hover:-translate-y-1 transition-all cursor-pointer">
+                             <div className="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center">
+                                <i className={`fi fi-brands-${platform === 'x' ? 'twitter' : platform} text-xl`}></i>
+                             </div>
+                             <div>
+                                <p className="text-xs font-black capitalize">{platform}</p>
+                                <p className="text-[10px] text-gray-400 truncate max-w-[100px]">{url}</p>
+                             </div>
+                             <i className="fi fi-rr-menu-dots-vertical text-[10px] text-gray-300 ml-2 group-hover:text-secondary"></i>
+                          </div>
+                        )
+                      ))}
+                      {Object.keys(profile?.social_links || {}).length === 0 && (
+                        <div className="w-full p-6 bg-white/50 rounded-3xl border border-dashed border-secondary/10 flex flex-col items-center justify-center text-center">
+                           <i className="fi fi-rr-apps text-2xl text-secondary/20 mb-2"></i>
+                           <p className="text-xs font-bold text-secondary/40">No social cards added yet.</p>
+                        </div>
+                      )}
                   </div>
               </div>
 
@@ -180,18 +199,18 @@ export default function Dashboard() {
                       <Reorder.Item 
                         key={link.id} 
                         value={link} 
-                        className="bg-white border border-gray-100 rounded-[32px] p-6 shadow-sm hover:shadow-md transition-all group relative"
+                        className="bg-white border border-gray-100 rounded-[40px] p-8 shadow-sm hover:shadow-lg transition-all group relative border-l-[6px] border-l-primary"
                       >
-                        <div className="flex items-center gap-4">
-                          <div className="cursor-grab active:cursor-grabbing text-gray-300">
-                             <i className="fi fi-rr-grip-vertical"></i>
+                        <div className="flex items-center gap-6">
+                          <div className="cursor-grab active:cursor-grabbing text-gray-300 hover:text-secondary transition-colors">
+                             <i className="fi fi-rr-grip-vertical text-lg"></i>
                           </div>
                           <div className="flex-1">
-                            <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center justify-between mb-3">
                                <input 
                                  type="text" 
                                  value={link.title}
-                                 className="font-bold text-secondary bg-transparent outline-none focus:border-b border-gray-200"
+                                 className="font-black text-xl text-secondary bg-transparent outline-none focus:border-b-2 border-primary w-full mr-4"
                                  onChange={(e) => {
                                    const newLinks = links.map(l => l.id === link.id ? { ...l, title: e.target.value } : l)
                                    setLinks(newLinks)
@@ -199,15 +218,15 @@ export default function Dashboard() {
                                  onBlur={() => updateLinks(links)}
                                />
                                <div className="flex items-center gap-4">
-                                  <button onClick={() => toggleLink(link.id)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${link.active ? 'bg-primary' : 'bg-gray-200'}`}>
-                                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${link.active ? 'translate-x-6' : 'translate-x-1'}`} />
+                                  <button onClick={() => toggleLink(link.id)} className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${link.active ? 'bg-primary' : 'bg-gray-200'}`}>
+                                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${link.active ? 'translate-x-6' : 'translate-x-1'}`} />
                                   </button>
                                </div>
                             </div>
                             <input 
                               type="text" 
                               value={link.url}
-                              className="text-sm text-gray-500 bg-transparent outline-none block w-full"
+                              className="text-sm font-medium text-gray-400 bg-transparent outline-none block w-full hover:text-secondary transition-colors"
                               onChange={(e) => {
                                 const newLinks = links.map(l => l.id === link.id ? { ...l, url: e.target.value } : l)
                                 setLinks(newLinks)
@@ -217,14 +236,14 @@ export default function Dashboard() {
                           </div>
                         </div>
                         
-                        <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
-                            <div className="flex items-center gap-4 text-gray-400">
-                               <button className="hover:text-secondary"><i className="fi fi-rr-picture text-sm"></i></button>
-                               <button className="hover:text-secondary"><i className="fi fi-rr-star text-sm"></i></button>
-                               <button className="hover:text-secondary"><i className="fi fi-rr-stats text-sm"></i></button>
+                        <div className="mt-6 pt-6 border-t border-gray-50 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div className="flex items-center gap-6 text-gray-400">
+                               <button className="hover:text-secondary flex items-center gap-2 text-xs font-bold"><i className="fi fi-rr-picture"></i> Image</button>
+                               <button className="hover:text-secondary flex items-center gap-2 text-xs font-bold"><i className="fi fi-rr-star"></i> Highlight</button>
+                               <button className="hover:text-secondary flex items-center gap-2 text-xs font-bold"><i className="fi fi-rr-stats"></i> Analytics</button>
                             </div>
-                            <button onClick={() => deleteLink(link.id)} className="text-gray-400 hover:text-red-500 transition-colors">
-                               <i className="fi fi-rr-trash text-sm"></i>
+                            <button onClick={() => deleteLink(link.id)} className="w-10 h-10 rounded-2xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center">
+                               <i className="fi fi-rr-trash"></i>
                             </button>
                         </div>
                       </Reorder.Item>
@@ -234,13 +253,13 @@ export default function Dashboard() {
               </div>
 
               {/* Archive row */}
-              <div className="flex items-center justify-between pt-10 border-t border-gray-50">
-                   <button className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary"><i className="fi fi-rr-square-plus"></i> Add collection</button>
-                   <button className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary">View archive <i className="fi fi-rr-angle-small-right pt-0.5"></i></button>
+              <div className="flex items-center justify-between pt-10 border-t border-gray-100">
+                   <button className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary whitespace-nowrap"><i className="fi fi-rr-square-plus"></i> Add collection</button>
+                   <button className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-secondary whitespace-nowrap">View link archive <i className="fi fi-rr-angle-small-right pt-0.5"></i></button>
               </div>
 
-              <div className="flex items-center gap-2 font-black text-xl px-2 opacity-50 grayscale mt-12 mb-20 text-secondary">
-                Monkey <span className="text-primary text-2xl">*</span>
+              <div className="flex items-center gap-2 font-black text-2xl px-2 opacity-50 grayscale mt-20 mb-32 text-secondary">
+                Monkey <span className="text-primary text-3xl">*</span>
               </div>
 
             </div>

@@ -53,8 +53,18 @@ export default function PublicProfile() {
   const selectedTheme = THEMES.find(t => t.id === profile.theme) || THEMES[0]
 
   return (
-    <div className={`min-h-screen w-full flex flex-col items-center pt-24 pb-12 px-4 transition-colors duration-500 ${selectedTheme.bg} ${selectedTheme.text}`}>
-      
+    <div 
+      className={`min-h-screen w-full flex flex-col items-center pt-24 pb-12 px-4 transition-colors duration-500 relative ${selectedTheme.bg} ${selectedTheme.text}`}
+      style={selectedTheme.id === 'grid-mocha' ? {
+        backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
+        backgroundSize: '30px 30px'
+      } : {}}
+    >
+      {/* Top Left Icon */}
+      <div className="fixed top-8 left-8 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 z-[100]">
+        <span className="text-white text-lg font-black">*</span>
+      </div>
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -69,15 +79,13 @@ export default function PublicProfile() {
            />
         </div>
         
-        <h1 className="text-2xl font-bold mb-1 flex items-center justify-center gap-1">
+        <h1 className="text-3xl font-black mb-1 flex items-center justify-center gap-1 tracking-tight">
           {profile.display_name} 
           <i className="fi fi-sr-badge-check text-primary text-xl"></i>
         </h1>
-        <p className="text-sm font-medium opacity-70 mb-6">@{profile.username}</p>
+        <p className="text-sm font-bold opacity-70 mb-8">@{profile.username}</p>
         
-        {profile.bio && <p className="text-center px-8 mb-10 font-medium max-w-md leading-relaxed opacity-90">{profile.bio}</p>}
-        
-        {/* Social Icons */}
+        {/* Social Icons Section */}
         <div className="flex flex-wrap justify-center gap-6 mb-12">
            {profile.social_links && Object.entries(profile.social_links).map(([platform, url]: [string, any]) => (
              url && (
@@ -86,7 +94,7 @@ export default function PublicProfile() {
                  href={url} 
                  target="_blank"
                  rel="noopener noreferrer"
-                 className="text-2xl transition-transform hover:scale-125 hover:opacity-80"
+                 className="text-3xl transition-transform hover:scale-125 hover:opacity-80"
                >
                  <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'}`}></i>
                </a>
@@ -94,6 +102,8 @@ export default function PublicProfile() {
            ))}
         </div>
 
+        {profile.bio && <p className="text-center px-8 mb-10 font-bold max-w-md leading-relaxed opacity-90">{profile.bio}</p>}
+        
         {/* Links */}
         <div className="w-full space-y-4">
           {profile.links?.filter((l: any) => l.active).map((link: any, i: number) => (
@@ -102,17 +112,26 @@ export default function PublicProfile() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`block w-full py-5 px-6 rounded-2xl font-bold shadow-md hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 text-center ${selectedTheme.button}`}
+              className={`block w-full py-5 px-6 rounded-2xl font-bold shadow-md hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 text-center relative group ${selectedTheme.button}`}
             >
-              {link.title}
+              <span>{link.title}</span>
+              <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-30 group-hover:opacity-100 transition-opacity">
+                 <i className="fi fi-rr-menu-dots-vertical text-sm"></i>
+              </div>
             </a>
           ))}
         </div>
         
-        <div className="mt-24 flex flex-col items-center gap-4">
-           <a href="/" className="inline-flex items-center gap-1 opacity-50 text-sm font-bold hover:opacity-100 transition-opacity">
-              Join millions on <span className="font-black tracking-tight">Monkey<span className="text-primary">*</span></span>
-           </a>
+        <div className="mt-24 flex flex-col items-center gap-8">
+           <button className="px-8 py-3 bg-white text-secondary font-black rounded-full shadow-2xl transform hover:scale-105 active:scale-95 transition-all">
+              Join {profile.username} on Monkey
+           </button>
+           
+           <div className="flex items-center gap-3 text-[10px] font-bold opacity-30 uppercase tracking-[0.2em]">
+              <span>Report</span>
+              <span>•</span>
+              <span>Privacy</span>
+           </div>
         </div>
       </motion.div>
     </div>

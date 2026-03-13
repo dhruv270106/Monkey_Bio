@@ -48,5 +48,6 @@ export const THEMES = [
   { id: 'royal-blue', name: 'Royal Blue', bg: 'bg-[#4169e1]', text: 'text-white', button: 'bg-white text-secondary', accent: 'blue' },
   { id: 'deep-pink', name: 'Deep Pink', bg: 'bg-[#ff1493]', text: 'text-white', button: 'bg-white text-secondary', accent: 'pink' },
   { id: 'lime-green', name: 'Lime Green', bg: 'bg-[#32cd32]', text: 'text-secondary', button: 'bg-black text-white', accent: 'lime' },
-  { id: 'tan-leather', name: 'Tan Leather', bg: 'bg-[#d2b48c]', text: 'text-secondary', button: 'bg-[#8b4513] text-white', accent: 'tan' }
+  { id: 'tan-leather', name: 'Tan Leather', bg: 'bg-[#d2b48c]', text: 'text-secondary', button: 'bg-[#8b4513] text-white', accent: 'tan' },
+  { id: 'grid-mocha', name: 'Grid Mocha', bg: 'bg-[#402020]', text: 'text-white', button: 'bg-[#FDF2E3] text-secondary', accent: '#FDF2E3', grid: true }
 ]
