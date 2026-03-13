@@ -46,6 +46,10 @@ export default function Dashboard() {
     ])
 
     if (profileRes.data) {
+      if (!profileRes.data.onboarding_completed) {
+        window.location.href = '/onboarding'
+        return
+      }
       setProfile(profileRes.data)
       setLinks(profileRes.data.links || [])
     }
