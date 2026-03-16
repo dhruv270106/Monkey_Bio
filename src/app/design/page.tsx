@@ -116,9 +116,9 @@ export default function DesignPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="h-screen bg-white flex flex-col overflow-hidden">
       {/* Top Banner */}
-      <div className="bg-[#1e293b] text-white py-2 px-8 flex justify-center items-center gap-4 text-sm font-medium sticky top-0 z-[100]">
+      <div className="bg-[#1e293b] text-white py-2 px-8 flex justify-center items-center gap-4 text-sm font-medium flex-shrink-0 z-[100]">
           <span>Unlock more tools to grow your audience faster.</span>
           <button className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 px-3 py-1 rounded-full flex items-center gap-2 transition-all">
               <i className="fi fi-rr-bolt text-[10px]"></i> Claim free week
@@ -144,12 +144,12 @@ export default function DesignPage() {
 
           <div className="flex-1 flex overflow-hidden">
             {/* Design Tab Sidebar */}
-            <div className="w-24 bg-white border-r border-gray-100 flex flex-col items-center py-8 gap-8 flex-shrink-0">
+            <div className="w-24 bg-white border-r border-gray-100 flex flex-col items-center py-8 gap-8 flex-shrink-0 overflow-y-auto no-scrollbar">
               {TABS.map(tab => (
                 <button 
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex flex-col items-center gap-2 transition-all ${activeTab === tab.id ? 'text-secondary' : 'text-gray-300 hover:text-gray-400'}`}
+                  className={`flex flex-col items-center gap-2 transition-all shrink-0 ${activeTab === tab.id ? 'text-secondary' : 'text-gray-300 hover:text-gray-400'}`}
                 >
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${activeTab === tab.id ? 'bg-gray-50' : 'bg-transparent'}`}>
                     <i className={`fi ${tab.icon} text-lg`}></i>
@@ -159,9 +159,11 @@ export default function DesignPage() {
               ))}
             </div>
 
-            {/* Content Area - Scrollable independently */}
-            <div className="flex-1 overflow-y-auto p-12 bg-white no-scrollbar h-full">
-              <div className="max-w-xl mx-auto space-y-12 pb-24">
+            {/* Content Area - Floating "Box" structure */}
+            <div className="flex-1 bg-gray-50/30 p-8 overflow-hidden flex flex-col">
+              <div className="flex-1 bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden flex flex-col max-w-2xl mx-auto w-full">
+                <div className="flex-1 overflow-y-auto p-10 no-scrollbar">
+                  <div className="space-y-12 pb-24">
                 
                 {activeTab === 'Header' && (
                   <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
@@ -445,7 +447,9 @@ export default function DesignPage() {
               </div>
             </div>
           </div>
-        </main>
+        </div>
+      </div>
+    </main>
 
         <Preview userProfile={profile} links={links} socialLinks={profile?.social_links} />
       </div>
