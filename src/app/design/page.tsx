@@ -40,6 +40,7 @@ export default function DesignPage() {
   const [links, setLinks] = useState<Link[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [hasChanges, setHasChanges] = useState(false)
   const [showCropper, setShowCropper] = useState(false)
   const [selectedImage, setSelectedImage] = useState('')
   const [activeTab, setActiveTab] = useState('Header')
@@ -87,18 +88,34 @@ export default function DesignPage() {
     setLoading(false)
   }
 
-  const updateProfile = async (updates: Partial<Profile>) => {
+  const updateProfile = (updates: Partial<Profile>) => {
     if (!profile) return
     const newProfile = { ...profile, ...updates }
     setProfile(newProfile)
-    
+    setHasChanges(true)
+  }
+
+  const handleSave = async () => {
+    if (!profile) return
     setSaving(true)
+    
+    // Extract only the fields we want to save to the DB to avoid potential issues with extra state fields
+    const { id, username, display_name, avatar_url, bio, social_links, theme, custom_bg, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur } = profile
+    const dbUpdates = { display_name, avatar_url, bio, social_links, theme, custom_bg, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur }
+
     const { data: { session } } = await supabase.auth.getSession()
     if (session) {
-      await supabase
+      const { error } = await supabase
         .from('monkey_bio')
-        .update(updates)
+        .update(dbUpdates)
         .eq('id', session.user.id)
+      
+      if (!error) {
+        setHasChanges(false)
+      } else {
+        console.error('Save error:', error)
+        alert('Error saving changes: ' + error.message)
+      }
     }
     setSaving(false)
   }
@@ -148,10 +165,24 @@ export default function DesignPage() {
           <div className="h-16 px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0">
              <h1 className="font-bold text-xl">{activeTab}</h1>
              <div className="flex items-center gap-4">
-               {saving && <span className="text-xs font-bold text-primary animate-pulse flex items-center gap-2">
-                 <i className="fi fi-rr-cloud-upload"></i> Saving...
-               </span>}
-               <button className="bg-primary text-secondary font-black px-6 py-2 rounded-full text-sm shadow-lg hover:scale-105 transition-all">
+               {saving ? (
+                 <span className="text-xs font-bold text-primary animate-pulse flex items-center gap-2">
+                   <i className="fi fi-rr-cloud-upload"></i> Saving...
+                 </span>
+               ) : hasChanges ? (
+                 <span className="text-xs font-bold text-orange-400 flex items-center gap-2">
+                   <i className="fi fi-rr-info"></i> Unsaved changes
+                 </span>
+               ) : (
+                 <span className="text-xs font-bold text-green-400 flex items-center gap-2">
+                   <i className="fi fi-rr-check"></i> All changes saved
+                 </span>
+               )}
+               <button 
+                 onClick={handleSave}
+                 disabled={saving}
+                 className={`font-black px-6 py-2 rounded-full text-sm shadow-lg transition-all ${saving ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-primary text-secondary hover:scale-105'}`}
+               >
                  Save
                </button>
              </div>
