@@ -52,8 +52,8 @@ export default function AutoReplyPage() {
   }
 
   const handleConnect = () => {
-    if (!igUsername.startsWith('@')) {
-       alert('Please enter a valid Instagram username starting with @')
+    if (!igUsername) {
+       alert('Please enter your Instagram profile link')
        return
     }
     setStep(2)
@@ -96,6 +96,19 @@ export default function AutoReplyPage() {
     )
   }
 
+  const handleAuthSimulation = () => {
+    if (!igUsername) {
+       alert('Please enter your Instagram link first');
+       return;
+    }
+    setSubmitting(true);
+    // Simulating Instagram OAuth Popup
+    setTimeout(() => {
+       setSubmitting(false);
+       setStep(2);
+    }, 1500);
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="flex-1 flex overflow-hidden">
@@ -112,7 +125,7 @@ export default function AutoReplyPage() {
                <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full">
                      <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                     <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Live: {igUsername}</span>
+                     <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Live: {igUsername.split('/').pop()?.replace('@','')}</span>
                   </div>
                </div>
              )}
@@ -137,17 +150,20 @@ export default function AutoReplyPage() {
                         <h2 className="text-3xl font-black text-secondary">Connect Instagram</h2>
                         <p className="text-gray-400 font-bold max-w-sm mx-auto leading-relaxed">Boost your engagement by automatically replying to DMs with your Monkey Bio links.</p>
                      </div>
-                     <div className="max-w-xs mx-auto space-y-4">
+                     
+                     <div className="max-w-sm mx-auto space-y-4">
+                        <div className="text-left space-y-2">
+                           <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Your Instagram Profile URL</label>
+                           <input 
+                             type="text" 
+                             value={igUsername}
+                             onChange={(e) => setIgUsername(e.target.value)}
+                             placeholder="https://instagram.com/your_name"
+                             className="w-full px-6 py-5 rounded-3xl bg-gray-50 border-2 border-transparent focus:border-primary/20 outline-none transition-all font-bold text-secondary text-sm"
+                           />
+                        </div>
                         <button 
-                          onClick={() => {
-                             setSubmitting(true);
-                             // Simulating Instagram OAuth Popup
-                             setTimeout(() => {
-                                setIgUsername('@monkey_creator'); // Mocked username from "auth"
-                                setSubmitting(false);
-                                setStep(2);
-                             }, 1500);
-                          }}
+                          onClick={handleAuthSimulation}
                           disabled={submitting}
                           className="w-full py-5 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white font-black rounded-3xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-70"
                         >
@@ -156,7 +172,7 @@ export default function AutoReplyPage() {
                            ) : (
                               <>
                                  <i className="fi fi-brands-instagram text-xl"></i>
-                                 Connect with Instagram
+                                 Authorize & Connect
                               </>
                            )}
                         </button>
@@ -229,8 +245,15 @@ export default function AutoReplyPage() {
                                <i className="fi fi-brands-instagram"></i>
                             </div>
                             <div>
-                               <h3 className="text-xl font-black text-secondary">{igUsername}</h3>
-                               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Status: <span className="text-green-500 font-black">Connected & Active</span></p>
+                               <h3 className="text-xl font-black text-secondary">{igUsername.split('/').pop()?.replace('@','') || igUsername}</h3>
+                               <a 
+                                href={igUsername.startsWith('http') ? igUsername : `https://instagram.com/${igUsername.replace('@','')}`} 
+                                target="_blank" 
+                                className="text-[10px] font-bold text-primary hover:underline flex items-center gap-1 mt-1"
+                               >
+                                  {igUsername} <i className="fi fi-rr-arrow-up-right text-[8px]"></i>
+                               </a>
+                               <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest mt-1">Status: <span className="text-green-500">Active</span></p>
                             </div>
                          </div>
                          <div className="flex items-center gap-3">
@@ -310,7 +333,7 @@ export default function AutoReplyPage() {
                                            </div>
                                         </div>
                                      </div>
-                                     <span className="font-black text-secondary">{igUsername}</span>
+                                     <span className="font-black text-secondary">{igUsername.split('/').pop()?.replace('@','') || 'Username'}</span>
                                      <span className="text-[10px] font-bold text-gray-300 uppercase mt-1">Direct Message</span>
                                   </div>
                                   <div className="space-y-3">
