@@ -191,8 +191,8 @@ export default function Sidebar({ userProfile }: SidebarProps) {
             <Link href="/dashboard/planner" className={`flex items-center gap-3 px-4 py-2.5 transition-all rounded-xl text-sm font-bold ${pathname === '/dashboard/planner' ? 'bg-white text-secondary shadow-sm border border-gray-100' : 'text-gray-500 hover:bg-gray-100'}`}>
                 <i className={`fi fi-rr-calendar opacity-70 ${pathname === '/dashboard/planner' ? 'text-primary' : ''}`}></i> Social planner
             </Link>
-            <Link href="#" className="flex items-center gap-3 px-4 py-2.5 text-gray-500 font-medium hover:bg-gray-100 transition-all rounded-xl text-sm">
-                <i className="fi fi-rr-comment-alt opacity-70"></i> Auto-reply
+            <Link href="/dashboard/autoreply" className={`flex items-center gap-3 px-4 py-2.5 transition-all rounded-xl text-sm font-bold ${pathname === '/dashboard/autoreply' ? 'bg-white text-secondary shadow-sm border border-gray-100' : 'text-gray-500 hover:bg-gray-100'}`}>
+                <i className={`fi fi-rr-comment-alt opacity-70 ${pathname === '/dashboard/autoreply' ? 'text-primary' : ''}`}></i> Auto-reply
             </Link>
           </div>
         </div>
