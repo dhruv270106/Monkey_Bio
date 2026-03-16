@@ -16,7 +16,6 @@ export interface AppConfig {
 export const CATEGORIES = [
   { id: 'suggested', name: 'Suggested', icon: 'fi-rr-star' },
   { id: 'social', name: 'Social', icon: 'fi-rr-share' },
-  { id: 'commerce', name: 'Commerce', icon: 'fi-rr-shopping-cart' },
   { id: 'media', name: 'Media', icon: 'fi-rr-play-alt' },
   { id: 'audio', name: 'Audio', icon: 'fi-rr-music' },
   { id: 'contact', name: 'Contact', icon: 'fi-rr-envelope' },
@@ -29,16 +28,7 @@ export const CATEGORIES = [
 ]
 
 export const APPS: AppConfig[] = [
-  // COMMERCE
-  { id: 'coaching', title: 'Coaching & bookings', description: 'Sell 1:1 sessions, consultations, and private coaching', icon: 'fi-rr-calendar-check', color: 'text-blue-600', category: 'commerce', placeholder: 'Service link' },
-  { id: 'digital-products', title: 'Digital products', description: 'Sell documents, PDFs, guides, templates, and other content', icon: 'fi-rr-box-open', color: 'text-indigo-600', category: 'commerce', placeholder: 'Product link' },
-  { id: 'courses', title: 'Courses', description: 'Sell online courses and lessons to your audience', icon: 'fi-rr-graduation-cap', color: 'text-purple-600', category: 'commerce', placeholder: 'Course link' },
-  { id: 'affiliate', title: 'Affiliate products', description: 'Share the items you love or promote products you sell with Product links.', icon: 'fi-rr-shopping-cart', color: 'text-emerald-500', category: 'commerce', placeholder: 'Product URL' },
-  { id: 'shopify', title: 'Shopify', description: 'Display your Shopify collections and products', icon: 'fi-brands-shopify', color: 'text-[#96BF48]', category: 'commerce', placeholder: 'Shopify store link' },
-  { id: 'fourthwall', title: 'Fourthwall', description: 'Make & sell premium merch and custom goods', icon: 'fi-rr-shopping-bag', color: 'text-black', category: 'commerce', placeholder: 'Store link' },
-  { id: 'amaze', title: 'Amaze', description: 'Create a store and display it on your Linktree', icon: 'fi-rr-shop', color: 'text-orange-500', category: 'commerce', placeholder: 'Amaze link' },
-  { id: 'books', title: 'Books', description: 'Sell books from Amazon, Apple, and more', icon: 'fi-rr-book', color: 'text-amber-800', category: 'commerce', placeholder: 'Book link' },
-  { id: 'bonfire', title: 'Bonfire', description: 'Sell products from your Bonfire store directly', icon: 'fi-rr-flame', color: 'text-orange-600', category: 'commerce', placeholder: 'Store link' },
+
 
   // COMMUNITIES
   { id: 'community-channels', title: 'Community Channels', description: 'Offer access to WhatsApp, Discord or Slack communities', icon: 'fi-rr-users-alt', color: 'text-blue-500', category: 'communities', placeholder: 'Community link' },
@@ -103,4 +93,4 @@ export const APPS: AppConfig[] = [
   { id: 'header', title: 'Header', description: 'Make it easy to navigate with Link Headers helping visitors find what they need fast.', icon: 'fi-rr-text-size', color: 'text-slate-600', category: 'text', placeholder: 'Header text' },
 ]
 
-export const SUGGESTED_APPS = APPS.filter(a => ['instagram', 'tiktok', 'youtube', 'spotify', 'shopify'].includes(a.id))
+export const SUGGESTED_APPS = APPS.filter(a => ['instagram', 'tiktok', 'youtube', 'spotify'].includes(a.id))
