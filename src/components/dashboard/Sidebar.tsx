@@ -22,7 +22,7 @@ export default function Sidebar({ userProfile }: SidebarProps) {
       items: [
         { label: 'Links', href: '/dashboard', icon: 'fi-rr-link', color: 'text-purple-500' },
         { label: 'Shop', href: '#', icon: 'fi-rr-shopping-bag', color: 'text-blue-500' },
-        { label: 'Design', href: '#', icon: 'fi-rr-palette', color: 'text-pink-500' },
+        { label: 'Design', href: '/design', icon: 'fi-rr-palette', color: 'text-pink-500' },
       ]
     },
     {
