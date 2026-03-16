@@ -21,6 +21,9 @@ export default function SocialPlannerPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('calendar')
   const [showScheduleModal, setShowScheduleModal] = useState(false)
+  const [showDayDetails, setShowDayDetails] = useState(false)
+  const [selectedDayPosts, setSelectedDayPosts] = useState<ScheduledPost[]>([])
+  const [selectedDateLabel, setSelectedDateLabel] = useState('')
   const [posts, setPosts] = useState<ScheduledPost[]>([])
   
   // Form State
@@ -30,6 +33,7 @@ export default function SocialPlannerPage() {
     date: '',
     time: ''
   })
+  const [editingPostId, setEditingPostId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
@@ -51,8 +55,6 @@ export default function SocialPlannerPage() {
 
     if (profileData) {
       setProfile(profileData)
-      // fetch actual posts from local storage for now if table doesn't exist, 
-      // or try to fetch from supabase
       const savedPosts = localStorage.getItem(`planner_posts_${session.user.id}`)
       if (savedPosts) {
         setPosts(JSON.parse(savedPosts))
@@ -66,6 +68,14 @@ export default function SocialPlannerPage() {
     if (profile?.id) {
        localStorage.setItem(`planner_posts_${profile.id}`, JSON.stringify(updatedPosts))
     }
+    
+    // If we are currently viewing details for a specific day, update that view too
+    if (showDayDetails && selectedDayPosts.length > 0) {
+      const dateStr = selectedDayPosts[0].date
+      const updatedDayPosts = updatedPosts.filter(p => p.date === dateStr)
+      setSelectedDayPosts(updatedDayPosts)
+      if (updatedDayPosts.length === 0) setShowDayDetails(false)
+    }
   }
 
   const handleSchedule = () => {
@@ -76,32 +86,92 @@ export default function SocialPlannerPage() {
 
     setSubmitting(true)
 
+    if (editingPostId) {
+      // Update Mode
+      const updatedPosts = posts.map(p => 
+        p.id === editingPostId 
+        ? { ...p, platform: newPost.platform, content: newPost.content, date: newPost.date, time: newPost.time } 
+        : p
+      )
+      savePosts(updatedPosts)
+    } else {
+      // Create Mode
+      const post: ScheduledPost = {
+        id: Math.random().toString(36).substr(2, 9),
+        platform: newPost.platform,
+        content: newPost.content,
+        status: 'scheduled',
+        date: newPost.date,
+        time: newPost.time,
+        user_id: profile?.id || '',
+      }
+      const updatedPosts = [post, ...posts]
+      savePosts(updatedPosts)
+    }
+    
+    closeScheduleModal()
+    setSubmitting(false)
+  }
+
+  const handleSaveDraft = () => {
     const post: ScheduledPost = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: editingPostId || Math.random().toString(36).substr(2, 9),
       platform: newPost.platform,
       content: newPost.content,
-      status: 'scheduled',
-      date: newPost.date,
-      time: newPost.time,
+      status: 'draft',
+      date: newPost.date || new Date().toISOString().split('T')[0],
+      time: newPost.time || '12:00',
       user_id: profile?.id || '',
     }
 
-    const updatedPosts = [post, ...posts]
-    savePosts(updatedPosts)
-    
+    if (editingPostId) {
+      const updatedPosts = posts.map(p => p.id === editingPostId ? post : p)
+      savePosts(updatedPosts)
+    } else {
+      const updatedPosts = [post, ...posts]
+      savePosts(updatedPosts)
+    }
+    closeScheduleModal()
+  }
+
+  const openEditModal = (post: ScheduledPost) => {
+    setNewPost({
+      platform: post.platform,
+      content: post.content,
+      date: post.date,
+      time: post.time
+    })
+    setEditingPostId(post.id)
+    setShowScheduleModal(true)
+  }
+
+  const closeScheduleModal = () => {
+    setShowScheduleModal(false)
+    setEditingPostId(null)
     setNewPost({
       platform: 'instagram',
       content: '',
       date: '',
       time: ''
     })
-    setShowScheduleModal(false)
-    setSubmitting(false)
   }
 
   const deletePost = (id: string) => {
     const updatedPosts = posts.filter(p => p.id !== id)
     savePosts(updatedPosts)
+  }
+
+  const openDayDetails = (dateStr: string, dayNum: number) => {
+    const dayPosts = posts.filter(p => p.date === dateStr)
+    if (dayPosts.length > 0) {
+      setSelectedDayPosts(dayPosts)
+      setSelectedDateLabel(`March ${dayNum}, 2026`)
+      setShowDayDetails(true)
+    } else {
+      // If no posts, just open the add modal
+      setNewPost(prev => ({ ...prev, date: dateStr }))
+      setShowScheduleModal(true)
+    }
   }
 
   const platforms = [
@@ -214,21 +284,31 @@ export default function SocialPlannerPage() {
                                const dayPosts = posts.filter(p => p.date === dateStr);
                                
                                return (
-                                <div key={i} className={`h-24 p-2 border-r border-b border-gray-50 hover:bg-gray-50 transition-colors relative group ${day === new Date().getDate() ? 'bg-primary/5' : ''}`}>
+                                <div 
+                                  key={i} 
+                                  onClick={() => openDayDetails(dateStr, day)}
+                                  className={`h-28 p-2 border-r border-b border-gray-50 hover:bg-gray-50 transition-colors relative group cursor-pointer ${day === new Date().getDate() ? 'bg-primary/5' : ''}`}
+                                >
                                    <span className={`text-[10px] font-black ${day === new Date().getDate() ? 'text-primary' : 'text-gray-400'}`}>{day}</span>
-                                   <div className="mt-1 flex flex-col gap-1">
-                                      {dayPosts.map((p, idx) => (
+                                   <div className="mt-1 flex flex-col gap-1 overflow-hidden h-[50px]">
+                                      {dayPosts.slice(0, 2).map((p, idx) => (
                                          <div key={idx} className={`p-1 px-2 rounded-md text-[7px] font-bold truncate text-white ${platforms.find(plt => plt.id === p.platform)?.color || 'bg-secondary'}`}>
                                             {p.content}
                                          </div>
                                       ))}
+                                      {dayPosts.length > 2 && (
+                                         <div className="text-[7px] font-black text-gray-400 px-1">
+                                            + {dayPosts.length - 2} more
+                                         </div>
+                                      )}
                                    </div>
                                    <button 
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.stopPropagation();
                                       setNewPost(prev => ({ ...prev, date: dateStr }));
                                       setShowScheduleModal(true);
                                     }}
-                                    className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all p-1.5 bg-secondary text-white rounded-lg text-[8px]"
+                                    className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all p-1.5 bg-secondary text-white rounded-lg text-[8px] z-10"
                                    >
                                       <i className="fi fi-rr-plus"></i>
                                    </button>
@@ -267,7 +347,8 @@ export default function SocialPlannerPage() {
                                     <p className="text-[10px] text-gray-400 mt-1 font-medium">{post.date} at {post.time}</p>
                                  </div>
                                  <div className="flex items-center gap-2">
-                                    <button onClick={() => deletePost(post.id)} className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"><i className="fi fi-rr-trash"></i></button>
+                                    <button onClick={() => openEditModal(post)} className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-primary flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 text-sm"><i className="fi fi-rr-edit-alt"></i></button>
+                                    <button onClick={() => deletePost(post.id)} className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 text-sm"><i className="fi fi-rr-trash"></i></button>
                                  </div>
                                </motion.div>
                             ))
@@ -304,16 +385,12 @@ export default function SocialPlannerPage() {
                                  </div>
                                  <div className="flex items-center gap-2 text-gray-400">
                                     <button 
-                                      onClick={() => {
-                                        setNewPost({ platform: post.platform, content: post.content, date: post.date, time: post.time });
-                                        deletePost(post.id);
-                                        setShowScheduleModal(true);
-                                      }} 
-                                      className="w-10 h-10 rounded-xl bg-gray-50 hover:text-primary flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                                      onClick={() => openEditModal(post)} 
+                                      className="w-10 h-10 rounded-xl bg-gray-50 hover:text-primary flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 text-sm"
                                     >
                                       <i className="fi fi-rr-edit-alt"></i>
                                     </button>
-                                    <button onClick={() => deletePost(post.id)} className="w-10 h-10 rounded-xl bg-gray-50 hover:text-red-500 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"><i className="fi fi-rr-trash"></i></button>
+                                    <button onClick={() => deletePost(post.id)} className="w-10 h-10 rounded-xl bg-gray-50 hover:text-red-500 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 text-sm"><i className="fi fi-rr-trash"></i></button>
                                  </div>
                                </motion.div>
                             ))
@@ -364,15 +441,15 @@ export default function SocialPlannerPage() {
         </main>
       </div>
 
-      {/* Schedule Modal */}
+      {/* Day Details Modal */}
       <AnimatePresence>
-        {showScheduleModal && (
+        {showDayDetails && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
              <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setShowScheduleModal(false)}
+              onClick={() => setShowDayDetails(false)}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm"
              />
              <motion.div 
@@ -381,9 +458,84 @@ export default function SocialPlannerPage() {
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               className="w-full max-w-lg bg-white rounded-[40px] shadow-2xl relative z-10 overflow-hidden"
              >
-                <div className="p-8 border-b border-gray-50">
-                   <h2 className="text-2xl font-black text-secondary">New Social Post</h2>
-                   <p className="text-sm text-gray-400 font-bold mt-1 uppercase tracking-widest">Schedule your next big thing</p>
+                <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+                   <div>
+                      <h2 className="text-2xl font-black text-secondary">{selectedDateLabel}</h2>
+                      <p className="text-sm text-gray-400 font-bold mt-1 uppercase tracking-widest">{selectedDayPosts.length} Scheduled Posts</p>
+                   </div>
+                   <button onClick={() => setShowDayDetails(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-secondary"><i className="fi fi-rr-cross-small"></i></button>
+                </div>
+                <div className="p-8 max-h-[60vh] overflow-y-auto space-y-4 no-scrollbar">
+                   {selectedDayPosts.map((post) => (
+                      <div key={post.id} className="p-5 bg-gray-50 rounded-3xl border border-gray-100 flex items-center gap-4 group">
+                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl flex-shrink-0 ${platforms.find(p => p.id === post.platform)?.color}`}>
+                            <i className={`fi ${platforms.find(p => p.id === post.platform)?.icon}`}></i>
+                         </div>
+                         <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-secondary truncate">{post.content}</p>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{post.time} • {post.platform}</p>
+                         </div>
+                         <div className="flex items-center gap-2">
+                            <button 
+                              onClick={() => {
+                                setShowDayDetails(false);
+                                openEditModal(post);
+                              }}
+                              className="p-2.5 bg-white text-gray-400 hover:text-primary rounded-xl shadow-sm border border-gray-100 transition-all"
+                            >
+                               <i className="fi fi-rr-edit-alt text-sm"></i>
+                            </button>
+                            <button 
+                              onClick={() => deletePost(post.id)}
+                              className="p-2.5 bg-white text-red-300 hover:text-red-500 rounded-xl shadow-sm border border-gray-100 transition-all"
+                            >
+                               <i className="fi fi-rr-trash text-sm"></i>
+                            </button>
+                         </div>
+                      </div>
+                   ))}
+                </div>
+                <div className="p-8 bg-gray-50/50">
+                   <button 
+                    onClick={() => {
+                      const dateStr = selectedDayPosts[0]?.date;
+                      setNewPost(prev => ({ ...prev, date: dateStr }));
+                      setShowDayDetails(false);
+                      setShowScheduleModal(true);
+                    }}
+                    className="w-full py-4 bg-secondary text-white font-black rounded-full hover:bg-gray-800 transition-all"
+                   >
+                      + Add Another Post
+                   </button>
+                </div>
+             </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Schedule Modal */}
+      <AnimatePresence>
+        {showScheduleModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+             <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeScheduleModal}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+             />
+             <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="w-full max-w-lg bg-white rounded-[40px] shadow-2xl relative z-10 overflow-hidden"
+             >
+                <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+                   <div>
+                      <h2 className="text-2xl font-black text-secondary">{editingPostId ? 'Edit Social Post' : 'New Social Post'}</h2>
+                      <p className="text-sm text-gray-400 font-bold mt-1 uppercase tracking-widest">{editingPostId ? 'Update your content' : 'Schedule your next big thing'}</p>
+                   </div>
+                   <button onClick={closeScheduleModal} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-secondary"><i className="fi fi-rr-cross-small"></i></button>
                 </div>
                 <div className="p-8 space-y-6">
                    <div className="space-y-2">
@@ -393,7 +545,7 @@ export default function SocialPlannerPage() {
                             <button 
                               key={p.id} 
                               onClick={() => setNewPost({ ...newPost, platform: p.id })}
-                              className={`w-12 h-12 rounded-2xl ${p.color} flex items-center justify-center text-white shadow-sm hover:scale-110 transition-all ${newPost.platform === p.id ? 'ring-4 ring-primary ring-offset-2' : 'opacity-50 hover:opacity-100'}`}
+                              className={`w-12 h-12 rounded-2xl ${p.color} flex items-center justify-center text-white shadow-sm hover:scale-110 transition-all ${newPost.platform === p.id ? 'ring-4 ring-primary ring-offset-2' : 'opacity-40 hover:opacity-100'}`}
                             >
                                <i className={`fi ${p.icon}`}></i>
                             </button>
@@ -432,20 +584,7 @@ export default function SocialPlannerPage() {
                    <div className="pt-4 flex gap-3">
                       <button 
                         disabled={submitting}
-                        onClick={() => {
-                           const post: ScheduledPost = {
-                             id: Math.random().toString(36).substr(2, 9),
-                             platform: newPost.platform,
-                             content: newPost.content,
-                             status: 'draft',
-                             date: newPost.date || new Date().toISOString().split('T')[0],
-                             time: newPost.time || '12:00',
-                             user_id: profile?.id || '',
-                           }
-                           const updatedPosts = [post, ...posts]
-                           savePosts(updatedPosts)
-                           setShowScheduleModal(false)
-                        }}
+                        onClick={handleSaveDraft}
                         className="flex-1 py-4 bg-gray-100 text-secondary font-black rounded-full hover:bg-gray-200 transition-all disabled:opacity-50"
                       >
                          Save Draft
@@ -455,7 +594,7 @@ export default function SocialPlannerPage() {
                         onClick={handleSchedule}
                         className="flex-1 py-4 bg-secondary text-white font-black rounded-full hover:bg-gray-800 transition-all shadow-lg disabled:opacity-50"
                       >
-                         {submitting ? 'Scheduling...' : 'Schedule Now'}
+                         {submitting ? 'Updating...' : (editingPostId ? 'Update Post' : 'Schedule Now')}
                       </button>
                    </div>
                 </div>
