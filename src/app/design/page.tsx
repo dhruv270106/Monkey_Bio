@@ -326,7 +326,7 @@ export default function DesignPage() {
                           >
                             {theme.grid && (
                               <div className="absolute inset-0 opacity-20" style={{
-                                backgroundImage: theme.id === 'grid-mocha' 
+                                backgroundImage: theme.text.includes('white') 
                                   ? 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)'
                                   : 'linear-gradient(#000000 1px, transparent 1px), linear-gradient(90deg, #000000 1px, transparent 1px)',
                                 backgroundSize: '15px 15px'

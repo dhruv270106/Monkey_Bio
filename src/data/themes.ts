@@ -1,52 +1,303 @@
 export const THEMES = [
   { id: 'custom', name: 'Custom Color', bg: 'bg-white', text: 'text-secondary', button: 'bg-secondary text-white', accent: 'primary', isCustom: true },
-  { id: 'classic-white', name: 'Classic White', bg: 'bg-white', text: 'text-secondary', button: 'bg-secondary text-white', accent: 'primary' },
-  { id: 'classic-dark', name: 'Classic Dark', bg: 'bg-secondary', text: 'text-white', button: 'bg-white text-secondary', accent: 'primary' },
-  { id: 'glass-blur', name: 'Glass Blur', bg: 'bg-gradient-to-br from-blue-100 to-purple-100', text: 'text-secondary', button: 'bg-white/40 backdrop-blur-md border border-white/20', accent: 'primary' },
-  { id: 'ocean-deep', name: 'Ocean Deep', bg: 'bg-gradient-to-br from-blue-600 to-blue-900', text: 'text-white', button: 'bg-white/20 backdrop-blur-sm border border-white/10', accent: 'blue' },
-  { id: 'sunset-glow', name: 'Sunset Glow', bg: 'bg-gradient-to-br from-orange-400 to-rose-400', text: 'text-white', button: 'bg-white text-secondary', accent: 'orange' },
-  { id: 'cyber-neon', name: 'Cyber Neon', bg: 'bg-black', text: 'text-primary', button: 'border-2 border-primary text-primary', accent: 'primary' },
-  { id: 'pastel-pink', name: 'Pastel Pink', bg: 'bg-[#ffedef]', text: 'text-[#ff4f6a]', button: 'bg-[#ff4f6a] text-white', accent: 'white' },
-  { id: 'midnight-blue', name: 'Midnight Blue', bg: 'bg-[#191970]', text: 'text-white', button: 'bg-[#f0f8ff] text-secondary', accent: 'blue' },
-  { id: 'vibrant-yellow', name: 'Vibrant Yellow', bg: 'bg-[#ffff00]', text: 'text-black', button: 'bg-black text-white', accent: 'yellow' },
-  { id: 'grid-mocha', name: 'Grid Mocha', bg: 'bg-[#402020]', text: 'text-white', button: 'bg-[#FDF2E3] text-secondary', accent: '#FDF2E3', grid: true },
   
-  // Lifestyle & Printed
-  { id: 'happy-vibes', name: 'Happy Vibes', bg: 'bg-yellow-400', image: 'https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80&w=1000', text: 'text-secondary', button: 'bg-white/90 backdrop-blur text-secondary shadow-lg', accent: 'yellow' },
-  { id: 'sad-mood', name: 'Inner Rain', bg: 'bg-slate-900', image: 'https://images.unsplash.com/photo-1516585421171-46bb90680e9a?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-black/40 backdrop-blur border border-white/20', accent: 'blue' },
-  { id: 'love-red', name: 'Deep Love', bg: 'bg-rose-600', image: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white/20 backdrop-blur border border-white/30', accent: 'rose' },
-  { id: 'flower-bloom', name: 'Flower Bloom', bg: 'bg-pink-100', image: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=1000', text: 'text-[#2d3436]', button: 'bg-white/80 backdrop-blur text-secondary shadow-sm', accent: 'pink' },
-  { id: 'super-car', name: 'Speed Night', bg: 'bg-zinc-900', image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white/10 backdrop-blur border border-white/20', accent: 'red' },
-  { id: 'motorcycle-ride', name: 'Open Road', bg: 'bg-stone-900', image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-black/50 backdrop-blur border border-white/10', accent: 'orange' },
-  { id: 'black-design', name: 'Noir Texture', bg: 'bg-black', image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white text-black font-black', accent: 'white' },
-  { id: 'white-design', name: 'Clean Marble', bg: 'bg-white', image: 'https://images.unsplash.com/photo-1533134486753-c833f0ed4866?auto=format&fit=crop&q=80&w=1000', text: 'text-secondary', button: 'bg-secondary text-white shadow-xl', accent: 'black' },
+  // Clean Essentials (Reduced Redundancy)
+  { id: 'classic-white', name: 'Classic White', bg: 'bg-[#ffffff]', text: 'text-secondary', button: 'bg-secondary text-white', accent: 'primary' },
+  { id: 'classic-dark', name: 'Classic Dark', bg: 'bg-[#000000]', text: 'text-white', button: 'bg-white text-secondary', accent: 'primary' },
+  { id: 'glass-light', name: 'Glass Light', bg: 'bg-gradient-to-br from-blue-50 to-purple-50', text: 'text-secondary', button: 'bg-white/40 backdrop-blur-md border border-white/20', accent: 'primary' },
+  { id: 'glass-dark', name: 'Glass Dark', bg: 'bg-slate-900', text: 'text-white', button: 'bg-black/20 backdrop-blur-md border border-white/10', accent: 'primary' },
   
-  // Curated Library Themes (Linktree Style)
-  { id: 'agate', name: 'Agate', bg: 'bg-[#1b4332]', image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-[#9ef01a] text-[#1b4332] font-black', accent: '#9ef01a' },
-  { id: 'air', name: 'Air', bg: 'bg-[#f8fafc]', text: 'text-slate-600', button: 'bg-white border border-slate-200 text-slate-900 shadow-sm', accent: 'slate' },
-  { id: 'astrid', name: 'Astrid', bg: 'bg-[#0f172a]', image: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white/10 backdrop-blur border border-white/20', accent: 'white' },
-  { id: 'aura', name: 'Aura', bg: 'bg-[#e2e8f0]', text: 'text-slate-900', button: 'bg-black/5 text-slate-800 border border-black/5', accent: 'slate' },
-  { id: 'bliss', name: 'Bliss', bg: 'bg-white', image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000', text: 'text-secondary', button: 'bg-white/60 backdrop-blur shadow-sm', accent: 'gray' },
-  { id: 'blocks', name: 'Blocks', bg: 'bg-[#7c3aed]', text: 'text-white', button: 'bg-[#fb7185] text-white font-bold', accent: '#fb7185' },
-  { id: 'bloom', name: 'Bloom', bg: 'bg-[#ff7eb3]', image: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white/20 backdrop-blur border border-white/30', accent: 'white' },
-  { id: 'breeze', name: 'Breeze', bg: 'bg-gradient-to-br from-[#a5f3fc] to-[#ddd6fe]', text: 'text-slate-800', button: 'bg-white/40 shadow-inner', accent: 'cyan' },
-  { id: 'encore', name: 'Encore', bg: 'bg-[#111827]', image: 'https://images.unsplash.com/photo-1514525253344-99a6d5bdc04c?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white/5 border border-white/10', accent: 'gray' },
-  { id: 'grid', name: 'Grid', bg: 'bg-[#ecfccb]', text: 'text-slate-900', button: 'bg-white border-2 border-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]', accent: 'slate', grid: true },
-  { id: 'groove', name: 'Groove', bg: 'bg-[#f43f5e]', image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white/20 backdrop-blur border border-white/30', accent: 'white' },
-  { id: 'haven', name: 'Haven', bg: 'bg-[#f5f5dc]', text: 'text-[#483c32]', button: 'bg-white shadow-lg border border-gray-100', accent: '#483c32' },
-  { id: 'lake', name: 'Lake', bg: 'bg-[#1e1b4b]', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-black/30 backdrop-blur border border-white/10', accent: 'indigo' },
-  { id: 'mineral', name: 'Mineral', bg: 'bg-[#fafaf9]', text: 'text-slate-800', button: 'bg-[#f5f5f4] border border-slate-200', accent: 'slate' },
-  { id: 'nourish', name: 'Nourish', bg: 'bg-[#365314]', image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-[#a3e635] text-[#1a2e05] font-black', accent: '#a3e635' },
-  { id: 'rise', name: 'Rise', bg: 'bg-gradient-to-t from-[#f43f5e] to-[#fb923c]', text: 'text-white', button: 'bg-white/20 backdrop-blur border border-white/30', accent: 'white' },
-  { id: 'sweat', name: 'Sweat', bg: 'bg-[#020617]', image: 'https://images.unsplash.com/photo-1540539234-c14a20fb7c7b?auto=format&fit=crop&q=80&w=1000', text: 'text-[#38bdf8]', button: 'bg-[#38bdf8]/10 border border-[#38bdf8]/30', accent: '#38bdf8' },
-  { id: 'tress', name: 'Tress', bg: 'bg-[#451a03]', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=1000', text: 'text-[#fcd34d]', button: 'bg-white/5 border border-white/10 shadow-xl', accent: '#fcd34d' },
-  { id: 'twilight', name: 'Twilight', bg: 'bg-[#2e1065]', image: 'https://images.unsplash.com/photo-1472289065668-ce650ac443d2?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-[#d8b4fe]/20 backdrop-blur border border-[#d8b4fe]/30', accent: 'purple' },
-  { id: 'vox', name: 'Vox', bg: 'bg-[#7f1d1d]', image: 'https://images.unsplash.com/photo-1560171963-70d1b25059bb?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white text-red-900 font-extrabold', accent: 'red' },
-  
-  // Professional
-  { id: 'executive-white', name: 'Executive White', bg: 'bg-slate-50', text: 'text-slate-900', button: 'bg-white border border-slate-200 text-slate-900 shadow-sm font-semibold hover:border-slate-400', accent: 'slate' },
-  { id: 'modern-corporate', name: 'Modern Corporate', bg: 'bg-[#1e293b]', text: 'text-white', button: 'bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700', accent: 'blue' },
-  { id: 'tech-minimal', name: 'Tech Minimal', bg: 'bg-[#0f172a]', text: 'text-slate-300', button: 'bg-slate-800 border border-slate-700 text-white rounded-md hover:bg-slate-700', accent: 'slate' },
-  { id: 'business-slate', name: 'Business Slate', bg: 'bg-[#f8fafc]', text: 'text-[#334155]', button: 'bg-[#334155] text-white rounded-none border-b-4 border-[#1e293b]', accent: 'slate' }
+  // 30 NEW PREMIUM & PRINTED THEMES
+  { 
+    id: 'mesh-candy', 
+    name: 'Mesh Candy', 
+    bg: 'bg-[#ff7eb3]', 
+    image: 'https://images.unsplash.com/photo-1557683311-eac922347aa1?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-white', 
+    button: 'bg-white/20 backdrop-blur border border-white/30 rounded-2xl', 
+    accent: 'white' 
+  },
+  { 
+    id: 'northern-lights', 
+    name: 'Northern Lights', 
+    bg: 'bg-black', 
+    image: 'https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-white', 
+    button: 'bg-white/10 backdrop-blur border border-white/10 text-[#6cf383]', 
+    accent: '#6cf383' 
+  },
+  { 
+    id: 'cyber-city', 
+    name: 'Cyber City', 
+    bg: 'bg-[#0f172a]', 
+    image: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7da05?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-white', 
+    button: 'bg-primary text-secondary font-black border-4 border-secondary shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]', 
+    accent: 'primary' 
+  },
+  { 
+    id: 'luxury-gold', 
+    name: 'Luxury Gold', 
+    bg: 'bg-[#1a1a1a]', 
+    text: 'text-[#d4af37]', 
+    button: 'bg-[#d4af37]/10 border-2 border-[#d4af37] text-[#d4af37] font-bold', 
+    accent: '#d4af37' 
+  },
+  { 
+    id: 'deep-forest', 
+    name: 'Deep Forest', 
+    bg: 'bg-[#064e3b]', 
+    image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-white', 
+    button: 'bg-[#34d399] text-[#064e3b] font-black rounded-none', 
+    accent: '#34d399' 
+  },
+  { 
+    id: 'abstract-lava', 
+    name: 'Abstract Lava', 
+    bg: 'bg-[#000000]', 
+    image: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-white', 
+    button: 'bg-white/10 backdrop-blur border border-white/20 hover:bg-white/20', 
+    accent: 'red' 
+  },
+  { 
+    id: 'neo-lime', 
+    name: 'Neo Lime', 
+    bg: 'bg-[#dcfce7]', 
+    text: 'text-secondary', 
+    button: 'bg-[#6cf383] text-secondary border-4 border-secondary shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] font-black uppercase tracking-widest', 
+    accent: '#6cf383' 
+  },
+  { 
+    id: 'royal-velvet', 
+    name: 'Royal Velvet', 
+    bg: 'bg-[#310404]', 
+    text: 'text-[#ffb7b7]', 
+    button: 'bg-[#ff4f6a] text-white rounded-full shadow-2xl', 
+    accent: '#ff4f6a' 
+  },
+  { 
+    id: 'mountain-mist', 
+    name: 'Mountain Mist', 
+    bg: 'bg-slate-100', 
+    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-secondary', 
+    button: 'bg-white/80 backdrop-blur text-secondary font-bold shadow-lg', 
+    accent: 'slate' 
+  },
+  { 
+    id: 'desert-storm', 
+    name: 'Desert Storm', 
+    bg: 'bg-[#f5e6d3]', 
+    image: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-[#4a3728]', 
+    button: 'bg-[#4a3728] text-white rounded-xl', 
+    accent: '#4a3728' 
+  },
+  { 
+    id: 'ocean-wave', 
+    name: 'Ocean Wave', 
+    bg: 'bg-[#0077b6]', 
+    image: 'https://images.unsplash.com/photo-1505118380757-91f5f45d8de0?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-white', 
+    button: 'bg-white/20 backdrop-blur border border-white/30 flex items-center justify-center', 
+    accent: 'white' 
+  },
+  { 
+    id: 'minimal-noir', 
+    name: 'Minimal Noir', 
+    bg: 'bg-[#121212]', 
+    text: 'text-[#a0a0a0]', 
+    button: 'bg-[#1a1a1a] border border-[#2a2a2a] text-white font-medium hover:border-primary', 
+    accent: 'primary' 
+  },
+  { 
+    id: 'cotton-candy', 
+    name: 'Cotton Candy', 
+    bg: 'bg-gradient-to-br from-[#ff9a9e] to-[#fad0c4]', 
+    text: 'text-[#2d3436]', 
+    button: 'bg-white/30 backdrop-blur shadow-sm rounded-3xl', 
+    accent: 'pink' 
+  },
+  { 
+    id: 'tech-grid', 
+    name: 'Tech Grid', 
+    bg: 'bg-[#000000]', 
+    text: 'text-[#00ffcc]', 
+    button: 'bg-[#003322] border-2 border-[#00ffcc] text-[#00ffcc] shadow-[0_0_15px_rgba(0,255,204,0.3)]', 
+    accent: '#00ffcc', 
+    grid: true 
+  },
+  { 
+    id: 'vintage-cream', 
+    name: 'Vintage Cream', 
+    bg: 'bg-[#fff5e1]', 
+    text: 'text-[#8b5e3c]', 
+    button: 'border-2 border-[#8b5e3c] text-[#8b5e3c] bg-transparent hover:bg-[#8b5e3c] hover:text-white', 
+    accent: '#8b5e3c' 
+  },
+  { 
+    id: 'midnight-sakura', 
+    name: 'Midnight Sakura', 
+    bg: 'bg-[#0e0c0c]', 
+    image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-[#ff6b6b]', 
+    button: 'bg-[#ff6b6b]/10 border border-[#ff6b6b]/20 text-[#ff6b6b] rounded-pill', 
+    accent: '#ff6b6b' 
+  },
+  { 
+    id: 'marble-stone', 
+    name: 'Marble Stone', 
+    bg: 'bg-[#f3f4f6]', 
+    image: 'https://images.unsplash.com/photo-1533134486753-c833f0ed4866?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-secondary', 
+    button: 'bg-white border border-gray-100 shadow-xl font-black text-xs uppercase tracking-widest', 
+    accent: 'black' 
+  },
+  { 
+    id: 'retro-80s', 
+    name: 'Retro 80s', 
+    bg: 'bg-[#2b0057]', 
+    image: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-[#ff00ff]', 
+    button: 'bg-[#00ffff]/20 border-2 border-[#00ffff] text-[#00ffff] font-black italic shadow-[4px_4px_0px_0px_#ff00ff]', 
+    accent: '#00ffff' 
+  },
+  { 
+    id: 'zen-garden', 
+    name: 'Zen Garden', 
+    bg: 'bg-[#f1f2ed]', 
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-[#5d6049]', 
+    button: 'bg-white/40 border border-[#5d6049]/10 text-[#5d6049]', 
+    accent: '#5d6049' 
+  },
+  { 
+    id: 'urban-street', 
+    name: 'Urban Street', 
+    bg: 'bg-zinc-900', 
+    image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-white', 
+    button: 'bg-primary text-secondary font-black border-none px-8 py-5', 
+    accent: 'primary' 
+  },
+  { 
+    id: 'space-nebula', 
+    name: 'Space Nebula', 
+    bg: 'bg-black', 
+    image: 'https://images.unsplash.com/photo-1464802686167-b939a67e06a1?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-white', 
+    button: 'bg-white/5 backdrop-blur border border-white/10 rounded-xl', 
+    accent: 'purple' 
+  },
+  { 
+    id: 'boho-terracotta', 
+    name: 'Boho Terracotta', 
+    bg: 'bg-[#e2725b]', 
+    text: 'text-white', 
+    button: 'bg-[#fdf2e3] text-[#e2725b] border-2 border-[#fdf2e3] font-black', 
+    accent: '#fdf2e3' 
+  },
+  { 
+    id: 'modern-slate', 
+    name: 'Modern Slate', 
+    bg: 'bg-[#0f172a]', 
+    text: 'text-slate-100', 
+    button: 'bg-slate-800 border border-slate-700 text-white hover:bg-slate-700 rounded-none transform transition-all', 
+    accent: 'slate' 
+  },
+  { 
+    id: 'lavender-sky', 
+    name: 'Lavender Sky', 
+    bg: 'bg-gradient-to-t from-[#c471ed] to-[#f64f59]', 
+    text: 'text-white', 
+    button: 'bg-white/20 backdrop-blur border border-white/20 rounded-full', 
+    accent: 'white' 
+  },
+  { 
+    id: 'copper-night', 
+    name: 'Copper Night', 
+    bg: 'bg-[#1a0f0f]', 
+    text: 'text-[#d97706]', 
+    button: 'bg-transparent border-2 border-[#d97706] text-[#d97706] rounded-md font-bold', 
+    accent: '#d97706' 
+  },
+  { 
+    id: 'deep-sea', 
+    name: 'Deep Sea', 
+    bg: 'bg-[#001219]', 
+    image: 'https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-[#94d2bd]', 
+    button: 'bg-[#94d2bd]/10 border border-[#94d2bd]/30 text-[#94d2bd]', 
+    accent: '#94d2bd' 
+  },
+  { 
+    id: 'organic-clay', 
+    name: 'Organic Clay', 
+    bg: 'bg-[#d2b48c]', 
+    text: 'text-[#5d4037]', 
+    button: 'bg-[#5d4037] text-white rounded-none border-b-8 border-[#3e2723]', 
+    accent: '#5d4037' 
+  },
+  { 
+    id: 'techno-mesh', 
+    name: 'Techno Mesh', 
+    bg: 'bg-[#000000]', 
+    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-primary', 
+    button: 'bg-secondary text-primary border-2 border-primary shadow-[0_0_20px_rgba(108,243,131,0.2)]', 
+    accent: 'primary' 
+  },
+  { 
+    id: 'vivid-violet', 
+    name: 'Vivid Violet', 
+    bg: 'bg-gradient-to-tr from-[#4c1d95] to-[#7c3aed]', 
+    text: 'text-white', 
+    button: 'bg-[#a78bfa] text-white border-2 border-white/20 shadow-lg', 
+    accent: 'white' 
+  },
+  { 
+    id: 'matcha-minimal', 
+    name: 'Matcha Minimal', 
+    bg: 'bg-[#f0f9f1]', 
+    text: 'text-[#166534]', 
+    button: 'bg-[#166534] text-white rounded-xl shadow-inner', 
+    accent: '#166534' 
+  },
+  { 
+    id: 'dark-royal', 
+    name: 'Dark Royal', 
+    bg: 'bg-[#020617]', 
+    text: 'text-white', 
+    button: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black rounded-lg', 
+    accent: 'blue' 
+  },
+  { 
+    id: 'retro-grid', 
+    name: 'Retro Grid', 
+    bg: 'bg-[#fef9f1]', 
+    text: 'text-secondary', 
+    button: 'bg-white border-4 border-secondary shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]', 
+    accent: 'secondary', 
+    grid: true 
+  },
+  { 
+    id: 'neon-plasma', 
+    name: 'Neon Plasma', 
+    bg: 'bg-black', 
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-white', 
+    button: 'bg-white text-secondary font-black mix-blend-screen', 
+    accent: 'white' 
+  },
+  { 
+    id: 'clean-marble', 
+    name: 'Clean Marble', 
+    bg: 'bg-white', 
+    image: 'https://images.unsplash.com/photo-1618221651586-77891823908f?auto=format&fit=crop&q=80&w=1000', 
+    text: 'text-secondary', 
+    button: 'bg-secondary text-white font-bold tracking-tighter', 
+    accent: 'secondary' 
+  }
 ]
-

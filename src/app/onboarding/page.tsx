@@ -159,7 +159,10 @@ export default function Onboarding() {
                       onClick={() => setSelectedTheme(theme.id)}
                       className={`p-4 rounded-3xl border-4 transition-all flex flex-col items-center gap-3 ${selectedTheme === theme.id ? 'border-primary bg-white' : 'border-transparent bg-white/50 hover:bg-white'}`}
                     >
-                       <div className={`w-full h-24 rounded-2xl ${theme.bg} shadow-inner`}></div>
+                       <div 
+                         className={`w-full h-24 rounded-2xl ${theme.bg} shadow-inner bg-cover bg-center`}
+                         style={theme.image ? { backgroundImage: `url(${theme.image})` } : {}}
+                       ></div>
                        <span className="font-bold text-sm">{theme.name}</span>
                     </button>
                   ))}

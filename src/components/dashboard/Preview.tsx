@@ -101,11 +101,10 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                  filter: userProfile?.bg_blur ? `blur(${userProfile.bg_blur}px)` : 'none',
                  transform: userProfile?.bg_blur ? 'scale(1.1)' : 'scale(1)',
                  ...(selectedTheme.grid ? {
-                   backgroundImage: selectedTheme.id === 'grid-mocha' 
+                   backgroundImage: selectedTheme.text.includes('white') 
                      ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
                      : 'linear-gradient(#0000000a 1px, transparent 1px), linear-gradient(90deg, #0000000a 1px, transparent 1px)',
                    backgroundSize: '25px 25px',
-                   backgroundColor: selectedTheme.id === 'grid-mocha' ? '#402020' : undefined
                  } : selectedTheme.image ? {
                    backgroundImage: `url(${selectedTheme.image})`,
                    backgroundSize: 'cover',
