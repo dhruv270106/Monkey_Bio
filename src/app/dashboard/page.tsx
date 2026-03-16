@@ -72,7 +72,13 @@ export default function Dashboard() {
     })
     
     setLinks(sortedLinks)
-    setProfile(prev => prev ? { ...prev, links: sortedLinks } : null)
+    setProfile(prev => {
+      if (!prev) return null
+      return {
+        ...prev,
+        links: sortedLinks
+      }
+    })
     
     const { data: { session } } = await supabase.auth.getSession()
     if (session) {

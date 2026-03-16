@@ -60,11 +60,9 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                  <h3 className="font-black text-xl mb-1 tracking-tight">{userProfile?.display_name || 'Your Name'}</h3>
                  <h3 className="text-[10px] font-bold opacity-70 mb-4">@{userProfile?.username || 'username'}</h3>
 
-                  {userProfile?.bio && (
-                    <p className="text-[10px] text-center px-4 mb-6 opacity-80 font-bold leading-relaxed line-clamp-3">
-                      {userProfile.bio}
-                    </p>
-                  )}
+                  <p className="text-[10px] text-center px-4 mb-6 opacity-80 font-bold leading-relaxed line-clamp-3 min-h-[1em]">
+                    {userProfile?.bio || ''}
+                  </p>
 
                  {/* Social Icons Row (From Onboarding - Max 5) */}
                  <div className="flex flex-wrap justify-center gap-4 mb-10 w-full animate-fade-in">
