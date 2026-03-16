@@ -34,10 +34,17 @@ export default function AutoReplyPage() {
 
     if (profileData) {
       setProfile(profileData)
-      const savedIg = localStorage.getItem(`ig_connected_data_${session.user.id}`)
-      if (savedIg) {
-        setIgUser(JSON.parse(savedIg))
+      
+      // Check for DB connection first, fallback to localStorage
+      if (profileData.instagram_connection) {
+        setIgUser(profileData.instagram_connection)
         setStep(2)
+      } else {
+        const savedIg = localStorage.getItem(`ig_connected_data_${session.user.id}`)
+        if (savedIg) {
+          setIgUser(JSON.parse(savedIg))
+          setStep(2)
+        }
       }
     }
     setLoading(false)
@@ -46,23 +53,28 @@ export default function AutoReplyPage() {
   const handleInstagramConnect = () => {
     setSubmitting(true)
     
-    // Instead of a real URL that 404s without a Client ID, we use our beautiful mock auth page
-    const authUrl = `/auth/instagram`;
-    const popup = window.open(authUrl, 'Connect Instagram', 'width=500,height=700,status=no,resizable=no,left=300,top=100');
+    const APP_ID = process.env.NEXT_PUBLIC_INSTAGRAM_APP_ID || 'YOUR_APP_ID';
+    const REDIRECT_URI = typeof window !== 'undefined' ? `${window.location.origin}/auth/instagram/callback` : '';
+    const SCOPES = [
+      'instagram_basic',
+      'instagram_manage_messages',
+      'pages_show_list',
+      'pages_read_engagement',
+      'public_profile'
+    ].join(',');
 
-    // Listener for the message from the popup
+    const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${APP_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${SCOPES}&response_type=code`;
+    
+    const popup = window.open(authUrl, 'Connect Instagram', 'width=600,height=800,status=no,resizable=yes,left=300,top=100');
+
+    // Listener for the message from the callback popup
     const handleMessage = (event: MessageEvent) => {
        if (event.data.type === 'INSTAGRAM_AUTH_SUCCESS') {
-          const realIgData = {
-            username: profile?.username || 'monkey_creator',
-            full_name: profile?.display_name || 'Monkey Bio User',
-            profile_pic: profile?.avatar_url || 'https://images.unsplash.com/photo-1611262588024-d12430b98920?w=100&h=100&fit=crop',
-            id: '123456789'
-          }
+          const igData = event.data.data;
           
-          setIgUser(realIgData)
+          setIgUser(igData)
           if (profile?.id) {
-            localStorage.setItem(`ig_connected_data_${profile.id}`, JSON.stringify(realIgData))
+            localStorage.setItem(`ig_connected_data_${profile.id}`, JSON.stringify(igData))
           }
           setSubmitting(false)
           setStep(2)
@@ -118,7 +130,7 @@ export default function AutoReplyPage() {
                          <h2 className="text-3xl font-black text-secondary">Link Your Instagram</h2>
                          <p className="text-gray-400 font-bold max-w-xs mx-auto">Connect your main Instagram ID to start using automatic replies for your followers.</p>
                       </div>
-                      <div className="max-w-xs mx-auto">
+                      <div className="max-w-xs mx-auto space-y-4">
                          <button 
                           onClick={handleInstagramConnect}
                           disabled={submitting}
@@ -126,6 +138,9 @@ export default function AutoReplyPage() {
                          >
                             {submitting ? <i className="fi fi-rr-spinner animate-spin"></i> : <><i className="fi fi-brands-instagram text-xl"></i> Connect Instagram</>}
                          </button>
+                         <p className="text-[10px] text-gray-400 font-bold">
+                           Requires an <span className="text-secondary">Instagram Business/Creator</span> account linked to a <span className="text-secondary">Facebook Page</span>.
+                         </p>
                       </div>
                       <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Official Meta Integration</p>
                    </motion.div>
@@ -146,7 +161,16 @@ export default function AutoReplyPage() {
                             </div>
                          </div>
                          <button 
-                          onClick={() => { if(confirm("Disconnect ID?")) { localStorage.removeItem(`ig_connected_data_${profile.id}`); setStep(1); } }}
+                          onClick={async () => { 
+                            if(confirm("Disconnect ID?")) { 
+                              setLoading(true);
+                              await supabase.from('monkey_bio').update({ instagram_connection: null }).eq('id', profile.id);
+                              localStorage.removeItem(`ig_connected_data_${profile.id}`); 
+                              setIgUser(null);
+                              setStep(1); 
+                              setLoading(false);
+                            } 
+                          }}
                           className="px-6 py-3 bg-gray-50 text-gray-400 hover:text-red-500 font-black text-xs rounded-2xl transition-all"
                          >
                             Disconnect
