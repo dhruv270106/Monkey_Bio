@@ -7,25 +7,30 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 interface ScheduledPost {
   id: string
-  platform: 'instagram' | 'tiktok' | 'facebook' | 'twitter' | 'linkedin'
+  platform: string
   content: string
-  status: 'scheduled'| 'published' | 'draft'
+  status: 'scheduled' | 'published' | 'draft'
   date: string
   time: string
   image?: string
+  user_id: string
 }
-
-const DUMMY_POSTS: ScheduledPost[] = [
-  { id: '1', platform: 'instagram', content: 'Exciting news coming soon! Stay tuned. 🐒🚀', status: 'scheduled', date: '2026-03-20', time: '10:00 AM', image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=400' },
-  { id: '2', platform: 'tiktok', content: 'New vlog is out! Link in bio. #monkeybio #vlog', status: 'published', date: '2026-03-15', time: '06:30 PM', image: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&q=80&w=400' },
-  { id: '3', platform: 'linkedin', content: 'We are hiring! Join the team and help us build the future.', status: 'draft', date: '2026-03-25', time: '09:00 AM' },
-]
 
 export default function SocialPlannerPage() {
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('calendar') // calendar, queue, drafts
+  const [activeTab, setActiveTab] = useState('calendar')
   const [showScheduleModal, setShowScheduleModal] = useState(false)
+  const [posts, setPosts] = useState<ScheduledPost[]>([])
+  
+  // Form State
+  const [newPost, setNewPost] = useState({
+    platform: 'instagram',
+    content: '',
+    date: '',
+    time: ''
+  })
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -46,8 +51,57 @@ export default function SocialPlannerPage() {
 
     if (profileData) {
       setProfile(profileData)
+      // fetch actual posts from local storage for now if table doesn't exist, 
+      // or try to fetch from supabase
+      const savedPosts = localStorage.getItem(`planner_posts_${session.user.id}`)
+      if (savedPosts) {
+        setPosts(JSON.parse(savedPosts))
+      }
     }
     setLoading(false)
+  }
+
+  const savePosts = (updatedPosts: ScheduledPost[]) => {
+    setPosts(updatedPosts)
+    if (profile?.id) {
+       localStorage.setItem(`planner_posts_${profile.id}`, JSON.stringify(updatedPosts))
+    }
+  }
+
+  const handleSchedule = () => {
+    if (!newPost.content || !newPost.date || !newPost.time) {
+      alert('Please fill all fields')
+      return
+    }
+
+    setSubmitting(true)
+
+    const post: ScheduledPost = {
+      id: Math.random().toString(36).substr(2, 9),
+      platform: newPost.platform,
+      content: newPost.content,
+      status: 'scheduled',
+      date: newPost.date,
+      time: newPost.time,
+      user_id: profile?.id || '',
+    }
+
+    const updatedPosts = [post, ...posts]
+    savePosts(updatedPosts)
+    
+    setNewPost({
+      platform: 'instagram',
+      content: '',
+      date: '',
+      time: ''
+    })
+    setShowScheduleModal(false)
+    setSubmitting(false)
+  }
+
+  const deletePost = (id: string) => {
+    const updatedPosts = posts.filter(p => p.id !== id)
+    savePosts(updatedPosts)
   }
 
   const platforms = [
@@ -94,10 +148,10 @@ export default function SocialPlannerPage() {
               {/* Stats Overview */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                  {[
-                   { label: 'Scheduled', val: '12', icon: 'fi-rr-calendar-clock', color: 'text-purple-500' },
-                   { label: 'Drafts', val: '04', icon: 'fi-rr-memo', color: 'text-orange-500' },
-                   { label: 'Published', val: '89', icon: 'fi-rr-badge-check', color: 'text-green-500' },
-                   { label: 'Total Accounts', val: '05', icon: 'fi-rr-network', color: 'text-blue-500' },
+                   { label: 'Scheduled', val: posts.filter(p => p.status === 'scheduled').length.toString().padStart(2, '0'), icon: 'fi-rr-calendar-clock', color: 'text-purple-500' },
+                   { label: 'Drafts', val: posts.filter(p => p.status === 'draft').length.toString().padStart(2, '0'), icon: 'fi-rr-memo', color: 'text-orange-500' },
+                   { label: 'Published', val: posts.filter(p => p.status === 'published').length.toString().padStart(2, '0'), icon: 'fi-rr-badge-check', color: 'text-green-500' },
+                   { label: 'Total Posts', val: posts.length.toString().padStart(2, '0'), icon: 'fi-rr-stats', color: 'text-blue-500' },
                  ].map((stat, i) => (
                    <motion.div 
                     initial={{ opacity: 0, y: 10 }}
@@ -154,58 +208,116 @@ export default function SocialPlannerPage() {
                             ))}
                          </div>
                          <div className="grid grid-cols-7">
-                            {Array.from({ length: 31 }).map((_, i) => (
-                              <div key={i} className={`h-24 p-2 border-r border-b border-gray-50 hover:bg-gray-50 transition-colors relative group ${i === 15 ? 'bg-primary/5' : ''}`}>
-                                 <span className={`text-[10px] font-black ${i === 15 ? 'text-primary' : 'text-gray-400'}`}>{i + 1}</span>
-                                 {i === 15 && (
+                            {Array.from({ length: 31 }).map((_, i) => {
+                               const day = i + 1;
+                               const dateStr = `2026-03-${day.toString().padStart(2, '0')}`;
+                               const dayPosts = posts.filter(p => p.date === dateStr);
+                               
+                               return (
+                                <div key={i} className={`h-24 p-2 border-r border-b border-gray-50 hover:bg-gray-50 transition-colors relative group ${day === new Date().getDate() ? 'bg-primary/5' : ''}`}>
+                                   <span className={`text-[10px] font-black ${day === new Date().getDate() ? 'text-primary' : 'text-gray-400'}`}>{day}</span>
                                    <div className="mt-1 flex flex-col gap-1">
-                                      <div className="p-1 px-2 bg-pink-500 text-white rounded-md text-[8px] font-bold truncate">IG Post</div>
-                                      <div className="p-1 px-2 bg-black text-white rounded-md text-[8px] font-bold truncate">TikTok</div>
+                                      {dayPosts.map((p, idx) => (
+                                         <div key={idx} className={`p-1 px-2 rounded-md text-[7px] font-bold truncate text-white ${platforms.find(plt => plt.id === p.platform)?.color || 'bg-secondary'}`}>
+                                            {p.content}
+                                         </div>
+                                      ))}
                                    </div>
-                                 )}
-                                 {i === 19 && (
-                                   <div className="mt-1">
-                                      <div className="p-1 px-2 bg-blue-500 text-white rounded-md text-[8px] font-bold truncate">Webinar</div>
-                                   </div>
-                                 )}
-                                 <button className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all p-1.5 bg-secondary text-white rounded-lg text-[8px]">
-                                    <i className="fi fi-rr-plus"></i>
-                                 </button>
-                              </div>
-                            ))}
+                                   <button 
+                                    onClick={() => {
+                                      setNewPost(prev => ({ ...prev, date: dateStr }));
+                                      setShowScheduleModal(true);
+                                    }}
+                                    className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all p-1.5 bg-secondary text-white rounded-lg text-[8px]"
+                                   >
+                                      <i className="fi fi-rr-plus"></i>
+                                   </button>
+                                </div>
+                               )
+                            })}
                          </div>
                       </motion.div>
                     )}
 
                     {activeTab === 'queue' && (
                        <div className="space-y-4">
-                          {DUMMY_POSTS.filter(p => p.status !== 'draft').map((post, i) => (
-                            <motion.div 
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: i * 0.1 }}
-                              key={post.id} 
-                              className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm flex items-center gap-6 group hover:shadow-md transition-all"
-                            >
-                               <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 flex-shrink-0">
-                                  {post.image ? <img src={post.image} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-gray-300"><i className="fi fi-rr-picture text-xl"></i></div>}
-                               </div>
-                               <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-1">
-                                     {platforms.find(p => p.id === post.platform)?.name && (
+                          {posts.filter(p => p.status !== 'draft').length === 0 ? (
+                             <div className="text-center py-20 bg-white rounded-[40px] border border-dashed border-gray-200">
+                                <i className="fi fi-rr-calendar-clock text-4xl text-gray-200 mb-4 inline-block"></i>
+                                <p className="text-gray-400 font-bold">No posts in queue yet.</p>
+                             </div>
+                          ) : (
+                            posts.filter(p => p.status !== 'draft').map((post, i) => (
+                              <motion.div 
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                key={post.id} 
+                                className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm flex items-center gap-6 group hover:shadow-md transition-all"
+                              >
+                                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl ${platforms.find(p => p.id === post.platform)?.color}`}>
+                                    <i className={`fi ${platforms.find(p => p.id === post.platform)?.icon}`}></i>
+                                 </div>
+                                 <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
                                        <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 tracking-widest">{post.platform}</span>
-                                     )}
-                                     <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest ${post.status === 'scheduled' ? 'bg-blue-50 text-blue-500' : 'bg-green-50 text-green-500'}`}>{post.status}</span>
-                                  </div>
-                                  <p className="text-sm font-bold text-secondary truncate">{post.content}</p>
-                                  <p className="text-[10px] text-gray-400 mt-1 font-medium">{post.date} at {post.time}</p>
-                               </div>
-                               <div className="flex items-center gap-2">
-                                  <button className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-secondary flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"><i className="fi fi-rr-edit"></i></button>
-                                  <button className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"><i className="fi fi-rr-trash"></i></button>
-                               </div>
-                             </motion.div>
-                          ))}
+                                       <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest ${post.status === 'scheduled' ? 'bg-blue-50 text-blue-500' : 'bg-green-50 text-green-500'}`}>{post.status}</span>
+                                    </div>
+                                    <p className="text-sm font-bold text-secondary truncate">{post.content}</p>
+                                    <p className="text-[10px] text-gray-400 mt-1 font-medium">{post.date} at {post.time}</p>
+                                 </div>
+                                 <div className="flex items-center gap-2">
+                                    <button onClick={() => deletePost(post.id)} className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"><i className="fi fi-rr-trash"></i></button>
+                                 </div>
+                               </motion.div>
+                            ))
+                          )}
+                       </div>
+                    )}
+
+                    {activeTab === 'drafts' && (
+                       <div className="space-y-4">
+                          {posts.filter(p => p.status === 'draft').length === 0 ? (
+                             <div className="text-center py-20 bg-white rounded-[40px] border border-dashed border-gray-200">
+                                <i className="fi fi-rr-memo text-4xl text-gray-200 mb-4 inline-block"></i>
+                                <p className="text-gray-400 font-bold">No drafts saved yet.</p>
+                             </div>
+                          ) : (
+                            posts.filter(p => p.status === 'draft').map((post, i) => (
+                              <motion.div 
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                key={post.id} 
+                                className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm flex items-center gap-6 group hover:shadow-md transition-all"
+                              >
+                                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl ${platforms.find(p => p.id === post.platform)?.color}`}>
+                                    <i className={`fi ${platforms.find(p => p.id === post.platform)?.icon}`}></i>
+                                 </div>
+                                 <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                       <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 tracking-widest">{post.platform}</span>
+                                       <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest bg-orange-50 text-orange-500">Draft</span>
+                                    </div>
+                                    <p className="text-sm font-bold text-secondary truncate">{post.content}</p>
+                                    <p className="text-[10px] text-gray-400 mt-1 font-medium">Last edited: {post.date}</p>
+                                 </div>
+                                 <div className="flex items-center gap-2 text-gray-400">
+                                    <button 
+                                      onClick={() => {
+                                        setNewPost({ platform: post.platform, content: post.content, date: post.date, time: post.time });
+                                        deletePost(post.id);
+                                        setShowScheduleModal(true);
+                                      }} 
+                                      className="w-10 h-10 rounded-xl bg-gray-50 hover:text-primary flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                                    >
+                                      <i className="fi fi-rr-edit-alt"></i>
+                                    </button>
+                                    <button onClick={() => deletePost(post.id)} className="w-10 h-10 rounded-xl bg-gray-50 hover:text-red-500 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"><i className="fi fi-rr-trash"></i></button>
+                                 </div>
+                               </motion.div>
+                            ))
+                          )}
                        </div>
                     )}
                  </div>
@@ -275,10 +387,14 @@ export default function SocialPlannerPage() {
                 </div>
                 <div className="p-8 space-y-6">
                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Select Platforms</label>
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Select Platform</label>
                       <div className="flex gap-3">
                          {platforms.map(p => (
-                            <button key={p.id} className={`w-12 h-12 rounded-2xl ${p.color} flex items-center justify-center text-white shadow-sm hover:scale-110 transition-all`}>
+                            <button 
+                              key={p.id} 
+                              onClick={() => setNewPost({ ...newPost, platform: p.id })}
+                              className={`w-12 h-12 rounded-2xl ${p.color} flex items-center justify-center text-white shadow-sm hover:scale-110 transition-all ${newPost.platform === p.id ? 'ring-4 ring-primary ring-offset-2' : 'opacity-50 hover:opacity-100'}`}
+                            >
                                <i className={`fi ${p.icon}`}></i>
                             </button>
                          ))}
@@ -287,6 +403,8 @@ export default function SocialPlannerPage() {
                    <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Content</label>
                       <textarea 
+                        value={newPost.content}
+                        onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
                         className="w-full h-32 p-4 rounded-3xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-primary/20 outline-none transition-all font-medium text-secondary"
                         placeholder="Write your caption here..."
                       ></textarea>
@@ -294,19 +412,50 @@ export default function SocialPlannerPage() {
                    <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Date</label>
-                        <input type="date" className="w-full p-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none" />
+                        <input 
+                          type="date" 
+                          value={newPost.date}
+                          onChange={(e) => setNewPost({ ...newPost, date: e.target.value })}
+                          className="w-full p-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none" 
+                        />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Time</label>
-                        <input type="time" className="w-full p-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none" />
+                        <input 
+                          type="time" 
+                          value={newPost.time}
+                          onChange={(e) => setNewPost({ ...newPost, time: e.target.value })}
+                          className="w-full p-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none" 
+                        />
                       </div>
                    </div>
                    <div className="pt-4 flex gap-3">
                       <button 
-                        onClick={() => setShowScheduleModal(false)}
-                        className="flex-1 py-4 bg-secondary text-white font-black rounded-full hover:bg-gray-800 transition-all shadow-lg"
+                        disabled={submitting}
+                        onClick={() => {
+                           const post: ScheduledPost = {
+                             id: Math.random().toString(36).substr(2, 9),
+                             platform: newPost.platform,
+                             content: newPost.content,
+                             status: 'draft',
+                             date: newPost.date || new Date().toISOString().split('T')[0],
+                             time: newPost.time || '12:00',
+                             user_id: profile?.id || '',
+                           }
+                           const updatedPosts = [post, ...posts]
+                           savePosts(updatedPosts)
+                           setShowScheduleModal(false)
+                        }}
+                        className="flex-1 py-4 bg-gray-100 text-secondary font-black rounded-full hover:bg-gray-200 transition-all disabled:opacity-50"
                       >
-                         Schedule Now
+                         Save Draft
+                      </button>
+                      <button 
+                        disabled={submitting}
+                        onClick={handleSchedule}
+                        className="flex-1 py-4 bg-secondary text-white font-black rounded-full hover:bg-gray-800 transition-all shadow-lg disabled:opacity-50"
+                      >
+                         {submitting ? 'Scheduling...' : 'Schedule Now'}
                       </button>
                    </div>
                 </div>
