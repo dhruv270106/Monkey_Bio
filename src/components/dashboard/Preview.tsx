@@ -75,34 +75,41 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
       {/* iPhone Mockup */}
       <div className="flex-1 w-full flex items-center justify-center p-8 relative overflow-hidden">
           <div 
-            className={`w-full max-w-[280px] aspect-[9/18.5] rounded-[44px] border-[10px] border-[#020617] shadow-2xl relative overflow-hidden flex flex-col items-center transform scale-90 xxl:scale-100 transition-all duration-500 origin-center ${selectedTheme.bg} ${selectedTheme.text}`}
-            style={{
-              ...(selectedTheme.grid ? {
-                backgroundImage: selectedTheme.id === 'grid-mocha' 
-                  ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
-                  : 'linear-gradient(#0000000a 1px, transparent 1px), linear-gradient(90deg, #0000000a 1px, transparent 1px)',
-                backgroundSize: '25px 25px',
-                backgroundColor: selectedTheme.id === 'grid-mocha' ? '#402020' : undefined
-              } : selectedTheme.image ? {
-                backgroundImage: `url(${selectedTheme.image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              } : selectedTheme.id === 'custom' ? {
-                backgroundColor: userProfile?.custom_bg || '#ffffff',
-                backgroundImage: 'none'
-              } : {})
-            }}
+            className={`w-full max-w-[280px] aspect-[9/18.5] rounded-[44px] border-[10px] border-[#020617] shadow-2xl relative overflow-hidden flex flex-col items-center transform scale-90 xxl:scale-100 transition-all duration-500 origin-center ${selectedTheme.text}`}
           >
+             {/* Background Layer with Blur */}
+             <div 
+               className={`absolute inset-0 transition-all duration-700 ${selectedTheme.bg}`}
+               style={{
+                 filter: userProfile?.bg_blur ? `blur(${userProfile.bg_blur}px)` : 'none',
+                 transform: userProfile?.bg_blur ? 'scale(1.1)' : 'scale(1)',
+                 ...(selectedTheme.grid ? {
+                   backgroundImage: selectedTheme.id === 'grid-mocha' 
+                     ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
+                     : 'linear-gradient(#0000000a 1px, transparent 1px), linear-gradient(90deg, #0000000a 1px, transparent 1px)',
+                   backgroundSize: '25px 25px',
+                   backgroundColor: selectedTheme.id === 'grid-mocha' ? '#402020' : undefined
+                 } : selectedTheme.image ? {
+                   backgroundImage: `url(${selectedTheme.image})`,
+                   backgroundSize: 'cover',
+                   backgroundPosition: 'center'
+                 } : selectedTheme.id === 'custom' ? {
+                   backgroundColor: userProfile?.custom_bg || '#ffffff',
+                   backgroundImage: 'none'
+                 } : {})
+               }}
+             />
+
              {/* Notch */}
              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-[#020617] rounded-b-[16px] z-50"></div>
              
              {/* Asterisk top left */}
-             <div className="absolute top-8 left-6 w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+             <div className="absolute top-8 left-6 w-6 h-6 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10 z-20">
                 <span className="text-white text-[10px] font-black">*</span>
              </div>
 
              {/* Content */}
-             <div className="w-full h-full overflow-y-auto no-scrollbar flex flex-col items-center p-8 pt-12">
+             <div className="relative z-10 w-full h-full overflow-y-auto no-scrollbar flex flex-col items-center p-8 pt-12">
                  <div className="w-16 h-16 rounded-full bg-gray-100 border-2 border-white/20 mb-6 overflow-hidden shadow-lg flex-shrink-0">
                     <img 
                       src={userProfile?.avatar_url || `https://ui-avatars.com/api/?name=${userProfile?.display_name || 'U'}&background=6cf383&color=0f172a`} 

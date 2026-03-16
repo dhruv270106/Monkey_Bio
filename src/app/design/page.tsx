@@ -32,6 +32,7 @@ interface Profile {
   font_color?: string
   button_variant?: string
   button_radius?: string
+  bg_blur?: number
 }
 
 export default function DesignPage() {
@@ -250,9 +251,27 @@ export default function DesignPage() {
 
                 {activeTab === 'Theme' && (
                   <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                    <div>
-                      <h2 className="text-xl font-black">Themes</h2>
-                      <p className="text-sm text-gray-400 font-bold mt-1">Select a pre-designed theme for your profile</p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-xl font-black">Themes</h2>
+                        <p className="text-sm text-gray-400 font-bold mt-1">Select a pre-designed theme for your profile</p>
+                      </div>
+                      <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-3xl border border-gray-100">
+                        <i className="fi fi-rr-opacity text-gray-400"></i>
+                        <div className="flex flex-col">
+                          <span className="text-[8px] font-black uppercase text-gray-400 tracking-widest leading-none">Background Blur</span>
+                          <input 
+                            type="range" 
+                            min="0" 
+                            max="20" 
+                            step="1"
+                            value={profile?.bg_blur || 0}
+                            onChange={(e) => updateProfile({ bg_blur: parseInt(e.target.value) })}
+                            className="accent-primary h-1 w-24 rounded-lg cursor-pointer mt-1"
+                          />
+                        </div>
+                        <span className="text-[10px] font-black text-secondary w-4 text-center">{profile?.bg_blur || 0}</span>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">

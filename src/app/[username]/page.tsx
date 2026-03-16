@@ -82,24 +82,30 @@ export default function PublicProfile() {
 
   return (
     <div 
-      className={`min-h-screen w-full flex flex-col items-center pt-24 pb-12 px-4 transition-colors duration-500 relative ${selectedTheme.bg} ${selectedTheme.text}`}
-      style={{
-        ...(selectedTheme.grid ? {
-          backgroundImage: selectedTheme.id === 'grid-mocha' 
-            ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
-            : 'linear-gradient(#0000000a 1px, transparent 1px), linear-gradient(90deg, #0000000a 1px, transparent 1px)',
-          backgroundSize: '30px 30px'
-        } : selectedTheme.image ? {
-          backgroundImage: `url(${selectedTheme.image})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        } : selectedTheme.id === 'custom' ? {
-          backgroundColor: profile.custom_bg || '#ffffff',
-          backgroundImage: 'none'
-        } : {})
-      }}
+      className={`min-h-screen w-full flex flex-col items-center pt-24 pb-12 px-4 transition-colors duration-500 relative overflow-hidden ${selectedTheme.text}`}
     >
+      {/* Background Layer with Blur */}
+      <div 
+        className={`fixed inset-0 transition-all duration-700 ${selectedTheme.bg}`}
+        style={{
+          filter: profile?.bg_blur ? `blur(${profile.bg_blur}px)` : 'none',
+          transform: profile?.bg_blur ? 'scale(1.1)' : 'scale(1)',
+          ...(selectedTheme.grid ? {
+            backgroundImage: selectedTheme.id === 'grid-mocha' 
+              ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
+              : 'linear-gradient(#0000000a 1px, transparent 1px), linear-gradient(90deg, #0000000a 1px, transparent 1px)',
+            backgroundSize: '30px 30px'
+          } : selectedTheme.image ? {
+            backgroundImage: `url(${selectedTheme.image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed'
+          } : selectedTheme.id === 'custom' ? {
+            backgroundColor: profile.custom_bg || '#ffffff',
+            backgroundImage: 'none'
+          } : {})
+        }}
+      />
       {/* Dynamic Font Loader */}
       {profile?.font_family && (
         <link 
@@ -116,7 +122,7 @@ export default function PublicProfile() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="w-full max-w-[580px] flex flex-col items-center"
+        className="w-full max-w-[580px] flex flex-col items-center z-10 relative"
       >
         <div className="w-24 h-24 rounded-full border-4 border-white/20 shadow-xl mb-6 overflow-hidden">
            <img 
