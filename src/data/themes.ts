@@ -44,14 +44,14 @@ export const THEMES: Theme[] = [
 
   // ANIMALS
   { id: 'tiger-roar', name: 'Jungle King', bg: 'bg-black', image: 'https://images.unsplash.com/photo-1477764250597-dffe9f601ae8?auto=format&fit=crop&q=80&w=1000', text: 'text-[#fbbf24]', button: 'bg-[#fbbf24] text-black font-black', accent: 'orange' },
-  { id: 'panda-chill', name: 'Bamboo Soul', bg: 'bg-white', image: 'https://images.unsplash.com/photo-1564349683136-77e08bef1ed1?auto=format&fit=crop&q=80&w=1000', text: 'text-black', button: 'bg-black text-white rounded-[40px]', accent: 'gray' },
+  { id: 'panda-chill', name: 'Bamboo Soul', bg: 'bg-white', image: 'https://images.unsplash.com/photo-1534123235607-4402660d5dd7?auto=format&fit=crop&q=80&w=1000', text: 'text-black', button: 'bg-black text-white rounded-[40px]', accent: 'gray' },
 
   // CUTE
   { id: 'cookie-cream', name: 'Sweet Treat', bg: 'bg-[#fafaf9]', image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&q=80&w=1000', text: 'text-[#44403c]', button: 'bg-[#d6d3d1] text-[#44403c] rounded-[30px]', accent: 'brown' },
-  { id: 'cloud-nine', name: 'Soft Cloud', bg: 'bg-white', image: 'https://images.unsplash.com/photo-1517685633466-403d6955ae0e?auto=format&fit=crop&q=80&w=1000', text: 'text-secondary', button: 'bg-white/60 backdrop-blur rounded-2xl', accent: 'blue' },
+  { id: 'cloud-nine', name: 'Soft Cloud', bg: 'bg-white', image: 'https://images.unsplash.com/photo-1501630834273-4b5604d2ee31?auto=format&fit=crop&q=80&w=1000', text: 'text-secondary', button: 'bg-white/60 backdrop-blur rounded-2xl', accent: 'blue' },
 
   // DRAWING
-  { id: 'pencil-sketch', name: 'Graphite', bg: 'bg-[#f3f4f6]', image: 'https://images.unsplash.com/photo-1544211914-53fd175c0eaa?auto=format&fit=crop&q=80&w=1000', text: 'text-[#111827]', button: 'bg-white border-2 border-black text-black', accent: 'gray' },
+  { id: 'pencil-sketch', name: 'Graphite', bg: 'bg-[#f3f4f6]', image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=1000', text: 'text-[#111827]', button: 'bg-white border-2 border-black text-black', accent: 'gray' },
   { id: 'watercolor-fun', name: 'Abstract Art', bg: 'bg-white', image: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&q=80&w=1000', text: 'text-secondary', button: 'bg-white shadow-xl rounded-[100px]', accent: 'pink' },
 
   // PHOTOGRAPHY
