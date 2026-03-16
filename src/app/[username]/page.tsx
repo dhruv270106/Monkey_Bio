@@ -49,8 +49,10 @@ export default function PublicProfile() {
     <div 
       className={`min-h-screen w-full flex flex-col items-center pt-24 pb-12 px-4 transition-colors duration-500 relative ${selectedTheme.bg} ${selectedTheme.text}`}
       style={{
-        ...(selectedTheme.id === 'grid-mocha' ? {
-          backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
+        ...(selectedTheme.grid ? {
+          backgroundImage: selectedTheme.id === 'grid-mocha' 
+            ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
+            : 'linear-gradient(#0000000a 1px, transparent 1px), linear-gradient(90deg, #0000000a 1px, transparent 1px)',
           backgroundSize: '30px 30px'
         } : selectedTheme.image ? {
           backgroundImage: `url(${selectedTheme.image})`,

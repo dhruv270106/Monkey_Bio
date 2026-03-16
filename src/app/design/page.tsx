@@ -233,9 +233,11 @@ export default function DesignPage() {
                           } : {})
                         }}
                       >
-                        {theme.id === 'grid-mocha' && (
+                        {theme.grid && (
                           <div className="absolute inset-0 opacity-20" style={{
-                            backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)',
+                            backgroundImage: theme.id === 'grid-mocha' 
+                              ? 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)'
+                              : 'linear-gradient(#000000 1px, transparent 1px), linear-gradient(90deg, #000000 1px, transparent 1px)',
                             backgroundSize: '15px 15px'
                           }}></div>
                         )}
