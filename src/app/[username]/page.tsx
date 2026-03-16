@@ -107,11 +107,11 @@ export default function PublicProfile() {
     >
       {/* Background Layer with Blur */}
       <div 
-        className={`fixed inset-0 transition-all duration-700 ${selectedTheme.bg}`}
+        className={`fixed inset-0 transition-all duration-700 ${selectedTheme.bg} overflow-hidden`}
         style={{
           filter: profile?.bg_blur ? `blur(${profile.bg_blur}px)` : 'none',
           transform: profile?.bg_blur ? 'scale(1.1)' : 'scale(1)',
-          ...(selectedTheme.grid ? {
+          ...(selectedTheme.grid && !selectedTheme.video ? {
             backgroundImage: selectedTheme.id === 'grid-mocha' 
               ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
               : 'linear-gradient(#0000000a 1px, transparent 1px), linear-gradient(90deg, #0000000a 1px, transparent 1px)',
@@ -126,7 +126,19 @@ export default function PublicProfile() {
             backgroundImage: 'none'
           } : {})
         }}
-      />
+      >
+        {selectedTheme.video && (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          >
+            <source src={selectedTheme.video} type="video/mp4" />
+          </video>
+        )}
+      </div>
       {/* Dynamic Font Loader */}
       {profile?.font_family && (
         <link 

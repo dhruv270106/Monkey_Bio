@@ -96,11 +96,11 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
           >
              {/* Background Layer with Blur */}
              <div 
-               className={`absolute inset-0 transition-all duration-700 ${selectedTheme.bg}`}
+               className={`absolute inset-0 transition-all duration-700 ${selectedTheme.bg} overflow-hidden`}
                style={{
                  filter: userProfile?.bg_blur ? `blur(${userProfile.bg_blur}px)` : 'none',
                  transform: userProfile?.bg_blur ? 'scale(1.1)' : 'scale(1)',
-                 ...(selectedTheme.grid ? {
+                 ...(selectedTheme.grid && !selectedTheme.video ? {
                    backgroundImage: selectedTheme.text.includes('white') 
                      ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
                      : 'linear-gradient(#0000000a 1px, transparent 1px), linear-gradient(90deg, #0000000a 1px, transparent 1px)',
@@ -114,7 +114,19 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                    backgroundImage: 'none'
                  } : {})
                }}
-             />
+             >
+               {selectedTheme.video && (
+                 <video
+                   autoPlay
+                   loop
+                   muted
+                   playsInline
+                   className="absolute inset-0 w-full h-full object-cover"
+                 >
+                   <source src={selectedTheme.video} type="video/mp4" />
+                 </video>
+               )}
+             </div>
 
              {/* Notch */}
              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-[#020617] rounded-b-[16px] z-50"></div>

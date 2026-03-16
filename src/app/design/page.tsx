@@ -322,16 +322,7 @@ export default function DesignPage() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
-                      {themeCategory === 'premium' ? (
-                        <div className="col-span-2 py-12 flex flex-col items-center justify-center bg-gray-50/50 rounded-[40px] border-2 border-dashed border-gray-100">
-                          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                            <i className="fi fi-sr-star text-primary text-2xl"></i>
-                          </div>
-                          <h3 className="font-black text-secondary">Premium Themes Coming Soon</h3>
-                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">Stay tuned for exclusive designs</p>
-                        </div>
-                      ) : (
-                        (THEMES as Theme[]).map((theme) => (
+                      {(THEMES as Theme[]).filter(t => themeCategory === 'premium' ? t.isPremium : !t.isPremium).map((theme) => (
                         <button 
                           key={theme.id}
                           onClick={() => updateProfile({ theme: theme.id })}
@@ -349,7 +340,18 @@ export default function DesignPage() {
                               } : {})
                             }}
                           >
-                            {theme.grid && (
+                            {theme.video && (
+                              <video
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                className="absolute inset-0 w-full h-full object-cover"
+                              >
+                                <source src={theme.video} type="video/mp4" />
+                              </video>
+                            )}
+                            {theme.grid && !theme.video && (
                               <div className="absolute inset-0 opacity-20" style={{
                                 backgroundImage: theme.text.includes('white') 
                                   ? 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)'
@@ -371,9 +373,8 @@ export default function DesignPage() {
                             </div>
                           )}
                         </button>
-                      ))
-                    )}
-                  </div>
+                      ))}
+                    </div>
                   </motion.section>
                 )}
 
