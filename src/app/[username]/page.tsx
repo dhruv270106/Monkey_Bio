@@ -84,13 +84,26 @@ export default function PublicProfile() {
            />
         </div>
         
-        <h1 className="text-3xl font-black mb-1 flex items-center justify-center gap-1 tracking-tight">
+        <h1 
+          className="text-3xl font-black mb-1 flex items-center justify-center gap-1 tracking-tight"
+          style={{ 
+            fontFamily: profile.font_family || 'inherit',
+            color: profile.font_color || 'inherit'
+          }}
+        >
           {profile.display_name} 
           <i className="fi fi-sr-badge-check text-primary text-xl"></i>
         </h1>
         <p className="text-sm font-bold opacity-70 mb-10">@{profile.username}</p>
         
-        <p className="text-center px-8 mb-8 font-bold max-w-md leading-relaxed opacity-90 break-words w-full">
+        <p 
+          className="text-center px-8 mb-8 font-bold max-w-md leading-relaxed opacity-90 break-words w-full"
+          style={{ 
+            fontFamily: profile.font_family || 'inherit',
+            color: profile.font_color || 'inherit',
+            fontSize: profile.font_size || 'inherit'
+          }}
+        >
           {profile.bio}
         </p>
 
@@ -120,6 +133,11 @@ export default function PublicProfile() {
               target="_blank"
               rel="noopener noreferrer"
               className={`block w-full py-6 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 flex items-center justify-between group text-lg tracking-wide ${selectedTheme.button}`}
+              style={{
+                backgroundColor: profile.custom_button_bg || undefined,
+                fontFamily: profile.font_family || 'inherit',
+                color: profile.font_color || 'inherit'
+              }}
             >
               <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border border-black/5 bg-white/10">
                  <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-2xl opacity-80`}></i>

@@ -69,10 +69,25 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                     />
                  </div>
                  
-                 <h3 className="font-black text-xl mb-1 tracking-tight">{userProfile?.display_name || 'Your Name'}</h3>
+                 <h3 
+                   className="font-black text-xl mb-1 tracking-tight"
+                   style={{ 
+                     fontFamily: userProfile?.font_family || 'inherit',
+                     color: userProfile?.font_color || 'inherit'
+                   }}
+                 >
+                   {userProfile?.display_name || 'Your Name'}
+                 </h3>
                  <h3 className="text-[10px] font-bold opacity-70 mb-4">@{userProfile?.username || 'username'}</h3>
 
-                  <p className="text-[11px] text-center px-4 mb-6 opacity-80 font-bold leading-relaxed break-words w-full">
+                  <p 
+                    className="text-[11px] text-center px-4 mb-6 opacity-80 font-bold leading-relaxed break-words w-full"
+                    style={{ 
+                      fontFamily: userProfile?.font_family || 'inherit',
+                      color: userProfile?.font_color || 'inherit',
+                      fontSize: userProfile?.font_size || '11px'
+                    }}
+                  >
                     {userProfile?.bio}
                   </p>
 
@@ -80,7 +95,14 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                  <div className="flex flex-wrap justify-center gap-4 mb-10 w-full animate-fade-in">
                     {socialLinks && Object.entries(socialLinks).slice(0, 5).map(([platform, url]: [string, any]) => (
                       url && (
-                        <a key={platform} href={url} target="_blank" rel="noreferrer" className="transition-transform hover:scale-125">
+                        <a 
+                          key={platform} 
+                          href={url} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="transition-transform hover:scale-125"
+                          style={{ color: userProfile?.font_color || 'inherit' }}
+                        >
                            <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'} text-2xl`}></i>
                         </a>
                       )
@@ -96,6 +118,11 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                         target="_blank"
                         rel="noreferrer"
                         className={`w-full py-4 px-4 rounded-xl transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex items-center justify-between group ${selectedTheme.button}`}
+                        style={{ 
+                           backgroundColor: userProfile?.custom_button_bg || undefined,
+                           fontFamily: userProfile?.font_family || 'inherit',
+                           color: userProfile?.font_color || 'inherit'
+                        }}
                       >
                         <div className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 border border-black/5">
                            <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-[10px] opacity-70`}></i>

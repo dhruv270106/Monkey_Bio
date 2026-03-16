@@ -26,6 +26,10 @@ interface Profile {
   social_links: any
   theme: string
   custom_bg?: string
+  custom_button_bg?: string
+  font_family?: string
+  font_size?: string
+  font_color?: string
 }
 
 export default function DesignPage() {
@@ -36,12 +40,19 @@ export default function DesignPage() {
   const [showCropper, setShowCropper] = useState(false)
   const [selectedImage, setSelectedImage] = useState('')
   const [activeTab, setActiveTab] = useState('Header')
+  const [fontSearch, setFontSearch] = useState('')
 
   const TABS = [
     { id: 'Header', icon: 'fi-rr-user' },
     { id: 'Theme', icon: 'fi-rr-palette' },
-    { id: 'Buttons', icon: 'fi-rr-button' },
+    { id: 'Text', icon: 'fi-rr-text' },
+    { id: 'Buttons', icon: 'fi-rr-apps' },
     { id: 'Colors', icon: 'fi-rr-paint-brush' },
+  ]
+
+  const FONTS = [
+    'Inter', 'Roboto', 'Outfit', 'Playfair Display', 'Poppins', 'Montserrat', 'Open Sans', 'Lato', 'Ubuntu', 'Lora',
+    'Dancing Script', 'Pacifico', 'Caveat', 'Satisfy', 'Oswald', 'Raleway', 'Nunito', 'Merriweather', 'Bebas Neue'
   ]
 
   useEffect(() => {
@@ -133,7 +144,7 @@ export default function DesignPage() {
 
           <div className="flex-1 flex overflow-hidden">
             {/* Design Tab Sidebar */}
-            <div className="w-24 bg-white border-r border-gray-100 flex flex-col items-center py-8 gap-8">
+            <div className="w-24 bg-white border-r border-gray-100 flex flex-col items-center py-8 gap-8 flex-shrink-0">
               {TABS.map(tab => (
                 <button 
                   key={tab.id}
@@ -148,8 +159,9 @@ export default function DesignPage() {
               ))}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-12 bg-white no-scrollbar">
-              <div className="max-w-xl mx-auto space-y-12">
+            {/* Content Area - Scrollable independently */}
+            <div className="flex-1 overflow-y-auto p-12 bg-white no-scrollbar h-full">
+              <div className="max-w-xl mx-auto space-y-12 pb-24">
                 
                 {activeTab === 'Header' && (
                   <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
@@ -273,6 +285,89 @@ export default function DesignPage() {
                   </motion.section>
                 )}
 
+                {activeTab === 'Text' && (
+                  <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+                    <h2 className="text-xl font-black">Typography</h2>
+                    
+                    <div className="space-y-6">
+                      {/* Font Family search/dropdown */}
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest pl-2">Font Style</label>
+                        <div className="relative">
+                          <input 
+                             type="text"
+                             placeholder="Search fonts..."
+                             className="w-full px-10 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-primary/50 outline-none font-bold text-secondary shadow-sm transition-all"
+                             value={fontSearch}
+                             onChange={(e) => setFontSearch(e.target.value)}
+                          />
+                          <i className="fi fi-rr-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 mt-2 h-48 overflow-y-auto no-scrollbar bg-gray-50 p-2 rounded-2xl border border-gray-100">
+                          {FONTS.filter(f => f.toLowerCase().includes(fontSearch.toLowerCase())).map(font => (
+                            <button 
+                              key={font}
+                              onClick={() => updateProfile({ font_family: font })}
+                              className={`p-4 rounded-xl text-left transition-all ${profile?.font_family === font ? 'bg-white shadow-sm border border-primary/20 scale-95' : 'hover:bg-white'}`}
+                              style={{ fontFamily: font }}
+                            >
+                              <span className="font-bold">{font}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Font Color Picker */}
+                      <div className="p-8 bg-gray-50/50 rounded-[32px] border border-gray-100 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <label className="text-sm font-black text-secondary">Font Color</label>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-black uppercase text-gray-400">{profile?.font_color || '#000000'}</span>
+                            <input 
+                              type="color" 
+                              value={profile?.font_color || '#000000'}
+                              onChange={(e) => updateProfile({ font_color: e.target.value })}
+                              className="w-12 h-12 rounded-lg border-2 border-white shadow-sm cursor-pointer"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                           {['#000000', '#ffffff', '#4b5563', '#2563eb', '#dc2626', '#16a34a', '#9333ea'].map(c => (
+                             <button key={c} onClick={() => updateProfile({ font_color: c })} className="w-8 h-8 rounded-full border border-white shadow-sm" style={{ backgroundColor: c }}></button>
+                           ))}
+                        </div>
+                      </div>
+
+                      {/* Font Size with input and dropdown */}
+                      <div className="p-8 bg-gray-50/50 rounded-[32px] border border-gray-100 space-y-4">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest pl-2">Font Size</label>
+                        <div className="flex gap-4">
+                           <div className="flex-1 relative">
+                             <input 
+                               type="number"
+                               min="8"
+                               max="72"
+                               className="w-full px-4 py-4 bg-white rounded-2xl border-2 border-transparent focus:border-primary/50 outline-none font-bold text-secondary shadow-sm"
+                               value={profile?.font_size?.replace('px', '') || '16'}
+                               onChange={(e) => updateProfile({ font_size: e.target.value + 'px' })}
+                             />
+                             <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-gray-300 text-xs uppercase">px</span>
+                           </div>
+                           <select 
+                             className="flex-1 px-4 py-4 bg-white rounded-2xl border-2 border-transparent focus:border-primary/50 outline-none font-bold text-secondary shadow-sm appearance-none"
+                             value={profile?.font_size || '16px'}
+                             onChange={(e) => updateProfile({ font_size: e.target.value })}
+                           >
+                             {[12, 14, 16, 18, 20, 24, 32, 48].map(s => (
+                               <option key={s} value={`${s}px`}>{s}px - {s <= 14 ? 'Small' : s <= 18 ? 'Normal' : 'Large'}</option>
+                             ))}
+                           </select>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.section>
+                )}
+
                 {activeTab === 'Buttons' && (
                   <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
                     <h2 className="text-xl font-black">Button Style</h2>
@@ -304,26 +399,41 @@ export default function DesignPage() {
 
                 {activeTab === 'Colors' && (
                   <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                    <h2 className="text-xl font-black">Background Color</h2>
+                    <div>
+                      <h2 className="text-xl font-black">Button Colors</h2>
+                      <p className="text-sm text-gray-400 font-bold mt-1">Customize the background color of your social links</p>
+                    </div>
                     <div className="p-8 bg-gray-50/50 rounded-[40px] border border-gray-100 space-y-6">
                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-gray-500">Pick a color</span>
+                            <span className="font-bold text-gray-400">Box Color</span>
                             <input 
                               type="color" 
-                              value={profile?.custom_bg || '#ffffff'}
-                              onChange={(e) => updateProfile({ custom_bg: e.target.value, theme: 'custom' })}
+                              value={profile?.custom_button_bg || '#ffffff'}
+                              onChange={(e) => updateProfile({ custom_button_bg: e.target.value })}
                               className="w-12 h-12 rounded-lg border-2 border-white shadow-sm cursor-pointer"
                             />
                          </div>
                          <div className="flex flex-wrap gap-2">
-                            {['#ffffff', '#000000', '#f1f5f9', '#1e293b', '#6cf383', '#ff4f6a'].map(c => (
+                            {['#ffffff', '#000000', '#f1f5f9', '#1e293b', '#6cf383', '#ff4f6a', '#9ef01a'].map(c => (
                               <button 
                                 key={c}
-                                onClick={() => updateProfile({ custom_bg: c, theme: 'custom' })}
-                                className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
+                                onClick={() => updateProfile({ custom_button_bg: c })}
+                                className="w-10 h-10 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-all"
                                 style={{ backgroundColor: c }}
                               ></button>
                             ))}
+                         </div>
+                    </div>
+
+                    <div className="p-8 bg-gray-50/50 rounded-[40px] border border-gray-100 space-y-6">
+                         <div className="flex items-center justify-between">
+                            <h2 className="text-sm font-black text-secondary">Page Background</h2>
+                            <input 
+                              type="color" 
+                              value={profile?.custom_bg || '#ffffff'}
+                              onChange={(e) => updateProfile({ custom_bg: e.target.value, theme: 'custom' })}
+                              className="w-10 h-10 rounded-lg border-2 border-white shadow-sm cursor-pointer"
+                            />
                          </div>
                     </div>
                   </motion.section>
