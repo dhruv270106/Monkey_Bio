@@ -25,6 +25,7 @@ interface Profile {
   bio: string
   social_links: any
   theme: string
+  custom_bg?: string
 }
 
 export default function DesignPage() {
@@ -192,8 +193,26 @@ export default function DesignPage() {
               <section className="space-y-6">
                 <div>
                   <h2 className="text-xl font-black">Themes</h2>
-                  <p className="text-sm text-gray-400 font-bold mt-1">Select a pre-designed theme for your profile</p>
+                  <p className="text-sm text-gray-400 font-bold mt-1">Select a pre-designed theme or create your own</p>
                 </div>
+
+                {profile?.theme === 'custom' && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-8 bg-gray-50/50 rounded-[32px] border border-gray-100 space-y-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-black text-secondary">Choose Background Color</label>
+                      <input 
+                        type="color" 
+                        value={profile?.custom_bg || '#ffffff'}
+                        onChange={(e) => updateProfile({ custom_bg: e.target.value })}
+                        className="w-12 h-12 rounded-lg border-2 border-white shadow-sm cursor-pointer"
+                      />
+                    </div>
+                  </motion.div>
+                )}
 
                 <div className="grid grid-cols-3 gap-6">
                   {THEMES.map((theme) => (
@@ -202,24 +221,35 @@ export default function DesignPage() {
                       onClick={() => updateProfile({ theme: theme.id })}
                       className={`group relative flex flex-col gap-3 p-3 rounded-[32px] border-4 transition-all ${profile?.theme === theme.id ? 'border-primary bg-white' : 'border-transparent bg-gray-50/50 hover:bg-white hover:border-gray-100'}`}
                     >
-                      <div className={`aspect-[9/16] w-full rounded-2xl overflow-hidden shadow-inner ${theme.bg} relative`}>
+                      <div 
+                        className={`aspect-[9/16] w-full rounded-2xl overflow-hidden shadow-inner ${theme.bg} relative transition-all duration-300 group-hover:scale-105`}
+                        style={{
+                          ...(theme.image ? {
+                            backgroundImage: `url(${theme.image})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center'
+                          } : theme.id === 'custom' ? {
+                            backgroundColor: profile?.custom_bg || '#ffffff',
+                          } : {})
+                        }}
+                      >
                         {theme.id === 'grid-mocha' && (
-                          <div className="absolute inset-0" style={{
-                            backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
+                          <div className="absolute inset-0 opacity-20" style={{
+                            backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)',
                             backgroundSize: '15px 15px'
                           }}></div>
                         )}
-                        <div className="flex flex-col items-center pt-6 px-4 gap-2">
-                           <div className="w-6 h-6 rounded-full bg-white/20"></div>
-                           <div className={`w-full h-3 rounded-lg ${theme.button} opacity-40`}></div>
-                           <div className={`w-full h-3 rounded-lg ${theme.button} opacity-40`}></div>
-                           <div className={`w-full h-3 rounded-lg ${theme.button} opacity-40`}></div>
+                        <div className="flex flex-col items-center pt-10 px-4 gap-2">
+                             <div className={`w-8 h-8 rounded-full mb-2 ${theme.text.includes('white') ? 'bg-white/20' : 'bg-black/10'} ring-1 ring-white/20`}></div>
+                             <div className={`w-full h-3 rounded-md ${theme.button.split(' ')[0]} opacity-80 shadow-sm border border-black/5`}></div>
+                             <div className={`w-full h-3 rounded-md ${theme.button.split(' ')[0]} opacity-80 shadow-sm border border-black/5`}></div>
+                             <div className={`w-full h-3 rounded-md ${theme.button.split(' ')[0]} opacity-80 shadow-sm border border-black/5`}></div>
                         </div>
                       </div>
-                      <span className="font-extrabold text-[11px] text-center text-secondary uppercase tracking-wider">{theme.name}</span>
+                      <span className="font-extrabold text-[10px] text-center text-secondary uppercase tracking-widest mt-1 opacity-80">{theme.name}</span>
                       
                       {profile?.theme === theme.id && (
-                        <div className="absolute top-5 right-5 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-secondary shadow-lg">
+                        <div className="absolute top-1 right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-secondary shadow-lg z-10">
                           <i className="fi fi-rr-check text-[10px]"></i>
                         </div>
                       )}

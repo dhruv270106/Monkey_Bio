@@ -34,10 +34,19 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
       <div className="flex-1 w-full flex items-center justify-center p-8 relative overflow-hidden">
           <div 
             className={`w-full max-w-[280px] aspect-[9/18.5] rounded-[44px] border-[10px] border-[#020617] shadow-2xl relative overflow-hidden flex flex-col items-center transform scale-90 xxl:scale-100 transition-all duration-500 origin-center ${selectedTheme.bg} ${selectedTheme.text}`}
-            style={selectedTheme.id === 'grid-mocha' ? {
-              backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
-              backgroundSize: '25px 25px'
-            } : {}}
+            style={{
+              ...(selectedTheme.id === 'grid-mocha' ? {
+                backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
+                backgroundSize: '25px 25px'
+              } : selectedTheme.image ? {
+                backgroundImage: `url(${selectedTheme.image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              } : selectedTheme.id === 'custom' ? {
+                backgroundColor: userProfile?.custom_bg || '#ffffff',
+                backgroundImage: 'none'
+              } : {})
+            }}
           >
              {/* Notch */}
              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-[#020617] rounded-b-[16px] z-50"></div>

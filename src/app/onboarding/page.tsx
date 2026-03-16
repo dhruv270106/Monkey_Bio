@@ -289,10 +289,16 @@ export default function Onboarding() {
       <div className="hidden md:flex flex-1 bg-white border-l border-secondary/5 items-center justify-center p-12">
         <div 
           className={`w-[320px] h-[650px] rounded-[52px] border-[12px] border-secondary shadow-2xl relative overflow-hidden flex flex-col items-center p-8 transition-all duration-500 ${(THEMES.find(t => t.id === selectedTheme) || THEMES[0]).bg} ${(THEMES.find(t => t.id === selectedTheme) || THEMES[0]).text}`}
-          style={selectedTheme === 'grid-mocha' ? {
-            backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
-            backgroundSize: '30px 30px'
-          } : {}}
+          style={{
+            ...((THEMES.find(t => t.id === selectedTheme) || THEMES[0]).id === 'grid-mocha' ? {
+              backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
+              backgroundSize: '30px 30px'
+            } : (THEMES.find(t => t.id === selectedTheme) || THEMES[0]).image ? {
+              backgroundImage: `url(${(THEMES.find(t => t.id === selectedTheme) || THEMES[0]).image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            } : {})
+          }}
         >
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-secondary rounded-b-3xl"></div>
           

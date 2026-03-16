@@ -48,10 +48,20 @@ export default function PublicProfile() {
   return (
     <div 
       className={`min-h-screen w-full flex flex-col items-center pt-24 pb-12 px-4 transition-colors duration-500 relative ${selectedTheme.bg} ${selectedTheme.text}`}
-      style={selectedTheme.id === 'grid-mocha' ? {
-        backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
-        backgroundSize: '30px 30px'
-      } : {}}
+      style={{
+        ...(selectedTheme.id === 'grid-mocha' ? {
+          backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
+          backgroundSize: '30px 30px'
+        } : selectedTheme.image ? {
+          backgroundImage: `url(${selectedTheme.image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        } : selectedTheme.id === 'custom' ? {
+          backgroundColor: profile.custom_bg || '#ffffff',
+          backgroundImage: 'none'
+        } : {})
+      }}
     >
       {/* Top Left Icon */}
       <div className="fixed top-8 left-8 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 z-[100]">
