@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 
-export default function InstagramCallback() {
+function InstagramCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [status, setStatus] = useState('Connecting to Meta...')
@@ -96,5 +96,17 @@ export default function InstagramCallback() {
         </div>
       </motion.div>
     </div>
+  )
+}
+
+export default function InstagramCallback() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <i className="fi fi-rr-spinner animate-spin text-3xl text-primary"></i>
+      </div>
+    }>
+      <InstagramCallbackContent />
+    </Suspense>
   )
 }
