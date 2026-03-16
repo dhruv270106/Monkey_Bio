@@ -15,7 +15,6 @@ export default function InsightsPage() {
     { label: 'Views', value: '0', trend: '0%', color: 'text-primary', icon: 'fi-rr-eye' },
     { label: 'Clicks', value: '0', trend: '0%', color: 'text-blue-500', icon: 'fi-rr-cursor' },
     { label: 'CTR', value: '0%', trend: '0%', color: 'text-purple-500', icon: 'fi-rr-chart-line-up' },
-    { label: 'Revenue', value: '$0.00', trend: '0%', color: 'text-emerald-500', icon: 'fi-rr-dollar' },
   ])
 
   useEffect(() => {
@@ -64,7 +63,6 @@ export default function InsightsPage() {
           { label: 'Views', value: viewsCount.toLocaleString(), trend: '+0%', color: 'text-primary', icon: 'fi-rr-eye' },
           { label: 'Clicks', value: clicksCount.toLocaleString(), trend: '+0%', color: 'text-blue-500', icon: 'fi-rr-cursor' },
           { label: 'CTR', value: `${ctr}%`, trend: '+0%', color: 'text-purple-500', icon: 'fi-rr-chart-line-up' },
-          { label: 'Revenue', value: '$0.00', trend: '0%', color: 'text-emerald-500', icon: 'fi-rr-dollar' },
         ])
       }
     }
@@ -145,7 +143,7 @@ export default function InsightsPage() {
           <div className="flex-1 overflow-y-auto p-12 bg-white no-scrollbar">
             <div className="max-w-5xl mx-auto space-y-12">
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {stats.map((stat, i) => (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={i} className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm flex flex-col gap-4">
                     <div className="flex items-center justify-between">
