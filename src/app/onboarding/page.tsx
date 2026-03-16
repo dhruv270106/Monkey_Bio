@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
-import { THEMES } from '@/data/themes'
+import { THEMES, Theme } from '@/data/themes'
 import { PLATFORMS } from '@/data/platforms'
 import ImageCropperModal from '@/components/modals/ImageCropperModal'
 
@@ -153,7 +153,7 @@ export default function Onboarding() {
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                  {THEMES.map(theme => (
+                  {(THEMES as Theme[]).map(theme => (
                     <button 
                       key={theme.id}
                       onClick={() => setSelectedTheme(theme.id)}

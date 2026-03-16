@@ -1,4 +1,16 @@
-export const THEMES = [
+export interface Theme {
+  id: string;
+  name: string;
+  bg: string;
+  text: string;
+  button: string;
+  accent: string;
+  isCustom?: boolean;
+  image?: string;
+  grid?: boolean;
+}
+
+export const THEMES: Theme[] = [
   { id: 'custom', name: 'Custom Color', bg: 'bg-white', text: 'text-secondary', button: 'bg-secondary text-white', accent: 'primary', isCustom: true },
   
   // PREMIUM CATEGORY (Unique Selections)
@@ -15,8 +27,9 @@ export const THEMES = [
   { id: 'urban-street', name: 'Urban Street', bg: 'bg-zinc-900', image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-primary text-secondary font-black border-none px-8 py-5', accent: 'primary' },
   { id: 'deep-sea', name: 'Deep Sea', bg: 'bg-[#001219]', image: 'https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&q=80&w=1000', text: 'text-[#94d2bd]', button: 'bg-[#94d2bd]/10 border border-[#94d2bd]/30 text-[#94d2bd]', accent: '#94d2bd' },
   { id: 'dark-royal', name: 'Dark Royal', bg: 'bg-[#020617]', image: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black rounded-lg', accent: 'blue' },
+  { id: 'retro-grid-colored', name: 'Retro Grid', bg: 'bg-[#fef9f1]', text: 'text-secondary', button: 'bg-white border-4 border-secondary shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]', accent: 'secondary', grid: true },
 
-  // CATEGORIES WITH IMAGES (Ensuring no blanks)
+  // CATEGORIES WITH IMAGES
   // CARS
   { id: 'supercar-red', name: 'Vantage Red', bg: 'bg-black', image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-red-600 text-white font-black italic rounded-none', accent: 'red' },
   { id: 'gtr-skyline', name: 'Drift Night', bg: 'bg-zinc-900', image: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white/10 backdrop-blur border border-white/20', accent: 'blue' },
@@ -45,12 +58,15 @@ export const THEMES = [
   { id: 'minimal-wall', name: 'Clean Void', bg: 'bg-white', image: 'https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&q=80&w=1000', text: 'text-secondary', button: 'bg-gray-50 border border-gray-100', accent: 'gray' },
   { id: 'monochrome', name: 'BW Street', bg: 'bg-black', image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white text-black font-medium rounded-sm', accent: 'white' },
 
-  // BUSINESS (Fixed Blanks with Images)
+  // BUSINESS
   { id: 'high-rise', name: 'Skyscraper', bg: 'bg-zinc-900', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-blue-600 rounded-none transform transition-all', accent: 'blue' },
   { id: 'real-estate', name: 'Luxury Living', bg: 'bg-[#f8fafc]', image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1000', text: 'text-[#0f172a]', button: 'bg-white border-2 border-primary text-secondary', accent: 'gold' },
   { id: 'tech-vision', name: 'Silicon Valley', bg: 'bg-black', image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-primary text-secondary font-black rounded-sm', accent: 'primary' },
   { id: 'ceo-suite-new', name: 'CEO Suite', bg: 'bg-[#ffffff]', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1000', text: 'text-secondary', button: 'bg-transparent border-2 border-secondary text-secondary font-black', accent: 'black' },
   { id: 'creative-ops-new', name: 'Creative Ops', bg: 'bg-[#6366f1]', image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white text-[#6366f1] font-extrabold shadow-inner', accent: 'indigo' },
+
+  // GRIDS
+  { id: 'grid-mocha', name: 'Mocha Grid', bg: 'bg-[#2a1b0d]', text: 'text-white', button: 'bg-white/10 backdrop-blur border border-white/20', accent: 'white', grid: true },
 
   // SPORTS
   { id: 'soccer-field', name: 'Pitch High', bg: 'bg-[#166534]', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-white text-secondary font-black border-l-8 border-primary', accent: 'green' },

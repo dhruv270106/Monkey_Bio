@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { motion } from 'framer-motion'
-import { THEMES } from '@/data/themes'
+import { THEMES, Theme } from '@/data/themes'
 import { PLATFORMS } from '@/data/platforms'
 import { APPS } from '@/data/apps'
 
@@ -64,7 +64,7 @@ export default function PublicProfile() {
     )
   }
 
-  const selectedTheme = THEMES.find(t => t.id === profile.theme) || THEMES[0]
+  const selectedTheme = (THEMES.find(t => t.id === profile.theme) || THEMES[0]) as Theme
 
   const getButtonStyle = () => {
     const variant = profile?.button_variant || 'solid'

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/dashboard/Sidebar'
 import Preview from '@/components/dashboard/Preview'
-import { THEMES } from '@/data/themes'
+import { THEMES, Theme } from '@/data/themes'
 import ImageCropperModal from '@/components/modals/ImageCropperModal'
 
 interface Link {
@@ -306,7 +306,7 @@ export default function DesignPage() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
-                      {THEMES.map((theme) => (
+                      {(THEMES as Theme[]).map((theme) => (
                         <button 
                           key={theme.id}
                           onClick={() => updateProfile({ theme: theme.id })}

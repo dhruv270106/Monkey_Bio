@@ -1,6 +1,6 @@
 'use client'
 
-import { THEMES } from '@/data/themes'
+import { THEMES, Theme } from '@/data/themes'
 import { PLATFORMS } from '@/data/platforms'
 import { APPS } from '@/data/apps'
 
@@ -11,7 +11,7 @@ interface PreviewProps {
 }
 
 export default function Preview({ userProfile, links, socialLinks }: PreviewProps) {
-  const selectedTheme = THEMES.find(t => t.id === userProfile?.theme) || THEMES[0]
+  const selectedTheme = (THEMES.find(t => t.id === userProfile?.theme) || THEMES[0]) as Theme
 
   const getButtonStyle = () => {
     const variant = userProfile?.button_variant || 'solid'
