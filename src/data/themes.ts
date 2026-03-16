@@ -44,7 +44,7 @@ export const THEMES: Theme[] = [
 
   // ANIMALS
   { id: 'tiger-roar', name: 'Jungle King', bg: 'bg-black', image: 'https://images.unsplash.com/photo-1477764250597-dffe9f601ae8?auto=format&fit=crop&q=80&w=1000', text: 'text-[#fbbf24]', button: 'bg-[#fbbf24] text-black font-black', accent: 'orange' },
-  { id: 'panda-chill', name: 'Bamboo Soul', bg: 'bg-white', image: 'https://images.unsplash.com/photo-1534123235607-4402660d5dd7?auto=format&fit=crop&q=80&w=1000', text: 'text-black', button: 'bg-black text-white rounded-[40px]', accent: 'gray' },
+  { id: 'bamboo-soul-v2', name: 'Bamboo Soul', bg: 'bg-zinc-100', image: 'https://images.unsplash.com/photo-1512149177596-f817c7ef5d4c?auto=format&fit=crop&q=80&w=1000', text: 'text-black', button: 'bg-black text-white rounded-[40px]', accent: 'gray' },
 
   // CUTE
   { id: 'cookie-cream', name: 'Sweet Treat', bg: 'bg-[#fafaf9]', image: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&q=80&w=1000', text: 'text-[#44403c]', button: 'bg-[#d6d3d1] text-[#44403c] rounded-[30px]', accent: 'brown' },
