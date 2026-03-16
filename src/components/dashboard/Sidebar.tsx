@@ -26,13 +26,6 @@ export default function Sidebar({ userProfile }: SidebarProps) {
       ]
     },
     {
-      label: 'Earn',
-      items: [
-        { label: 'Overview', href: '#', icon: 'fi-rr-layout-fluid', color: 'text-green-500' },
-        { label: 'Earnings ($0.00)', href: '#', icon: 'fi-rr-dollar', color: 'text-emerald-500' },
-      ]
-    },
-    {
       label: 'Analytics',
       items: [
         { label: 'Audience', href: '#', icon: 'fi-rr-users', color: 'text-orange-500' },

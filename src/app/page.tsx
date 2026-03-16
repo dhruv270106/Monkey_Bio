@@ -104,10 +104,7 @@ export default function Home() {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="lg:w-[45%] relative flex justify-center lg:justify-end"
               >
-                 <div className="absolute -left-12 top-20 bg-white/90 backdrop-blur-md p-5 rounded-3xl shadow-2xl border border-white z-20 flex items-center gap-4 animate-bounce-slow">
-                    <div className="bg-green-100 p-3 rounded-2xl text-green-600"><i className="fi fi-rr-stats"></i></div>
-                    <div><p className="text-[11px] text-gray-400 font-black uppercase tracking-widest">Revenue</p><p className="text-xl font-black text-secondary">$3,420</p></div>
-                 </div>
+
                  <div className="relative w-[340px] h-[680px] bg-black rounded-[52px] border-[14px] border-[#020617] shadow-2xl overflow-hidden z-10 transform -rotate-2 hover:rotate-0 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(67,230,96,0.2)]">
                     <div className="w-full h-full bg-white flex flex-col items-center p-8 pt-12">
                         <div className="w-16 h-16 rounded-full bg-primary/20 mb-4" />
@@ -139,8 +136,8 @@ export default function Home() {
                    {[
                      { icon: 'fi-rr-layout-fluid', title: 'Create your page', desc: 'Design a stunning mobile-first landing page for your audience in minutes, no coding required.' },
                      { icon: 'fi-rr-stats', title: 'Track everything', desc: 'Real-time analytics on clicks, views, and revenue right from your beautifully clean dashboard.' },
-                     { icon: 'fi-rr-dollar', title: 'Earn money', desc: 'Sell digital products, collect tips, or set up a membership instantly directly on your page.' }
-                   ].map((item, i) => (
+                     // { icon: 'fi-rr-dollar', title: 'Earn money', desc: 'Sell digital products, collect tips, or set up a membership instantly directly on your page.' }
+                   ].filter((_, i) => i !== 2).map((item, i) => (
                      <div key={i} className="bg-[#F5F7FA] p-10 rounded-[40px] border border-gray-100 hover:shadow-xl transition-all duration-300 group hover:-translate-y-2">
                         <div className="w-16 h-16 bg-white text-secondary rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:scale-110 group-hover:bg-primary transition-all">
                            <i className={`fi ${item.icon} text-2xl`}></i>
