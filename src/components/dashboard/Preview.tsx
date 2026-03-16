@@ -63,11 +63,28 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
               <span className="px-4 text-[10px] font-bold text-gray-400 truncate">
                 monkey.link/{userProfile?.username || 'user'}
               </span>
-              <button className="p-2 bg-white rounded-lg shadow-sm ml-auto flex items-center justify-center">
+              <button 
+                onClick={() => {
+                  const url = `https://monkey.link/${userProfile?.username}`
+                  if (navigator.share) {
+                    navigator.share({
+                      title: userProfile?.display_name || 'Monkey Bio',
+                      url: url
+                    }).catch(() => {})
+                  } else {
+                    navigator.clipboard.writeText(url)
+                    alert('Link copied to clipboard!')
+                  }
+                }}
+                className="p-2 bg-white rounded-lg shadow-sm ml-auto flex items-center justify-center hover:bg-primary hover:text-white transition-all active:scale-90"
+              >
                 <i className="fi fi-rr-share text-[10px]"></i>
               </button>
           </div>
-          <button className="p-2 border border-gray-200 rounded-xl hover:bg-gray-50 flex-shrink-0 flex items-center justify-center">
+          <button 
+            onClick={() => window.location.reload()}
+            className="p-2 border border-gray-200 rounded-xl hover:bg-gray-50 flex-shrink-0 flex items-center justify-center active:rotate-180 transition-all duration-500"
+          >
             <i className="fi fi-rr-refresh text-xs text-gray-400"></i>
           </button>
       </div>

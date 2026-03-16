@@ -34,7 +34,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isManageModalOpen, setIsManageModalOpen] = useState(false)
-  const [errorHeader, setErrorHeader] = useState<string | null>(null)
 
   useEffect(() => {
     fetchData()
@@ -88,7 +87,6 @@ export default function Dashboard() {
         .eq('id', session.user.id)
     }
   }
-
 
   const toggleHighlight = async (id: string) => {
     const newLinks = links.map(l => l.id === id ? { ...l, highlighted: !l.highlighted } : l)
@@ -162,12 +160,30 @@ export default function Dashboard() {
           <div className="h-16 px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0">
              <h1 className="font-bold text-xl">Links</h1>
              <div className="flex items-center gap-3">
-                 <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-50">
-                     <i className="fi fi-rr-magic-wand text-purple-500 text-xs"></i> Enhance
-                 </button>
-                 <button className="p-2 border border-gray-200 rounded-full hover:bg-gray-50 flex items-center justify-center">
-                    <i className="fi fi-rr-settings text-gray-400 text-sm"></i>
-                 </button>
+                  <button 
+                    onClick={() => {
+                      const url = `https://monkey.link/${profile?.username}`
+                      if (navigator.share) {
+                        navigator.share({ title: profile?.display_name || 'Monkey Bio', url }).catch(() => {})
+                      } else {
+                        navigator.clipboard.writeText(url)
+                        alert('Link copied to clipboard!')
+                      }
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 border border-blue-100 bg-blue-50/50 text-blue-600 rounded-full font-bold text-sm hover:bg-blue-100 transition-all active:scale-95"
+                  >
+                      <i className="fi fi-rr-share text-xs"></i> Share
+                  </button>
+                  <button 
+                    onClick={() => fetchData()} 
+                    className="p-2 border border-gray-200 rounded-full hover:bg-gray-50 flex items-center justify-center transition-all active:rotate-180"
+                    title="Refresh Data"
+                  >
+                     <i className="fi fi-rr-refresh text-gray-400 text-sm"></i>
+                  </button>
+                  <button className="p-2 border border-gray-200 rounded-full hover:bg-gray-50 flex items-center justify-center">
+                     <i className="fi fi-rr-settings text-gray-400 text-sm"></i>
+                  </button>
              </div>
           </div>
 
