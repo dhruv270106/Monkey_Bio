@@ -47,6 +47,19 @@ export default function ManageLinksModal({ isOpen, onClose, links, onUpdate }: M
 
   const handleSave = () => {
     if (!editingId) return
+    const link = links.find(l => l.id === editingId)
+    if (!link) return
+
+    // Validation: Check if URL matches the platform's domain
+    const app = APPS.find(a => a.id === link.platform)
+    const normalizedUrl = editUrl.toLowerCase()
+    const isUrl = normalizedUrl.startsWith('http') || normalizedUrl.startsWith('www.')
+    
+    if (app?.domain && isUrl && !normalizedUrl.includes(app.domain.toLowerCase())) {
+      alert(`Please enter a valid ${app.title} link. Example: ${app.placeholder}`)
+      return
+    }
+
     const newLinks = links.map(l => l.id === editingId ? { ...l, title: editTitle, url: editUrl } : l)
     onUpdate(newLinks)
     setEditingId(null)

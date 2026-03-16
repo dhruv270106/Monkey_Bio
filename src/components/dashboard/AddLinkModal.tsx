@@ -55,6 +55,16 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
     }
     
     let finalUrl = inputValue
+    
+    // Validation: Check if it matches the platform's domain
+    if (selectedApp.domain) {
+      const isUrl = inputValue.toLowerCase().startsWith('http') || inputValue.toLowerCase().startsWith('www.')
+      if (isUrl && !inputValue.toLowerCase().includes(selectedApp.domain.toLowerCase())) {
+        alert(`Please enter a valid ${selectedApp.title} link. Example: ${selectedApp.placeholder}`)
+        return
+      }
+    }
+
     if (selectedApp.prefix && !inputValue.startsWith('http')) {
       finalUrl = selectedApp.prefix + inputValue.replace('@', '')
     }

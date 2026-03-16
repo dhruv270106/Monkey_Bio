@@ -10,6 +10,7 @@ export interface AppConfig {
   placeholder: string
   prefix?: string
   pattern?: RegExp
+  domain?: string
 }
 
 export const CATEGORIES = [
@@ -57,25 +58,25 @@ export const APPS: AppConfig[] = [
   { id: 'mobile-app', title: 'Mobile App', description: 'Market your app across Apple and Google stores', icon: 'fi-rr-apps', color: 'text-gray-700', category: 'other', placeholder: 'App store link' },
 
   // SOCIAL
-  { id: 'threads', title: 'Threads', description: 'Select your favorite Threads posts to display', icon: 'fi-brands-threads', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://threads.net/@' },
-  { id: 'instagram', title: 'Instagram', description: 'Display your posts and reels', icon: 'fi-brands-instagram', color: 'text-[#E4405F]', category: 'social', placeholder: '@username', prefix: 'https://instagram.com/' },
-  { id: 'facebook', title: 'Facebook', description: 'Show your visitors any Facebook video', icon: 'fi-brands-facebook', color: 'text-[#1877F2]', category: 'social', placeholder: 'Profile or Video link' },
-  { id: 'youtube', title: 'YouTube', description: 'Show your visitors any YouTube video', icon: 'fi-brands-youtube', color: 'text-[#FF0000]', category: 'social', placeholder: 'Video link' },
-  { id: 'x', title: 'X', description: 'Showcase what\'s new on your feed', icon: 'fi-brands-twitter', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://x.com/' },
-  { id: 'tiktok', title: 'TikTok', description: 'Share your latest TikTok videos', icon: 'fi-brands-tiktok', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://tiktok.com/@' },
-  { id: 'whatsapp-direct', title: 'WhatsApp', description: 'Chat directly with your visitors', icon: 'fi-brands-whatsapp', color: 'text-[#25D366]', category: 'social', placeholder: 'Group or Direct link' },
-  { id: 'snapchat', title: 'Snapchat', description: 'Drive audiences to your Public Stories', icon: 'fi-brands-snapchat', color: 'text-[#FFFC00]', category: 'social', placeholder: 'Username', prefix: 'https://snapchat.com/add/' },
-  { id: 'pinterest', title: 'Pinterest', description: 'Share boards and individual Pins', icon: 'fi-brands-pinterest', color: 'text-[#BD081C]', category: 'social', placeholder: 'Pinterest link', prefix: 'https://pinterest.com/' },
-  { id: 'twitch', title: 'Twitch', description: 'Show your live Twitch stream and chat', icon: 'fi-brands-twitch', color: 'text-[#9146FF]', category: 'social', placeholder: 'Channel name', prefix: 'https://twitch.tv/' },
-  { id: 'reddit', title: 'Reddit', description: 'Add a preview of your Reddit profile', icon: 'fi-brands-reddit', color: 'text-[#FF4500]', category: 'social', placeholder: 'Username', prefix: 'https://reddit.com/u/' },
-  { id: 'github', title: 'Github', description: 'Show your repositories and projects', icon: 'fi-brands-github', color: 'text-black', category: 'social', placeholder: 'Username', prefix: 'https://github.com/' },
-  { id: 'linkedin', title: 'LinkedIn', description: 'Share your professional profile', icon: 'fi-brands-linkedin', color: 'text-[#0A66C2]', category: 'social', placeholder: 'LinkedIn URL', prefix: 'https://linkedin.com/in/' },
-  { id: 'discord-social', title: 'Discord', description: 'Link to your Discord community', icon: 'fi-brands-discord', color: 'text-[#5865F2]', category: 'social', placeholder: 'Invite URL' },
-  { id: 'telegram', title: 'Telegram', description: 'Direct visitors to your Telegram channel', icon: 'fi-brands-telegram', color: 'text-[#229ED9]', category: 'social', placeholder: 'Username', prefix: 'https://t.me/' },
+  { id: 'threads', title: 'Threads', description: 'Select your favorite Threads posts to display', icon: 'fi-brands-threads', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://threads.net/@', domain: 'threads.net' },
+  { id: 'instagram', title: 'Instagram', description: 'Display your posts and reels', icon: 'fi-brands-instagram', color: 'text-[#E4405F]', category: 'social', placeholder: '@username', prefix: 'https://instagram.com/', domain: 'instagram.com' },
+  { id: 'facebook', title: 'Facebook', description: 'Show your visitors any Facebook video', icon: 'fi-brands-facebook', color: 'text-[#1877F2]', category: 'social', placeholder: 'Profile or Video link', domain: 'facebook.com' },
+  { id: 'youtube', title: 'YouTube', description: 'Show your visitors any YouTube video', icon: 'fi-brands-youtube', color: 'text-[#FF0000]', category: 'social', placeholder: 'Video link', domain: 'youtube.com' },
+  { id: 'x', title: 'X', description: 'Showcase what\'s new on your feed', icon: 'fi-brands-twitter', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://x.com/', domain: 'x.com' },
+  { id: 'tiktok', title: 'TikTok', description: 'Share your latest TikTok videos', icon: 'fi-brands-tiktok', color: 'text-[#000000]', category: 'social', placeholder: '@username', prefix: 'https://tiktok.com/@', domain: 'tiktok.com' },
+  { id: 'whatsapp-direct', title: 'WhatsApp', description: 'Chat directly with your visitors', icon: 'fi-brands-whatsapp', color: 'text-[#25D366]', category: 'social', placeholder: 'Group or Direct link', domain: 'whatsapp.com' },
+  { id: 'snapchat', title: 'Snapchat', description: 'Drive audiences to your Public Stories', icon: 'fi-brands-snapchat', color: 'text-[#FFFC00]', category: 'social', placeholder: 'Username', prefix: 'https://snapchat.com/add/', domain: 'snapchat.com' },
+  { id: 'pinterest', title: 'Pinterest', description: 'Share boards and individual Pins', icon: 'fi-brands-pinterest', color: 'text-[#BD081C]', category: 'social', placeholder: 'Pinterest link', prefix: 'https://pinterest.com/', domain: 'pinterest.com' },
+  { id: 'twitch', title: 'Twitch', description: 'Show your live Twitch stream and chat', icon: 'fi-brands-twitch', color: 'text-[#9146FF]', category: 'social', placeholder: 'Channel name', prefix: 'https://twitch.tv/', domain: 'twitch.tv' },
+  { id: 'reddit', title: 'Reddit', description: 'Add a preview of your Reddit profile', icon: 'fi-brands-reddit', color: 'text-[#FF4500]', category: 'social', placeholder: 'Username', prefix: 'https://reddit.com/u/', domain: 'reddit.com' },
+  { id: 'github', title: 'Github', description: 'Show your repositories and projects', icon: 'fi-brands-github', color: 'text-black', category: 'social', placeholder: 'Username', prefix: 'https://github.com/', domain: 'github.com' },
+  { id: 'linkedin', title: 'LinkedIn', description: 'Share your professional profile', icon: 'fi-brands-linkedin', color: 'text-[#0A66C2]', category: 'social', placeholder: 'LinkedIn URL', prefix: 'https://linkedin.com/in/', domain: 'linkedin.com' },
+  { id: 'discord-social', title: 'Discord', description: 'Link to your Discord community', icon: 'fi-brands-discord', color: 'text-[#5865F2]', category: 'social', placeholder: 'Invite URL', domain: 'discord' },
+  { id: 'telegram', title: 'Telegram', description: 'Direct visitors to your Telegram channel', icon: 'fi-brands-telegram', color: 'text-[#229ED9]', category: 'social', placeholder: 'Username', prefix: 'https://t.me/', domain: 't.me' },
   { id: 'rss', title: 'RSS Feed', description: 'Share RSS feeds for easy content syndication', icon: 'fi-rr-rss', color: 'text-orange-500', category: 'social', placeholder: 'RSS URL' },
 
   // MEDIA
-  { id: 'youtube-media', title: 'YouTube', description: 'Show your visitors any YouTube video', icon: 'fi-brands-youtube', color: 'text-[#FF0000]', category: 'media', placeholder: 'Video link' },
+  { id: 'youtube-media', title: 'YouTube', description: 'Show your visitors any YouTube video', icon: 'fi-brands-youtube', color: 'text-[#FF0000]', category: 'media', placeholder: 'Video link', domain: 'youtube.com' },
   { id: 'tiktok-video', title: 'TikTok Video', description: 'Highlight one of your TikToks directly', icon: 'fi-brands-tiktok', color: 'text-black', category: 'media', placeholder: 'TikTok Link' },
   { id: 'vimeo', title: 'Vimeo', description: 'Share Vimeo videos with your visitors', icon: 'fi-brands-vimeo', color: 'text-[#1AB7EA]', category: 'media', placeholder: 'Vimeo link' },
   { id: 'pdf', title: 'PDF display', description: 'Display downloadable PDF files and CVs', icon: 'fi-rr-file-pdf', color: 'text-red-500', category: 'media', placeholder: 'PDF link' },
