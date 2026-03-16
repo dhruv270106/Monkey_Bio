@@ -45,6 +45,7 @@ export default function DesignPage() {
   const [selectedImage, setSelectedImage] = useState('')
   const [activeTab, setActiveTab] = useState('Header')
   const [fontSearch, setFontSearch] = useState('')
+  const [themeCategory, setThemeCategory] = useState('free')
 
   const TABS = [
     { id: 'Header', icon: 'fi-rr-user' },
@@ -305,8 +306,32 @@ export default function DesignPage() {
                       </div>
                     </div>
 
+                    <div className="flex items-center gap-2 bg-gray-50/50 p-1.5 rounded-[24px] w-fit border border-gray-100">
+                      <button 
+                        onClick={() => setThemeCategory('free')}
+                        className={`px-8 py-3 rounded-[18px] text-[10px] font-black uppercase tracking-widest transition-all ${themeCategory === 'free' ? 'bg-white text-secondary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-secondary'}`}
+                      >
+                        Free
+                      </button>
+                      <button 
+                        onClick={() => setThemeCategory('premium')}
+                        className={`px-8 py-3 rounded-[18px] text-[10px] font-black uppercase tracking-widest transition-all ${themeCategory === 'premium' ? 'bg-white text-secondary shadow-sm border border-gray-100' : 'text-gray-400 hover:text-secondary'}`}
+                      >
+                        Premium
+                      </button>
+                    </div>
+
                     <div className="grid grid-cols-2 gap-6">
-                      {(THEMES as Theme[]).map((theme) => (
+                      {themeCategory === 'premium' ? (
+                        <div className="col-span-2 py-12 flex flex-col items-center justify-center bg-gray-50/50 rounded-[40px] border-2 border-dashed border-gray-100">
+                          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                            <i className="fi fi-sr-star text-primary text-2xl"></i>
+                          </div>
+                          <h3 className="font-black text-secondary">Premium Themes Coming Soon</h3>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">Stay tuned for exclusive designs</p>
+                        </div>
+                      ) : (
+                        (THEMES as Theme[]).map((theme) => (
                         <button 
                           key={theme.id}
                           onClick={() => updateProfile({ theme: theme.id })}
@@ -346,8 +371,9 @@ export default function DesignPage() {
                             </div>
                           )}
                         </button>
-                      ))}
-                    </div>
+                      ))
+                    )}
+                  </div>
                   </motion.section>
                 )}
 
