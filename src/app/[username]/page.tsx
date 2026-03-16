@@ -45,6 +45,41 @@ export default function PublicProfile() {
 
   const selectedTheme = THEMES.find(t => t.id === profile.theme) || THEMES[0]
 
+  const getButtonStyle = () => {
+    const variant = profile?.button_variant || 'solid'
+    const radius = profile?.button_radius || 'xl'
+    const customBg = profile?.custom_button_bg || (selectedTheme.button.includes('bg-white') ? '#ffffff' : '#000000')
+    const customColor = profile?.font_color || (selectedTheme.text.includes('white') ? '#ffffff' : '#000000')
+
+    let baseStyle: any = {
+      fontFamily: profile?.font_family || 'inherit',
+      color: customColor,
+      borderRadius: radius === 'none' ? '0px' : radius === 'md' ? '12px' : radius === 'xl' ? '24px' : '9999px',
+    }
+
+    if (variant === 'outline') {
+      baseStyle = {
+        ...baseStyle,
+        backgroundColor: 'transparent',
+        border: `2px solid ${customBg}`,
+      }
+    } else if (variant === 'glass') {
+      baseStyle = {
+        ...baseStyle,
+        backgroundColor: `${customBg}20`,
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255,255,255,0.1)',
+      }
+    } else {
+      baseStyle = {
+        ...baseStyle,
+        backgroundColor: customBg,
+      }
+    }
+
+    return baseStyle
+  }
+
   return (
     <div 
       className={`min-h-screen w-full flex flex-col items-center pt-24 pb-12 px-4 transition-colors duration-500 relative ${selectedTheme.bg} ${selectedTheme.text}`}
@@ -65,6 +100,13 @@ export default function PublicProfile() {
         } : {})
       }}
     >
+      {/* Dynamic Font Loader */}
+      {profile?.font_family && (
+        <link 
+          href={`https://fonts.googleapis.com/css2?family=${profile.font_family.replace(/ /g, '+')}:wght@400;700;900&display=swap`} 
+          rel="stylesheet" 
+        />
+      )}
       {/* Top Left Icon */}
       <div className="fixed top-8 left-8 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 z-[100]">
         <span className="text-white text-lg font-black">*</span>
@@ -117,6 +159,7 @@ export default function PublicProfile() {
                  target="_blank"
                  rel="noopener noreferrer"
                  className="text-4xl transition-transform hover:scale-125 hover:opacity-80"
+                 style={{ color: profile.font_color || 'inherit' }}
                >
                  <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'}`}></i>
                </a>
@@ -132,12 +175,8 @@ export default function PublicProfile() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`block w-full py-6 px-8 rounded-2xl font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 flex items-center justify-between group text-lg tracking-wide ${selectedTheme.button}`}
-              style={{
-                backgroundColor: profile.custom_button_bg || undefined,
-                fontFamily: profile.font_family || 'inherit',
-                color: profile.font_color || 'inherit'
-              }}
+              className={`block w-full py-6 px-8 font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 flex items-center justify-between group text-lg tracking-wide`}
+              style={getButtonStyle()}
             >
               <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border border-black/5 bg-white/10">
                  <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-2xl opacity-80`}></i>

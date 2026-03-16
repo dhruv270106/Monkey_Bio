@@ -30,6 +30,8 @@ interface Profile {
   font_family?: string
   font_size?: string
   font_color?: string
+  button_variant?: string
+  button_radius?: string
 }
 
 export default function DesignPage() {
@@ -52,7 +54,12 @@ export default function DesignPage() {
 
   const FONTS = [
     'Inter', 'Roboto', 'Outfit', 'Playfair Display', 'Poppins', 'Montserrat', 'Open Sans', 'Lato', 'Ubuntu', 'Lora',
-    'Dancing Script', 'Pacifico', 'Caveat', 'Satisfy', 'Oswald', 'Raleway', 'Nunito', 'Merriweather', 'Bebas Neue'
+    'Dancing Script', 'Pacifico', 'Caveat', 'Satisfy', 'Oswald', 'Raleway', 'Nunito', 'Merriweather', 'Bebas Neue',
+    'Abel', 'Abril Fatface', 'Arvo', 'Assistant', 'Barlow', 'Bitter', 'Cabin', 'Cairo', 'Catamaran', 'Comfortaa',
+    'Dosis', 'Exo 2', 'Fira Sans', 'Heebo', 'Inconsolata', 'Josefin Sans', 'Kanit', 'Karla', 'Libre Baskerville',
+    'Libre Franklin', 'Lobster', 'Maven Pro', 'Muli', 'Noticia Text', 'Notosans', 'Old Standard TT', 'Overpass', 
+    'Oxygen', 'PT Sans', 'PT Serif', 'Quicksand', 'Questrial', 'Righteous', 'Rubik', 'Shadows Into Light', 'Spectral', 
+    'Teko', 'Titillium Web', 'Varela Round', 'Work Sans', 'Zilla Slab'
   ]
 
   useEffect(() => {
@@ -117,6 +124,13 @@ export default function DesignPage() {
 
   return (
     <div className="h-screen bg-white flex flex-col overflow-hidden">
+      {/* Dynamic Font Loader */}
+      {profile?.font_family && (
+        <link 
+          href={`https://fonts.googleapis.com/css2?family=${profile.font_family.replace(/ /g, '+')}:wght@400;700;900&display=swap`} 
+          rel="stylesheet" 
+        />
+      )}
       {/* Top Banner */}
       <div className="bg-[#1e293b] text-white py-2 px-8 flex justify-center items-center gap-4 text-sm font-medium flex-shrink-0 z-[100]">
           <span>Unlock more tools to grow your audience faster.</span>
@@ -370,27 +384,37 @@ export default function DesignPage() {
                   </motion.section>
                 )}
 
-                {activeTab === 'Buttons' && (
+                 {activeTab === 'Buttons' && (
                   <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
                     <h2 className="text-xl font-black">Button Style</h2>
                     
                     <div className="space-y-8">
                        <div className="grid grid-cols-3 gap-4">
                           {['Solid', 'Glass', 'Outline'].map(type => (
-                            <button key={type} className="flex flex-col items-center gap-3 p-4 bg-gray-50/50 rounded-3xl border border-transparent hover:border-gray-200 transition-all">
-                               <div className={`w-full h-12 rounded-xl bg-white border-2 border-slate-200 ${type === 'Glass' ? 'opacity-40' : type === 'Outline' ? 'bg-transparent' : ''}`}></div>
-                               <span className="text-xs font-bold text-gray-400">{type}</span>
+                            <button 
+                              key={type} 
+                              onClick={() => updateProfile({ button_variant: type.toLowerCase() })}
+                              className={`flex flex-col items-center gap-3 p-4 rounded-3xl border-2 transition-all ${profile?.button_variant === type.toLowerCase() ? 'border-primary bg-white' : 'border-transparent bg-gray-50/50 hover:bg-white'}`}
+                            >
+                               <div className={`w-full h-12 rounded-xl border-2 ${type === 'Glass' ? 'bg-gray-100 opacity-40 border-gray-200' : type === 'Outline' ? 'bg-transparent border-slate-200' : 'bg-slate-800 border-slate-800'}`}></div>
+                               <span className="text-xs font-bold text-gray-500">{type}</span>
                             </button>
                           ))}
                        </div>
 
                        <div className="space-y-4">
-                          <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Corner Roundness</label>
+                          <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest pl-2">Corner Roundness</label>
                           <div className="grid grid-cols-4 gap-3">
-                             {['Square', 'Round', 'Rounder', 'Full'].map(type => (
-                               <button key={type} className="p-4 bg-gray-50/50 rounded-2xl border border-transparent hover:border-gray-200 transition-all flex flex-col items-center gap-2">
-                                  <div className={`w-8 h-8 border-2 border-slate-300 ${type === 'Square' ? '' : type === 'Round' ? 'rounded-md' : type === 'Rounder' ? 'rounded-xl' : 'rounded-full'}`}></div>
-                                  <span className="text-[8px] font-black uppercase text-gray-400">{type}</span>
+                             {['none', 'md', 'xl', 'full'].map(radius => (
+                               <button 
+                                 key={radius} 
+                                 onClick={() => updateProfile({ button_radius: radius })}
+                                 className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${profile?.button_radius === radius ? 'border-primary bg-white' : 'border-transparent bg-gray-50/50 hover:bg-white'}`}
+                               >
+                                  <div className={`w-8 h-8 border-2 border-slate-400 ${radius === 'none' ? '' : radius === 'md' ? 'rounded-md' : radius === 'xl' ? 'rounded-xl' : 'rounded-full'}`}></div>
+                                  <span className="text-[8px] font-black uppercase text-gray-400">
+                                    {radius === 'none' ? 'Square' : radius === 'md' ? 'Round' : radius === 'xl' ? 'Rounder' : 'Full'}
+                                  </span>
                                </button>
                              ))}
                           </div>

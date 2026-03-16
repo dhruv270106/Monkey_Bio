@@ -13,8 +13,50 @@ interface PreviewProps {
 export default function Preview({ userProfile, links, socialLinks }: PreviewProps) {
   const selectedTheme = THEMES.find(t => t.id === userProfile?.theme) || THEMES[0]
 
+  const getButtonStyle = () => {
+    const variant = userProfile?.button_variant || 'solid'
+    const radius = userProfile?.button_radius || 'xl'
+    const customBg = userProfile?.custom_button_bg || (selectedTheme.button.includes('bg-white') ? '#ffffff' : '#000000')
+    const customColor = userProfile?.font_color || (selectedTheme.text.includes('white') ? '#ffffff' : '#000000')
+
+    let baseStyle: any = {
+      fontFamily: userProfile?.font_family || 'inherit',
+      color: customColor,
+      borderRadius: radius === 'none' ? '0px' : radius === 'md' ? '12px' : radius === 'xl' ? '24px' : '9999px',
+    }
+
+    if (variant === 'outline') {
+      baseStyle = {
+        ...baseStyle,
+        backgroundColor: 'transparent',
+        border: `2px solid ${customBg}`,
+      }
+    } else if (variant === 'glass') {
+      baseStyle = {
+        ...baseStyle,
+        backgroundColor: `${customBg}20`,
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255,255,255,0.1)',
+      }
+    } else {
+      baseStyle = {
+        ...baseStyle,
+        backgroundColor: customBg,
+      }
+    }
+
+    return baseStyle
+  }
+
   return (
     <aside className="w-[480px] bg-white border-l border-gray-100 hidden lg:flex flex-col items-center flex-shrink-0 relative h-screen sticky top-0 overflow-hidden">
+      {/* Dynamic Font Loader */}
+      {userProfile?.font_family && (
+        <link 
+          href={`https://fonts.googleapis.com/css2?family=${userProfile.font_family.replace(/ /g, '+')}:wght@400;700;900&display=swap`} 
+          rel="stylesheet" 
+        />
+      )}
       {/* Search/URL simulation */}
       <div className="w-full p-8 flex items-center justify-center gap-3">
           <div className="bg-gray-100 flex items-center rounded-xl p-1 w-full max-w-sm">
@@ -117,12 +159,8 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                         href={link.url}
                         target="_blank"
                         rel="noreferrer"
-                        className={`w-full py-4 px-4 rounded-xl transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex items-center justify-between group ${selectedTheme.button}`}
-                        style={{ 
-                           backgroundColor: userProfile?.custom_button_bg || undefined,
-                           fontFamily: userProfile?.font_family || 'inherit',
-                           color: userProfile?.font_color || 'inherit'
-                        }}
+                        className={`w-full py-4 px-4 transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex items-center justify-between group`}
+                        style={getButtonStyle()}
                       >
                         <div className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 border border-black/5">
                            <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-[10px] opacity-70`}></i>
