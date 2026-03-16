@@ -329,12 +329,9 @@ export default function DesignPage() {
                   </motion.section>
                 )}
 
-              </div>
-            </div>
-          </div>
-
-              <div className="flex items-center gap-2 font-black text-2xl px-2 opacity-10 grayscale py-12 text-secondary">
-                Monkey <span className="text-primary text-3xl">*</span>
+                <div className="flex items-center gap-2 font-black text-2xl px-2 opacity-10 grayscale py-12 text-secondary">
+                  Monkey <span className="text-primary text-3xl">*</span>
+                </div>
               </div>
             </div>
           </div>
