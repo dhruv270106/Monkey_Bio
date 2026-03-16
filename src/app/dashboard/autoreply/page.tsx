@@ -9,10 +9,7 @@ export default function AutoReplyPage() {
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [step, setStep] = useState(1) // 1: Connect, 2: Privacy Check, 3: Dashboard
-  const [igUsername, setIgUsername] = useState('')
-  const [isPublic, setIsPublic] = useState(false)
-  
-  // Dashboard states
+  const [igUser, setIgUser] = useState<any>(null)
   const [autoReplyEnabled, setAutoReplyEnabled] = useState(true)
   const [keywords, setKeywords] = useState([
     { id: '1', trigger: 'link', response: 'Here is my latest link: monkeybio.com/user', status: 'active' },
@@ -41,22 +38,38 @@ export default function AutoReplyPage() {
 
     if (profileData) {
       setProfile(profileData)
-      // Check if IG is already connected in local storage
-      const savedIg = localStorage.getItem(`ig_connected_${session.user.id}`)
+      const savedIg = localStorage.getItem(`ig_connected_data_${session.user.id}`)
       if (savedIg) {
-        setIgUsername(savedIg)
+        setIgUser(JSON.parse(savedIg))
         setStep(3)
       }
     }
     setLoading(false)
   }
 
-  const handleConnect = () => {
-    if (!igUsername) {
-       alert('Please enter your Instagram profile link')
-       return
-    }
-    setStep(2)
+  const handleInstagramAuth = async () => {
+    setSubmitting(true)
+    
+    // In a real production app, this would be:
+    // await supabase.auth.signInWithOAuth({ provider: 'instagram' })
+    
+    // Simulating the real OAuth popup and data return
+    setTimeout(() => {
+      const realIgData = {
+        username: 'monkey_official',
+        full_name: 'Monkey Bio Official',
+        profile_pic: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&q=80',
+        id: '1784123456',
+        link: 'https://instagram.com/monkey_official'
+      }
+      
+      setIgUser(realIgData)
+      if (profile?.id) {
+        localStorage.setItem(`ig_connected_data_${profile.id}`, JSON.stringify(realIgData))
+      }
+      setSubmitting(false)
+      setStep(2) // Go to privacy check
+    }, 2000)
   }
 
   const handlePrivacyConfirm = (isPub: boolean) => {
@@ -64,11 +77,7 @@ export default function AutoReplyPage() {
       alert('Please make your account public in Instagram settings to continue.')
       return
     }
-    setIsPublic(true)
     setStep(3)
-    if (profile?.id) {
-      localStorage.setItem(`ig_connected_${profile.id}`, igUsername)
-    }
   }
 
   const addKeyword = () => {
@@ -96,19 +105,6 @@ export default function AutoReplyPage() {
     )
   }
 
-  const handleAuthSimulation = () => {
-    if (!igUsername) {
-       alert('Please enter your Instagram link first');
-       return;
-    }
-    setSubmitting(true);
-    // Simulating Instagram OAuth Popup
-    setTimeout(() => {
-       setSubmitting(false);
-       setStep(2);
-    }, 1500);
-  }
-
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="flex-1 flex overflow-hidden">
@@ -121,11 +117,11 @@ export default function AutoReplyPage() {
                 <i className="fi fi-rr-comment-alt text-primary text-xl"></i>
                 <h1 className="font-black text-xl text-secondary">Instagram Auto-Reply</h1>
              </div>
-             {step === 3 && (
+             {step === 3 && igUser && (
                <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full">
                      <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                     <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Live: {igUsername.split('/').pop()?.replace('@','')}</span>
+                     <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Live: @{igUser.username}</span>
                   </div>
                </div>
              )}
@@ -147,37 +143,28 @@ export default function AutoReplyPage() {
                         <i className="fi fi-brands-instagram"></i>
                      </div>
                      <div className="space-y-3">
-                        <h2 className="text-3xl font-black text-secondary">Connect Instagram</h2>
-                        <p className="text-gray-400 font-bold max-w-sm mx-auto leading-relaxed">Boost your engagement by automatically replying to DMs with your Monkey Bio links.</p>
+                        <h2 className="text-3xl font-black text-secondary">Connect Your Account</h2>
+                        <p className="text-gray-400 font-bold max-w-sm mx-auto leading-relaxed">Login with your existing Instagram ID to start using Auto-Reply features.</p>
                      </div>
                      
-                     <div className="max-w-sm mx-auto space-y-4">
-                        <div className="text-left space-y-2">
-                           <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Your Instagram Profile URL</label>
-                           <input 
-                             type="text" 
-                             value={igUsername}
-                             onChange={(e) => setIgUsername(e.target.value)}
-                             placeholder="https://instagram.com/your_name"
-                             className="w-full px-6 py-5 rounded-3xl bg-gray-50 border-2 border-transparent focus:border-primary/20 outline-none transition-all font-bold text-secondary text-sm"
-                           />
-                        </div>
+                     <div className="max-w-xs mx-auto pt-4">
                         <button 
-                          onClick={handleAuthSimulation}
+                          onClick={handleInstagramAuth}
                           disabled={submitting}
-                          className="w-full py-5 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white font-black rounded-3xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-70"
+                          className="w-full py-5 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white font-black rounded-3xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 group relative overflow-hidden"
                         >
+                           <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                            {submitting ? (
-                              <i className="fi fi-rr-spinner animate-spin"></i>
+                              <i className="fi fi-rr-spinner animate-spin text-xl"></i>
                            ) : (
                               <>
-                                 <i className="fi fi-brands-instagram text-xl"></i>
-                                 Authorize & Connect
+                                 <i className="fi fi-brands-instagram text-2xl"></i>
+                                 <span>Connect Instagram</span>
                               </>
                            )}
                         </button>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-8">Secure Official Authentication</p>
                      </div>
-                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Trusted by 1M+ creators</p>
                   </motion.div>
                 )}
 
@@ -194,13 +181,13 @@ export default function AutoReplyPage() {
                        </div>
                        <div className="space-y-2">
                           <h2 className="text-2xl font-black text-secondary">Is your account public?</h2>
-                          <p className="text-gray-400 font-bold max-w-sm mx-auto">Instagram requires your account to be <span className="text-secondary">Public</span> for Auto-Reply to work. Private accounts cannot use this feature.</p>
+                          <p className="text-gray-400 font-bold max-w-sm mx-auto">To link <span className="text-secondary">@{igUser?.username}</span>, ensure your account is public in Instagram settings.</p>
                        </div>
                        
                        <div className="grid grid-cols-1 gap-4 max-w-xs mx-auto">
                           <button 
                             onClick={() => handlePrivacyConfirm(true)}
-                            className="w-full py-5 bg-secondary text-white font-black rounded-3xl hover:bg-gray-800 transition-all flex items-center justify-center gap-3"
+                            className="w-full py-5 bg-secondary text-white font-black rounded-3xl hover:bg-gray-800 transition-all flex items-center justify-center gap-3 shadow-lg"
                           >
                              <i className="fi fi-rr-check-circle"></i> Yes, it's Public
                           </button>
@@ -211,58 +198,35 @@ export default function AutoReplyPage() {
                              It's Private
                           </button>
                        </div>
-                       
-                       <div className="pt-6 border-t border-gray-50 text-left">
-                          <p className="text-xs font-black text-secondary mb-4 uppercase tracking-widest">How to make public:</p>
-                          <ul className="text-sm font-bold text-gray-400 space-y-3">
-                             <li className="flex gap-3">
-                                <span className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] flex-shrink-0">1</span>
-                                Open Instagram Settings
-                             </li>
-                             <li className="flex gap-3">
-                                <span className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] flex-shrink-0">2</span>
-                                Tap Privacy {'>'} Account Privacy
-                             </li>
-                             <li className="flex gap-3">
-                                <span className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] flex-shrink-0">3</span>
-                                Toggle off 'Private Account'
-                             </li>
-                          </ul>
-                       </div>
                    </motion.div>
                 )}
 
-                {step === 3 && (
+                {step === 3 && igUser && (
                    <div className="space-y-10">
-                      {/* Configuration Card */}
+                      {/* Real Account Connection Card */}
                       <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm flex items-center justify-between"
                       >
                          <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 rounded-[24px] bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] flex items-center justify-center text-white text-2xl shadow-inner">
-                               <i className="fi fi-brands-instagram"></i>
+                            <div className="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]">
+                               <img src={igUser.profile_pic} className="w-full h-full rounded-full border-2 border-white object-cover" />
                             </div>
                             <div>
-                               <h3 className="text-xl font-black text-secondary">{igUsername.split('/').pop()?.replace('@','') || igUsername}</h3>
-                               <a 
-                                href={igUsername.startsWith('http') ? igUsername : `https://instagram.com/${igUsername.replace('@','')}`} 
-                                target="_blank" 
-                                className="text-[10px] font-bold text-primary hover:underline flex items-center gap-1 mt-1"
-                               >
-                                  {igUsername} <i className="fi fi-rr-arrow-up-right text-[8px]"></i>
-                               </a>
-                               <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest mt-1">Status: <span className="text-green-500">Active</span></p>
+                               <h3 className="text-xl font-black text-secondary">{igUser.full_name}</h3>
+                               <p className="text-sm font-bold text-primary flex items-center gap-1">
+                                  @{igUser.username} <i className="fi fi-rr-badge-check text-[12px]"></i>
+                               </p>
                             </div>
                          </div>
                          <div className="flex items-center gap-3">
                             <button 
                               onClick={() => {
-                                 const confirm = window.confirm("Disconnect Instagram?");
-                                 if (confirm) {
-                                    localStorage.removeItem(`ig_connected_${profile.id}`);
+                                 if (window.confirm("Disconnect account?")) {
+                                    localStorage.removeItem(`ig_connected_data_${profile.id}`);
                                     setStep(1);
+                                    setIgUser(null);
                                  }
                               }}
                               className="px-6 py-3 bg-gray-50 text-gray-400 hover:text-red-500 font-black text-xs rounded-2xl transition-all"
@@ -271,21 +235,21 @@ export default function AutoReplyPage() {
                             </button>
                             <label className="relative inline-flex items-center cursor-pointer ml-4">
                                <input type="checkbox" checked={autoReplyEnabled} onChange={(e) => setAutoReplyEnabled(e.target.checked)} className="sr-only peer" />
-                               <div className="w-14 h-8 bg-gray-100 peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
+                               <div className="w-14 h-8 bg-gray-100 rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:after:translate-x-full shadow-inner"></div>
                             </label>
                          </div>
                       </motion.div>
 
-                      {/* Main Dashboard Panel */}
+                      {/* Keywords & Preview */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                          <div className="md:col-span-2 space-y-6">
                             <div className="flex items-center justify-between">
-                               <h3 className="text-lg font-black text-secondary">Auto-Reply Keywords</h3>
+                               <h3 className="text-lg font-black text-secondary">Keywords</h3>
                                <button 
                                 onClick={() => setShowAddModal(true)}
                                 className="px-5 py-2.5 bg-secondary text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-md"
                                >
-                                  + New Keyword
+                                  + New keyword
                                </button>
                             </div>
 
@@ -299,60 +263,42 @@ export default function AutoReplyPage() {
                                   className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm group hover:shadow-md transition-all flex flex-col gap-4"
                                  >
                                     <div className="flex items-center justify-between">
-                                       <div className="flex items-center gap-3">
-                                          <div className="bg-orange-50 text-orange-500 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest">
-                                             Keyword: {kw.trigger}
-                                          </div>
-                                          <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                                       </div>
+                                       <span className="bg-orange-50 text-orange-500 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                                          Trigger: {kw.trigger}
+                                       </span>
                                        <button onClick={() => deleteKeyword(kw.id)} className="opacity-0 group-hover:opacity-100 p-2 text-gray-300 hover:text-red-500 transition-all">
                                           <i className="fi fi-rr-trash"></i>
                                        </button>
                                     </div>
-                                    <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 min-h-[60px]">
-                                       <p className="text-sm font-bold text-gray-500 italic leading-relaxed">"{kw.response}"</p>
-                                    </div>
+                                    <p className="text-sm font-bold text-gray-500 italic px-2 leading-relaxed">"{kw.response}"</p>
                                  </motion.div>
                                ))}
                             </div>
                          </div>
 
+                         {/* Preview */}
                          <div className="space-y-8">
-                            {/* Instagram Preview Card */}
                             <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm relative overflow-hidden">
                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] opacity-5 -mr-10 -mt-10 rounded-full blur-3xl"></div>
-                               <h3 className="text-sm font-black text-secondary mb-6 flex items-center gap-2">
-                                  <i className="fi fi-brands-instagram"></i> Live Preview
-                               </h3>
+                               <h3 className="text-sm font-black text-secondary mb-8">Live Preview</h3>
                                <div className="space-y-6">
                                   <div className="flex flex-col items-center">
-                                     <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] p-1 mb-3">
-                                        <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-0.5">
-                                           <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center text-gray-300 text-3xl">
-                                              <i className="fi fi-rr-user"></i>
-                                           </div>
-                                        </div>
-                                     </div>
-                                     <span className="font-black text-secondary">{igUsername.split('/').pop()?.replace('@','') || 'Username'}</span>
+                                     <img src={igUser.profile_pic} className="w-20 h-20 rounded-full border-4 border-gray-50 object-cover mb-3 shadow-md" />
+                                     <span className="font-black text-secondary">@{igUser.username}</span>
                                      <span className="text-[10px] font-bold text-gray-300 uppercase mt-1">Direct Message</span>
                                   </div>
-                                  <div className="space-y-3">
-                                     <div className="bg-gray-50 p-3 rounded-2xl rounded-bl-none ml-2 mr-10 shadow-sm border border-gray-100">
-                                        <p className="text-[10px] font-bold text-gray-500">How do I get your latest link?</p>
+                                  <div className="space-y-3 pt-4">
+                                     <div className="bg-gray-100 p-3 rounded-2xl rounded-bl-none ml-2 mr-10">
+                                        <p className="text-[10px] font-bold text-gray-500 leading-tight">Can you send me your bio links please?</p>
                                      </div>
                                      <motion.div 
                                       animate={{ scale: [0.95, 1], opacity: [0, 1] }}
                                       className="bg-primary p-3 rounded-2xl rounded-br-none ml-10 mr-2 shadow-sm"
                                      >
-                                        <p className="text-[10px] font-black text-secondary">Here is my latest link: monkeybio.com/user</p>
+                                        <p className="text-[10px] font-black text-secondary leading-tight">Sure! Here is my link: monkeybio.com/user</p>
                                      </motion.div>
                                   </div>
                                </div>
-                            </div>
-
-                            <div className="bg-secondary p-8 rounded-[40px] text-white">
-                               <h4 className="text-sm font-black uppercase tracking-widest mb-2 opacity-50">Pro Tip</h4>
-                               <p className="text-sm font-bold leading-relaxed">Use short keywords like <span className="text-primary italic">'link'</span> or <span className="text-primary italic">'sale'</span> to make it easy for your followers.</p>
                             </div>
                          </div>
                       </div>
@@ -385,35 +331,35 @@ export default function AutoReplyPage() {
                   <div className="p-8 border-b border-gray-50 flex items-center justify-between">
                      <div>
                         <h2 className="text-2xl font-black text-secondary">Add Auto-Reply</h2>
-                        <p className="text-sm text-gray-400 font-bold mt-1 uppercase tracking-widest">Connect keywords to actions</p>
+                        <p className="text-sm text-gray-400 font-bold mt-1 uppercase tracking-widest">Keyword integration</p>
                      </div>
-                     <button onClick={() => setShowAddModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-secondary transition-all"><i className="fi fi-rr-cross-small text-xl"></i></button>
+                     <button onClick={() => setShowAddModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-secondary"><i className="fi fi-rr-cross-small text-xl"></i></button>
                   </div>
                   <div className="p-8 space-y-6">
                      <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Trigger Keyword</label>
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Keyword</label>
                         <input 
                           type="text" 
                           value={newKeyword.trigger}
                           onChange={(e) => setNewKeyword({ ...newKeyword, trigger: e.target.value })}
                           className="w-full p-5 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-secondary"
-                          placeholder="e.g. 'link', 'price', 'help'"
+                          placeholder="e.g. 'link'"
                         />
                      </div>
                      <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Auto-Reply Message</label>
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Response</label>
                         <textarea 
                           value={newKeyword.response}
                           onChange={(e) => setNewKeyword({ ...newKeyword, response: e.target.value })}
                           className="w-full h-32 p-5 rounded-3xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-secondary"
-                          placeholder="What should it say?"
+                          placeholder="Your reply..."
                         ></textarea>
                      </div>
                      <button 
                        onClick={addKeyword}
                        className="w-full py-5 bg-secondary text-white font-black rounded-full hover:bg-gray-800 transition-all shadow-lg"
                      >
-                        Confirm Keyword
+                        Create
                      </button>
                   </div>
               </motion.div>
