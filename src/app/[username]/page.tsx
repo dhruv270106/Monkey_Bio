@@ -78,12 +78,11 @@ export default function PublicProfile() {
         </h1>
         <p className="text-sm font-bold opacity-70 mb-10">@{profile.username}</p>
         
-        {/* Bio Area */}
-        {profile.bio ? (
+        {profile.bio && (
           <p className="text-center px-8 mb-8 font-bold max-w-md leading-relaxed opacity-90">
             {profile.bio}
           </p>
-        ) : null}
+        )}
 
         {/* Social Icons Row (From Onboarding - Max 5) */}
         <div className="flex flex-wrap justify-center gap-8 mb-16 w-full">
