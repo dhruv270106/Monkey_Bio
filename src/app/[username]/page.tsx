@@ -78,8 +78,8 @@ export default function PublicProfile() {
         </h1>
         <p className="text-sm font-bold opacity-70 mb-10">@{profile.username}</p>
         
-        <p className="text-center px-8 mb-8 font-bold max-w-md leading-relaxed opacity-90 min-h-[1em]">
-          {profile.bio || ''}
+        <p className="text-center px-8 mb-8 font-bold max-w-md leading-relaxed opacity-90 break-words w-full">
+          {profile.bio}
         </p>
 
         {/* Social Icons Row (From Onboarding - Max 5) */}
