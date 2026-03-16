@@ -46,28 +46,40 @@ export default function AutoReplyPage() {
   const handleInstagramConnect = () => {
     setSubmitting(true)
     
-    // Simulate the real official connection flow
-    const authUrl = `https://api.instagram.com/oauth/authorize?client_id=MONKEY_BIO&redirect_uri=${window.location.origin}/dashboard/autoreply&scope=user_profile,user_media&response_type=code`;
-    const popup = window.open(authUrl, 'Connect Instagram', 'width=500,height=600,left=300,top=100');
+    // Instead of a real URL that 404s without a Client ID, we use our beautiful mock auth page
+    const authUrl = `/auth/instagram`;
+    const popup = window.open(authUrl, 'Connect Instagram', 'width=500,height=700,status=no,resizable=no,left=300,top=100');
 
-    setTimeout(() => {
-      if (popup) popup.close();
-      
-      // Using a generic but real-looking profile that represents "Connecting your main ID"
-      const realIgData = {
-        username: profile?.username || 'my_instagram',
-        full_name: profile?.display_name || 'My Official Account',
-        profile_pic: 'https://images.unsplash.com/photo-1611262588024-d12430b98920?w=100&h=100&fit=crop',
-        id: '123456789'
-      }
-      
-      setIgUser(realIgData)
-      if (profile?.id) {
-        localStorage.setItem(`ig_connected_data_${profile.id}`, JSON.stringify(realIgData))
-      }
-      setSubmitting(false)
-      setStep(2)
-    }, 2500)
+    // Listener for the message from the popup
+    const handleMessage = (event: MessageEvent) => {
+       if (event.data.type === 'INSTAGRAM_AUTH_SUCCESS') {
+          const realIgData = {
+            username: profile?.username || 'monkey_creator',
+            full_name: profile?.display_name || 'Monkey Bio User',
+            profile_pic: profile?.avatar_url || 'https://images.unsplash.com/photo-1611262588024-d12430b98920?w=100&h=100&fit=crop',
+            id: '123456789'
+          }
+          
+          setIgUser(realIgData)
+          if (profile?.id) {
+            localStorage.setItem(`ig_connected_data_${profile.id}`, JSON.stringify(realIgData))
+          }
+          setSubmitting(false)
+          setStep(2)
+          window.removeEventListener('message', handleMessage);
+       }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // Safety timeout in case user closes popup manually
+    const checkPopup = setInterval(() => {
+       if (!popup || popup.closed) {
+          clearInterval(checkPopup);
+          setSubmitting(false);
+          window.removeEventListener('message', handleMessage);
+       }
+    }, 1000);
   }
 
   if (loading) return null
