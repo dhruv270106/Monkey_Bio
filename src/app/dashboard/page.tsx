@@ -281,32 +281,18 @@ export default function Dashboard() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-1">
-                               <input 
-                                 type="text" 
-                                 value={link.title}
-                                 className="font-black text-lg text-secondary bg-transparent outline-none focus:border-b border-primary w-full mr-4 truncate"
-                                 onChange={(e) => {
-                                   const newLinks = links.map(l => l.id === link.id ? { ...l, title: e.target.value } : l)
-                                   setLinks(newLinks)
-                                 }}
-                                 onBlur={() => updateLinks(links)}
-                               />
+                               <h3 className="font-black text-lg text-secondary w-full mr-4 truncate">
+                                 {link.title}
+                               </h3>
                                <div className="flex items-center gap-4">
                                   <button onClick={() => toggleLink(link.id)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${link.active ? 'bg-primary' : 'bg-gray-200'}`}>
                                       <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${link.active ? 'translate-x-6' : 'translate-x-1'}`} />
                                   </button>
                                </div>
                             </div>
-                            <input 
-                              type="text" 
-                              value={link.url}
-                              className="text-xs font-medium text-gray-400 bg-transparent outline-none block w-full hover:text-secondary transition-colors truncate"
-                              onChange={(e) => {
-                                const newLinks = links.map(l => l.id === link.id ? { ...l, url: e.target.value } : l)
-                                setLinks(newLinks)
-                              }}
-                              onBlur={() => updateLinks(links)}
-                            />
+                            <p className="text-xs font-medium text-gray-400 block w-full truncate">
+                              {link.url}
+                            </p>
                           </div>
                         </div>
 
