@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/dashboard/Sidebar'
 import Preview from '@/components/dashboard/Preview'
 import { THEMES } from '@/data/themes'
+import ImageCropperModal from '@/components/modals/ImageCropperModal'
 
 interface Link {
   id: string
@@ -31,6 +32,8 @@ export default function DesignPage() {
   const [links, setLinks] = useState<Link[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [showCropper, setShowCropper] = useState(false)
+  const [selectedImage, setSelectedImage] = useState('')
 
   useEffect(() => {
     fetchData()
@@ -77,9 +80,9 @@ export default function DesignPage() {
     if (!file) return
 
     const reader = new FileReader()
-    reader.onloadend = async () => {
-      const base64 = reader.result as string
-      await updateProfile({ avatar_url: base64 })
+    reader.onloadend = () => {
+      setSelectedImage(reader.result as string)
+      setShowCropper(true)
     }
     reader.readAsDataURL(file)
   }
@@ -252,6 +255,13 @@ export default function DesignPage() {
 
         <Preview userProfile={profile} links={links} socialLinks={profile?.social_links} />
       </div>
+
+      <ImageCropperModal 
+        isOpen={showCropper}
+        imageSrc={selectedImage}
+        onClose={() => setShowCropper(false)}
+        onCropComplete={(croppedImage) => updateProfile({ avatar_url: croppedImage })}
+      />
     </div>
   )
 }

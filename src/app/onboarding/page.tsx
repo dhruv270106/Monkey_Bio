@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { THEMES } from '@/data/themes'
 import { PLATFORMS } from '@/data/platforms'
+import ImageCropperModal from '@/components/modals/ImageCropperModal'
 
 export default function Onboarding() {
   const [step, setStep] = useState(1)
@@ -22,6 +23,8 @@ export default function Onboarding() {
   const [displayName, setDisplayName] = useState('')
   const [bio, setBio] = useState('')
   const [avatar, setAvatar] = useState<string | null>(null)
+  const [showCropper, setShowCropper] = useState(false)
+  const [selectedImage, setSelectedImage] = useState('')
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -251,7 +254,10 @@ export default function Onboarding() {
                           const file = e.target.files?.[0]
                           if (file) {
                              const reader = new FileReader()
-                             reader.onloadend = () => setAvatar(reader.result as string)
+                             reader.onloadend = () => {
+                               setSelectedImage(reader.result as string)
+                               setShowCropper(true)
+                             }
                              reader.readAsDataURL(file)
                           }
                         }} />
@@ -311,6 +317,13 @@ export default function Onboarding() {
           </div>
         </div>
       </div>
+
+      <ImageCropperModal 
+        isOpen={showCropper}
+        imageSrc={selectedImage}
+        onClose={() => setShowCropper(false)}
+        onCropComplete={(croppedImage) => setAvatar(croppedImage)}
+      />
     </div>
   )
 }
