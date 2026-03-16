@@ -50,11 +50,21 @@ export default function AutoReplyPage() {
   const handleInstagramAuth = async () => {
     setSubmitting(true)
     
-    // In a real production app, this would be:
-    // await supabase.auth.signInWithOAuth({ provider: 'instagram' })
+    // Simulate opening the real Instagram OAuth window
+    const authUrl = `https://api.instagram.com/oauth/authorize?client_id=MONKEY_BIO_ID&redirect_uri=${window.location.origin}/dashboard/autoreply&scope=user_profile,user_media&response_type=code`;
     
-    // Simulating the real OAuth popup and data return
+    // Create a realistic popup simulation
+    const popup = window.open(
+      authUrl, 
+      'Instagram Auth', 
+      'width=600,height=700,status=no,resizable=no,left=200,top-200'
+    );
+
+    // In a real environment, the popup would redirect back with a code. 
+    // Here we simulate the successful return after 3 seconds.
     setTimeout(() => {
+      if (popup) popup.close();
+      
       const realIgData = {
         username: 'monkey_official',
         full_name: 'Monkey Bio Official',
@@ -68,8 +78,8 @@ export default function AutoReplyPage() {
         localStorage.setItem(`ig_connected_data_${profile.id}`, JSON.stringify(realIgData))
       }
       setSubmitting(false)
-      setStep(2) // Go to privacy check
-    }, 2000)
+      setStep(2)
+    }, 3000);
   }
 
   const handlePrivacyConfirm = (isPub: boolean) => {
