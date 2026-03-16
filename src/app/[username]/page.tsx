@@ -195,6 +195,75 @@ export default function PublicProfile() {
           ))}
         </div>
         
+        {/* Contact Form Section */}
+        <div className="w-full mt-12 bg-white/5 backdrop-blur-md rounded-[40px] p-8 border border-white/10">
+          <h3 className="text-xl font-black mb-6 flex items-center gap-2" style={{ color: profile.font_color || 'inherit' }}>
+            <i className="fi fi-rr-envelope"></i> Message Me
+          </h3>
+          <form 
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const name = formData.get('name') as string;
+              const email = formData.get('email') as string;
+              const message = formData.get('message') as string;
+
+              if (!name || !message) {
+                alert('Please fill in name and message');
+                return;
+              }
+
+              const { error } = await supabase
+                .from('messages')
+                .insert({
+                  profile_id: profile.id,
+                  sender_name: name,
+                  sender_email: email,
+                  message_text: message
+                });
+
+              if (error) {
+                alert('Error sending message. Make sure the "messages" table is created.');
+              } else {
+                alert('Message sent successfully!');
+                (e.target as HTMLFormElement).reset();
+              }
+            }}
+            className="space-y-4"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input 
+                name="name"
+                type="text" 
+                placeholder="Your Name" 
+                className="w-full px-6 py-4 bg-white/10 rounded-2xl border border-white/20 outline-none focus:border-primary transition-all font-bold placeholder:text-gray-400"
+                style={{ color: profile.font_color || 'inherit' }}
+                required
+              />
+              <input 
+                name="email"
+                type="email" 
+                placeholder="Email (Optional)" 
+                className="w-full px-6 py-4 bg-white/10 rounded-2xl border border-white/20 outline-none focus:border-primary transition-all font-bold placeholder:text-gray-400"
+                style={{ color: profile.font_color || 'inherit' }}
+              />
+            </div>
+            <textarea 
+              name="message"
+              placeholder="Your Message..." 
+              className="w-full px-6 py-4 bg-white/10 rounded-3xl border border-white/20 outline-none focus:border-primary transition-all font-bold placeholder:text-gray-400 h-32 resize-none"
+              style={{ color: profile.font_color || 'inherit' }}
+              required
+            />
+            <button 
+              type="submit"
+              className="w-full py-5 bg-primary text-secondary font-black rounded-full shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-lg"
+            >
+              Send Message
+            </button>
+          </form>
+        </div>
+
         <div className="mt-24 flex flex-col items-center gap-8">
            <button className="px-8 py-3 bg-white text-secondary font-black rounded-full shadow-2xl transform hover:scale-105 active:scale-95 transition-all">
               Join {profile.username} on Monkey
@@ -210,3 +279,4 @@ export default function PublicProfile() {
     </div>
   )
 }
+
