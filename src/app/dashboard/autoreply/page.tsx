@@ -138,10 +138,21 @@ export default function AutoReplyPage() {
                          >
                             {submitting ? <i className="fi fi-rr-spinner animate-spin"></i> : <><i className="fi fi-brands-instagram text-xl"></i> Connect Instagram</>}
                          </button>
-                         <p className="text-[10px] text-gray-400 font-bold">
+                          <p className="text-[10px] text-gray-400 font-bold">
                            Requires an <span className="text-secondary">Instagram Business/Creator</span> account linked to a <span className="text-secondary">Facebook Page</span>.
                          </p>
                       </div>
+
+                      <div className="max-w-md mx-auto p-6 bg-blue-50/50 rounded-3xl border border-blue-100/50 space-y-3">
+                         <div className="flex items-center gap-2 text-blue-600">
+                           <i className="fi fi-rr-info text-sm"></i>
+                           <span className="text-[10px] font-black uppercase tracking-widest">Why Facebook login?</span>
+                         </div>
+                         <p className="text-[11px] text-blue-800/70 font-bold leading-relaxed">
+                           To enable <span className="text-blue-900">Auto DM/Automated Messaging</span>, Meta requires access through their official Business API. This ensures your account remains secure while allowing Monkey Bio to handle automated replies on your behalf.
+                         </p>
+                      </div>
+
                       <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Official Meta Integration</p>
                    </motion.div>
                 ) : (

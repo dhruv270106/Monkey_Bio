@@ -56,7 +56,10 @@ export async function POST(req: Request) {
     }
 
     if (!igAccount) {
-      return NextResponse.json({ error: 'No Instagram Business Account linked to your Facebook Pages. Please ensure you have an IG Business/Creator account connected to a FB Page.' }, { status: 400 })
+      return NextResponse.json({ 
+        error: 'Instagram Business Account not found.',
+        details: 'Please ensure: 1. Your Instagram is a Professional/Creator account. 2. It is linked to the Facebook Page you selected. 3. You granted "Manage Messages" permission.'
+      }, { status: 400 })
     }
 
     // 5. Store in Supabase
