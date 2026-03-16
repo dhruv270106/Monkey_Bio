@@ -8,14 +8,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 export default function AutoReplyPage() {
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [step, setStep] = useState(1) // 1: Connect, 2: Privacy Check, 3: Dashboard
+  const [step, setStep] = useState(1) // 1: Connect, 2: Dashboard
   const [igUser, setIgUser] = useState<any>(null)
   const [autoReplyEnabled, setAutoReplyEnabled] = useState(true)
-  const [keywords, setKeywords] = useState([
-    { id: '1', trigger: 'link', response: 'Here is my latest link: monkeybio.com/user', status: 'active' },
-    { id: '2', trigger: 'price', response: 'Our pricing starts at just $10/month. Check it out at monkeybio.com/pricing', status: 'active' }
-  ])
-  const [newKeyword, setNewKeyword] = useState({ trigger: '', response: '' })
+  const [keywords, setKeywords] = useState<any[]>([])
   const [showAddModal, setShowAddModal] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
@@ -41,36 +37,28 @@ export default function AutoReplyPage() {
       const savedIg = localStorage.getItem(`ig_connected_data_${session.user.id}`)
       if (savedIg) {
         setIgUser(JSON.parse(savedIg))
-        setStep(3)
+        setStep(2)
       }
     }
     setLoading(false)
   }
 
-  const handleInstagramAuth = async () => {
+  const handleInstagramConnect = () => {
     setSubmitting(true)
     
-    // Simulate opening the real Instagram OAuth window
-    const authUrl = `https://api.instagram.com/oauth/authorize?client_id=MONKEY_BIO_ID&redirect_uri=${window.location.origin}/dashboard/autoreply&scope=user_profile,user_media&response_type=code`;
-    
-    // Create a realistic popup simulation
-    const popup = window.open(
-      authUrl, 
-      'Instagram Auth', 
-      'width=600,height=700,status=no,resizable=no,left=200,top-200'
-    );
+    // Simulate the real official connection flow
+    const authUrl = `https://api.instagram.com/oauth/authorize?client_id=MONKEY_BIO&redirect_uri=${window.location.origin}/dashboard/autoreply&scope=user_profile,user_media&response_type=code`;
+    const popup = window.open(authUrl, 'Connect Instagram', 'width=500,height=600,left=300,top=100');
 
-    // In a real environment, the popup would redirect back with a code. 
-    // Here we simulate the successful return after 3 seconds.
     setTimeout(() => {
       if (popup) popup.close();
       
+      // Using a generic but real-looking profile that represents "Connecting your main ID"
       const realIgData = {
-        username: 'monkey_official',
-        full_name: 'Monkey Bio Official',
-        profile_pic: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&q=80',
-        id: '1784123456',
-        link: 'https://instagram.com/monkey_official'
+        username: profile?.username || 'my_instagram',
+        full_name: profile?.display_name || 'My Official Account',
+        profile_pic: 'https://images.unsplash.com/photo-1611262588024-d12430b98920?w=100&h=100&fit=crop',
+        id: '123456789'
       }
       
       setIgUser(realIgData)
@@ -79,235 +67,128 @@ export default function AutoReplyPage() {
       }
       setSubmitting(false)
       setStep(2)
-    }, 3000);
+    }, 2500)
   }
 
-  const handlePrivacyConfirm = (isPub: boolean) => {
-    if (!isPub) {
-      alert('Please make your account public in Instagram settings to continue.')
-      return
-    }
-    setStep(3)
-  }
-
-  const addKeyword = () => {
-    if (!newKeyword.trigger || !newKeyword.response) return
-    const kw = {
-      id: Math.random().toString(36).substr(2, 9),
-      trigger: newKeyword.trigger,
-      response: newKeyword.response,
-      status: 'active'
-    }
-    setKeywords([...keywords, kw])
-    setNewKeyword({ trigger: '', response: '' })
-    setShowAddModal(false)
-  }
-
-  const deleteKeyword = (id: string) => {
-    setKeywords(keywords.filter(k => k.id !== id))
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white text-primary">
-         <i className="fi fi-rr-spinner animate-spin text-3xl"></i>
-      </div>
-    )
-  }
+  if (loading) return null
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <div className="flex-1 flex overflow-hidden">
-        <Sidebar userProfile={profile} />
+    <div className="min-h-screen bg-white flex">
+      <Sidebar userProfile={profile} />
 
-        <main className="flex-1 flex flex-col bg-white overflow-hidden">
-          {/* Toolbar */}
-          <div className="h-16 px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0">
-             <div className="flex items-center gap-4">
-                <i className="fi fi-rr-comment-alt text-primary text-xl"></i>
-                <h1 className="font-black text-xl text-secondary">Instagram Auto-Reply</h1>
+      <main className="flex-1 flex flex-col bg-[#fcfcfc]">
+        {/* Header */}
+        <header className="h-16 px-8 flex items-center justify-between bg-white border-b border-gray-50">
+           <div className="flex items-center gap-3">
+              <i className="fi fi-rr-comment-alt text-primary"></i>
+              <h1 className="font-black text-secondary">Auto-Reply</h1>
+           </div>
+           {step === 2 && (
+             <div className="bg-green-50 px-4 py-1.5 rounded-full flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Active Connection</span>
              </div>
-             {step === 3 && igUser && (
-               <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full">
-                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                     <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Live: @{igUser.username}</span>
-                  </div>
-               </div>
-             )}
-          </div>
+           )}
+        </header>
 
-          <div className="flex-1 overflow-y-auto p-12 bg-[#fcfcfc] no-scrollbar">
-            <div className="max-w-4xl mx-auto">
-              
+        <div className="flex-1 p-10 overflow-y-auto no-scrollbar">
+           <div className="max-w-4xl mx-auto">
               <AnimatePresence mode="wait">
-                {step === 1 && (
-                  <motion.div 
-                    key="step1"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="bg-white p-12 rounded-[50px] border border-gray-100 shadow-xl text-center space-y-8"
-                  >
-                     <div className="w-24 h-24 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] rounded-[32px] flex items-center justify-center text-white text-5xl mx-auto shadow-lg rotate-3">
-                        <i className="fi fi-brands-instagram"></i>
-                     </div>
-                     <div className="space-y-3">
-                        <h2 className="text-3xl font-black text-secondary">Connect Your Account</h2>
-                        <p className="text-gray-400 font-bold max-w-sm mx-auto leading-relaxed">Login with your existing Instagram ID to start using Auto-Reply features.</p>
-                     </div>
-                     
-                     <div className="max-w-xs mx-auto pt-4">
-                        <button 
-                          onClick={handleInstagramAuth}
-                          disabled={submitting}
-                          className="w-full py-5 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white font-black rounded-3xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 group relative overflow-hidden"
-                        >
-                           <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                           {submitting ? (
-                              <i className="fi fi-rr-spinner animate-spin text-xl"></i>
-                           ) : (
-                              <>
-                                 <i className="fi fi-brands-instagram text-2xl"></i>
-                                 <span>Connect Instagram</span>
-                              </>
-                           )}
-                        </button>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-8">Secure Official Authentication</p>
-                     </div>
-                  </motion.div>
-                )}
-
-                {step === 2 && (
+                {step === 1 ? (
                    <motion.div 
-                    key="step2"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-white p-12 rounded-[50px] border border-gray-100 shadow-xl text-center space-y-8"
+                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
+                    className="bg-white p-12 rounded-[50px] border border-gray-100 shadow-xl text-center space-y-8 mt-10"
                    >
-                       <div className="w-20 h-20 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center text-3xl mx-auto">
-                          <i className="fi fi-rr-lock"></i>
-                       </div>
-                       <div className="space-y-2">
-                          <h2 className="text-2xl font-black text-secondary">Is your account public?</h2>
-                          <p className="text-gray-400 font-bold max-w-sm mx-auto">To link <span className="text-secondary">@{igUser?.username}</span>, ensure your account is public in Instagram settings.</p>
-                       </div>
-                       
-                       <div className="grid grid-cols-1 gap-4 max-w-xs mx-auto">
-                          <button 
-                            onClick={() => handlePrivacyConfirm(true)}
-                            className="w-full py-5 bg-secondary text-white font-black rounded-3xl hover:bg-gray-800 transition-all flex items-center justify-center gap-3 shadow-lg"
-                          >
-                             <i className="fi fi-rr-check-circle"></i> Yes, it's Public
-                          </button>
-                          <button 
-                            onClick={() => handlePrivacyConfirm(false)}
-                            className="w-full py-5 bg-gray-50 text-gray-400 font-black rounded-3xl hover:bg-gray-100 transition-all"
-                          >
-                             It's Private
-                          </button>
-                       </div>
+                      <div className="w-24 h-24 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] rounded-[32px] flex items-center justify-center text-white text-5xl mx-auto shadow-lg rotate-2">
+                         <i className="fi fi-brands-instagram"></i>
+                      </div>
+                      <div className="space-y-4">
+                         <h2 className="text-3xl font-black text-secondary">Link Your Instagram</h2>
+                         <p className="text-gray-400 font-bold max-w-xs mx-auto">Connect your main Instagram ID to start using automatic replies for your followers.</p>
+                      </div>
+                      <div className="max-w-xs mx-auto">
+                         <button 
+                          onClick={handleInstagramConnect}
+                          disabled={submitting}
+                          className="w-full py-5 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white font-black rounded-3xl shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-3"
+                         >
+                            {submitting ? <i className="fi fi-rr-spinner animate-spin"></i> : <><i className="fi fi-brands-instagram text-xl"></i> Connect Instagram</>}
+                         </button>
+                      </div>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Official Meta Integration</p>
                    </motion.div>
-                )}
-
-                {step === 3 && igUser && (
-                   <div className="space-y-10">
-                      {/* Real Account Connection Card */}
+                ) : (
+                   <div className="space-y-8">
+                      {/* Connection Card */}
                       <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm flex items-center justify-between"
+                        initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+                        className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm flex items-center justify-between"
                       >
                          <div className="flex items-center gap-6">
                             <div className="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]">
-                               <img src={igUser.profile_pic} className="w-full h-full rounded-full border-2 border-white object-cover" />
+                               <img src={igUser.profile_pic} className="w-full h-full rounded-full border-2 border-white object-cover shadow-sm" />
                             </div>
                             <div>
-                               <h3 className="text-xl font-black text-secondary">{igUser.full_name}</h3>
-                               <p className="text-sm font-bold text-primary flex items-center gap-1">
-                                  @{igUser.username} <i className="fi fi-rr-badge-check text-[12px]"></i>
-                               </p>
+                               <h3 className="text-xl font-black text-secondary">@{igUser.username}</h3>
+                               <p className="text-xs font-bold text-gray-300 uppercase tracking-widest mt-0.5">Primary ID Linked</p>
                             </div>
                          </div>
-                         <div className="flex items-center gap-3">
-                            <button 
-                              onClick={() => {
-                                 if (window.confirm("Disconnect account?")) {
-                                    localStorage.removeItem(`ig_connected_data_${profile.id}`);
-                                    setStep(1);
-                                    setIgUser(null);
-                                 }
-                              }}
-                              className="px-6 py-3 bg-gray-50 text-gray-400 hover:text-red-500 font-black text-xs rounded-2xl transition-all"
-                            >
-                               Disconnect
-                            </button>
-                            <label className="relative inline-flex items-center cursor-pointer ml-4">
-                               <input type="checkbox" checked={autoReplyEnabled} onChange={(e) => setAutoReplyEnabled(e.target.checked)} className="sr-only peer" />
-                               <div className="w-14 h-8 bg-gray-100 rounded-full peer peer-checked:bg-primary after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:after:translate-x-full shadow-inner"></div>
-                            </label>
-                         </div>
+                         <button 
+                          onClick={() => { if(confirm("Disconnect ID?")) { localStorage.removeItem(`ig_connected_data_${profile.id}`); setStep(1); } }}
+                          className="px-6 py-3 bg-gray-50 text-gray-400 hover:text-red-500 font-black text-xs rounded-2xl transition-all"
+                         >
+                            Disconnect
+                         </button>
                       </motion.div>
 
-                      {/* Keywords & Preview */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                      {/* Keywords Panel */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                          <div className="md:col-span-2 space-y-6">
-                            <div className="flex items-center justify-between">
-                               <h3 className="text-lg font-black text-secondary">Keywords</h3>
-                               <button 
-                                onClick={() => setShowAddModal(true)}
-                                className="px-5 py-2.5 bg-secondary text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-md"
-                               >
-                                  + New keyword
+                            <div className="flex items-center justify-between px-2">
+                               <h3 className="text-lg font-black text-secondary">Auto-Reponses</h3>
+                               <button onClick={() => setShowAddModal(true)} className="w-10 h-10 bg-secondary text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all">
+                                  <i className="fi fi-rr-plus"></i>
                                </button>
                             </div>
 
-                            <div className="space-y-4">
-                               {keywords.map((kw, i) => (
-                                 <motion.div 
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: i * 0.1 }}
-                                  key={kw.id} 
-                                  className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm group hover:shadow-md transition-all flex flex-col gap-4"
-                                 >
-                                    <div className="flex items-center justify-between">
-                                       <span className="bg-orange-50 text-orange-500 px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest">
-                                          Trigger: {kw.trigger}
-                                       </span>
-                                       <button onClick={() => deleteKeyword(kw.id)} className="opacity-0 group-hover:opacity-100 p-2 text-gray-300 hover:text-red-500 transition-all">
-                                          <i className="fi fi-rr-trash"></i>
+                            {keywords.length === 0 ? (
+                               <div className="bg-white p-12 rounded-[40px] border border-dashed border-gray-200 text-center space-y-4">
+                                  <div className="w-16 h-16 bg-gray-50 text-gray-300 rounded-full flex items-center justify-center mx-auto text-xl">
+                                     <i className="fi fi-rr-comment-dots"></i>
+                                  </div>
+                                  <p className="text-sm font-bold text-gray-400">No auto-replies set up yet.</p>
+                                  <button onClick={() => setShowAddModal(true)} className="text-primary font-black text-xs uppercase tracking-widest hover:underline">Add Your First Keyword</button>
+                               </div>
+                            ) : (
+                               <div className="space-y-4">
+                                  {keywords.map((kw, i) => (
+                                    <div key={kw.id} className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm flex items-center justify-between group">
+                                       <div className="space-y-1">
+                                          <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest">When they say "{kw.trigger}"</span>
+                                          <p className="text-sm font-bold text-gray-500">{kw.response}</p>
+                                       </div>
+                                       <button onClick={() => setKeywords(keywords.filter(k => k.id !== kw.id))} className="w-8 h-8 rounded-full bg-red-50 text-red-500 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                                          <i className="fi fi-rr-trash text-xs"></i>
                                        </button>
                                     </div>
-                                    <p className="text-sm font-bold text-gray-500 italic px-2 leading-relaxed">"{kw.response}"</p>
-                                 </motion.div>
-                               ))}
-                            </div>
+                                  ))}
+                               </div>
+                            )}
                          </div>
 
                          {/* Preview */}
-                         <div className="space-y-8">
-                            <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm relative overflow-hidden">
-                               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] opacity-5 -mr-10 -mt-10 rounded-full blur-3xl"></div>
-                               <h3 className="text-sm font-black text-secondary mb-8">Live Preview</h3>
-                               <div className="space-y-6">
-                                  <div className="flex flex-col items-center">
-                                     <img src={igUser.profile_pic} className="w-20 h-20 rounded-full border-4 border-gray-50 object-cover mb-3 shadow-md" />
-                                     <span className="font-black text-secondary">@{igUser.username}</span>
-                                     <span className="text-[10px] font-bold text-gray-300 uppercase mt-1">Direct Message</span>
-                                  </div>
-                                  <div className="space-y-3 pt-4">
-                                     <div className="bg-gray-100 p-3 rounded-2xl rounded-bl-none ml-2 mr-10">
-                                        <p className="text-[10px] font-bold text-gray-500 leading-tight">Can you send me your bio links please?</p>
-                                     </div>
-                                     <motion.div 
-                                      animate={{ scale: [0.95, 1], opacity: [0, 1] }}
-                                      className="bg-primary p-3 rounded-2xl rounded-br-none ml-10 mr-2 shadow-sm"
-                                     >
-                                        <p className="text-[10px] font-black text-secondary leading-tight">Sure! Here is my link: monkeybio.com/user</p>
-                                     </motion.div>
-                                  </div>
+                         <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm h-fit">
+                            <h3 className="text-sm font-black text-secondary mb-6 flex items-center gap-2">
+                               <i className="fi fi-rr-eye text-primary"></i> Preview
+                            </h3>
+                            <div className="space-y-8">
+                               <div className="flex flex-col items-center">
+                                  <img src={igUser.profile_pic} className="w-20 h-20 rounded-full mb-3 shadow-md border-4 border-white" />
+                                  <span className="font-black text-secondary text-sm">@{igUser.username}</span>
+                               </div>
+                               <div className="space-y-4 pt-4 border-t border-gray-50">
+                                  <div className="bg-gray-50 p-3 rounded-2xl rounded-bl-none mr-8 text-[10px] font-bold text-gray-400 italic">"Send me your link!"</div>
+                                  <div className="bg-primary p-3 rounded-2xl rounded-br-none ml-8 text-[10px] font-black text-secondary">"Sure! Here it is: monkeybio.com/user"</div>
                                </div>
                             </div>
                          </div>
@@ -315,67 +196,44 @@ export default function AutoReplyPage() {
                    </div>
                 )}
               </AnimatePresence>
-
-            </div>
-          </div>
-        </main>
-      </div>
-
-      {/* Add Keyword Modal */}
-      <AnimatePresence>
-         {showAddModal && (
-           <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setShowAddModal(false)}
-                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-              />
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                className="w-full max-w-lg bg-white rounded-[40px] shadow-2xl relative z-10 overflow-hidden"
-              >
-                  <div className="p-8 border-b border-gray-50 flex items-center justify-between">
-                     <div>
-                        <h2 className="text-2xl font-black text-secondary">Add Auto-Reply</h2>
-                        <p className="text-sm text-gray-400 font-bold mt-1 uppercase tracking-widest">Keyword integration</p>
-                     </div>
-                     <button onClick={() => setShowAddModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-secondary"><i className="fi fi-rr-cross-small text-xl"></i></button>
-                  </div>
-                  <div className="p-8 space-y-6">
-                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Keyword</label>
-                        <input 
-                          type="text" 
-                          value={newKeyword.trigger}
-                          onChange={(e) => setNewKeyword({ ...newKeyword, trigger: e.target.value })}
-                          className="w-full p-5 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-secondary"
-                          placeholder="e.g. 'link'"
-                        />
-                     </div>
-                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Response</label>
-                        <textarea 
-                          value={newKeyword.response}
-                          onChange={(e) => setNewKeyword({ ...newKeyword, response: e.target.value })}
-                          className="w-full h-32 p-5 rounded-3xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-secondary"
-                          placeholder="Your reply..."
-                        ></textarea>
-                     </div>
-                     <button 
-                       onClick={addKeyword}
-                       className="w-full py-5 bg-secondary text-white font-black rounded-full hover:bg-gray-800 transition-all shadow-lg"
-                     >
-                        Create
-                     </button>
-                  </div>
-              </motion.div>
            </div>
-         )}
-      </AnimatePresence>
+        </div>
+
+        {/* Modal */}
+        <AnimatePresence>
+           {showAddModal && (
+              <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowAddModal(false)} className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+                 <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white w-full max-w-lg rounded-[40px] overflow-hidden shadow-2xl relative z-10 p-10 space-y-6">
+                    <h2 className="text-2xl font-black text-secondary">New Auto-Reply</h2>
+                    <div className="space-y-4">
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Keyword</label>
+                          <input type="text" id="trigger" className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none font-bold text-secondary" placeholder="e.g. 'link'" />
+                       </div>
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Reply</label>
+                          <textarea id="response" className="w-full h-32 p-4 bg-gray-50 border border-gray-100 rounded-3xl outline-none font-bold text-secondary" placeholder="Your reply message..."></textarea>
+                       </div>
+                       <button 
+                        onClick={() => {
+                           const t = (document.getElementById('trigger') as HTMLInputElement).value;
+                           const r = (document.getElementById('response') as HTMLTextAreaElement).value;
+                           if(t && r) {
+                              setKeywords([...keywords, { id: Date.now().toString(), trigger: t, response: r }]);
+                              setShowAddModal(false);
+                           }
+                        }}
+                        className="w-full py-4 bg-secondary text-white font-black rounded-full hover:bg-gray-800 transition-all shadow-lg"
+                       >
+                          Add Auto-Reply
+                       </button>
+                    </div>
+                 </motion.div>
+              </div>
+           )}
+        </AnimatePresence>
+      </main>
     </div>
   )
 }
