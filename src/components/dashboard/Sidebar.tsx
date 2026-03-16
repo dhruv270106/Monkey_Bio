@@ -29,7 +29,7 @@ export default function Sidebar({ userProfile }: SidebarProps) {
       label: 'Analytics',
       items: [
         { label: 'Audience', href: '/dashboard/audience', icon: 'fi-rr-users', color: 'text-orange-500' },
-        { label: 'Insights', href: '#', icon: 'fi-rr-stats', color: 'text-cyan-500' },
+        { label: 'Insights', href: '/dashboard/insights', icon: 'fi-rr-stats', color: 'text-cyan-500' },
       ]
     }
   ]
