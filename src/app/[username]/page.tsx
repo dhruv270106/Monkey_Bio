@@ -21,11 +21,32 @@ export default function PublicProfile() {
         .eq('username', (username as string).toLowerCase())
         .single()
       
-      if (data) setProfile(data)
+      if (data) {
+        setProfile(data)
+        // Track Profile View
+        trackEvent('view', data.id)
+      }
       setLoading(false)
     }
     fetchProfile()
   }, [username])
+
+  const trackEvent = async (type: string, profileId: string, linkId?: string) => {
+    try {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+      const isTablet = /iPad|Android|Touch/i.test(navigator.userAgent) && !isMobile
+      const device = isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop'
+
+      await supabase.from('analytics').insert({
+        profile_id: profileId,
+        event_type: type,
+        link_id: linkId,
+        device: device
+      })
+    } catch (e) {
+      console.error("Tracking error:", e)
+    }
+  }
 
   if (loading) {
     return (
@@ -181,6 +202,7 @@ export default function PublicProfile() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackEvent('click', profile.id, link.id || link.title)}
               className={`block w-full py-6 px-8 font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 flex items-center justify-between group text-lg tracking-wide`}
               style={getButtonStyle()}
             >
