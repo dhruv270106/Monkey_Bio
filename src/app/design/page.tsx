@@ -346,6 +346,7 @@ export default function DesignPage() {
                                 loop
                                 muted
                                 playsInline
+                                poster={theme.image}
                                 className="absolute inset-0 w-full h-full object-cover"
                               >
                                 <source src={theme.video} type="video/mp4" />

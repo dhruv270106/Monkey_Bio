@@ -133,6 +133,7 @@ export default function PublicProfile() {
             loop
             muted
             playsInline
+            poster={selectedTheme.image}
             className="absolute inset-0 w-full h-full object-cover"
           >
             <source src={selectedTheme.video} type="video/mp4" />
