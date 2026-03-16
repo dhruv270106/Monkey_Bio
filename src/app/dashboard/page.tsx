@@ -200,7 +200,7 @@ export default function Dashboard() {
                           )}
                           <div className="flex items-center gap-4 mt-3">
                              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                                <i className="fi fi-rr-link text-[10px]"></i> linktr.ee/{profile?.username}
+                                <i className="fi fi-rr-link text-[10px]"></i> monkey.link/{profile?.username}
                              </span>
                           </div>
                       </div>

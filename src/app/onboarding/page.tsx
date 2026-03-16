@@ -115,7 +115,7 @@ export default function Onboarding() {
                 
                 <div className="space-y-4">
                   <div className="relative">
-                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary/30 font-bold">linktr.ee/</span>
+                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary/30 font-bold">monkey.link/</span>
                     <input 
                       type="text" 
                       value={username}

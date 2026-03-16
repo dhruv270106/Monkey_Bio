@@ -61,7 +61,7 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
       <div className="w-full p-8 flex items-center justify-center gap-3">
           <div className="bg-gray-100 flex items-center rounded-xl p-1 w-full max-w-sm">
               <span className="px-4 text-[10px] font-bold text-gray-400 truncate">
-                linktr.ee/{userProfile?.username || 'user'}
+                monkey.link/{userProfile?.username || 'user'}
               </span>
               <button className="p-2 bg-white rounded-lg shadow-sm ml-auto flex items-center justify-center">
                 <i className="fi fi-rr-share text-[10px]"></i>
