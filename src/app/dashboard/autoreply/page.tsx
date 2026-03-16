@@ -20,6 +20,7 @@ export default function AutoReplyPage() {
   ])
   const [newKeyword, setNewKeyword] = useState({ trigger: '', response: '' })
   const [showAddModal, setShowAddModal] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -137,21 +138,27 @@ export default function AutoReplyPage() {
                         <p className="text-gray-400 font-bold max-w-sm mx-auto leading-relaxed">Boost your engagement by automatically replying to DMs with your Monkey Bio links.</p>
                      </div>
                      <div className="max-w-xs mx-auto space-y-4">
-                        <div className="relative">
-                           <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-black">@</span>
-                           <input 
-                             type="text" 
-                             value={igUsername.replace('@', '')}
-                             onChange={(e) => setIgUsername('@' + e.target.value)}
-                             placeholder="your_username"
-                             className="w-full pl-12 pr-6 py-5 rounded-3xl bg-gray-50 border-2 border-transparent focus:border-primary/20 outline-none transition-all font-black text-secondary"
-                           />
-                        </div>
                         <button 
-                          onClick={handleConnect}
-                          className="w-full py-5 bg-primary text-secondary font-black rounded-3xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
+                          onClick={() => {
+                             setSubmitting(true);
+                             // Simulating Instagram OAuth Popup
+                             setTimeout(() => {
+                                setIgUsername('@monkey_creator'); // Mocked username from "auth"
+                                setSubmitting(false);
+                                setStep(2);
+                             }, 1500);
+                          }}
+                          disabled={submitting}
+                          className="w-full py-5 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white font-black rounded-3xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-70"
                         >
-                           Connect Account
+                           {submitting ? (
+                              <i className="fi fi-rr-spinner animate-spin"></i>
+                           ) : (
+                              <>
+                                 <i className="fi fi-brands-instagram text-xl"></i>
+                                 Connect with Instagram
+                              </>
+                           )}
                         </button>
                      </div>
                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Trusted by 1M+ creators</p>
