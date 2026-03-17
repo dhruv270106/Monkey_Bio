@@ -103,7 +103,7 @@ export default function PublicProfile() {
 
   return (
     <div 
-      className={`min-h-screen w-full flex flex-col items-center transition-colors duration-500 relative overflow-x-hidden ${selectedTheme.text}`}
+      className={`h-screen w-full flex flex-col items-center transition-colors duration-500 relative overflow-hidden overscroll-y-none ${selectedTheme.text}`}
     >
       {/* Background Layer with Blur */}
       <div 
@@ -149,14 +149,9 @@ export default function PublicProfile() {
         />
       )}
 
-      {/* Main Container - Centered Mobile Like Column */}
-      <div className="relative z-10 w-full flex justify-center py-20 px-4">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="w-full max-w-[420px] flex flex-col items-center"
-        >
+      {/* Main Content Scroll Area */}
+      <div className="relative z-10 w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col items-center">
+        <div className="w-full max-w-[420px] flex flex-col items-center py-20 px-4 min-h-full">
           {/* Top Utilities */}
           <div className="w-full flex justify-between absolute top-10 left-0 px-8 items-center">
              <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
@@ -298,7 +293,7 @@ export default function PublicProfile() {
                 </div>
              </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* QR Code - Bottom Right Mobile Corner */}
