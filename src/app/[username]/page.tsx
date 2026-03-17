@@ -209,25 +209,50 @@ export default function PublicProfile() {
 
         {/* Links Section (Only Cards/Boxes) */}
         <div className="w-full space-y-4">
-          {profile.links?.filter((l: any) => l.active).map((link: any, i: number) => (
-            <a 
-              key={i}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackEvent('click', profile.id, link.id || link.title)}
-              className={`block w-full py-6 px-8 font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 flex items-center justify-between group text-lg tracking-wide`}
-              style={getButtonStyle()}
-            >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border border-black/5 bg-white/10">
-                 <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-2xl opacity-80`}></i>
-              </div>
-              <span className="flex-1 text-center truncate px-4">{link.title}</span>
-              <div className="w-10 opacity-30 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                 <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
-              </div>
-            </a>
-          ))}
+          {profile.links?.filter((l: any) => l.active).map((link: any, i: number) => {
+            const isFeatured = link.layout === 'featured'
+            return (
+              <a 
+                key={i}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('click', profile.id, link.id || link.title)}
+                className={`block w-full font-black shadow-lg hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 flex ${isFeatured ? 'flex-col overflow-hidden' : 'items-center py-6 px-8'} group text-lg tracking-wide`}
+                style={getButtonStyle()}
+              >
+                {isFeatured ? (
+                  <>
+                    {link.thumbnail && (
+                      <div className="w-full aspect-video overflow-hidden border-b border-black/5">
+                         <img src={link.thumbnail} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="p-6 text-center relative w-full">
+                       {link.title}
+                       <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-30 group-hover:opacity-100 transition-opacity">
+                          <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
+                       </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 border border-black/5 bg-white/10 overflow-hidden">
+                       {link.thumbnail ? (
+                         <img src={link.thumbnail} className="w-full h-full object-cover" />
+                       ) : (
+                         <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-2xl opacity-80`}></i>
+                       )}
+                    </div>
+                    <span className="flex-1 text-center truncate px-4">{link.title}</span>
+                    <div className="w-10 opacity-30 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                       <i className="fi fi-rr-menu-dots-vertical text-lg"></i>
+                    </div>
+                  </>
+                )}
+              </a>
+            )
+          })}
         </div>
         
         {/* Contact Form Section */}

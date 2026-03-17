@@ -189,24 +189,49 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
 
                  {/* Regular Links (From Dashboard Add Link - Box Style) */}
                  <div className="w-full space-y-3">
-                    {links && links.filter((l: any) => l.active).map((link: any, i: number) => (
-                      <a 
-                        key={i} 
-                        href={link.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={`w-full py-4 px-4 transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex items-center justify-between group`}
-                        style={getButtonStyle()}
-                      >
-                        <div className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 border border-black/5">
-                           <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-[10px] opacity-70`}></i>
-                        </div>
-                        <span className="flex-1 text-center truncate px-2">{link.title}</span>
-                        <div className="w-5 opacity-30 flex items-center justify-center">
-                           <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
-                        </div>
-                      </a>
-                    ))}
+                    {links && links.filter((l: any) => l.active).map((link: any, i: number) => {
+                      const isFeatured = link.layout === 'featured'
+                      return (
+                        <a 
+                          key={i} 
+                          href={link.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={`w-full transition-all text-[11px] font-bold shadow-sm cursor-pointer hover:scale-[1.01] flex ${isFeatured ? 'flex-col overflow-hidden' : 'items-center py-2.5 px-3'} group`}
+                          style={getButtonStyle()}
+                        >
+                          {isFeatured ? (
+                            <>
+                              {link.thumbnail && (
+                                <div className="w-full aspect-video overflow-hidden border-b border-black/5">
+                                   <img src={link.thumbnail} className="w-full h-full object-cover" />
+                                </div>
+                              )}
+                              <div className="p-3 text-center relative">
+                                 {link.title}
+                                 <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-30">
+                                    <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
+                                 </div>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0 border border-black/5 bg-black/5">
+                                 {link.thumbnail ? (
+                                   <img src={link.thumbnail} className="w-full h-full object-cover" />
+                                 ) : (
+                                   <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-[12px] opacity-70`}></i>
+                                 )}
+                              </div>
+                              <span className="flex-1 text-center truncate px-2">{link.title}</span>
+                              <div className="w-5 opacity-30 flex items-center justify-center">
+                                 <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
+                              </div>
+                            </>
+                          )}
+                        </a>
+                      )
+                    })}
                     {(!links || links.filter((l: any) => l.active).length === 0) && (
                       <div className="space-y-3 w-full opacity-10">
                         <div className={`w-full h-12 rounded-xl ${selectedTheme.button}`}></div>
