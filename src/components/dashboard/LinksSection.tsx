@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { APPS } from '@/data/apps'
 import AddLinkModal from '@/components/dashboard/AddLinkModal'
 import ManageLinksModal from '@/components/dashboard/ManageLinksModal'
+import ImageCropperModal from '@/components/modals/ImageCropperModal'
 
 interface Link {
   id: string
@@ -29,6 +30,9 @@ interface LinksSectionProps {
 export default function LinksSection({ profile, links, setLinks, setProfile, refreshData }: LinksSectionProps) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isManageModalOpen, setIsManageModalOpen] = useState(false)
+  const [isCropperOpen, setIsCropperOpen] = useState(false)
+  const [selectedImageSrc, setSelectedImageSrc] = useState('')
+  const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
 
   const updateLinks = async (newLinks: Link[]) => {
     const sortedLinks = [...newLinks].sort((a, b) => {
@@ -74,14 +78,20 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Preview locally first for speed
     const reader = new FileReader()
-    reader.onload = async (event) => {
-      const base64 = event.target?.result as string
-      const newLinks = links.map(l => l.id === id ? { ...l, thumbnail: base64 } : l)
-      await updateLinks(newLinks)
+    reader.onload = (event) => {
+      setSelectedImageSrc(event.target?.result as string)
+      setEditingLinkId(id)
+      setIsCropperOpen(true)
     }
     reader.readAsDataURL(file)
+  }
+
+  const handleCropComplete = async (croppedImage: string) => {
+    if (!editingLinkId) return
+    const newLinks = links.map(l => l.id === editingLinkId ? { ...l, thumbnail: croppedImage } : l)
+    await updateLinks(newLinks)
+    setEditingLinkId(null)
   }
 
   const handleAddNewLink = async (linkData: { title: string; url: string; platform: string }) => {
@@ -333,6 +343,13 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
           </div>
         </div>
       </div>
+      <ImageCropperModal
+        isOpen={isCropperOpen}
+        imageSrc={selectedImageSrc}
+        onClose={() => setIsCropperOpen(false)}
+        onCropComplete={handleCropComplete}
+        aspect={links.find(l => l.id === editingLinkId)?.layout === 'featured' ? 16 / 9 : 1 / 1}
+      />
     </div>
   )
 }

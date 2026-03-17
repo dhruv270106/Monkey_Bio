@@ -10,9 +10,18 @@ interface ImageCropperModalProps {
   imageSrc: string
   onClose: () => void
   onCropComplete: (croppedImage: string) => void
+  aspect?: number
+  circularCrop?: boolean
 }
 
-export default function ImageCropperModal({ isOpen, imageSrc, onClose, onCropComplete }: ImageCropperModalProps) {
+export default function ImageCropperModal({ 
+  isOpen, 
+  imageSrc, 
+  onClose, 
+  onCropComplete,
+  aspect = 1 / 1,
+  circularCrop = false
+}: ImageCropperModalProps) {
   const [crop, setCrop] = useState<Crop>()
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
   const imgRef = useRef<HTMLImageElement>(null)
@@ -26,7 +35,7 @@ export default function ImageCropperModal({ isOpen, imageSrc, onClose, onCropCom
           unit: '%',
           width: 90,
         },
-        1 / 1,
+        aspect,
         width,
         height
       ),
@@ -96,8 +105,8 @@ export default function ImageCropperModal({ isOpen, imageSrc, onClose, onCropCom
               crop={crop}
               onChange={(c) => setCrop(c)}
               onComplete={(c) => setCompletedCrop(c)}
-              aspect={1 / 1}
-              circularCrop
+              aspect={aspect}
+              circularCrop={circularCrop}
             >
               <img
                 ref={imgRef}
