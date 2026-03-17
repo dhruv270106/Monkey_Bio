@@ -42,6 +42,13 @@ export default function PlannerSection({ profile }: PlannerSectionProps) {
       if (savedPosts) {
         setPosts(JSON.parse(savedPosts))
       }
+      
+      // Auto-select first active platform
+      const activePlats = platforms.filter(p => profile?.links?.some((l: any) => l.platform === p.id))
+      if (activePlats.length > 0) {
+        setNewPost(prev => ({ ...prev, platform: activePlats[0].id }))
+      }
+
       setLoading(false)
     }
   }, [profile])
@@ -181,114 +188,111 @@ export default function PlannerSection({ profile }: PlannerSectionProps) {
            ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-           <div className="lg:col-span-2 space-y-8">
-              <div className="flex items-center gap-2 bg-gray-100/50 p-1 rounded-2xl w-fit border border-gray-100">
-                 {['calendar', 'queue', 'drafts'].map((tab) => (
-                   <button 
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-white text-secondary shadow-sm rounded-xl' : 'text-gray-400 hover:text-secondary'}`}
-                   >
-                      {tab}
-                   </button>
-                 ))}
+        <div className="space-y-8">
+          {/* Connected Accounts - Horizontal */}
+          {profile?.links?.some((l: any) => l.platform) && (
+            <div className="bg-white p-6 rounded-[40px] border border-gray-100 shadow-sm flex flex-col gap-4">
+              <h3 className="text-sm font-black text-secondary/40 uppercase tracking-widest ml-2">Connected Accounts</h3>
+              <div className="flex flex-wrap gap-4">
+                {platforms.filter(p => profile?.links?.some((l: any) => l.platform === p.id)).map((p) => (
+                  <div key={p.id} className="flex items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl border border-gray-100 group transition-all hover:bg-white hover:shadow-md">
+                    <div className={`w-8 h-8 rounded-xl ${p.color} flex items-center justify-center text-white shadow-sm`}>
+                      <i className={`fi ${p.icon} text-xs`}></i>
+                    </div>
+                    <span className="text-xs font-black text-secondary">{p.name}</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 ring-2 ring-green-100 ml-1"></div>
+                  </div>
+                ))}
               </div>
+            </div>
+          )}
 
-              {activeTab === 'calendar' && (
-                <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
-                   <div className="p-8 border-b border-gray-50 flex items-center justify-between">
-                      <h2 className="text-lg font-black text-secondary">March 2026</h2>
-                      <div className="flex items-center gap-2">
-                         <button className="p-2 hover:bg-gray-100 rounded-lg"><i className="fi fi-rr-angle-left"></i></button>
-                         <button className="p-2 hover:bg-gray-100 rounded-lg"><i className="fi fi-rr-angle-right"></i></button>
-                      </div>
-                   </div>
-                   <div className="grid grid-cols-7 border-b border-gray-50 bg-gray-50/10">
-                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                        <div key={day} className="py-3 text-center text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">
-                          {day}
-                        </div>
-                      ))}
-                   </div>
-                   <div className="grid grid-cols-7">
-                      {Array.from({ length: 31 }).map((_, i) => {
-                         const day = i + 1;
-                         const dateStr = `2026-03-${day.toString().padStart(2, '0')}`;
-                         const dayPosts = posts.filter(p => p.date === dateStr);
-                         return (
-                          <div key={i} onClick={() => openDayDetails(dateStr, day)} className={`h-28 p-2 border-r border-b border-gray-50 hover:bg-gray-50 transition-colors relative group cursor-pointer ${day === new Date().getDate() ? 'bg-primary/5' : ''}`}>
-                             <span className={`text-[10px] font-black ${day === new Date().getDate() ? 'text-primary' : 'text-gray-400'}`}>{day}</span>
-                             <div className="mt-1 flex flex-col gap-1 overflow-hidden h-[50px]">
-                                {dayPosts.slice(0, 2).map((p, idx) => (
-                                   <div key={idx} className={`p-1 px-2 rounded-md text-[7px] font-bold truncate text-white ${platforms.find(plt => plt.id === p.platform)?.color || 'bg-secondary'}`}>
-                                      {p.content}
-                                   </div>
-                                ))}
-                             </div>
-                             <button onClick={(e) => { e.stopPropagation(); setNewPost(prev => ({ ...prev, date: dateStr })); setShowScheduleModal(true); }} className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all p-1.5 bg-secondary text-white rounded-lg text-[8px] z-10 shadow-lg translate-y-2 group-hover:translate-y-0">
-                                <i className="fi fi-rr-plus"></i>
-                             </button>
-                          </div>
-                         )
-                      })}
-                   </div>
-                </motion.div>
-              )}
+          <div className="lg:col-span-3 space-y-8">
+            {/* View Switcher */}
+            <div className="flex items-center gap-2 bg-gray-100/50 p-1 rounded-2xl w-fit border border-gray-100">
+               {['calendar', 'queue', 'drafts'].map((tab) => (
+                 <button 
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-white text-secondary shadow-sm rounded-xl' : 'text-gray-400 hover:text-secondary'}`}
+                 >
+                    {tab}
+                 </button>
+               ))}
+            </div>
 
-              {activeTab === 'queue' && (
-                 <div className="space-y-4">
-                    {posts.filter(p => p.status !== 'draft').length === 0 ? (
-                       <div className="text-center py-20 bg-white rounded-[40px] border border-dashed border-gray-200">
-                          <i className="fi fi-rr-calendar-clock text-4xl text-gray-200 mb-4 inline-block"></i>
-                          <p className="text-gray-400 font-bold">No posts in queue yet.</p>
-                       </div>
-                    ) : (
-                      posts.filter(p => p.status !== 'draft').map((post, i) => (
-                        <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} key={post.id} className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm flex items-center gap-6 group hover:shadow-md transition-all">
-                           <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl shrink-0 ${platforms.find(p => p.id === post.platform)?.color}`}>
-                              <i className={`fi ${platforms.find(p => p.id === post.platform)?.icon}`}></i>
-                           </div>
-                           <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                 <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 tracking-widest">{post.platform}</span>
-                                 <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest ${post.status === 'scheduled' ? 'bg-blue-50 text-blue-500' : 'bg-green-50 text-green-500'}`}>{post.status}</span>
-                              </div>
-                              <p className="text-sm font-bold text-secondary truncate">{post.content}</p>
-                              <p className="text-[10px] text-gray-400 mt-1 font-medium italic">{post.date} at {post.time}</p>
-                           </div>
-                           <div className="flex items-center gap-2 opactiy-0 group-hover:opacity-100 transition-all">
-                              <button onClick={() => openEditModal(post)} className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-primary flex items-center justify-center text-sm shadow-sm"><i className="fi fi-rr-edit-alt"></i></button>
-                              <button onClick={() => deletePost(post.id)} className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 flex items-center justify-center text-sm shadow-sm"><i className="fi fi-rr-trash"></i></button>
-                           </div>
-                         </motion.div>
-                      ))
-                    )}
+            {activeTab === 'calendar' && (
+              <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
+                 <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+                    <h2 className="text-lg font-black text-secondary">March 2026</h2>
+                    <div className="flex items-center gap-2">
+                       <button className="p-2 hover:bg-gray-100 rounded-lg"><i className="fi fi-rr-angle-left"></i></button>
+                       <button className="p-2 hover:bg-gray-100 rounded-lg"><i className="fi fi-rr-angle-right"></i></button>
+                    </div>
                  </div>
-              )}
-           </div>
-
-           <div className="space-y-8">
-              <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm">
-                 <h3 className="text-lg font-black text-secondary mb-6 tracking-tight">Connected Accounts</h3>
-                 <div className="space-y-5">
-                    {platforms.map((p) => (
-                      <div key={p.id} className="flex items-center justify-between group">
-                         <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 rounded-xl ${p.color} flex items-center justify-center text-white shadow-lg`}>
-                               <i className={`fi ${p.icon}`}></i>
-                            </div>
-                            <span className="text-xs font-black text-secondary/70">{p.name}</span>
-                         </div>
-                         <div className="w-2 h-2 rounded-full bg-green-500 ring-4 ring-green-50"></div>
+                 <div className="grid grid-cols-7 border-b border-gray-50 bg-gray-50/10">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                      <div key={day} className="py-3 text-center text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">
+                        {day}
                       </div>
                     ))}
-                    <button className="w-full mt-4 py-3 bg-gray-50 hover:bg-gray-100 transition-all text-secondary font-black text-[10px] uppercase tracking-widest rounded-2xl border border-dashed border-gray-200">
-                       + Add Platform
-                    </button>
                  </div>
-              </div>
-           </div>
+                 <div className="grid grid-cols-7">
+                    {Array.from({ length: 31 }).map((_, i) => {
+                       const day = i + 1;
+                       const dateStr = `2026-03-${day.toString().padStart(2, '0')}`;
+                       const dayPosts = posts.filter(p => p.date === dateStr);
+                       return (
+                        <div key={i} onClick={() => openDayDetails(dateStr, day)} className={`h-28 p-2 border-r border-b border-gray-50 hover:bg-gray-50 transition-colors relative group cursor-pointer ${day === new Date().getDate() ? 'bg-primary/5' : ''}`}>
+                           <span className={`text-[10px] font-black ${day === new Date().getDate() ? 'text-primary' : 'text-gray-400'}`}>{day}</span>
+                           <div className="mt-1 flex flex-col gap-1 overflow-hidden h-[50px]">
+                              {dayPosts.slice(0, 2).map((p, idx) => (
+                                 <div key={idx} className={`p-1 px-2 rounded-md text-[7px] font-bold truncate text-white ${platforms.find(plt => plt.id === p.platform)?.color || 'bg-secondary'}`}>
+                                    {p.content}
+                                 </div>
+                              ))}
+                           </div>
+                           <button onClick={(e) => { e.stopPropagation(); setNewPost(prev => ({ ...prev, date: dateStr })); setShowScheduleModal(true); }} className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all p-1.5 bg-secondary text-white rounded-lg text-[8px] z-10 shadow-lg translate-y-2 group-hover:translate-y-0">
+                              <i className="fi fi-rr-plus"></i>
+                           </button>
+                        </div>
+                       )
+                    })}
+                 </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'queue' && (
+               <div className="space-y-4">
+                  {posts.filter(p => p.status !== 'draft').length === 0 ? (
+                     <div className="text-center py-20 bg-white rounded-[40px] border border-dashed border-gray-200">
+                        <i className="fi fi-rr-calendar-clock text-4xl text-gray-200 mb-4 inline-block"></i>
+                        <p className="text-gray-400 font-bold">No posts in queue yet.</p>
+                     </div>
+                  ) : (
+                    posts.filter(p => p.status !== 'draft').map((post, i) => (
+                      <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} key={post.id} className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm flex items-center gap-6 group hover:shadow-md transition-all">
+                         <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl shrink-0 ${platforms.find(p => p.id === post.platform)?.color}`}>
+                            <i className={`fi ${platforms.find(p => p.id === post.platform)?.icon}`}></i>
+                         </div>
+                         <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                               <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 tracking-widest">{post.platform}</span>
+                               <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest ${post.status === 'scheduled' ? 'bg-blue-50 text-blue-500' : 'bg-green-50 text-green-500'}`}>{post.status}</span>
+                            </div>
+                            <p className="text-sm font-bold text-secondary truncate">{post.content}</p>
+                            <p className="text-[10px] text-gray-400 mt-1 font-medium italic">{post.date} at {post.time}</p>
+                         </div>
+                         <div className="flex items-center gap-2 opactiy-0 group-hover:opacity-100 transition-all">
+                            <button onClick={() => openEditModal(post)} className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-primary flex items-center justify-center text-sm shadow-sm"><i className="fi fi-rr-edit-alt"></i></button>
+                            <button onClick={() => deletePost(post.id)} className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 flex items-center justify-center text-sm shadow-sm"><i className="fi fi-rr-trash"></i></button>
+                         </div>
+                       </motion.div>
+                    ))
+                  )}
+               </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -335,9 +339,12 @@ export default function PlannerSection({ profile }: PlannerSectionProps) {
                 </div>
                 <div className="p-10 space-y-8">
                    <div className="flex gap-4">
-                      {platforms.map(p => (
+                      {platforms.filter(p => profile?.links?.some((l: any) => l.platform === p.id)).map(p => (
                          <button key={p.id} onClick={() => setNewPost({ ...newPost, platform: p.id })} className={`w-12 h-12 rounded-2xl ${p.color} flex items-center justify-center text-white transition-all ${newPost.platform === p.id ? 'ring-4 ring-primary ring-offset-2' : 'opacity-40 grayscale'}`}><i className={`fi ${p.icon}`}></i></button>
                       ))}
+                      {platforms.filter(p => profile?.links?.some((l: any) => l.platform === p.id)).length === 0 && (
+                        <p className="text-xs font-bold text-gray-400">Please add social links first to schedule posts.</p>
+                      )}
                    </div>
                    <textarea value={newPost.content} onChange={(e) => setNewPost({ ...newPost, content: e.target.value })} className="w-full h-32 p-6 rounded-[32px] bg-gray-50 border-none focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold text-secondary" placeholder="What's on your mind?"></textarea>
                    <div className="grid grid-cols-2 gap-4">
