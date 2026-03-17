@@ -62,10 +62,9 @@ export default function UserManagement() {
       .order('signup_date', { ascending: false })
 
     if (data) {
-      // For demo, if some fields are missing due to schema not being updated yet, we add fallbacks
       const processedUsers = data.map(u => ({
         ...u,
-        email: u.email || `${u.username}@example.com`,
+        email: u.email || 'No Email',
         signup_date: u.signup_date || u.created_at || new Date().toISOString(),
         role: u.role || 'user',
         plan_status: u.plan_status || 'free',

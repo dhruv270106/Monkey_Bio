@@ -35,6 +35,8 @@ import Link from 'next/link'
 
 export default function UserDetails({ params }: { params: { id: string } }) {
   const [user, setUser] = useState<any>(null)
+  const [logs, setLogs] = useState<any[]>([])
+  const [payments, setPayments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -43,50 +45,37 @@ export default function UserDetails({ params }: { params: { id: string } }) {
 
   const fetchUserDetails = async () => {
     setLoading(true)
-    const { data } = await supabase
+    
+    // 1. Fetch Profile
+    const { data: profile } = await supabase
       .from('monkey_bio')
       .select('*')
       .eq('id', params.id)
       .single()
 
-    if (data) {
-      setUser({
-        ...data,
-        email: data.email || `${data.username}@example.com`,
-        mobile_number: data.mobile_number || '+1 234 567 8901',
-        signup_date: data.signup_date || data.created_at || new Date().toISOString(),
-        last_login: new Date().toISOString(),
-        plan_status: data.plan_status || 'free',
-        payment_status: data.payment_status || 'none',
-        role: data.role || 'user',
-        ip_address: '192.168.1.45',
-        device_info: 'Chrome 122 / Windows 11',
-        location: 'California, US',
-        tags: ['high value', 'creator']
-      })
-    } else {
-       // Demo data
-       setUser({
-          id: params.id,
-          username: 'johndoe',
-          display_name: 'John Doe',
-          avatar_url: '',
-          email: 'john@example.com',
-          mobile_number: '+1 234 567 8901',
-          role: 'user',
-          plan_status: 'premium',
-          payment_status: 'approved',
-          signup_date: new Date().toISOString(),
-          last_login: new Date().toISOString(),
-          ip_address: '192.168.1.45',
-          device_info: 'Chrome 122 / Windows 11',
-          location: 'California, US',
-          bio: 'Creator & Digital Nomad',
-          theme: 'glass',
-          links: [{ title: 'Instagram', url: 'https://instgr.am/johndoe' }],
-          tags: ['high value', 'creator']
-       })
+    if (profile) {
+      setUser(profile)
+      
+      // 2. Fetch Real Activity Logs
+      const { data: activityData } = await supabase
+        .from('activity_logs')
+        .select('*')
+        .eq('user_id', params.id)
+        .order('created_at', { ascending: false })
+        .limit(10)
+      
+      if (activityData) setLogs(activityData)
+
+      // 3. Fetch Real Payment History
+      const { data: payData } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('user_id', params.id)
+        .order('created_at', { ascending: false })
+      
+      if (payData) setPayments(payData)
     }
+
     setLoading(false)
   }
 
@@ -156,14 +145,14 @@ export default function UserDetails({ params }: { params: { id: string } }) {
                      </div>
                      <span className="text-xs font-black text-secondary">{user.mobile_number}</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                     <div className="flex items-center gap-3 text-gray-400">
-                        <MapPin size={16} />
-                        <span className="text-xs font-bold uppercase tracking-widest">Location</span>
-                     </div>
-                     <span className="text-xs font-black text-secondary">{user.location}</span>
-                  </div>
-               </div>
+                   <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 text-gray-400">
+                         <MapPin size={16} />
+                         <span className="text-xs font-bold uppercase tracking-widest">Location</span>
+                      </div>
+                      <span className="text-xs font-black text-secondary">{user.location || 'Not Specified'}</span>
+                   </div>
+                </div>
             </div>
 
             {/* Account Status Card */}
@@ -199,8 +188,8 @@ export default function UserDetails({ params }: { params: { id: string } }) {
                         <p className="text-[10px] font-black text-secondary uppercase tracking-widest">Last Access Data</p>
                       </div>
                       <div className="grid grid-cols-2 gap-4 mt-1">
-                         <div className="text-[10px] font-bold text-gray-400">IP: <span className="text-secondary font-black">{user.ip_address}</span></div>
-                         <div className="text-[10px] font-bold text-gray-400">Device: <span className="text-secondary font-black">Windows 11</span></div>
+                         <div className="text-[10px] font-bold text-gray-400">IP: <span className="text-secondary font-black">{user.ip_address || 'N/A'}</span></div>
+                         <div className="text-[10px] font-bold text-gray-400">Device: <span className="text-secondary font-black truncate">{user.device_info || 'Unknown'}</span></div>
                       </div>
                   </div>
                </div>
@@ -241,25 +230,22 @@ export default function UserDetails({ params }: { params: { id: string } }) {
                     </div>
                     <div className="text-right">
                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Lifetime Value</p>
-                       <p className="text-3xl font-black text-primary">$149.00</p>
+                       <p className="text-3xl font-black text-primary">${payments.reduce((acc, p) => acc + (p.status === 'approved' ? Number(p.amount) : 0), 0).toFixed(2)}</p>
                     </div>
                  </div>
                  
                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur">
-                       <div className="flex items-center gap-4">
-                          <CheckCircle2 size={16} className="text-primary" />
-                          <span className="text-sm font-bold">Pro Yearly Subscription</span>
+                    {payments.length === 0 ? (
+                       <p className="text-center py-8 text-white/20 text-xs font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-2xl">No transaction history</p>
+                    ) : payments.slice(0, 3).map((p, i) => (
+                       <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur">
+                          <div className="flex items-center gap-4">
+                             <CheckCircle2 size={16} className={p.status === 'approved' ? "text-primary" : "text-gray-500"} />
+                             <span className="text-sm font-bold capitalize">{p.plan_id?.replace('_', ' ') || 'Subscription'}</span>
+                          </div>
+                          <span className="text-xs font-black">${p.amount} • {new Date(p.created_at).toLocaleDateString()}</span>
                        </div>
-                       <span className="text-xs font-black">$149.00 • Sep 2024</span>
-                    </div>
-                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10 opacity-50">
-                        <div className="flex items-center gap-4">
-                           <CheckCircle2 size={16} className="text-primary" />
-                           <span className="text-sm font-bold">Pro Monthly Plan</span>
-                        </div>
-                        <span className="text-xs font-black">$19.00 • Aug 2024</span>
-                    </div>
+                    ))}
                  </div>
                </div>
                <DollarSign size={200} className="absolute right-[-40px] top-[-40px] text-white/5 rotate-12 group-hover:scale-110 transition-transform duration-1000" />
@@ -280,23 +266,19 @@ export default function UserDetails({ params }: { params: { id: string } }) {
                </div>
                
                <div className="p-8 space-y-6 max-h-[400px] overflow-y-auto no-scrollbar">
-                  {[
-                    { event: 'Profile Updated', detail: 'Changed avatar and display name', time: '1 hour ago', icon: User, color: 'text-blue-500' },
-                    { event: 'Theme Purchased', detail: 'Lifetime access to "Glassmorphism" granted', time: '3 hours ago', icon: Tag, color: 'text-purple-500' },
-                    { event: 'New Link Added', detail: 'Added "My Portfolio" (https://john.com)', time: '1 day ago', icon: Activity, color: 'text-orange-500' },
-                    { event: 'Login Session', detail: 'New login from Chrome / Windows 11', time: '2 days ago', icon: Shield, color: 'text-emerald-500' },
-                    { event: 'Signup Completed', detail: 'Account created and verified', time: '1 month ago', icon: Calendar, color: 'text-slate-500' }
-                  ].map((log, i) => (
+                  {logs.length === 0 ? (
+                    <div className="text-center py-20 text-gray-400 font-bold uppercase tracking-widest text-xs">No activity found</div>
+                  ) : logs.map((log, i) => (
                     <div key={i} className="flex gap-4 group">
-                       <div className={`w-10 h-10 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center ${log.color} group-hover:scale-110 transition-transform`}>
-                          <log.icon size={18} />
+                       <div className={`w-10 h-10 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center text-primary group-hover:scale-110 transition-transform`}>
+                          <Activity size={18} />
                        </div>
                        <div className="flex-1 pb-6 border-b border-gray-50 group-last:border-0 group-last:pb-0">
                           <div className="flex items-center justify-between mb-1">
-                             <h4 className="font-black text-secondary text-sm">{log.event}</h4>
-                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{log.time}</span>
+                             <h4 className="font-black text-secondary text-sm capitalize">{log.event_type?.replace('_', ' ')}</h4>
+                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{new Date(log.created_at).toLocaleDateString()}</span>
                           </div>
-                          <p className="text-xs font-medium text-gray-500">{log.detail}</p>
+                          <p className="text-xs font-medium text-gray-500">{log.detail || log.description}</p>
                        </div>
                     </div>
                   ))}

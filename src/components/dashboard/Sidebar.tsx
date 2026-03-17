@@ -8,9 +8,11 @@ import { motion } from 'framer-motion'
 
 interface SidebarProps {
   userProfile: any
+  activeTab?: string
+  onTabChange?: (tab: string) => void
 }
 
-export default function Sidebar({ userProfile }: SidebarProps) {
+export default function Sidebar({ userProfile, activeTab, onTabChange }: SidebarProps) {
   const pathname = usePathname()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [accounts, setAccounts] = useState<any[]>([])
@@ -165,19 +167,42 @@ export default function Sidebar({ userProfile }: SidebarProps) {
             </p>
             <div className="space-y-1">
               {group.items.map((item, j) => {
-                const isActive = pathname === item.href
+                const itemTabId = item.href.split('/').pop() || 'links'
+                const isTabActive = activeTab === itemTabId || (activeTab === 'links' && item.href === '/dashboard' && !pathname.includes('/design'))
+                const isActive = onTabChange ? isTabActive : pathname === item.href
+                
+                const content = (
+                  <>
+                    <i className={`fi ${item.icon} ${item.color} ${isActive ? 'opacity-100' : 'opacity-70'}`}></i>
+                    {item.label}
+                  </>
+                )
+
+                const className = `w-full flex items-center gap-3 px-4 py-2.5 transition-all rounded-xl font-bold text-sm ${
+                  isActive 
+                    ? 'bg-white text-secondary shadow-sm border border-gray-100' 
+                    : 'text-gray-500 hover:bg-gray-100'
+                }`
+
+                if (onTabChange && (item.href === '/dashboard' || item.href === '/design')) {
+                  return (
+                    <button 
+                      key={j}
+                      onClick={() => onTabChange(itemTabId === 'dashboard' ? 'links' : itemTabId)}
+                      className={className}
+                    >
+                      {content}
+                    </button>
+                  )
+                }
+
                 return (
                   <Link 
                     key={j}
                     href={item.href}
-                    className={`flex items-center gap-3 px-4 py-2.5 transition-all rounded-xl font-bold text-sm ${
-                      isActive 
-                        ? 'bg-white text-secondary shadow-sm border border-gray-100' 
-                        : 'text-gray-500 hover:bg-gray-100'
-                    }`}
+                    className={className}
                   >
-                    <i className={`fi ${item.icon} ${item.color} ${isActive ? 'opacity-100' : 'opacity-70'}`}></i>
-                    {item.label}
+                    {content}
                   </Link>
                 )
               })}

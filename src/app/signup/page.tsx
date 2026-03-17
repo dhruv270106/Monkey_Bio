@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { sendNotification } from '@/lib/notifications'
+import { trackActivity } from '@/lib/analytics'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -41,12 +42,17 @@ export default function SignupPage() {
             onboarding_completed: false,
             links: [],
             social_links: {},
-            theme: 'white'
+            theme: 'white',
+            signup_date: new Date().toISOString(),
+            device_info: typeof window !== 'undefined' ? window.navigator.userAgent.substring(0, 100) : 'Web Client'
           }])
         
         if (profileError) {
           alert(profileError.message)
         } else {
+          // Track Activity
+          trackActivity('signup', `User @${username} was created.`, authData.user.id)
+          
           // Notify Admin
           sendNotification({
             title: 'New User Signup',

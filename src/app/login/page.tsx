@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
+import { trackActivity } from '@/lib/analytics'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -13,11 +14,14 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       alert(error.message)
       setLoading(false)
     } else {
+      if (data.user) {
+        trackActivity('login', `User ${email} signed in via Email.`, data.user.id)
+      }
       window.location.href = '/dashboard'
     }
   }
