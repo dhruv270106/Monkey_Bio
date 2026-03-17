@@ -3,11 +3,18 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import Navbar from '@/components/Navbar'
+import { supabase } from '@/lib/supabase'
 
 export default function Home() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user || null)
+    })
+
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({
         x: e.clientX / window.innerWidth,
@@ -21,38 +28,7 @@ export default function Home() {
   return (
     <div className="bg-gray-50 text-secondary min-h-screen flex flex-col selection:bg-primary/30">
       
-      {/* HEADER */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center gap-8">
-              <Link href="/" className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-secondary font-bold text-xl">M</span>
-                <span className="font-bold text-xl tracking-tight text-secondary">Monkey</span>
-              </Link>
-              <nav className="hidden md:flex items-center gap-6">
-                <div className="relative group">
-                  <Link href="#" className="text-sm font-medium text-gray-600 hover:text-black transition-colors flex items-center gap-1 py-4">
-                    Features <i className="fi fi-rr-angle-small-down pt-1"></i>
-                  </Link>
-                  <div className="absolute top-[80%] left-0 bg-white shadow-xl rounded-xl border border-gray-100 w-64 pt-2 pb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left -translate-y-2 group-hover:translate-y-0">
-                    <Link href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-neutral-100 rounded-lg">Link Pages</Link>
-                    <Link href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-neutral-100 rounded-lg">Analytics</Link>
-                    <Link href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-neutral-100 rounded-lg">Appearance</Link>
-                  </div>
-                </div>
-                <Link href="#" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">Pricing</Link>
-                <Link href="#" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">Discover</Link>
-                <Link href="#" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">Blog</Link>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-               <Link href="/login" className="text-sm font-semibold text-gray-800 hover:text-black hidden sm:block bg-gray-100 hover:bg-gray-200 px-6 py-3 rounded-full transition-colors">Log in</Link>
-               <Link href="/signup" className="text-sm font-semibold bg-secondary text-white hover:bg-gray-800 px-6 py-3 rounded-full transition-all shadow-md transform hover:scale-105">Sign up free</Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="flex-1 mt-20">
         {/* HERO SECTION */}
@@ -84,13 +60,21 @@ export default function Home() {
                   </p>
                   
                   <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto lg:mx-0 mb-8">
-                     <div className="flex flex-1 relative bg-white rounded-[20px] shadow-sm border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all">
-                       <span className="flex items-center pl-6 pr-2 text-gray-400 font-bold text-lg">monkey.link/</span>
-                       <input type="text" placeholder="yourname" className="w-full py-5 pr-6 outline-none font-bold text-lg text-secondary" />
-                     </div>
-                     <Link href="/signup" className="bg-secondary text-white font-bold text-lg px-8 py-5 rounded-[20px] hover:bg-gray-800 transition-all shadow-lg flex-shrink-0 flex items-center justify-center transform hover:scale-[1.02]">
-                        Claim it
-                     </Link>
+                     {user ? (
+                        <Link href="/dashboard" className="bg-secondary text-white font-bold text-lg px-8 py-5 rounded-[20px] hover:bg-gray-800 transition-all shadow-lg flex-1 flex items-center justify-center transform hover:scale-[1.02]">
+                          Go to Dashboard <i className="fi fi-rr-arrow-right ml-2 pt-1 text-sm"></i>
+                        </Link>
+                     ) : (
+                       <>
+                        <div className="flex flex-1 relative bg-white rounded-[20px] shadow-sm border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all">
+                          <span className="flex items-center pl-6 pr-2 text-gray-400 font-bold text-lg">monkey.link/</span>
+                          <input type="text" placeholder="yourname" className="w-full py-5 pr-6 outline-none font-bold text-lg text-secondary" />
+                        </div>
+                        <Link href="/signup" className="bg-secondary text-white font-bold text-lg px-8 py-5 rounded-[20px] hover:bg-gray-800 transition-all shadow-lg flex-shrink-0 flex items-center justify-center transform hover:scale-[1.02]">
+                            Claim it
+                        </Link>
+                       </>
+                     )}
                   </div>
                   
                   <div className="flex items-center justify-center lg:justify-start gap-3 text-sm text-gray-400 font-bold">
@@ -158,8 +142,8 @@ export default function Home() {
             <div className="max-w-4xl mx-auto px-4 relative z-10">
                <h2 className="text-5xl md:text-7xl font-black mb-8 tracking-tight">Ready to grow?</h2>
                <p className="text-xl text-white/70 font-medium mb-12">Join millions of creators managing their digital presence.</p>
-               <Link href="/signup" className="inline-flex items-center justify-center bg-primary text-secondary font-bold text-xl px-12 py-5 rounded-full hover:bg-primary-dark transition-all transform hover:scale-105 shadow-lg">
-                  Start building today
+               <Link href={user ? "/dashboard" : "/signup"} className="inline-flex items-center justify-center bg-primary text-secondary font-bold text-xl px-12 py-5 rounded-full hover:bg-primary-dark transition-all transform hover:scale-105 shadow-lg">
+                  {user ? "Go to Dashboard" : "Start building today"}
                </Link>
             </div>
         </section>
