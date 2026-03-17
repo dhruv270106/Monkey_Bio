@@ -29,7 +29,6 @@ interface LinksSectionProps {
 export default function LinksSection({ profile, links, setLinks, setProfile, refreshData }: LinksSectionProps) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isManageModalOpen, setIsManageModalOpen] = useState(false)
-  const [expandedLinkId, setExpandedLinkId] = useState<string | null>(null)
 
   const updateLinks = async (newLinks: Link[]) => {
     const sortedLinks = [...newLinks].sort((a, b) => {
@@ -288,86 +287,45 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
                     </div>
 
                     <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-6">
                            <button 
                              onClick={() => toggleHighlight(link.id)}
-                             className={`${link.highlighted ? 'text-yellow-500' : 'hover:text-yellow-500'} flex items-center gap-2 text-[10px] font-bold transition-colors`}
+                             className={`${link.highlighted ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'} flex items-center transition-colors`}
                              title="Highlight"
                            >
-                             <i className={`fi ${link.highlighted ? 'fi-sr-star' : 'fi-rr-star'}`}></i>
+                             <i className={`fi ${link.highlighted ? 'fi-sr-star' : 'fi-rr-star'} text-sm`}></i>
                            </button>
 
                            <button 
-                             onClick={() => setExpandedLinkId(expandedLinkId === link.id ? null : link.id)}
-                             className={`flex items-center gap-2 text-[10px] font-bold transition-colors ${expandedLinkId === link.id ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
-                             title="More Features"
+                             onClick={() => toggleLayout(link.id)}
+                             className={`flex items-center transition-colors ${link.layout === 'featured' ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
+                             title={`Layout: ${link.layout === 'featured' ? 'Featured' : 'Classic'}`}
                            >
-                             <i className="fi fi-rr-settings-sliders"></i> Features
+                             <i className={`fi ${link.layout === 'featured' ? 'fi-sr-gallery' : 'fi-rr-gallery'} text-sm`}></i>
                            </button>
+
+                           <div className="relative group/thumb-btn">
+                              <button className="flex items-center text-gray-400 hover:text-blue-500 transition-colors" title="Change Thumbnail">
+                                 {link.thumbnail ? (
+                                   <div className="w-5 h-5 rounded-md overflow-hidden border border-gray-100">
+                                      <img src={link.thumbnail} className="w-full h-full object-cover" />
+                                   </div>
+                                 ) : (
+                                   <i className="fi fi-rr-picture text-sm"></i>
+                                 )}
+                              </button>
+                              <input 
+                                type="file" 
+                                accept="image/*"
+                                onChange={(e) => handleThumbnailUpload(link.id, e)}
+                                className="absolute inset-0 opacity-0 cursor-pointer z-10 w-5 h-5"
+                              />
+                           </div>
                         </div>
                         <button onClick={() => deleteLink(link.id)} className="w-8 h-8 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm">
                            <i className="fi fi-rr-trash text-xs"></i>
                         </button>
                     </div>
-
-                    {/* Features Panel */}
-                    <AnimatePresence>
-                      {expandedLinkId === link.id && (
-                        <motion.div 
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="mt-6 p-6 bg-gray-50 rounded-3xl space-y-6">
-                             {/* Layout Toggle */}
-                             <div className="space-y-3">
-                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Layout</label>
-                                <div className="grid grid-cols-2 gap-3">
-                                   <button 
-                                      onClick={() => toggleLayout(link.id)}
-                                      className={`p-4 rounded-2xl flex flex-col items-center gap-2 transition-all border-2 ${link.layout === 'classic' || !link.layout ? 'bg-white border-primary shadow-sm' : 'bg-white border-transparent grayscale opacity-50'}`}
-                                   >
-                                      <i className="fi fi-rr-list text-lg"></i>
-                                      <span className="text-[10px] font-black uppercase">Classic</span>
-                                   </button>
-                                   <button 
-                                      onClick={() => toggleLayout(link.id)}
-                                      className={`p-4 rounded-2xl flex flex-col items-center gap-2 transition-all border-2 ${link.layout === 'featured' ? 'bg-white border-primary shadow-sm' : 'bg-white border-transparent grayscale opacity-50'}`}
-                                   >
-                                      <i className="fi fi-rr-gallery text-lg"></i>
-                                      <span className="text-[10px] font-black uppercase">Featured</span>
-                                   </button>
-                                </div>
-                             </div>
-
-                             {/* Thumbnail Upload */}
-                             <div className="space-y-3">
-                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Thumbnail Image</label>
-                                <div className="flex items-center gap-4">
-                                   <div className="w-16 h-16 rounded-2xl bg-white border border-gray-100 overflow-hidden flex items-center justify-center shrink-0 shadow-sm relative group/thumb">
-                                      {link.thumbnail ? (
-                                        <img src={link.thumbnail} className="w-full h-full object-cover" />
-                                      ) : (
-                                        <i className="fi fi-rr-picture text-gray-200 text-xl"></i>
-                                      )}
-                                      <input 
-                                        type="file" 
-                                        accept="image/*"
-                                        onChange={(e) => handleThumbnailUpload(link.id, e)}
-                                        className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                                      />
-                                   </div>
-                                   <div className="flex-1 space-y-1">
-                                      <p className="text-xs font-bold text-secondary">Set Custom Thumbnail</p>
-                                      <p className="text-[10px] text-gray-400 font-medium">Add a photo to make your link stand out.</p>
-                                   </div>
-                                </div>
-                             </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
                   </Reorder.Item>
                 ))}
               </Reorder.Group>
