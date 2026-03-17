@@ -20,30 +20,92 @@ import {
   ShieldCheck
 } from 'lucide-react'
 
-const stats = [
-  { label: 'Total Users', value: '1,284', icon: Users, color: 'bg-blue-500', trend: '+12%', trendUp: true },
-  { label: 'Active Users', value: '842', icon: UserCheck, color: 'bg-green-500', trend: '+5%', trendUp: true },
-  { label: 'New Today', value: '12', icon: UserPlus, color: 'bg-orange-500', trend: '+2', trendUp: true },
-  { label: 'Premium Users', value: '156', icon: Crown, color: 'bg-purple-500', trend: '+8%', trendUp: true },
-  { label: 'Pending Payments', value: '4', icon: Clock, color: 'bg-yellow-500', highlight: true },
-  { label: 'Approved Payments', value: '29', icon: CheckCircle2, color: 'bg-emerald-500', trend: '+15%', trendUp: true },
-  { label: 'Rejected Payments', value: '2', icon: AlertCircle, color: 'bg-red-500' },
-  { label: 'Total Revenue', value: '$2,480', icon: DollarSign, color: 'bg-indigo-500', trend: '+24%', trendUp: true },
-  { label: 'Total Themes', value: '42', icon: Palette, color: 'bg-pink-500' },
-  { label: 'Locked Themes', value: '30', icon: Lock, color: 'bg-slate-500' },
-  { label: 'Unlocked Today', value: '5', icon: Unlock, color: 'bg-cyan-500' },
-  { label: 'Today Logins', value: '312', icon: TrendingUp, color: 'bg-violet-500' },
-]
-
-const recentActivity = [
-  { id: 1, type: 'signup', user: 'johndoe', time: '2 mins ago', detail: 'New user registered from USA' },
-  { id: 2, type: 'payment', user: 'sarah_smith', time: '15 mins ago', detail: 'Uploaded proof for Pro Plan ($19)' },
-  { id: 3, type: 'premium', user: 'mike_ross', time: '45 mins ago', detail: 'Premium access granted by Admin' },
-  { id: 4, type: 'theme', user: 'elena_q', time: '1 hour ago', detail: 'Unlocked "Glassmorphism" theme' },
-  { id: 5, type: 'login_fail', user: 'unknown', time: '2 hours ago', detail: 'Failed login attempt from IP 192.168.1.1' },
-]
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
+import { THEMES } from '@/data/themes'
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState<any[]>([])
+  const [activities, setActivities] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
+  const fetchDashboardData = async () => {
+    setLoading(true)
+    
+    // 1. Fetch Users Stats
+    const { data: users } = await supabase.from('monkey_bio').select('*')
+    const totalUsers = users?.length || 0
+    const activeUsers = users?.filter(u => u.is_active).length || 0
+    const premiumUsers = users?.filter(u => u.plan_status === 'premium').length || 0
+    
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const newToday = users?.filter(u => new Date(u.signup_date || u.created_at) >= today).length || 0
+    
+    // 2. Fetch Payments Stats
+    const { data: payments } = await supabase.from('payments').select('*')
+    const pendingPayments = payments?.filter(p => p.status === 'pending').length || 0
+    const approvedPayments = payments?.filter(p => p.status === 'approved').length || 0
+    const rejectedPayments = payments?.filter(p => p.status === 'rejected').length || 0
+    const totalRevenue = payments?.filter(p => p.status === 'approved').reduce((acc, p) => acc + (Number(p.amount) || 0), 0) || 0
+
+    // 3. Activity Feed (Last 5 users + Last 5 payments)
+    const recentSignups = users?.sort((a, b) => new Date(b.signup_date || b.created_at).getTime() - new Date(a.signup_date || a.created_at).getTime()).slice(0, 5).map(u => ({
+      id: `u-${u.id}`,
+      type: 'signup',
+      user: u.username,
+      time: u.signup_date || u.created_at,
+      detail: `New user registered`
+    })) || []
+
+    const recentPayments = payments?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5).map(p => ({
+      id: `p-${p.id}`,
+      type: 'payment',
+      user: p.user_name || 'User',
+      time: p.created_at,
+      detail: `Uploaded proof for ${p.plan_id} ($${p.amount})`
+    })) || []
+
+    const combinedActivity = [...recentSignups, ...recentPayments]
+      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+      .slice(0, 5)
+
+    setActivities(combinedActivity)
+
+    setStats([
+      { label: 'Total Users', value: totalUsers.toLocaleString(), icon: Users, color: 'bg-blue-500', trend: '+12%', trendUp: true },
+      { label: 'Active Users', value: activeUsers.toLocaleString(), icon: UserCheck, color: 'bg-green-500', trend: '+5%', trendUp: true },
+      { label: 'New Today', value: newToday.toString(), icon: UserPlus, color: 'bg-orange-500', trend: `+${newToday}`, trendUp: true },
+      { label: 'Premium Users', value: premiumUsers.toLocaleString(), icon: Crown, color: 'bg-purple-500', trend: '+8%', trendUp: true },
+      { label: 'Pending Payments', value: pendingPayments.toString(), icon: Clock, color: 'bg-yellow-500', highlight: pendingPayments > 0 },
+      { label: 'Approved Payments', value: approvedPayments.toString(), icon: CheckCircle2, color: 'bg-emerald-500', trend: '+15%', trendUp: true },
+      { label: 'Rejected Payments', value: rejectedPayments.toString(), icon: AlertCircle, color: 'bg-red-500' },
+      { label: 'Total Revenue', value: `$${totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'bg-indigo-500', trend: '+24%', trendUp: true },
+      { label: 'Total Themes', value: THEMES.length.toString(), icon: Palette, color: 'bg-pink-500' },
+      { label: 'Locked Themes', value: THEMES.filter(t => t.isPremium).length.toString(), icon: Lock, color: 'bg-slate-500' },
+      { label: 'Unlocked Today', value: '0', icon: Unlock, color: 'bg-cyan-500' }, // Hard to calculate without theme_access logs
+      { label: 'Today Logins', value: users?.filter(u => u.last_login && new Date(u.last_login) >= today).length.toString(), icon: TrendingUp, color: 'bg-violet-500' },
+    ])
+    
+    setLoading(false)
+  }
+
+  const formatRelativeTime = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    const mins = Math.floor(diff / 60000)
+    const hours = Math.floor(mins / 60)
+    const days = Math.floor(hours / 24)
+
+    if (mins < 60) return `${mins} mins ago`
+    if (hours < 24) return `${hours} hours ago`
+    return `${days} days ago`
+  }
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
@@ -65,29 +127,35 @@ export default function AdminDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className={`bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-gray-200/50 transition-all group ${stat.highlight ? 'ring-2 ring-primary ring-offset-4' : ''}`}
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div className={`w-12 h-12 rounded-2xl ${stat.color} flex items-center justify-center text-white shadow-lg shadow-${stat.color.split('-')[1]}-500/20 group-hover:scale-110 transition-transform`}>
-                <stat.icon size={24} />
-              </div>
-              {stat.trend && (
-                <div className={`flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-full ${stat.trendUp ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                  {stat.trendUp ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
-                  {stat.trend}
+        {loading ? (
+          Array(8).fill(0).map((_, i) => (
+            <div key={i} className="h-32 bg-white rounded-[32px] animate-pulse border border-gray-100 shadow-sm" />
+          ))
+        ) : (
+          stats.map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className={`bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-gray-200/50 transition-all group ${stat.highlight ? 'ring-2 ring-primary ring-offset-4' : ''}`}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className={`w-12 h-12 rounded-2xl ${stat.color} flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110`}>
+                  <stat.icon size={24} />
                 </div>
-              )}
-            </div>
-            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">{stat.label}</p>
-            <h3 className="text-3xl font-black text-secondary mt-1">{stat.value}</h3>
-          </motion.div>
-        ))}
+                {stat.trend && (
+                  <div className={`flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-full ${stat.trendUp ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                    {stat.trendUp ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
+                    {stat.trend}
+                  </div>
+                )}
+              </div>
+              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">{stat.label}</p>
+              <h3 className="text-3xl font-black text-secondary mt-1">{stat.value}</h3>
+            </motion.div>
+          ))
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -138,16 +206,20 @@ export default function AdminDashboard() {
             <button className="text-primary text-xs font-bold hover:underline">View All</button>
           </div>
           <div className="space-y-6">
-            {recentActivity.map((activity, i) => (
+            {loading ? (
+              Array(5).fill(0).map((_, i) => <div key={i} className="h-12 bg-gray-50 rounded-xl animate-pulse" />)
+            ) : activities.length === 0 ? (
+              <p className="text-center text-gray-400 py-10 font-bold">No recent activity</p>
+            ) : activities.map((activity, i) => (
               <div key={activity.id} className="flex gap-4 relative">
-                {i !== recentActivity.length - 1 && (
+                {i !== activities.length - 1 && (
                   <div className="absolute left-[19px] top-10 bottom-[-10px] w-px bg-gray-100"></div>
                 )}
                 <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center border-4 border-white shadow-sm z-10 ${activity.type === 'signup' ? 'bg-blue-500 text-white' :
                     activity.type === 'payment' ? 'bg-yellow-500 text-white' :
-                      activity.type === 'premium' ? 'bg-purple-500 text-white' :
-                        activity.type === 'theme' ? 'bg-pink-500 text-white' :
-                          'bg-red-500 text-white'
+                    activity.type === 'premium' ? 'bg-purple-500 text-white' :
+                    activity.type === 'theme' ? 'bg-pink-500 text-white' :
+                    'bg-red-500 text-white'
                   }`}>
                   {activity.type === 'signup' && <UserPlus size={14} />}
                   {activity.type === 'payment' && <CreditCard size={14} />}
@@ -155,13 +227,13 @@ export default function AdminDashboard() {
                   {activity.type === 'theme' && <Palette size={14} />}
                   {activity.type === 'login_fail' && <AlertCircle size={14} />}
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="text-xs font-bold text-secondary">
                     <span className="text-primary mr-1">@{activity.user}</span>
                     {activity.detail}
                   </p>
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1 mt-1">
-                    <Clock size={10} /> {activity.time}
+                    <Clock size={10} /> {formatRelativeTime(activity.time)}
                   </span>
                 </div>
               </div>

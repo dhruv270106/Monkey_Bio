@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
+import Link from 'next/link'
 import { 
   Users, 
   Search, 
@@ -76,6 +77,40 @@ export default function UserManagement() {
     setLoading(false)
   }
 
+  const handleToggleStatus = async (user: UserProfile) => {
+    const newStatus = !user.is_active
+    const confirmMsg = newStatus ? `Activate ${user.username}?` : `Block ${user.username}?`
+    
+    if (!confirm(confirmMsg)) return
+
+    const { error } = await supabase
+      .from('monkey_bio')
+      .update({ is_active: newStatus })
+      .eq('id', user.id)
+
+    if (error) {
+      alert(error.message)
+    } else {
+      setUsers(prev => prev.map(u => u.id === user.id ? { ...u, is_active: newStatus } : u))
+    }
+  }
+
+  const handleDeleteUser = async (user: UserProfile) => {
+    if (!confirm(`Are you sure you want to PERMANENTLY delete ${user.username}? This cannot be undone.`)) return
+
+    const { error } = await supabase
+      .from('monkey_bio')
+      .delete()
+      .eq('id', user.id)
+
+    if (error) {
+      alert(error.message)
+    } else {
+      setUsers(prev => prev.filter(u => u.id !== user.id))
+      alert('User deleted successfully')
+    }
+  }
+
   const filteredUsers = users.filter(u => {
     const matchesSearch = u.username.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          u.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -111,15 +146,15 @@ export default function UserManagement() {
           
           <div className="flex items-center bg-white p-1.5 rounded-2xl border border-gray-100 shadow-sm">
              {['all', 'premium', 'active', 'leads'].map((f) => (
-               <button
-                 key={f}
-                 onClick={() => setFilter(f)}
-                 className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
-                   filter === f ? 'bg-secondary text-white' : 'text-gray-400 hover:text-secondary'
-                 }`}
-               >
-                 {f}
-               </button>
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
+                    filter === f ? 'bg-secondary text-white' : 'text-gray-400 hover:text-secondary'
+                  }`}
+                >
+                  {f}
+                </button>
              ))}
           </div>
 
@@ -232,14 +267,21 @@ export default function UserManagement() {
                     </td>
                     <td className="px-8 py-6 text-right">
                        <div className="flex items-center justify-end gap-2">
-                          <button className="p-2.5 hover:bg-white hover:shadow-md rounded-xl text-gray-400 hover:text-secondary border border-transparent hover:border-gray-100 transition-all">
+                          <Link href={`/admin/users/${user.id}`} className="p-2.5 hover:bg-white hover:shadow-md rounded-xl text-gray-400 hover:text-secondary border border-transparent hover:border-gray-100 transition-all">
                              <Eye size={16} />
-                          </button>
-                          <button className="p-2.5 hover:bg-white hover:shadow-md rounded-xl text-gray-400 hover:text-primary border border-transparent hover:border-gray-100 transition-all">
-                             <Edit3 size={16} />
+                          </Link>
+                          <button 
+                            onClick={() => handleToggleStatus(user)}
+                            className={`p-2.5 hover:bg-white hover:shadow-md rounded-xl border border-transparent hover:border-gray-100 transition-all ${user.is_active ? 'text-gray-400 hover:text-red-500' : 'text-primary hover:text-primary-dark'}`}
+                            title={user.is_active ? 'Block User' : 'Unblock User'}
+                          >
+                             {user.is_active ? <Ban size={16} /> : <Unlock size={16} />}
                           </button>
                           <div className="h-4 w-px bg-gray-100 mx-1"></div>
-                          <button className="p-2.5 hover:bg-red-50 hover:shadow-md rounded-xl text-gray-400 hover:text-red-500 border border-transparent hover:border-red-100 transition-all">
+                          <button 
+                            onClick={() => handleDeleteUser(user)}
+                            className="p-2.5 hover:bg-red-50 hover:shadow-md rounded-xl text-gray-400 hover:text-red-500 border border-transparent hover:border-red-100 transition-all"
+                          >
                              <Trash2 size={16} />
                           </button>
                        </div>

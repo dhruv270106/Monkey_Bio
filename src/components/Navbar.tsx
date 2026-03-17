@@ -23,7 +23,7 @@ export default function Navbar() {
           .select('*')
           .eq('id', session.user.id)
           .single()
-        
+
         if (profileData) {
           setProfile(profileData)
         }
@@ -76,7 +76,7 @@ export default function Navbar() {
                   <Link href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-neutral-100 rounded-lg">Appearance</Link>
                 </div>
               </div>
-              <Link href="#" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">Pricing</Link>
+              <Link href="/pricing" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">Pricing</Link>
               <Link href="#" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">Discover</Link>
               <Link href="#" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">Blog</Link>
             </nav>
@@ -87,20 +87,20 @@ export default function Navbar() {
               <div className="w-10 h-10 rounded-full bg-gray-100 animate-pulse"></div>
             ) : user ? (
               <div className="relative">
-                <button 
+                <button
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="w-10 h-10 rounded-full border-2 border-primary overflow-hidden shadow-sm hover:scale-105 transition-all"
                 >
-                  <img 
-                    src={profile?.avatar_url || user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || user.email}&background=random`} 
-                    alt="Profile" 
+                  <img
+                    src={profile?.avatar_url || user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || user.email}&background=random`}
+                    alt="Profile"
                     className="w-full h-full object-cover"
                   />
                 </button>
 
                 <AnimatePresence>
                   {showDropdown && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -111,8 +111,8 @@ export default function Navbar() {
                         <p className="text-sm font-bold text-secondary truncate">{profile?.username || user.email}</p>
                       </div>
 
-                      <Link 
-                        href="/dashboard" 
+                      <Link
+                        href="/dashboard"
                         onClick={() => setShowDropdown(false)}
                         className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-primary/10 hover:text-secondary transition-all"
                       >
@@ -120,8 +120,8 @@ export default function Navbar() {
                       </Link>
 
                       {isAdmin && (
-                        <Link 
-                          href="/admin" 
+                        <Link
+                          href="/admin"
                           onClick={() => setShowDropdown(false)}
                           className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-600 hover:bg-primary/10 hover:text-secondary transition-all"
                         >
@@ -131,7 +131,7 @@ export default function Navbar() {
 
                       <div className="h-px bg-gray-50 my-1"></div>
 
-                      <button 
+                      <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all text-left"
                       >

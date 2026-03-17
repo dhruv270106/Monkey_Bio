@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { sendNotification } from '@/lib/notifications'
 import { 
   Settings, 
   Globe, 
@@ -174,6 +175,67 @@ export default function AdminSettings() {
               </motion.div>
             )}
 
+            {activeTab === 'notifications' && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-10">
+                 <div className="space-y-8">
+                    <h3 className="text-xl font-black text-secondary flex items-center gap-3">
+                       <Bell size={24} className="text-primary" /> Notification Channels
+                    </h3>
+                    
+                    <div className="p-8 bg-gray-50 rounded-[40px] border border-gray-100 space-y-6">
+                       <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-2xl bg-[#4A154B] text-white flex items-center justify-center">
+                             <Webhook size={24} />
+                          </div>
+                          <div className="flex-1">
+                             <p className="font-black text-secondary">Slack Integration</p>
+                             <p className="text-xs font-bold text-gray-400">Receive real-time alerts for signups and payments.</p>
+                          </div>
+                          <button 
+                            onClick={() => {
+                              sendNotification({
+                                title: 'Test from Monkey Admin',
+                                message: 'Integration test successful! 🐒',
+                                type: 'success',
+                                channels: ['Slack']
+                              })
+                              alert('Test notification sent to Slack!')
+                            }}
+                            className="px-6 py-2 bg-white border border-gray-200 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-secondary hover:text-white transition-all shadow-sm"
+                          >
+                            Send Test
+                          </button>
+                       </div>
+                       
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Slack Webhook URL</label>
+                          <input 
+                            type="text" 
+                            placeholder="https://hooks.slack.com/services/..." 
+                            className="w-full bg-white border border-gray-200 rounded-2xl p-4 font-mono text-xs text-secondary outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm overflow-ellipsis" 
+                          />
+                          <p className="text-[10px] text-gray-400 font-bold mt-2 italic px-1">Note: In production, store this in your .env as NEXT_PUBLIC_SLACK_WEBHOOK_URL</p>
+                       </div>
+                    </div>
+
+                    <div className="p-8 bg-gray-50 rounded-[40px] border border-gray-100 space-y-6">
+                       <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                             <Mail size={24} />
+                          </div>
+                          <div className="flex-1">
+                             <p className="font-black text-secondary">Email Alerts (Admin Only)</p>
+                             <p className="text-xs font-bold text-gray-400">Daily summary and critical system failures.</p>
+                          </div>
+                          <button className={`w-14 h-8 rounded-full relative transition-all bg-gray-200`}>
+                             <div className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all left-1`}></div>
+                          </button>
+                       </div>
+                    </div>
+                 </div>
+              </motion.div>
+            )}
+
             {activeTab === 'automation' && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-10">
                  <div className="space-y-8">
@@ -185,10 +247,10 @@ export default function AdminSettings() {
                        {[
                          { title: 'Auto-Unlock on Approval', desc: 'Immediately grant theme access when a payment is marked as Approved.', active: true },
                          { title: 'Email Reminder System', desc: 'Send email to user 3 days before their premium subscription expires.', active: true },
-                         { title: 'Slack/Telegram Notifications', desc: 'Push every new signup and payment request to a private channel.', active: false },
+                         { title: 'Slack/Telegram Notifications', desc: 'Push every new signup and payment request to a private channel.', active: true },
                          { title: 'Auto-Reject Suspicious', desc: 'Automatically flag and pending payments from blacklisted IPs.', active: false }
                        ].map((rule, i) => (
-                         <div key={i} className="flex items-center justify-between p-6 bg-gray-50 rounded-[32px] border border-gray-100">
+                         <div key={i} className="flex items-center justify-between p-6 bg-gray-50 rounded-[32px] border border-gray-100 group hover:bg-white hover:shadow-xl transition-all">
                             <div>
                                <p className="font-black text-secondary">{rule.title}</p>
                                <p className="text-xs font-bold text-gray-400">{rule.desc}</p>

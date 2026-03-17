@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
+import { sendNotification } from '@/lib/notifications'
 import { 
   CreditCard, 
   Search, 
@@ -43,6 +44,9 @@ export default function PaymentVerification() {
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [actionLoading, setActionLoading] = useState(false)
+  const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [stats, setStats] = useState({ totalRevenue: 0, pendingCount: 0 })
 
   useEffect(() => {
     fetchPayments()
@@ -50,43 +54,17 @@ export default function PaymentVerification() {
 
   const fetchPayments = async () => {
     setLoading(true)
-    // Mock data for now since table might not exist
-    const { data, error } = await supabase.from('payments').select('*')
+    const { data, error } = await supabase
+      .from('payments')
+      .select('*')
+      .order('created_at', { ascending: false })
     
-    if (data && data.length > 0) {
+    if (data) {
       setPayments(data)
-    } else {
-      // Seed mockup data for preview
-      setPayments([
-        {
-          id: 'pay_1',
-          user_id: 'u1',
-          user_name: 'John Doe',
-          user_email: 'john@example.com',
-          amount: 19.99,
-          currency: 'USD',
-          method: 'UPI / Card',
-          transaction_id: 'TXN_982374123',
-          proof_url: 'https://placehold.co/600x800?text=Payment+Proof',
-          status: 'pending',
-          created_at: new Date().toISOString(),
-          plan_id: 'pro_monthly'
-        },
-        {
-          id: 'pay_2',
-          user_id: 'u2',
-          user_name: 'Sarah Smith',
-          user_email: 'sarah@design.co',
-          amount: 149.00,
-          currency: 'USD',
-          method: 'Stripe',
-          transaction_id: 'TXN_00234123',
-          proof_url: 'https://placehold.co/600x800?text=Receipt+Sarah',
-          status: 'approved',
-          created_at: new Date(Date.now() - 86400000).toISOString(),
-          plan_id: 'pro_yearly'
-        }
-      ])
+      const approved = data.filter(p => p.status === 'approved')
+      const pending = data.filter(p => p.status === 'pending')
+      const totalRev = approved.reduce((acc, p) => acc + (Number(p.amount) || 0), 0)
+      setStats({ totalRevenue: totalRev, pendingCount: pending.length })
     }
     setLoading(false)
   }
@@ -96,44 +74,66 @@ export default function PaymentVerification() {
     setActionLoading(true)
     
     try {
-      // 1. Update payment status
       const { error: payError } = await supabase
         .from('payments')
-        .update({ status, remarks, verified_by: (await supabase.auth.getUser()).data.user?.id })
+        .update({ status, remarks })
         .eq('id', selectedPayment.id)
 
+      if (payError) throw payError
+
       if (status === 'approved') {
-        // 2. Automate access: Update user profile
-        await supabase
+        const { error: userError } = await supabase
           .from('monkey_bio')
           .update({ 
             plan_status: 'premium', 
-            payment_status: 'approved',
-            premium_access_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
+            payment_status: 'approved'
           })
           .eq('id', selectedPayment.user_id)
+        
+        if (userError) console.error("Error updating user profile:", userError)
           
-        // 3. Log activity
         await supabase.from('activity_logs').insert({
           user_id: selectedPayment.user_id,
           event_type: 'payment_approved',
-          description: `Payment of ${selectedPayment.amount} approved by Admin.`
+          description: `Payment of ${selectedPayment.amount} approved by Admin for ${selectedPayment.plan_id}.`
+        })
+
+        // Notify Slack & Audit
+        sendNotification({
+          title: 'Payment Approved! 💰',
+          message: `User ${selectedPayment.user_name} has been upgraded to Premium.\nAmount: ${selectedPayment.amount} ${selectedPayment.currency}`,
+          type: 'success',
+          channels: ['Slack', 'Audit', 'Email'],
+          metadata: { user_id: selectedPayment.user_id, payment_id: selectedPayment.id }
+        })
+      } else {
+        // Notify Rejection
+        sendNotification({
+          title: 'Payment Rejected ❌',
+          message: `Payment from ${selectedPayment.user_name} was rejected.\nReason: ${remarks || 'No reason provided'}`,
+          type: 'error',
+          channels: ['Slack', 'Audit'],
+          metadata: { user_id: selectedPayment.user_id, payment_id: selectedPayment.id }
         })
       }
 
       alert(`Payment ${status} successfully!`)
-      fetchPayments()
-      setIsModalOpen(false)
-    } catch (err) {
-      console.error(err)
-      alert('Action completed (Simulation Mode)')
-      // Local state update for mockup
       setPayments(prev => prev.map(p => p.id === selectedPayment.id ? { ...p, status } : p))
       setIsModalOpen(false)
+    } catch (err: any) {
+      console.error(err)
+      alert('Error: ' + err.message)
     } finally {
       setActionLoading(false)
     }
   }
+
+  const filteredPayments = payments.filter(p => {
+    const matchesSearch = p.transaction_id?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          p.user_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    if (filter === 'all') return matchesSearch
+    return matchesSearch && p.status === filter
+  })
 
   return (
     <div className="space-y-8">
@@ -145,8 +145,8 @@ export default function PaymentVerification() {
         </div>
         <div className="flex items-center gap-3">
            <div className="flex flex-col items-end">
-             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Revenue Today</span>
-             <span className="text-xl font-black text-secondary">$349.50</span>
+             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Revenue</span>
+             <span className="text-xl font-black text-secondary">${stats.totalRevenue.toLocaleString()}</span>
            </div>
            <div className="w-px h-10 bg-gray-100 mx-2"></div>
            <button className="bg-primary/10 text-primary p-3 rounded-2xl hover:bg-primary/20 transition-all">
@@ -159,16 +159,26 @@ export default function PaymentVerification() {
       <div className="flex items-center justify-between border-b border-gray-100 pb-2">
          <div className="flex items-center gap-8">
             {['all', 'pending', 'approved', 'rejected'].map((s) => (
-              <button key={s} className={`pb-4 text-xs font-black uppercase tracking-widest relative transition-all ${s === 'pending' ? 'text-secondary' : 'text-gray-400'}`}>
+              <button 
+                key={s} 
+                onClick={() => setFilter(s as any)}
+                className={`pb-4 text-xs font-black uppercase tracking-widest relative transition-all ${filter === s ? 'text-secondary' : 'text-gray-400'}`}
+              >
                 {s}
-                {s === 'pending' && <motion.div layoutId="pay-active" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full" />}
+                {filter === s && <motion.div layoutId="pay-active" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full" />}
               </button>
             ))}
          </div>
          <div className="flex items-center gap-4 mb-4">
             <div className="relative">
                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-               <input type="text" placeholder="Search Transaction ID..." className="pl-9 pr-4 py-2 bg-white border border-gray-100 rounded-xl outline-none text-xs font-medium w-64 shadow-sm" />
+               <input 
+                type="text" 
+                placeholder="Search Transaction ID..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-4 py-2 bg-white border border-gray-100 rounded-xl outline-none text-xs font-medium w-64 shadow-sm" 
+               />
             </div>
          </div>
       </div>
@@ -176,9 +186,13 @@ export default function PaymentVerification() {
       {/* Payments Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {loading ? (
-          Array(4).fill(0).map((_, i) => <div key={i} className="h-64 bg-white rounded-[40px] animate-pulse"></div>)
+          Array(4).fill(0).map((_, i) => <div key={i} className="h-64 bg-white rounded-[40px] animate-pulse shadow-sm"></div>)
+        ) : filteredPayments.length === 0 ? (
+          <div className="col-span-2 py-20 bg-white rounded-[40px] text-center border border-dashed border-gray-200">
+            <p className="text-gray-400 font-bold">No payments found</p>
+          </div>
         ) : (
-          payments.map((pay) => (
+          filteredPayments.map((pay) => (
             <motion.div 
               key={pay.id}
               layout
@@ -187,7 +201,10 @@ export default function PaymentVerification() {
               }`}
             >
               {/* Proof Preview */}
-              <div className="w-full sm:w-48 h-64 bg-gray-50 rounded-3xl overflow-hidden relative group cursor-pointer border border-gray-100">
+              <div 
+                onClick={() => { setSelectedPayment(pay); setIsModalOpen(true); }}
+                className="w-full sm:w-48 h-64 bg-gray-50 rounded-3xl overflow-hidden relative group cursor-pointer border border-gray-100 flex-shrink-0"
+              >
                  <img src={pay.proof_url} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Proof" />
                  <div className="absolute inset-0 bg-secondary/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px]">
                     <ImageIcon size={32} className="text-white" />
@@ -216,7 +233,7 @@ export default function PaymentVerification() {
                  <div className="space-y-4 mb-6">
                     <div className="flex items-center justify-between text-xs">
                        <span className="text-gray-400 font-bold uppercase tracking-widest">Plan Selection</span>
-                       <span className="text-secondary font-black bg-gray-50 px-3 py-1 rounded-lg uppercase tracking-wider">{pay.plan_id.replace('_', ' ')}</span>
+                       <span className="text-secondary font-black bg-gray-50 px-3 py-1 rounded-lg uppercase tracking-wider">{pay.plan_id?.replace('_', ' ')}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs">
                        <span className="text-gray-400 font-bold uppercase tracking-widest">Amount</span>
@@ -240,7 +257,10 @@ export default function PaymentVerification() {
                         >
                           <CheckCircle2 size={16} /> Verify & Approve
                         </button>
-                        <button className="p-4 bg-white border border-red-100 text-red-500 rounded-2xl hover:bg-red-50 transition-all">
+                        <button 
+                          onClick={() => handleAction('rejected', 'Invalid proof or payment not received')}
+                          className="p-4 bg-white border border-red-100 text-red-500 rounded-2xl hover:bg-red-50 transition-all"
+                        >
                            <XCircle size={18} />
                         </button>
                       </>
@@ -325,7 +345,7 @@ export default function PaymentVerification() {
                       </button>
                       <button 
                          disabled={actionLoading}
-                         onClick={() => handleAction('rejected')}
+                         onClick={() => handleAction('rejected', 'User cancelled or fake proof')}
                          className="w-full py-4 text-red-500 font-black text-xs hover:bg-red-50 rounded-2xl transition-all"
                       >
                          Reject with Reason

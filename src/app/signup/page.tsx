@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
+import { sendNotification } from '@/lib/notifications'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -46,6 +47,14 @@ export default function SignupPage() {
         if (profileError) {
           alert(profileError.message)
         } else {
+          // Notify Admin
+          sendNotification({
+            title: 'New User Signup',
+            message: `@${username} just joined Monkey Bio!`,
+            type: 'success',
+            channels: ['Slack', 'Audit'],
+            metadata: { user_id: authData.user.id, username, event_type: 'signup' }
+          })
           window.location.href = '/onboarding'
         }
       }
