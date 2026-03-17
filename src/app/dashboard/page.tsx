@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/dashboard/Sidebar'
@@ -8,7 +8,7 @@ import Preview from '@/components/dashboard/Preview'
 import LinksSection from '@/components/dashboard/LinksSection'
 import DesignSection from '@/components/dashboard/DesignSection'
 
-export default function Dashboard() {
+function DashboardContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tabFromQuery = searchParams.get('tab') || 'links'
@@ -53,6 +53,11 @@ export default function Dashboard() {
     setLoading(false)
   }
 
+  useEffect(() => {
+    const tabFromQuery = searchParams.get('tab') || 'links'
+    setActiveTab(tabFromQuery)
+  }, [searchParams])
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -60,11 +65,6 @@ export default function Dashboard() {
       </div>
     )
   }
-
-  useEffect(() => {
-    const tabFromQuery = searchParams.get('tab') || 'links'
-    setActiveTab(tabFromQuery)
-  }, [searchParams])
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -111,5 +111,17 @@ export default function Dashboard() {
         />
       </div>
     </div>
+  )
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <i className="fi fi-rr-spinner animate-spin text-3xl text-primary"></i>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   )
 }
