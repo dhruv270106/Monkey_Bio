@@ -5,8 +5,10 @@ import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import Navbar from '@/components/Navbar'
 import { supabase } from '@/lib/supabase'
+import { useDomain } from '@/hooks/useDomain'
 
 export default function Home() {
+  const domain = useDomain()
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [user, setUser] = useState<any>(null)
 
@@ -66,10 +68,10 @@ export default function Home() {
                         </Link>
                      ) : (
                        <>
-                        <div className="flex flex-1 relative bg-white rounded-[20px] shadow-sm border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all">
-                          <span className="flex items-center pl-6 pr-2 text-gray-400 font-bold text-lg">monkey.link/</span>
-                          <input type="text" placeholder="yourname" className="w-full py-5 pr-6 outline-none font-bold text-lg text-secondary" />
-                        </div>
+                         <div className="flex flex-1 relative bg-white rounded-[20px] shadow-sm border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all">
+                           <span className="flex items-center pl-6 pr-2 text-gray-400 font-bold text-lg">{domain}/</span>
+                           <input type="text" placeholder="yourname" className="w-full py-5 pr-6 outline-none font-bold text-lg text-secondary" />
+                         </div>
                         <Link href="/signup" className="bg-secondary text-white font-bold text-lg px-8 py-5 rounded-[20px] hover:bg-gray-800 transition-all shadow-lg flex-shrink-0 flex items-center justify-center transform hover:scale-[1.02]">
                             Claim it
                         </Link>

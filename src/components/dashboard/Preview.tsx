@@ -3,6 +3,7 @@
 import { THEMES, Theme } from '@/data/themes'
 import { PLATFORMS } from '@/data/platforms'
 import { APPS } from '@/data/apps'
+import { useDomain } from '@/hooks/useDomain'
 
 interface PreviewProps {
   userProfile: any
@@ -11,6 +12,7 @@ interface PreviewProps {
 }
 
 export default function Preview({ userProfile, links, socialLinks }: PreviewProps) {
+  const domain = useDomain()
   const selectedTheme = (THEMES.find(t => t.id === userProfile?.theme) || THEMES[0]) as Theme
 
   const getButtonStyle = () => {
@@ -61,11 +63,11 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
       <div className="w-full p-8 flex items-center justify-center gap-3">
           <div className="bg-gray-100 flex items-center rounded-xl p-1 w-full max-w-sm">
               <span className="px-4 text-[10px] font-bold text-gray-400 truncate">
-                monkey.link/{userProfile?.username || 'user'}
+                {domain}/{userProfile?.username || 'user'}
               </span>
               <button 
                 onClick={() => {
-                  const url = `https://monkey.link/${userProfile?.username}`
+                  const url = `https://${domain}/${userProfile?.username}`
                   if (navigator.share) {
                     navigator.share({
                       title: userProfile?.display_name || 'Monkey Bio',

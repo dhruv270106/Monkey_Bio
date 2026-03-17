@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useDomain } from '@/hooks/useDomain'
 
 interface AutoReplySectionProps {
   profile: any
 }
 
 export default function AutoReplySection({ profile }: AutoReplySectionProps) {
+  const domain = useDomain()
   const [loading, setLoading] = useState(true)
   const [step, setStep] = useState(1) // 1: Connect, 2: Dashboard
   const [igUser, setIgUser] = useState<any>(null)
@@ -137,7 +139,7 @@ export default function AutoReplySection({ profile }: AutoReplySectionProps) {
                          <h3 className="text-white font-black text-lg flex items-center gap-3"><i className="fi fi-rr-eye text-primary"></i> Chat Preview</h3>
                          <div className="space-y-6">
                             <div className="bg-white/10 p-5 rounded-3xl rounded-bl-none mr-6 text-[11px] font-bold text-gray-300 italic group">"What is your website link?"</div>
-                            <div className="bg-primary p-5 rounded-3xl rounded-br-none ml-6 text-[11px] font-black text-secondary leading-relaxed shadow-lg">"Sure! Here it is: monkey.link/{profile?.username}"</div>
+                             <div className="bg-primary p-5 rounded-3xl rounded-br-none ml-6 text-[11px] font-black text-secondary leading-relaxed shadow-lg">"Sure! Here it is: {domain}/{profile?.username}"</div>
                          </div>
                       </div>
                       <i className="fi fi-rr-comment-quote absolute -bottom-10 -right-10 text-9xl text-white/5 rotate-12"></i>

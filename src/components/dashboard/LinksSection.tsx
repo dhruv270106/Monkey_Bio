@@ -7,6 +7,7 @@ import { APPS } from '@/data/apps'
 import AddLinkModal from '@/components/dashboard/AddLinkModal'
 import ManageLinksModal from '@/components/dashboard/ManageLinksModal'
 import ImageCropperModal from '@/components/modals/ImageCropperModal'
+import { useDomain } from '@/hooks/useDomain'
 
 interface Link {
   id: string
@@ -28,6 +29,7 @@ interface LinksSectionProps {
 }
 
 export default function LinksSection({ profile, links, setLinks, setProfile, refreshData }: LinksSectionProps) {
+  const domain = useDomain()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isManageModalOpen, setIsManageModalOpen] = useState(false)
   const [isCropperOpen, setIsCropperOpen] = useState(false)
@@ -143,7 +145,7 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
          <div className="flex items-center gap-3">
               <button 
                 onClick={() => {
-                  const url = `https://monkey.link/${profile?.username}`
+                  const url = `https://${domain}/${profile?.username}`
                   if (navigator.share) {
                     navigator.share({ title: profile?.display_name || 'Monkey Bio', url }).catch(() => {})
                   } else {
@@ -186,7 +188,7 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
                   </h2>
                   <div className="flex items-center gap-4 mt-3">
                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                        <i className="fi fi-rr-link text-[10px]"></i> monkey.link/{profile?.username}
+                        <i className="fi fi-rr-link text-[10px]"></i> {domain}/{profile?.username}
                      </span>
                   </div>
               </div>

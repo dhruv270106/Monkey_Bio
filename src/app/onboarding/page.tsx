@@ -6,8 +6,10 @@ import { supabase } from '@/lib/supabase'
 import { THEMES, Theme } from '@/data/themes'
 import { PLATFORMS } from '@/data/platforms'
 import ImageCropperModal from '@/components/modals/ImageCropperModal'
+import { useDomain } from '@/hooks/useDomain'
 
 export default function Onboarding() {
+  const domain = useDomain()
   const [step, setStep] = useState(1)
   const [username, setUsername] = useState('')
   const [isUsernameValid, setIsUsernameValid] = useState(false)
@@ -115,7 +117,7 @@ export default function Onboarding() {
                 
                 <div className="space-y-4">
                   <div className="relative">
-                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary/30 font-bold">monkey.link/</span>
+                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary/30 font-bold">{domain}/</span>
                     <input 
                       type="text" 
                       value={username}

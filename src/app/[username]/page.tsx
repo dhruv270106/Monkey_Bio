@@ -305,7 +305,7 @@ export default function PublicProfile() {
       <div className="fixed bottom-10 right-10 z-50 flex flex-col items-center gap-2 hidden lg:flex">
          <div className="bg-white p-2 rounded-2xl shadow-2xl border border-gray-100">
             <img 
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`https://monkey.link/${profile.username}`)}`} 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(typeof window !== 'undefined' ? `https://${window.location.host}/${profile.username}` : `https://monkeybio.com/${profile.username}`)}`} 
               alt="QR Code" 
               className="w-20 h-20 opacity-80"
             />
