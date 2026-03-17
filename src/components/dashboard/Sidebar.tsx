@@ -65,15 +65,22 @@ export default function Sidebar({ userProfile, activeTab, onTabChange }: Sidebar
     {
       label: 'My Linktree',
       items: [
-        { label: 'Links', href: '/dashboard', icon: 'fi-rr-link', color: 'text-purple-500' },
-        { label: 'Design', href: '/design', icon: 'fi-rr-palette', color: 'text-pink-500' },
+        { label: 'Links', id: 'links', icon: 'fi-rr-link', color: 'text-purple-500' },
+        { label: 'Design', id: 'design', icon: 'fi-rr-palette', color: 'text-pink-500' },
       ]
     },
     {
       label: 'Analytics',
       items: [
-        { label: 'Audience', href: '/dashboard/audience', icon: 'fi-rr-users', color: 'text-orange-500' },
-        { label: 'Insights', href: '/dashboard/insights', icon: 'fi-rr-stats', color: 'text-cyan-500' },
+        { label: 'Audience', id: 'audience', icon: 'fi-rr-users', color: 'text-orange-500' },
+        { label: 'Insights', id: 'insights', icon: 'fi-rr-stats', color: 'text-cyan-500' },
+      ]
+    },
+    {
+      label: 'Tools',
+      items: [
+        { label: 'Social planner', id: 'planner', icon: 'fi-rr-calendar', color: 'text-blue-500' },
+        { label: 'Auto-reply', id: 'autoreply', icon: 'fi-rr-comment-alt', color: 'text-primary' },
       ]
     }
   ]
@@ -101,14 +108,14 @@ export default function Sidebar({ userProfile, activeTab, onTabChange }: Sidebar
             </div>
           </div>
           
-          <Link 
-            href="/dashboard/audience" 
+          <button 
+            onClick={() => onTabChange?.('audience')}
             className="p-2 text-gray-400 hover:text-orange-500 transition-colors relative"
             title="Messages"
           >
             <i className="fi fi-rr-bell text-sm"></i>
             <span className="absolute top-1 right-1 w-2 h-2 bg-orange-500 rounded-full border-2 border-white"></span>
-          </Link>
+          </button>
 
           {/* User Dropdown Menu */}
           {isDropdownOpen && (
@@ -167,9 +174,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange }: Sidebar
             </p>
             <div className="space-y-1">
               {group.items.map((item, j) => {
-                const itemTabId = item.href.split('/').pop() || 'links'
-                const isTabActive = activeTab === itemTabId || (activeTab === 'links' && item.href === '/dashboard' && !pathname.includes('/design'))
-                const isActive = onTabChange ? isTabActive : pathname === item.href
+                const isActive = activeTab === item.id
                 
                 const content = (
                   <>
@@ -184,11 +189,11 @@ export default function Sidebar({ userProfile, activeTab, onTabChange }: Sidebar
                     : 'text-gray-500 hover:bg-gray-100'
                 }`
 
-                if (onTabChange && (item.href === '/dashboard' || item.href === '/design')) {
+                if (onTabChange) {
                   return (
                     <button 
                       key={j}
-                      onClick={() => onTabChange(itemTabId === 'dashboard' ? 'links' : itemTabId)}
+                      onClick={() => onTabChange(item.id)}
                       className={className}
                     >
                       {content}
@@ -199,7 +204,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange }: Sidebar
                 return (
                   <Link 
                     key={j}
-                    href={item.href}
+                    href={`/dashboard?tab=${item.id}`}
                     className={className}
                   >
                     {content}
@@ -209,18 +214,6 @@ export default function Sidebar({ userProfile, activeTab, onTabChange }: Sidebar
             </div>
           </div>
         ))}
-
-        <div className="pt-4">
-          <p className="px-4 py-2 text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-1">Tools</p>
-          <div className="space-y-1">
-            <Link href="/dashboard/planner" className={`flex items-center gap-3 px-4 py-2.5 transition-all rounded-xl text-sm font-bold ${pathname === '/dashboard/planner' ? 'bg-white text-secondary shadow-sm border border-gray-100' : 'text-gray-500 hover:bg-gray-100'}`}>
-                <i className={`fi fi-rr-calendar opacity-70 ${pathname === '/dashboard/planner' ? 'text-primary' : ''}`}></i> Social planner
-            </Link>
-            <Link href="/dashboard/autoreply" className={`flex items-center gap-3 px-4 py-2.5 transition-all rounded-xl text-sm font-bold ${pathname === '/dashboard/autoreply' ? 'bg-white text-secondary shadow-sm border border-gray-100' : 'text-gray-500 hover:bg-gray-100'}`}>
-                <i className={`fi fi-rr-comment-alt opacity-70 ${pathname === '/dashboard/autoreply' ? 'text-primary' : ''}`}></i> Auto-reply
-            </Link>
-          </div>
-        </div>
       </nav>
 
       {/* Checklist Card */}

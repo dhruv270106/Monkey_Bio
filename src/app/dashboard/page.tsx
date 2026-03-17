@@ -7,6 +7,10 @@ import Sidebar from '@/components/dashboard/Sidebar'
 import Preview from '@/components/dashboard/Preview'
 import LinksSection from '@/components/dashboard/LinksSection'
 import DesignSection from '@/components/dashboard/DesignSection'
+import AudienceSection from '@/components/dashboard/AudienceSection'
+import InsightsSection from '@/components/dashboard/InsightsSection'
+import PlannerSection from '@/components/dashboard/PlannerSection'
+import AutoReplySection from '@/components/dashboard/AutoReplySection'
 
 function DashboardContent() {
   const router = useRouter()
@@ -16,7 +20,7 @@ function DashboardContent() {
   const [profile, setProfile] = useState<any>(null)
   const [links, setLinks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState(tabFromQuery) // 'links' or 'design'
+  const [activeTab, setActiveTab] = useState(tabFromQuery) // 'links', 'design', 'audience', 'insights', 'planner', 'autoreply'
   const [hasDesignChanges, setHasDesignChanges] = useState(false)
 
   // Sync state with URL
@@ -66,6 +70,25 @@ function DashboardContent() {
     )
   }
 
+  const renderSection = () => {
+    switch (activeTab) {
+      case 'links':
+        return <LinksSection profile={profile} links={links} setLinks={setLinks} setProfile={setProfile} refreshData={fetchData} />
+      case 'design':
+        return <DesignSection profile={profile} setProfile={setProfile} hasChanges={hasDesignChanges} setHasChanges={setHasDesignChanges} />
+      case 'audience':
+        return <AudienceSection profile={profile} />
+      case 'insights':
+        return <InsightsSection profile={profile} />
+      case 'planner':
+        return <PlannerSection profile={profile} />
+      case 'autoreply':
+        return <AutoReplySection profile={profile} />
+      default:
+        return <LinksSection profile={profile} links={links} setLinks={setLinks} setProfile={setProfile} refreshData={fetchData} />
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Top Banner */}
@@ -85,22 +108,7 @@ function DashboardContent() {
 
         {/* Main Content Area */}
         <main className="flex-1 flex flex-col bg-white overflow-hidden">
-          {activeTab === 'links' ? (
-            <LinksSection 
-              profile={profile} 
-              links={links} 
-              setLinks={setLinks} 
-              setProfile={setProfile} 
-              refreshData={fetchData} 
-            />
-          ) : (
-            <DesignSection 
-              profile={profile} 
-              setProfile={setProfile} 
-              hasChanges={hasDesignChanges} 
-              setHasChanges={setHasDesignChanges} 
-            />
-          )}
+          {renderSection()}
         </main>
 
         {/* Real-time Preview */}
