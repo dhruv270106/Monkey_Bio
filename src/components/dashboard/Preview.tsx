@@ -102,6 +102,7 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                style={{
                  filter: userProfile?.bg_blur ? `blur(${userProfile.bg_blur}px)` : 'none',
                  transform: userProfile?.bg_blur ? 'scale(1.1)' : 'scale(1)',
+                 willChange: 'transform, filter',
                  ...(selectedTheme.grid && !selectedTheme.video ? {
                    backgroundImage: selectedTheme.text.includes('white') 
                      ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'

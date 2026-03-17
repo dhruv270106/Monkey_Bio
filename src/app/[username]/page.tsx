@@ -103,14 +103,15 @@ export default function PublicProfile() {
 
   return (
     <div 
-      className={`h-screen w-full flex flex-col items-center transition-colors duration-500 relative overflow-hidden overscroll-y-none ${selectedTheme.text}`}
+      className={`min-h-screen w-full flex flex-col items-center transition-colors duration-500 relative overflow-x-hidden ${selectedTheme.text}`}
     >
       {/* Background Layer with Blur */}
       <div 
-        className={`fixed inset-0 transition-all duration-700 ${selectedTheme.bg} overflow-hidden`}
+        className={`fixed inset-0 transition-all duration-700 ${selectedTheme.bg} overflow-hidden z-0`}
         style={{
           filter: profile?.bg_blur ? `blur(${profile.bg_blur}px)` : 'none',
           transform: profile?.bg_blur ? 'scale(1.1)' : 'scale(1)',
+          willChange: 'transform, filter',
           ...(selectedTheme.grid && !selectedTheme.video ? {
             backgroundImage: selectedTheme.text.includes('white') 
               ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
@@ -119,8 +120,7 @@ export default function PublicProfile() {
           } : selectedTheme.image ? {
             backgroundImage: `url(${selectedTheme.image})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed'
+            backgroundPosition: 'center'
           } : selectedTheme.id === 'custom' ? {
             backgroundColor: profile.custom_bg || '#ffffff',
             backgroundImage: 'none'
@@ -149,9 +149,14 @@ export default function PublicProfile() {
         />
       )}
 
-      {/* Main Content Scroll Area */}
-      <div className="relative z-10 w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col items-center">
-        <div className="w-full max-w-[420px] flex flex-col items-center py-20 px-4 min-h-full">
+      {/* Main Container - Centered Mobile Like Column */}
+      <div className="relative z-10 w-full flex justify-center py-20 px-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="w-full max-w-[420px] flex flex-col items-center"
+        >
           {/* Top Utilities */}
           <div className="w-full flex justify-between absolute top-10 left-0 px-8 items-center">
              <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
@@ -293,7 +298,7 @@ export default function PublicProfile() {
                 </div>
              </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* QR Code - Bottom Right Mobile Corner */}
