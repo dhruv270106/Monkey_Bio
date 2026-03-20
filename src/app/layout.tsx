@@ -6,7 +6,7 @@ import '@flaticon/flaticon-uicons/css/all/all.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Monkey Linktree | One Link for Everything',
+  title: 'Monkey Bio | One Link for Everything',
   description: 'Connect your audience to everything you are with one simple link.',
 }
 

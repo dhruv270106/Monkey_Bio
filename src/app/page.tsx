@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import Navbar from '@/components/Navbar'
+import HeroScroll from '@/components/HeroScroll'
 import { supabase } from '@/lib/supabase'
 import { useDomain } from '@/hooks/useDomain'
 
@@ -25,85 +26,66 @@ export default function Home() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 px-4 bg-linktree-lime overflow-hidden">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        <section className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 px-4 bg-linktree-lime overflow-hidden">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="lg:w-1/2 text-center lg:text-left z-10"
+              transition={{ duration: 0.8 }}
+              className="lg:w-[60%] text-center lg:text-left z-20"
             >
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-8 leading-[0.95] text-linktree-text">
-                Everything you are. In one, simple link in bio.
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[0.95] text-linktree-text">
+                The only link in bio you'll ever need.
               </h1>
               <p className="text-xl md:text-2xl text-linktree-text font-semibold mb-12 max-w-xl mx-auto lg:mx-0 leading-tight">
-                Join 50M+ people using Linktree for their link in bio. One link to help you share everything you create, curate and sell from your Instagram, TikTok, Twitter, YouTube and other social media profiles.
+                Join 50M+ people using Monkey Bio for their link in bio. One link to help you share everything you create, curate and sell from your Instagram, TikTok, Twitter, YouTube and other social media profiles.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto lg:mx-0 mb-6">
+              <div className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto lg:mx-0 mb-6 group">
                 {user ? (
-                  <Link href="/dashboard" className="bg-linktree-text text-linktree-lime font-bold text-xl px-10 py-6 rounded-full hover:bg-opacity-90 transition-all shadow-xl flex-1 flex items-center justify-center">
+                  <Link href="/dashboard" className="bg-linktree-text text-linktree-lime font-bold text-xl px-12 py-7 rounded-full hover:scale-105 transition-transform shadow-xl flex-1 flex items-center justify-center">
                     Go to your Dashboard
                   </Link>
                 ) : (
                   <>
-                    <div className="flex flex-1 relative bg-white rounded-2xl shadow-sm overflow-hidden border-2 border-transparent focus-within:border-linktree-text transition-all">
-                      <span className="flex items-center pl-6 pr-1 text-gray-500 font-bold text-xl">monkey.id/</span>
+                    <div className="flex-1 relative bg-white rounded-2xl shadow-sm overflow-hidden flex items-center px-4 md:px-6 py-5 md:py-6 border-2 border-transparent focus-within:border-linktree-text transition-all">
+                      <span className="text-linktree-text/60 font-bold text-lg md:text-xl">monkey.id/</span>
                       <input 
                         type="text" 
                         placeholder="yourname" 
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-full py-6 pr-6 outline-none font-bold text-xl text-linktree-text" 
+                        className="w-full bg-transparent outline-none font-bold text-lg md:text-xl text-linktree-text" 
                       />
                     </div>
-                    <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-bold text-xl px-10 py-6 rounded-full hover:bg-opacity-90 transition-all shadow-xl flex-shrink-0 flex items-center justify-center">
-                      Claim your Linktree
+                    <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-bold text-xl px-12 py-6 rounded-full hover:scale-105 transition-transform shadow-xl flex-shrink-0 flex items-center justify-center">
+                      Claim your Monkey Bio
                     </Link>
                   </>
                 )}
               </div>
               
-              <div className="flex items-center justify-center lg:justify-start gap-3 text-sm text-linktree-text/70 font-bold">
-                 <p>Free forever. No credit card required.</p>
+              <div className="flex items-center justify-center lg:justify-start gap-3 mt-8 text-sm text-linktree-text/70 font-bold">
+                 <p>🔥 Join 50 million+ active creators</p>
               </div>
             </motion.div>
 
             <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="lg:w-1/2 relative hidden lg:flex justify-center"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="lg:w-[40%] relative hidden lg:flex justify-end pr-8"
             >
-              <div className="relative w-[400px] h-[750px] bg-black rounded-[60px] border-[14px] border-black shadow-[0_50px_100px_rgba(0,0,0,0.3)] overflow-hidden">
-                <div className="w-full h-full bg-[#502274] flex flex-col items-center p-8 pt-16">
-                   <div className="w-24 h-24 rounded-full bg-linktree-lime mb-6 transform hover:scale-110 transition-transform cursor-pointer" />
-                   <div className="text-white font-bold text-2xl mb-12">@yourname</div>
-                   
-                   <div className="w-full space-y-4">
-                     {[1,2,3,4].map((i) => (
-                       <div key={i} className="w-full h-16 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center text-white font-bold hover:bg-white hover:text-[#502274] transition-all cursor-pointer">
-                         Link {i}
-                       </div>
-                     ))}
-                   </div>
-                </div>
-              </div>
-              
-              {/* Floating icons */}
-              <div className="absolute -right-10 top-20 bg-white p-4 rounded-3xl shadow-2xl animate-bounce-slow">
-                <div className="w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center text-pink-600">
-                  <i className="fi fi-brands-instagram text-2xl"></i>
-                </div>
-              </div>
-              <div className="absolute -left-10 bottom-40 bg-white p-4 rounded-3xl shadow-2xl animate-bounce-slow" style={{ animationDelay: '1s' }}>
-                <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600">
-                  <i className="fi fi-brands-twitter text-2xl"></i>
-                </div>
-              </div>
+              <HeroScroll />
             </motion.div>
           </div>
+          
+          {/* MOBILE SCROLL (ONLY ON SM) */}
+          <div className="lg:hidden mt-20 opacity-50 relative h-[400px]">
+             <HeroScroll />
+          </div>
         </section>
+
 
         {/* LOGOS / SOCIAL PROOF */}
         <section className="py-12 bg-white border-y border-gray-50 flex items-center justify-center">
@@ -138,7 +120,7 @@ export default function Home() {
                </div>
             </div>
             <div className="lg:w-1/2">
-              <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">Create and customize your Linktree in minutes</h2>
+              <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">Create and customize your Monkey Bio in minutes</h2>
               <p className="text-xl md:text-2xl font-semibold mb-12 opacity-90">
                 Connect your TikTok, Instagram, Twitter, website, store, videos, music, podcast, events and more. It all comes together in a link in bio landing page designed to convert.
               </p>
@@ -152,7 +134,7 @@ export default function Home() {
         {/* FEATURE 2: SHARE */}
         <section className="py-24 lg:py-32 bg-linktree-maroon text-[#FFDDDD] px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-white">Share your Linktree from your Instagram, TikTok, Twitter and other bios</h2>
+            <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-white">Share your Monkey Bio from your Instagram, TikTok, Twitter and other bios</h2>
             <p className="text-xl md:text-2xl font-semibold mb-12 opacity-90">
               Add your unique Linktree URL to all the platforms and places you find your audience. Then use your QR code to drive your offline audience online.
             </p>
@@ -208,7 +190,7 @@ export default function Home() {
               
               <div className="grid md:grid-cols-3 gap-8">
                  {[
-                   { name: 'Alex Rivera', role: 'Digital Artist', text: 'Monkey Linktree has completely changed how I manage my online presence. It\'s simple, beautiful and it works.' },
+                   { name: 'Alex Rivera', role: 'Digital Artist', text: 'Monkey Bio has completely changed how I manage my online presence. It\'s simple, beautiful and it works.' },
                    { name: 'Sarah Chen', role: 'Fitness Coach', text: 'I love how easy it is to customize. I can match my brand colors perfectly and my clients find everything they need.' },
                    { name: 'Marcus Bell', role: 'Podcaster', text: 'The analytics are a game changer. I actually know which episodes my listeners are clicking on now.' }
                  ].map((t, i) => (
@@ -267,7 +249,7 @@ export default function Home() {
             <ul className="space-y-4 text-sm font-bold text-gray-500">
               <li><Link href="#">Creators</Link></li>
               <li><Link href="#">Charities</Link></li>
-              <li><Link href="#">Linktree for Teams</Link></li>
+              <li><Link href="#">Monkey Bio for Teams</Link></li>
             </ul>
           </div>
           <div>
@@ -288,7 +270,7 @@ export default function Home() {
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-24 pt-8 border-t border-gray-50 text-center text-sm font-bold text-gray-400">
-          <p>&copy; 2026 Monkey Linktree. Built with love for creators.</p>
+          <p>© 2026 Monkey Bio. Built with love for creators.</p>
         </div>
       </footer>
     </div>
