@@ -30,14 +30,38 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-@keyframes bg-linktree-cycle {
-  0% { background-color: #D2E823; }
-  25% { background-color: #2665D6; }
-  50% { background-color: #780016; }
-  75% { background-color: #502274; }
-  100% { background-color: #D2E823; }
+@keyframes bg-text-cycle-1 {
+  0% { background-color: #D2E823; color: #254F1A; }
+  25% { background-color: #2665D6; color: #FFFFFF; }
+  50% { background-color: #780016; color: #FFDDDD; }
+  75% { background-color: #502274; color: #FFFFFF; }
+  100% { background-color: #D2E823; color: #254F1A; }
 }
 
-.animate-bg-cycle {
-  animation: bg-linktree-cycle 20s infinite ease-in-out;
+@keyframes bg-text-cycle-2 {
+  0% { background-color: #2665D6; color: #FFFFFF; }
+  25% { background-color: #780016; color: #FFDDDD; }
+  50% { background-color: #502274; color: #FFFFFF; }
+  75% { background-color: #D2E823; color: #254F1A; }
+  100% { background-color: #2665D6; color: #FFFFFF; }
+}
+
+@keyframes bg-text-cycle-3 {
+  0% { background-color: #780016; color: #FFDDDD; }
+  25% { background-color: #502274; color: #FFFFFF; }
+  50% { background-color: #D2E823; color: #254F1A; }
+  75% { background-color: #2665D6; color: #FFFFFF; }
+  100% { background-color: #780016; color: #FFDDDD; }
+}
+
+.animate-bg-text-1 { animation: bg-text-cycle-1 20s infinite ease-in-out; }
+.animate-bg-text-2 { animation: bg-text-cycle-2 20s infinite ease-in-out; }
+.animate-bg-text-3 { animation: bg-text-cycle-3 20s infinite ease-in-out; }
+
+/* Ensure children inherit the color OR specific text elements do */
+.animate-bg-text-1 h1, .animate-bg-text-1 h2, .animate-bg-text-1 h3, .animate-bg-text-1 p, .animate-bg-text-1 .text-content,
+.animate-bg-text-2 h1, .animate-bg-text-2 h2, .animate-bg-text-2 h3, .animate-bg-text-2 p, .animate-bg-text-2 .text-content,
+.animate-bg-text-3 h1, .animate-bg-text-3 h2, .animate-bg-text-3 h3, .animate-bg-text-3 p, .animate-bg-text-3 .text-content {
+  color: inherit !important;
+  transition: color 1s ease-in-out;
 }

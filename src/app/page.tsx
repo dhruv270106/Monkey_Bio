@@ -26,7 +26,7 @@ export default function Home() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative min-h-screen pt-24 pb-12 lg:pt-32 lg:pb-0 px-4 animate-bg-cycle overflow-hidden flex items-center transition-all duration-1000">
+        <section className="relative min-h-screen pt-24 pb-12 lg:pt-32 lg:pb-0 px-4 animate-bg-text-1 overflow-hidden flex items-center transition-all duration-1000">
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 w-full">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -34,10 +34,10 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="lg:w-[55%] text-center lg:text-left z-20"
             >
-              <h1 className="text-5xl md:text-7xl lg:text-[84px] font-black tracking-tighter mb-6 leading-[0.95] text-linktree-text">
+              <h1 className="text-5xl md:text-7xl lg:text-[84px] font-black tracking-tighter mb-6 leading-[0.95]">
                 The only link in bio you'll ever need.
               </h1>
-              <p className="text-lg md:text-xl text-linktree-text font-semibold mb-10 max-w-xl mx-auto lg:mx-0 leading-tight">
+              <p className="text-lg md:text-xl font-semibold mb-10 max-w-xl mx-auto lg:mx-0 leading-tight">
                 Join 50M+ people using Monkey Bio for their link in bio. One link to help you share everything you create, curate and sell from your Instagram, TikTok, Twitter, YouTube and other social media profiles.
               </p>
               
@@ -103,8 +103,7 @@ export default function Home() {
         </section>
 
         {/* FEATURE 1: CUSTOMIZE */}
-        <section className="py-24 lg:py-32 animate-bg-cycle text-white overflow-hidden px-4 relative">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
+        <section className="py-24 lg:py-32 animate-bg-text-2 overflow-hidden px-4 relative">
           <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24 z-10">
             <div className="lg:w-1/2 flex justify-center">
                <div className="relative w-full max-w-md aspect-[3/4] bg-white rounded-3xl overflow-hidden shadow-2xl transform lg:-rotate-6">
@@ -135,8 +134,7 @@ export default function Home() {
         </section>
 
         {/* FEATURE 2: SHARE */}
-        <section className="py-24 lg:py-32 animate-bg-cycle text-[#FFDDDD] px-4 relative">
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
+        <section className="py-24 lg:py-32 animate-bg-text-3 px-4 relative">
           <div className="relative max-w-4xl mx-auto text-center z-10">
             <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-white">Share your Monkey Bio from your Instagram, TikTok, Twitter and other bios</h2>
             <p className="text-xl md:text-2xl font-semibold mb-12 opacity-90">
@@ -149,7 +147,7 @@ export default function Home() {
         </section>
 
         {/* FEATURE 3: ANALYZE */}
-        <section className="py-24 lg:py-32 bg-linktree-grey text-linktree-text px-4">
+        <section className="py-24 lg:py-32 animate-bg-text-2 px-4">
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-16 lg:gap-24">
             <div className="lg:w-1/2 flex justify-center">
                <div className="bg-white p-8 rounded-3xl shadow-2xl w-full">
@@ -185,8 +183,7 @@ export default function Home() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section className="py-32 animate-bg-cycle text-white px-4 relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+        <section className="py-32 animate-bg-text-1 px-4 relative overflow-hidden">
           <div className="relative max-w-7xl mx-auto z-10">
               <div className="text-center mb-24">
                  <h2 className="text-5xl md:text-7xl font-black mb-8">The only link you'll ever need.</h2>
