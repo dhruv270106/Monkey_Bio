@@ -9,196 +9,286 @@ import { useDomain } from '@/hooks/useDomain'
 
 export default function Home() {
   const domain = useDomain()
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [user, setUser] = useState<any>(null)
+  const [username, setUsername] = useState('')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user || null)
     })
-
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({
-        x: e.clientX / window.innerWidth,
-        y: e.clientY / window.innerHeight
-      })
-    }
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [])
 
   return (
-    <div className="bg-gray-50 text-secondary min-h-screen flex flex-col selection:bg-primary/30">
+    <div className="bg-white text-linktree-text min-h-screen flex flex-col selection:bg-linktree-lime/30 font-sans">
       
       <Navbar />
 
-      <main className="flex-1 mt-20">
+      <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative pt-24 pb-32 overflow-hidden px-4 sm:px-6 lg:px-8 bg-white">
-           <div 
-             className="absolute inset-0 z-0 opacity-60 transition-transform duration-100 ease-linear pointer-events-none"
-             style={{ transform: `translate(-${mousePos.x * 30}px, -${mousePos.y * 30}px) scale(1.05)` }}
-           >
-              <div className="absolute rounded-full filter blur-[80px] opacity-60 animate-blob" style={{ width: '800px', height: '800px', background: 'linear-gradient(135deg, #43E660, #d9f99d)', top: '-20%', left: '-10%' }}></div>
-              <div className="absolute rounded-full filter blur-[80px] opacity-20 animate-blob" style={{ width: '600px', height: '600px', background: '#60a5fa', bottom: '-10%', right: '-5%', animationDelay: '-5s' }}></div>
-           </div>
-           
-           <div className="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row items-center gap-16">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="lg:w-[55%] text-center lg:text-left"
-              >
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 backdrop-blur-md border border-gray-100 shadow-sm mb-8 text-sm font-bold text-secondary">
-                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(67,230,96,1)]"></span> Join 5M+ successful creators today.
-                  </div>
-                  <h1 className="text-[3.5rem] md:text-[5rem] lg:text-[5.5rem] font-black tracking-tight mb-8 leading-[1.05] text-secondary">
-                    Everything you are.<br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 via-[#43E660] to-teal-400">In one link.</span>
-                  </h1>
-                  <p className="text-xl md:text-2xl text-gray-500 font-medium mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                    Join 50M+ creators who use Monkey to organize their links, monetize their audience, and build their brand. The only platform that grows with you.
-                  </p>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto lg:mx-0 mb-8">
-                     {user ? (
-                        <Link href="/dashboard" className="bg-secondary text-white font-bold text-lg px-8 py-5 rounded-[20px] hover:bg-gray-800 transition-all shadow-lg flex-1 flex items-center justify-center transform hover:scale-[1.02]">
-                          Go to Dashboard <i className="fi fi-rr-arrow-right ml-2 pt-1 text-sm"></i>
-                        </Link>
-                     ) : (
-                       <>
-                         <div className="flex flex-1 relative bg-white rounded-[20px] shadow-sm border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all">
-                           <span className="flex items-center pl-6 pr-2 text-gray-400 font-bold text-lg">{domain}/</span>
-                           <input type="text" placeholder="yourname" className="w-full py-5 pr-6 outline-none font-bold text-lg text-secondary" />
-                         </div>
-                        <Link href="/signup" className="bg-secondary text-white font-bold text-lg px-8 py-5 rounded-[20px] hover:bg-gray-800 transition-all shadow-lg flex-shrink-0 flex items-center justify-center transform hover:scale-[1.02]">
-                            Claim it
-                        </Link>
-                       </>
-                     )}
-                  </div>
-                  
-                  <div className="flex items-center justify-center lg:justify-start gap-3 text-sm text-gray-400 font-bold">
-                     <p>Free forever</p> <span className="bg-gray-300 w-1 h-1 rounded-full"></span> <p>No credit card required</p>
-                  </div>
-              </motion.div>
+        <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 px-4 bg-linktree-lime overflow-hidden">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="lg:w-1/2 text-center lg:text-left z-10"
+            >
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-8 leading-[0.95] text-linktree-text">
+                Everything you are. In one, simple link in bio.
+              </h1>
+              <p className="text-xl md:text-2xl text-linktree-text font-semibold mb-12 max-w-xl mx-auto lg:mx-0 leading-tight">
+                Join 50M+ people using Linktree for their link in bio. One link to help you share everything you create, curate and sell from your Instagram, TikTok, Twitter, YouTube and other social media profiles.
+              </p>
               
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="lg:w-[45%] relative flex justify-center lg:justify-end"
-              >
-
-                 <div className="relative w-[340px] h-[680px] bg-black rounded-[52px] border-[14px] border-[#020617] shadow-2xl overflow-hidden z-10 transform -rotate-2 hover:rotate-0 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(67,230,96,0.2)]">
-                    <div className="w-full h-full bg-white flex flex-col items-center p-8 pt-12">
-                        <div className="w-16 h-16 rounded-full bg-primary/20 mb-4" />
-                        <div className="w-24 h-4 bg-gray-100 rounded-full mb-8" />
-                        <div className="w-full space-y-3">
-                          <div className="w-full h-12 bg-gray-50 rounded-xl" />
-                          <div className="w-full h-12 bg-gray-50 rounded-xl" />
-                          <div className="w-full h-12 bg-gray-50 rounded-xl" />
-                        </div>
+              <div className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto lg:mx-0 mb-6">
+                {user ? (
+                  <Link href="/dashboard" className="bg-linktree-text text-linktree-lime font-bold text-xl px-10 py-6 rounded-full hover:bg-opacity-90 transition-all shadow-xl flex-1 flex items-center justify-center">
+                    Go to your Dashboard
+                  </Link>
+                ) : (
+                  <>
+                    <div className="flex flex-1 relative bg-white rounded-2xl shadow-sm overflow-hidden border-2 border-transparent focus-within:border-linktree-text transition-all">
+                      <span className="flex items-center pl-6 pr-1 text-gray-500 font-bold text-xl">monkey.id/</span>
+                      <input 
+                        type="text" 
+                        placeholder="yourname" 
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="w-full py-6 pr-6 outline-none font-bold text-xl text-linktree-text" 
+                      />
                     </div>
-                 </div>
-                 <div className="absolute -right-8 bottom-32 bg-white/90 backdrop-blur-md py-4 px-6 rounded-3xl shadow-2xl border border-white z-20 flex items-center gap-4 animate-bounce-slow" style={{ animationDelay: '2s' }}>
-                    <div className="bg-blue-100 p-2.5 rounded-full text-blue-600"><i className="fi fi-rr-music-alt"></i></div>
-                    <p className="text-sm font-bold text-secondary">Spotify Linked!</p>
-                 </div>
-              </motion.div>
-           </div>
-        </section>
-
-        {/* FEATURES GRID */}
-        <section className="py-32 bg-white">
-           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-24">
-                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight text-secondary">Everything you need.</h2>
-                 <p className="text-xl md:text-2xl text-gray-500 max-w-2xl mx-auto font-medium">Create your page, share your content, and monetize your audience — all in one place.</p>
+                    <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-bold text-xl px-10 py-6 rounded-full hover:bg-opacity-90 transition-all shadow-xl flex-shrink-0 flex items-center justify-center">
+                      Claim your Linktree
+                    </Link>
+                  </>
+                )}
               </div>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                   {[
-                     { icon: 'fi-rr-layout-fluid', title: 'Create your page', desc: 'Design a stunning mobile-first landing page for your audience in minutes, no coding required.' },
-                     { icon: 'fi-rr-stats', title: 'Track everything', desc: 'Real-time analytics on clicks, views, and revenue right from your beautifully clean dashboard.' },
-                     // { icon: 'fi-rr-dollar', title: 'Earn money', desc: 'Sell digital products, collect tips, or set up a membership instantly directly on your page.' }
-                   ].filter((_, i) => i !== 2).map((item, i) => (
-                     <div key={i} className="bg-[#F5F7FA] p-10 rounded-[40px] border border-gray-100 hover:shadow-xl transition-all duration-300 group hover:-translate-y-2">
-                        <div className="w-16 h-16 bg-white text-secondary rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:scale-110 group-hover:bg-primary transition-all">
-                           <i className={`fi ${item.icon} text-2xl`}></i>
-                        </div>
-                        <h3 className="text-3xl font-bold mb-4 tracking-tight text-secondary">{item.title}</h3>
-                        <p className="text-lg text-gray-500 font-medium">{item.desc}</p>
-                     </div>
-                   ))}
+              <div className="flex items-center justify-center lg:justify-start gap-3 text-sm text-linktree-text/70 font-bold">
+                 <p>Free forever. No credit card required.</p>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="lg:w-1/2 relative hidden lg:flex justify-center"
+            >
+              <div className="relative w-[400px] h-[750px] bg-black rounded-[60px] border-[14px] border-black shadow-[0_50px_100px_rgba(0,0,0,0.3)] overflow-hidden">
+                <div className="w-full h-full bg-[#502274] flex flex-col items-center p-8 pt-16">
+                   <div className="w-24 h-24 rounded-full bg-linktree-lime mb-6 transform hover:scale-110 transition-transform cursor-pointer" />
+                   <div className="text-white font-bold text-2xl mb-12">@yourname</div>
+                   
+                   <div className="w-full space-y-4">
+                     {[1,2,3,4].map((i) => (
+                       <div key={i} className="w-full h-16 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center text-white font-bold hover:bg-white hover:text-[#502274] transition-all cursor-pointer">
+                         Link {i}
+                       </div>
+                     ))}
+                   </div>
+                </div>
+              </div>
+              
+              {/* Floating icons */}
+              <div className="absolute -right-10 top-20 bg-white p-4 rounded-3xl shadow-2xl animate-bounce-slow">
+                <div className="w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center text-pink-600">
+                  <i className="fi fi-brands-instagram text-2xl"></i>
+                </div>
+              </div>
+              <div className="absolute -left-10 bottom-40 bg-white p-4 rounded-3xl shadow-2xl animate-bounce-slow" style={{ animationDelay: '1s' }}>
+                <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600">
+                  <i className="fi fi-brands-twitter text-2xl"></i>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* LOGOS / SOCIAL PROOF */}
+        <section className="py-12 bg-white border-y border-gray-50 flex items-center justify-center">
+           <div className="max-w-7xl mx-auto px-4 overflow-hidden text-linktree-text">
+             <div className="flex flex-wrap justify-center items-center gap-10 lg:gap-20 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
+               <span className="font-black text-2xl tracking-tighter italic">Forbes</span>
+               <span className="font-black text-2xl tracking-tighter">RollingStone</span>
+               <span className="font-black text-2xl tracking-tighter">TechCrunch</span>
+               <span className="font-black text-3xl tracking-tighter italic font-serif">WIRED</span>
+               <span className="font-serif font-extrabold text-2xl tracking-tighter text-3xl">The Guardian</span>
+             </div>
+           </div>
+        </section>
+
+        {/* FEATURE 1: CUSTOMIZE */}
+        <section className="py-24 lg:py-32 bg-linktree-blue text-white overflow-hidden px-4">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+            <div className="lg:w-1/2 flex justify-center">
+               <div className="relative w-full max-w-md aspect-[3/4] bg-white rounded-3xl overflow-hidden shadow-2xl transform lg:-rotate-6">
+                  {/* Mock UI */}
+                  <div className="p-8 h-full flex flex-col">
+                    <div className="flex items-center gap-4 mb-8">
+                       <div className="w-12 h-12 rounded-full bg-gray-200" />
+                       <div className="h-4 w-32 bg-gray-100 rounded-full" />
+                    </div>
+                    <div className="space-y-4 flex-1">
+                       <div className="h-12 w-full bg-gray-50 rounded-xl" />
+                       <div className="h-12 w-full bg-gray-50 rounded-xl" />
+                       <div className="h-12 w-full bg-gray-50 rounded-xl" />
+                    </div>
+                  </div>
+               </div>
+            </div>
+            <div className="lg:w-1/2">
+              <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">Create and customize your Linktree in minutes</h2>
+              <p className="text-xl md:text-2xl font-semibold mb-12 opacity-90">
+                Connect your TikTok, Instagram, Twitter, website, store, videos, music, podcast, events and more. It all comes together in a link in bio landing page designed to convert.
+              </p>
+              <Link href="/signup" className="inline-block bg-linktree-lavender text-linktree-text font-bold text-xl px-12 py-6 rounded-full hover:bg-white transition-all shadow-lg">
+                Get started for free
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* FEATURE 2: SHARE */}
+        <section className="py-24 lg:py-32 bg-linktree-maroon text-[#FFDDDD] px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-white">Share your Linktree from your Instagram, TikTok, Twitter and other bios</h2>
+            <p className="text-xl md:text-2xl font-semibold mb-12 opacity-90">
+              Add your unique Linktree URL to all the platforms and places you find your audience. Then use your QR code to drive your offline audience online.
+            </p>
+            <Link href="/signup" className="inline-block bg-[#FFDDDD] text-linktree-maroon font-bold text-xl px-12 py-6 rounded-full hover:bg-white transition-all shadow-lg">
+              Get started for free
+            </Link>
+          </div>
+        </section>
+
+        {/* FEATURE 3: ANALYZE */}
+        <section className="py-24 lg:py-32 bg-linktree-grey text-linktree-text px-4">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-16 lg:gap-24">
+            <div className="lg:w-1/2 flex justify-center">
+               <div className="bg-white p-8 rounded-3xl shadow-2xl w-full">
+                  <div className="flex justify-between items-center mb-8">
+                    <h4 className="font-bold text-xl">Analytics</h4>
+                    <span className="text-sm font-bold text-gray-400">Last 28 days</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="bg-gray-50 p-6 rounded-2xl">
+                       <p className="text-sm text-gray-500 font-bold mb-2">Views</p>
+                       <p className="text-3xl font-black">12.4k</p>
+                    </div>
+                    <div className="bg-gray-50 p-6 rounded-2xl">
+                       <p className="text-sm text-gray-500 font-bold mb-2">Clicks</p>
+                       <p className="text-3xl font-black">4.8k</p>
+                    </div>
+                  </div>
+                  <div className="h-40 w-full bg-linktree-lime/20 rounded-2xl relative overflow-hidden">
+                     <div className="absolute bottom-0 left-0 w-full h-24 bg-linktree-lime/40" style={{ clipPath: 'polygon(0 100%, 100% 100%, 100% 0, 80% 40%, 60% 20%, 40% 60%, 20% 40%, 0 80%)' }} />
+                  </div>
+               </div>
+            </div>
+            <div className="lg:w-1/2">
+              <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">Analyze your audience and keep your followers engaged</h2>
+              <p className="text-xl md:text-2xl font-semibold mb-12 opacity-80">
+                Track your audience with our detailed insights. See which links are performing best, where your traffic is coming from and what's converting.
+              </p>
+              <Link href="/signup" className="inline-block bg-linktree-text text-white font-bold text-xl px-12 py-6 rounded-full hover:opacity-90 transition-all shadow-lg">
+                Get started for free
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* TESTIMONIALS */}
+        <section className="py-32 bg-linktree-purple text-white px-4">
+           <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-24">
+                 <h2 className="text-5xl md:text-7xl font-black mb-8">The only link you'll ever need.</h2>
+                 <p className="text-xl md:text-2xl opacity-80 font-semibold max-w-2xl mx-auto">Used by creators, influencers and brands across the globe.</p>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-8">
+                 {[
+                   { name: 'Alex Rivera', role: 'Digital Artist', text: 'Monkey Linktree has completely changed how I manage my online presence. It\'s simple, beautiful and it works.' },
+                   { name: 'Sarah Chen', role: 'Fitness Coach', text: 'I love how easy it is to customize. I can match my brand colors perfectly and my clients find everything they need.' },
+                   { name: 'Marcus Bell', role: 'Podcaster', text: 'The analytics are a game changer. I actually know which episodes my listeners are clicking on now.' }
+                 ].map((t, i) => (
+                   <div key={i} className="bg-white/10 backdrop-blur-md p-10 rounded-3xl border border-white/10">
+                      <p className="text-xl font-medium mb-8">"{t.text}"</p>
+                      <div>
+                        <p className="font-bold text-lg">{t.name}</p>
+                        <p className="text-sm opacity-60 font-bold">{t.role}</p>
+                      </div>
+                   </div>
+                 ))}
               </div>
            </div>
         </section>
 
-        {/* CTA SECTION */}
-        <section className="py-32 relative overflow-hidden bg-secondary text-white text-center rounded-[60px] max-w-[1400px] mx-auto mb-16 shadow-2xl">
-            <div className="absolute inset-0 z-0">
-                <div className="absolute rounded-full bg-primary/15 filter blur-[80px] animate-blob" style={{ width: '800px', height: '800px', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', animationDuration: '20s' }}></div>
-            </div>
-            <div className="max-w-4xl mx-auto px-4 relative z-10">
-               <h2 className="text-5xl md:text-7xl font-black mb-8 tracking-tight">Ready to grow?</h2>
-               <p className="text-xl text-white/70 font-medium mb-12">Join millions of creators managing their digital presence.</p>
-               <Link href={user ? "/dashboard" : "/signup"} className="inline-flex items-center justify-center bg-primary text-secondary font-bold text-xl px-12 py-5 rounded-full hover:bg-primary-dark transition-all transform hover:scale-105 shadow-lg">
-                  {user ? "Go to Dashboard" : "Start building today"}
-               </Link>
-            </div>
+        {/* FINAL CTA */}
+        <section className="py-32 bg-linktree-lime px-4 text-center">
+           <div className="max-w-4xl mx-auto">
+              <h2 className="text-5xl md:text-8xl font-black mb-12 text-linktree-text">The only link in bio you’ll ever need</h2>
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                 <Link href="/signup" className="bg-linktree-purple text-white font-bold text-xl px-12 py-6 rounded-full hover:opacity-90 transition-all">
+                    Sign up for free
+                 </Link>
+                 <Link href="/pricing" className="bg-linktree-text text-white font-bold text-xl px-12 py-6 rounded-full hover:opacity-90 transition-all">
+                    Find out more
+                 </Link>
+              </div>
+           </div>
         </section>
       </main>
 
-      <footer className="bg-gray-50 border-t border-gray-200 text-secondary pt-24 pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12 mb-16">
-            <div className="col-span-2 lg:col-span-1">
-               <Link href="/" className="flex items-center gap-2 mb-6">
-                <span className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-secondary font-bold text-xl">M</span>
-                <span className="font-bold text-xl tracking-tight">Monkey</span>
-               </Link>
-               <p className="text-gray-500 text-sm mb-6">Everything you are. In one simple link in bio. Join millions of creators today.</p>
-               <div className="flex items-center gap-4">
-                 <Link href="#" className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-primary transition-colors text-gray-700 hover:text-secondary"><i className="fi fi-brands-twitter"></i></Link>
-                 <Link href="#" className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-primary transition-colors text-gray-700 hover:text-secondary"><i className="fi fi-brands-instagram"></i></Link>
-                 <Link href="#" className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-primary transition-colors text-gray-700 hover:text-secondary"><i className="fi fi-brands-youtube"></i></Link>
-               </div>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Product</h4>
-              <ul className="space-y-3 text-sm text-gray-500 font-medium">
-                <li><Link href="#" className="hover:text-primary transition-colors">Features</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors">Discover</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Company</h4>
-              <ul className="space-y-3 text-sm text-gray-500 font-medium">
-                <li><Link href="#" className="hover:text-primary transition-colors">About Us</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors">Careers</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Resources</h4>
-              <ul className="space-y-3 text-sm text-gray-500 font-medium">
-                <li><Link href="#" className="hover:text-primary transition-colors">Blog</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors">Help Center</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Legal</h4>
-              <ul className="space-y-3 text-sm text-gray-500 font-medium">
-                <li><Link href="#" className="hover:text-primary transition-colors">Privacy</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors">Terms</Link></li>
-              </ul>
-            </div>
+      <footer className="bg-white text-linktree-text py-24 px-4 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-12">
+          <div className="col-span-2 md:col-span-1">
+             <Link href="/" className="flex items-center gap-2 mb-8">
+              <span className="w-10 h-10 rounded-xl bg-linktree-text flex items-center justify-center text-linktree-lime font-black text-2xl">M</span>
+              <span className="font-black text-2xl tracking-tight">Monkey.</span>
+             </Link>
+             <div className="flex gap-4">
+                <i className="fi fi-brands-instagram text-2xl"></i>
+                <i className="fi fi-brands-twitter text-2xl"></i>
+                <i className="fi fi-brands-tiktok text-2xl"></i>
+             </div>
           </div>
-          <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500 font-medium">
-            <p>&copy; 2026 Monkey Linktree. All rights reserved.</p>
+          <div>
+            <h4 className="font-bold text-lg mb-6">Company</h4>
+            <ul className="space-y-4 text-sm font-bold text-gray-500">
+              <li><Link href="#">About</Link></li>
+              <li><Link href="#">Careers</Link></li>
+              <li><Link href="#">Press</Link></li>
+              <li><Link href="#">Social Good</Link></li>
+            </ul>
           </div>
+          <div>
+            <h4 className="font-bold text-lg mb-6">Community</h4>
+            <ul className="space-y-4 text-sm font-bold text-gray-500">
+              <li><Link href="#">Creators</Link></li>
+              <li><Link href="#">Charities</Link></li>
+              <li><Link href="#">Linktree for Teams</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold text-lg mb-6">Support</h4>
+            <ul className="space-y-4 text-sm font-bold text-gray-500">
+              <li><Link href="#">Help Center</Link></li>
+              <li><Link href="#">Contact</Link></li>
+              <li><Link href="#">Trust Center</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold text-lg mb-6">Legal</h4>
+            <ul className="space-y-4 text-sm font-bold text-gray-500">
+              <li><Link href="#">Privacy Policy</Link></li>
+              <li><Link href="#">Terms of Service</Link></li>
+              <li><Link href="#">Cookie Policy</Link></li>
+            </ul>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto mt-24 pt-8 border-t border-gray-50 text-center text-sm font-bold text-gray-400">
+          <p>&copy; 2026 Monkey Linktree. Built with love for creators.</p>
         </div>
       </footer>
     </div>

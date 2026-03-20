@@ -24,6 +24,15 @@ const config: Config = {
           100: '#F5F7FA',
           200: '#EAEFF4',
           900: '#111111',
+        },
+        linktree: {
+          lime: '#D2E823',
+          blue: '#2665D6',
+          maroon: '#780016',
+          grey: '#E8EFD6',
+          purple: '#502274',
+          text: '#254F1A',
+          lavender: '#E9D5FF',
         }
       },
       fontFamily: {
