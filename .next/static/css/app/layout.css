@@ -2974,6 +2974,9 @@ body{
 .pl-4{
   padding-left: 1rem;
 }
+.pb-10{
+  padding-bottom: 2.5rem;
+}
 .text-left{
   text-align: left;
 }
@@ -3101,6 +3104,10 @@ body{
 }
 .text-\[6px\]{
   font-size: 6px;
+}
+.text-5xl{
+  font-size: 3rem;
+  line-height: 1;
 }
 .font-black{
   font-weight: 900;
@@ -4934,6 +4941,10 @@ html.lenis {
     padding-top: 0px;
   }
 
+  .md\:pb-2{
+    padding-bottom: 0.5rem;
+  }
+
   .md\:text-left{
     text-align: left;
   }
@@ -5176,6 +5187,10 @@ html.lenis {
 
   .lg\:text-\[112px\]{
     font-size: 112px;
+  }
+
+  .lg\:leading-\[0\.85\]{
+    line-height: 0.85;
   }
 }
 
