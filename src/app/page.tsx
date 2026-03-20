@@ -26,7 +26,7 @@ export default function Home() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 px-4 bg-linktree-lime overflow-hidden">
+        <section className="relative pt-32 pb-24 lg:pt-52 lg:pb-52 px-4 bg-linktree-lime overflow-hidden">
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -73,16 +73,18 @@ export default function Home() {
             <motion.div 
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="lg:w-[40%] relative hidden lg:flex justify-end pr-8"
+              transition={{ duration: 1, delay: 0.3 }}
+              className="lg:w-[45%] relative hidden lg:flex justify-end p-0"
             >
               <HeroScroll />
             </motion.div>
           </div>
           
           {/* MOBILE SCROLL (ONLY ON SM) */}
-          <div className="lg:hidden mt-20 opacity-50 relative h-[400px]">
-             <HeroScroll />
+          <div className="lg:hidden mt-20 opacity-40 relative h-[500px] flex justify-center">
+             <div className="scale-[0.6] origin-top">
+                <HeroScroll />
+             </div>
           </div>
         </section>
 
