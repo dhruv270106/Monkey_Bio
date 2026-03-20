@@ -8,10 +8,34 @@ import HeroScroll from '@/components/HeroScroll'
 import { Reveal } from '@/components/Reveal'
 import Lenis from 'lenis'
 
+function Section({ id, children, from = "bottom", bgClass = "" }: { id: string, children: React.ReactNode, from?: "left" | "right" | "bottom", bgClass?: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  })
+
+  // Arrive earlier
+  const x = useTransform(scrollYProgress, [0, 0.4], [from === "left" ? -250 : from === "right" ? 250 : 0, 0])
+  const y = useTransform(scrollYProgress, [0, 0.4], [from === "bottom" ? 250 : 0, 0])
+  const opacity = useTransform(scrollYProgress, [0, 0.35], [0, 1])
+  const scale = useTransform(scrollYProgress, [0, 0.4], [0.95, 1])
+
+  return (
+    <section id={id} ref={ref} className={`stack-section px-8 md:px-20 ${bgClass} overflow-hidden`}>
+      <motion.div 
+        style={{ x, y, opacity, scale }}
+        className="w-full h-full flex flex-col items-center justify-center py-20 relative z-20"
+      >
+        {children}
+      </motion.div>
+    </section>
+  )
+}
+
 export default function Home() {
   const [username, setUsername] = useState('')
   const [isClaimed, setIsClaimed] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const lenis = new Lenis()
@@ -28,190 +52,192 @@ export default function Home() {
       <div className="noise-overlay" />
       <Navbar />
 
-      <main ref={containerRef} className="relative flex flex-col">
+      <main className="relative flex flex-col">
         
-        {/* SECTION 1: VIBRANT STACKING HERO */}
-        <section id="hero" className="stack-section bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-linktree-text">
-          <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 h-full items-center gap-10 px-8">
-            <motion.div 
-              style={{ opacity: useTransform(useScroll().scrollY, [0, 500], [1, 0]) }}
-              className="flex flex-col gap-10 z-20"
-            >
-              <Reveal delay={0.1}>
-                <h1 className="text-7xl md:text-9xl lg:text-[140px] font-black leading-[0.8] tracking-[-0.06em] text-linktree-text uppercase">
-                  Everything <br /> You Are. <br /> One Link.
-                </h1>
-              </Reveal>
+        {/* HERO SECTION - REFINED LAYOUT */}
+        <section id="hero" className="stack-section bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-8 md:px-20 overflow-hidden">
+           <div className="max-w-[1600px] mx-auto w-full grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] h-full items-center gap-10 relative z-20">
               
-              <Reveal delay={0.3}>
-                <p className="text-2xl md:text-3xl font-black max-w-2xl text-linktree-text leading-tight opacity-90">
-                  The only link in bio you'll ever need. Join 40M+ people using <span className="underline decoration-wavy decoration-linktree-purple decoration-4">Monkey Bio</span> to grow their audience.
-                </p>
-              </Reveal>
+              {/* LEFT TEXT CONTAINER */}
+              <div className="flex flex-col gap-10 z-30 pr-10 relative">
+                <Reveal delay={0.05} width="100%">
+                  <h1 className="text-6xl md:text-8xl lg:text-[110px] font-black leading-[0.85] tracking-[-0.07em] uppercase">
+                    Everything <br /> You Are. <br /> One Link.
+                  </h1>
+                </Reveal>
+                
+                <Reveal delay={0.2} width="100%">
+                  <p className="text-2xl font-black max-w-sm leading-tight opacity-60">
+                     The original link in bio, trusted by <span className="underline decoration-wavy decoration-linktree-purple decoration-4">40M+</span> creators.
+                  </p>
+                </Reveal>
 
-              <div className="flex flex-col gap-6 max-w-lg mt-6">
-                {!isClaimed ? (
-                  <div className="flex bg-white rounded-3xl p-3 gap-3 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] ring-black/5 focus-within:ring-8 transition-all">
-                    <span className="flex items-center pl-6 font-black text-xl text-gray-300">monkey.bio/</span>
-                    <input 
-                      type="text" 
-                      placeholder="username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="bg-transparent border-none focus:outline-none focus:ring-0 font-black text-2xl text-linktree-text flex-1 py-4"
-                    />
-                    <motion.button 
-                      whileHover={{ scale: 1.05, rotate: 2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => username && setIsClaimed(true)}
-                      className="bg-linktree-purple text-white font-black text-xl px-12 py-5 rounded-3xl shadow-xl transition-all"
-                    >
-                      CLAIM IT
-                    </motion.button>
-                  </div>
-                ) : (
-                  <motion.div 
-                    initial={{ scale: 0.8, opacity: 0 }} 
-                    animate={{ scale: 1, opacity: 1 }} 
-                    className="flex justify-between items-center bg-white p-6 rounded-[30px] shadow-2xl border-4 border-white"
-                  >
-                    <p className="font-black text-2xl text-linktree-text">monkey.bio/{username}</p>
-                    <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-black text-lg px-8 py-4 rounded-2xl">Finish! 🔥</Link>
-                  </motion.div>
-                )}
+                <div className="flex flex-col gap-4 max-w-lg mt-6">
+                  {!isClaimed ? (
+                    <div className="flex bg-white rounded-3xl p-3 gap-3 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.1)] focus-within:ring-8 transition-all">
+                      <span className="flex items-center pl-6 font-black text-xl text-gray-200">/</span>
+                      <input 
+                        type="text" 
+                        placeholder="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="bg-transparent border-none focus:outline-none focus:ring-0 font-black text-2xl text-black flex-1 py-4"
+                      />
+                      <motion.button 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => username && setIsClaimed(true)}
+                        className="bg-linktree-purple text-white font-black text-xl px-12 py-5 rounded-[20px]"
+                      >
+                        CLAIM IT
+                      </motion.button>
+                    </div>
+                  ) : (
+                    <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="flex justify-between items-center bg-white p-6 rounded-[30px] border-4 border-white shadow-2xl">
+                      <p className="font-black text-2xl">monkey.bio/{username}</p>
+                      <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-black text-lg px-8 py-4 rounded-2xl">IT'S YOURS!</Link>
+                    </motion.div>
+                  )}
+                </div>
               </div>
-            </motion.div>
 
-            <motion.div 
-              style={{ y: useTransform(useScroll().scrollY, [0, 800], [0, -100]) }}
-              className="absolute right-0 top-0 bottom-0 w-1/2 hidden lg:block overflow-hidden pointer-events-none"
-            >
-               <HeroScroll />
-            </motion.div>
-          </div>
-          <div className="absolute bottom-12 left-8 flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.4em] opacity-30 text-linktree-text">
+              {/* RIGHT SCROLL CONTAINER - ISOLATED */}
+              <div className="relative h-full w-full hidden lg:block overflow-hidden">
+                <HeroScroll />
+              </div>
+           </div>
+
+           {/* Scroll Indicator */}
+           <div className="absolute bottom-12 left-8 flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.4em] opacity-30 text-black z-30">
              <div className="w-10 h-[2px] bg-black" /> Scroll to explore
-          </div>
+           </div>
         </section>
 
-        {/* SECTION 2: CUSTOMIZE STACK - RADIANT BLUE */}
-        <section id="features" className="stack-section bg-gradient-to-br from-[#2665D6] via-[#4F8BF8] to-[#1E4FAF] text-white">
-           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center px-8 z-10">
-              <div className="order-2 lg:order-1">
-                 <Reveal delay={0.1}>
-                    <h2 className="text-7xl md:text-9xl font-black leading-[0.85] uppercase tracking-tighter mb-10">
+        {/* CUSTOMIZE SECTION - FROM LEFT (BLUE) */}
+        <Section id="features" from="left" bgClass="bg-gradient-to-br from-[#2665D6] via-[#4F8BF8] to-[#1E4FAF] text-white">
+           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+              <div className="pr-10 z-30 relative">
+                 <Reveal delay={0.1} width="100%">
+                    <h2 className="text-6xl md:text-8xl lg:text-[100px] font-black leading-[0.85] uppercase mb-10">
                       Personalize <br /> Everything.
                     </h2>
                  </Reveal>
-                 <Reveal delay={0.2}>
-                    <p className="text-2xl font-black text-white/70 mb-12 max-w-md">
-                       Your Brand. Your Style. <br /> Our Beautiful Infrastructure.
-                    </p>
-                 </Reveal>
-                 <motion.div whileHover={{ scale: 1.1, x: 20 }} className="inline-block">
-                    <Link href="/signup" className="bg-[#D2E823] text-linktree-text font-black text-2xl px-16 py-8 rounded-3xl shadow-2xl">
-                       START FREE <span>→</span>
+                 <motion.div whileHover={{ x: 20 }} className="inline-block mt-12">
+                    <Link href="/signup" className="border-b-4 border-[#D2E823] text-[#D2E823] font-black text-3xl pb-2">
+                       DISCOVER <span>→</span>
                     </Link>
                  </motion.div>
               </div>
-              
-              <div className="order-1 lg:order-2 flex justify-center lg:justify-end h-full items-center">
-                 <motion.div 
-                   whileInView={{ rotate: 10, scale: 1.1 }}
-                   className="relative w-full max-w-sm aspect-[4/5] bg-white rounded-[60px] p-2 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border-[16px] border-white"
-                 >
-                    <div className="h-full w-full bg-white rounded-[40px] flex flex-col p-8 overflow-hidden">
-                       <div className="w-16 h-16 rounded-full bg-gray-100 mb-8" />
-                       <div className="space-y-4">
-                          {[1,2,3].map(i => <div key={i} className="h-16 w-full rounded-2xl bg-black/5" />)}
-                       </div>
-                    </div>
-                 </motion.div>
+              <div className="flex justify-center lg:justify-end z-10">
+                <div className="relative w-full max-w-[400px] aspect-[4/5] bg-white rounded-[60px] p-2 shadow-2xl overflow-hidden border border-white/20">
+                   <img src="/images/customize.png" className="w-full h-full object-cover rounded-[50px]" />
+                </div>
               </div>
            </div>
-        </section>
+        </Section>
 
-        {/* SECTION 3: SHARE STACK - MAROON FIRE */}
-        <section id="share" className="stack-section bg-gradient-to-br from-[#780011] via-[#B50019] to-[#54000C] text-white">
-           <div className="max-w-4xl mx-auto text-center px-8">
-              <Reveal delay={0.1}>
-                 <h2 className="text-7xl md:text-[140px] font-black leading-none uppercase tracking-tighter mb-12">
-                    Share <br /> Everywhere.
-                 </h2>
-              </Reveal>
-              <Reveal delay={0.2}>
-                 <p className="text-2xl font-black text-[#FFDDDD] mb-12 max-w-2xl mx-auto">
-                    One link for your Instagram, TikTok, Twitter, YouTube and everything else.
-                 </p>
-              </Reveal>
-              <button className="mt-16">
-                 <Link href="/signup" className="bg-white text-linktree-maroon font-black text-3xl px-20 py-10 rounded-full shadow-2xl inline-flex items-center gap-4">
+        {/* SHARE SECTION - FROM RIGHT (MAROON) */}
+        <Section id="share" from="right" bgClass="bg-gradient-to-br from-[#780011] via-[#B50019] to-[#54000C] text-white">
+           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-20 items-center">
+              <div className="flex justify-center z-10 order-2 lg:order-1">
+                 <div className="relative w-full max-w-[400px] aspect-[4/5] bg-white rounded-[60px] p-2 shadow-2xl overflow-hidden border border-white/20">
+                    <img src="/images/share.png" className="w-full h-full object-cover rounded-[50px]" />
+                 </div>
+              </div>
+              <div className="pl-10 z-30 order-1 lg:order-2">
+                 <Reveal delay={0.1} width="100%">
+                    <h2 className="text-7xl md:text-9xl lg:text-[120px] font-black leading-none uppercase tracking-tighter mb-12">
+                       Share <br /> Everywhere.
+                    </h2>
+                 </Reveal>
+                 <Link href="/signup" className="bg-white text-linktree-maroon font-black text-2xl px-12 py-8 rounded-full shadow-2xl inline-flex items-center gap-4">
                     GET YOURS 🔥
                  </Link>
-              </button>
+              </div>
            </div>
-        </section>
+        </Section>
 
-        {/* SECTION 4: ANALYZE STACK - CHARCOAL STEEL */}
-        <section id="analyze" className="stack-section bg-gradient-to-br from-[#1E1E1E] via-[#2D2D2D] to-[#0D0D0D] text-white">
-          <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center px-8">
-             <div className="flex justify-center">
-                <motion.div 
-                  whileInView={{ scale: [0.9, 1], opacity: [0, 1] }}
-                  className="bg-white p-12 rounded-[50px] shadow-2xl w-full max-w-md"
-                >
-                   <div className="flex justify-between items-center mb-10 text-black">
-                      <span className="font-black text-2xl">Insights</span>
-                      <span className="text-green-500 font-black">+42% ↑</span>
-                   </div>
-                   <div className="space-y-4">
-                      {[1,2,3].map(i => (
-                        <div key={i} className="h-10 w-full bg-gray-100 rounded-2xl overflow-hidden">
-                           <motion.div 
-                             initial={{ width: 0 }} 
-                             whileInView={{ width: `${30 + i * 20}%` }} 
-                             className="h-full bg-linktree-purple" 
-                           />
-                        </div>
-                      ))}
-                   </div>
-                </motion.div>
-             </div>
-             
-             <div>
-                <Reveal delay={0.1}>
-                  <h2 className="text-6xl md:text-8xl font-black uppercase leading-[0.9] mb-8">
-                    Smart <br /> Data.
-                  </h2>
-                </Reveal>
-                <p className="text-2xl font-black text-white/60 mb-12">
-                  Track your growth in real-time. <br /> See who's clicking and why.
-                </p>
-                <Link href="/signup" className="bg-linktree-lime text-linktree-text font-black text-2xl px-12 py-6 rounded-2xl shadow-xl inline-block hover:bg-white transition-all">
-                  GO PRO ↗
-                </Link>
-             </div>
-          </div>
-        </section>
+        {/* ANALYZE SECTION - FROM BOTTOM (CHARCOAL) */}
+        <Section id="analyze" from="bottom" bgClass="bg-gradient-to-br from-[#1E1E1E] via-[#2D2D2D] to-[#0D0D0D] text-white">
+           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+              <div className="z-30 order-2 lg:order-1">
+                 <Reveal delay={0.1} width="100%">
+                   <h2 className="text-6xl md:text-9xl font-black uppercase leading-[0.9] mb-8">
+                     Smart <br /> Data.
+                   </h2>
+                 </Reveal>
+                 <Link href="/signup" className="bg-linktree-lime text-black font-black text-2xl px-12 py-6 rounded-2xl shadow-xl inline-block hover:bg-white transition-all">
+                   GO PRO ↗
+                 </Link>
+              </div>
+              <div className="flex justify-center z-10 order-1 lg:order-2">
+                 <div className="relative w-full max-w-[400px] aspect-[4/5] bg-white rounded-[60px] p-2 shadow-2xl overflow-hidden border border-white/20">
+                    <img src="/images/analyze.png" className="w-full h-full object-cover rounded-[50px]" />
+                 </div>
+              </div>
+           </div>
+        </Section>
 
-        {/* SECTION 5: FINAL CTA STACK - CYBER LIME */}
-        <section className="stack-section bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-linktree-text">
-           <div className="max-w-7xl mx-auto text-center px-8">
-              <Reveal delay={0.1}>
-                 <h2 className="text-7xl md:text-[180px] font-black leading-[0.75] uppercase tracking-tighter mb-20 italic">
+        {/* MARKETPLACE SECTION - FROM LEFT (PURPLE) */}
+        <Section id="marketplace" from="left" bgClass="bg-gradient-to-br from-[#8000FF] via-[#A84FFF] to-[#5000AF] text-white">
+           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] gap-20 items-center">
+              <div className="pr-10 z-30">
+                 <Reveal delay={0.1} width="100%">
+                    <h2 className="text-6xl md:text-9xl lg:text-[100px] font-black leading-[0.8] uppercase mb-10">
+                      Marketplace <br /> For Creators.
+                    </h2>
+                 </Reveal>
+                 <Link href="/templates" className="bg-[#D2E823] text-black font-black text-2xl px-16 py-8 rounded-3xl shadow-2xl inline-block mt-10">
+                    BROWSE SHOP <span>→</span>
+                 </Link>
+              </div>
+              <div className="flex justify-center lg:justify-end z-10 relative">
+                 <div className="relative w-full max-w-[450px] aspect-square bg-white shadow-2xl rounded-[60px] overflow-hidden p-2 border border-white/20">
+                    <img src="/images/marketplace.png" className="w-full h-full object-cover rounded-[50px]" />
+                 </div>
+              </div>
+           </div>
+        </Section>
+
+        {/* TEMPLATES - FROM RIGHT (PINK) */}
+        <Section id="templates" from="right" bgClass="bg-gradient-to-br from-[#FF0080] via-[#FF4FBC] to-[#AF0050] text-white">
+           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-20 items-center">
+              <div className="flex justify-center z-10 order-2 lg:order-1">
+                 <div className="relative w-full max-w-[450px] aspect-[4/5] bg-white shadow-2xl rounded-[60px] overflow-hidden p-2 border border-white/20">
+                    <img src="/images/templates.png" className="w-full h-full object-cover rounded-[50px]" />
+                 </div>
+              </div>
+              <div className="pl-10 z-30 order-1 lg:order-2">
+                 <Reveal delay={0.1} width="100%">
+                    <h2 className="text-6xl md:text-9xl lg:text-[100px] font-black leading-[0.9] uppercase mb-10">
+                      Beautiful <br /> Layouts.
+                    </h2>
+                 </Reveal>
+                 <Link href="/templates" className="bg-black text-white font-black text-2xl px-16 py-8 rounded-3xl shadow-2xl inline-block mt-10">
+                    VIEW ALL <span>↗</span>
+                 </Link>
+              </div>
+           </div>
+        </Section>
+
+        {/* FINAL CTA - FROM BOTTOM (CYBER LIME) */}
+        <Section id="cta" from="bottom" bgClass="bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black">
+           <div className="max-w-7xl mx-auto text-center px-8 flex flex-col items-center">
+              <Reveal delay={0.1} width="100%">
+                 <h2 className="text-7xl md:text-[13vw] font-black leading-[0.75] uppercase tracking-tighter mb-20 italic">
                     Finish <br /> Strong.
                   </h2>
               </Reveal>
-              <div className="flex flex-col md:flex-row justify-center gap-8">
-                 <Link href="/signup" className="bg-linktree-purple text-white font-black text-4xl px-24 py-12 rounded-[40px] hover:rotate-3 transition-transform shadow-2xl">
+              <div className="flex flex-col md:flex-row justify-center gap-8 w-full max-w-4xl">
+                 <Link href="/signup" className="flex-1 bg-linktree-purple text-white font-black text-4xl px-12 py-10 rounded-[40px]">
                     SIGN UP
                  </Link>
-                 <Link href="/login" className="bg-white text-linktree-text font-black text-4xl px-24 py-12 rounded-[40px] hover:-rotate-3 transition-transform shadow-2xl">
+                 <Link href="/login" className="flex-1 bg-white text-black font-black text-4xl px-12 py-10 rounded-[40px]">
                     LOG IN
                  </Link>
               </div>
            </div>
-        </section>
+        </Section>
 
         {/* VIBRANT FOOTER */}
         <footer className="relative bg-white pt-32 pb-16 px-8 z-30">

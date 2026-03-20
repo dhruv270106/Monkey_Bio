@@ -11,7 +11,7 @@ interface RevealProps {
 
 export const Reveal = ({ children, width = 'fit-content', delay = 0.25 }: RevealProps) => {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const isInView = useInView(ref, { once: true, margin: "0px" })
   const mainControls = useAnimation()
 
   useEffect(() => {
@@ -21,15 +21,19 @@ export const Reveal = ({ children, width = 'fit-content', delay = 0.25 }: Reveal
   }, [isInView])
 
   return (
-    <div ref={ref} style={{ position: 'relative', width, overflow: 'visible' }}>
+    <div ref={ref} className="relative overflow-hidden" style={{ width }}>
       <motion.div
         variants={{
-          hidden: { opacity: 0, y: 75 },
+          hidden: { opacity: 0, y: "100%" },
           visible: { opacity: 1, y: 0 },
         }}
         initial="hidden"
         animate={mainControls}
-        transition={{ duration: 0.6, delay, ease: 'easeOut' }}
+        transition={{ 
+           duration: 0.8, 
+           delay, 
+           ease: [0.33, 1, 0.68, 1] // Custom cubic-bezier for refined sliding
+        }}
       >
         {children}
       </motion.div>

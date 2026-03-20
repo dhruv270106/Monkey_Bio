@@ -74,30 +74,32 @@ const ShowcaseCard = ({ data }: { data: typeof CREATOR_DATA[0] }) => {
 
 export default function HeroScroll() {
   return (
-    <div className="relative h-full w-full overflow-hidden select-none pointer-events-none">
-      {/* MASKING GRADIENTS (Blending with Lime) */}
-      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-linktree-lime to-transparent z-10" />
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-linktree-lime to-transparent z-10" />
+    <div className="absolute inset-x-0 -top-40 bottom-0 pointer-events-none select-none z-10">
+      {/* GRADIENT MASK TOP */}
+      <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-[#D2E823] via-[#D2E823]/60 to-transparent z-10" />
       
-      <div className="pt-4 pb-24 flex flex-col items-center">
+      <div className="flex flex-col items-center">
         <motion.div 
-          animate={{ y: [0, -1536] }} 
+          animate={{ y: [0, -1600] }} 
           transition={{ 
             y: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 35,
+              duration: 40,
               ease: "linear",
             }
           }}
-          className="flex flex-col gap-12"
+          className="flex flex-col gap-16 pt-20"
         >
-          {/* Multiply list for long infinite scroll */}
-          {[...CREATOR_DATA, ...CREATOR_DATA, ...CREATOR_DATA, ...CREATOR_DATA].map((data, i) => (
+          {/* Multiple sets for infinite loop */}
+          {[...CREATOR_DATA, ...CREATOR_DATA, ...CREATOR_DATA, ...CREATOR_DATA, ...CREATOR_DATA].map((data, i) => (
             <ShowcaseCard key={i} data={data} />
           ))}
         </motion.div>
       </div>
+
+      {/* GRADIENT MASK BOTTOM */}
+      <div className="absolute bottom-0 left-0 right-0 h-60 bg-gradient-to-t from-[#D2E823] via-[#D2E823]/40 to-transparent z-10" />
     </div>
   )
 }
