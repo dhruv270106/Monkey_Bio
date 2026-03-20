@@ -30,3 +30,14 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+@keyframes bg-linktree-cycle {
+  0% { background-color: #D2E823; }
+  25% { background-color: #2665D6; }
+  50% { background-color: #780016; }
+  75% { background-color: #502274; }
+  100% { background-color: #D2E823; }
+}
+
+.animate-bg-cycle {
+  animation: bg-linktree-cycle 20s infinite ease-in-out;
+}

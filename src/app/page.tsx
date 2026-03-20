@@ -26,46 +26,46 @@ export default function Home() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative pt-32 pb-24 lg:pt-52 lg:pb-52 px-4 bg-linktree-lime overflow-hidden">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        <section className="relative min-h-screen pt-24 pb-12 lg:pt-32 lg:pb-0 px-4 animate-bg-cycle overflow-hidden flex items-center transition-all duration-1000">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 w-full">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="lg:w-[60%] text-center lg:text-left z-20"
+              className="lg:w-[55%] text-center lg:text-left z-20"
             >
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-8 leading-[0.95] text-linktree-text">
+              <h1 className="text-5xl md:text-7xl lg:text-[84px] font-black tracking-tighter mb-6 leading-[0.95] text-linktree-text">
                 The only link in bio you'll ever need.
               </h1>
-              <p className="text-xl md:text-2xl text-linktree-text font-semibold mb-12 max-w-xl mx-auto lg:mx-0 leading-tight">
+              <p className="text-lg md:text-xl text-linktree-text font-semibold mb-10 max-w-xl mx-auto lg:mx-0 leading-tight">
                 Join 50M+ people using Monkey Bio for their link in bio. One link to help you share everything you create, curate and sell from your Instagram, TikTok, Twitter, YouTube and other social media profiles.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto lg:mx-0 mb-6 group">
                 {user ? (
-                  <Link href="/dashboard" className="bg-linktree-text text-linktree-lime font-bold text-xl px-12 py-7 rounded-full hover:scale-105 transition-transform shadow-xl flex-1 flex items-center justify-center">
+                  <Link href="/dashboard" className="bg-linktree-text text-linktree-lime font-bold text-xl px-12 py-6 rounded-full hover:scale-105 transition-transform shadow-xl flex-1 flex items-center justify-center">
                     Go to your Dashboard
                   </Link>
                 ) : (
                   <>
-                    <div className="flex-1 relative bg-white rounded-2xl shadow-sm overflow-hidden flex items-center px-4 md:px-6 py-5 md:py-6 border-2 border-transparent focus-within:border-linktree-text transition-all">
-                      <span className="text-linktree-text/60 font-bold text-lg md:text-xl">monkey.id/</span>
+                    <div className="flex-1 relative bg-white rounded-2xl shadow-sm overflow-hidden flex items-center px-4 md:px-6 py-4 md:py-5 border-2 border-transparent focus-within:border-linktree-text transition-all">
+                      <span className="text-linktree-text/60 font-bold text-lg">monkey.id/</span>
                       <input 
                         type="text" 
                         placeholder="yourname" 
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-full bg-transparent outline-none font-bold text-lg md:text-xl text-linktree-text" 
+                        className="w-full bg-transparent outline-none font-bold text-lg text-linktree-text" 
                       />
                     </div>
-                    <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-bold text-xl px-12 py-6 rounded-full hover:scale-105 transition-transform shadow-xl flex-shrink-0 flex items-center justify-center">
+                    <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-bold text-lg px-10 py-5 rounded-full hover:scale-105 transition-transform shadow-xl flex-shrink-0 flex items-center justify-center">
                       Claim your Monkey Bio
                     </Link>
                   </>
                 )}
               </div>
               
-              <div className="flex items-center justify-center lg:justify-start gap-3 mt-8 text-sm text-linktree-text/70 font-bold">
+              <div className="flex items-center justify-center lg:justify-start gap-3 mt-4 text-xs text-linktree-text/70 font-bold">
                  <p>🔥 Join 50 million+ active creators</p>
               </div>
             </motion.div>
@@ -74,15 +74,15 @@ export default function Home() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="lg:w-[45%] relative hidden lg:flex justify-end p-0"
+              className="lg:w-[45%] relative hidden lg:flex justify-end p-0 items-center"
             >
               <HeroScroll />
             </motion.div>
           </div>
           
           {/* MOBILE SCROLL (ONLY ON SM) */}
-          <div className="lg:hidden mt-20 opacity-40 relative h-[500px] flex justify-center">
-             <div className="scale-[0.6] origin-top">
+          <div className="lg:hidden mt-12 opacity-30 relative h-[400px] flex justify-center">
+             <div className="scale-[0.5] origin-top">
                 <HeroScroll />
              </div>
           </div>
@@ -103,8 +103,9 @@ export default function Home() {
         </section>
 
         {/* FEATURE 1: CUSTOMIZE */}
-        <section className="py-24 lg:py-32 bg-linktree-blue text-white overflow-hidden px-4">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+        <section className="py-24 lg:py-32 animate-bg-cycle text-white overflow-hidden px-4 relative">
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
+          <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24 z-10">
             <div className="lg:w-1/2 flex justify-center">
                <div className="relative w-full max-w-md aspect-[3/4] bg-white rounded-3xl overflow-hidden shadow-2xl transform lg:-rotate-6">
                   {/* Mock UI */}
@@ -134,8 +135,9 @@ export default function Home() {
         </section>
 
         {/* FEATURE 2: SHARE */}
-        <section className="py-24 lg:py-32 bg-linktree-maroon text-[#FFDDDD] px-4">
-          <div className="max-w-4xl mx-auto text-center">
+        <section className="py-24 lg:py-32 animate-bg-cycle text-[#FFDDDD] px-4 relative">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
+          <div className="relative max-w-4xl mx-auto text-center z-10">
             <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-white">Share your Monkey Bio from your Instagram, TikTok, Twitter and other bios</h2>
             <p className="text-xl md:text-2xl font-semibold mb-12 opacity-90">
               Add your unique Linktree URL to all the platforms and places you find your audience. Then use your QR code to drive your offline audience online.
@@ -183,8 +185,9 @@ export default function Home() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section className="py-32 bg-linktree-purple text-white px-4">
-           <div className="max-w-7xl mx-auto">
+        <section className="py-32 animate-bg-cycle text-white px-4 relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+          <div className="relative max-w-7xl mx-auto z-10">
               <div className="text-center mb-24">
                  <h2 className="text-5xl md:text-7xl font-black mb-8">The only link you'll ever need.</h2>
                  <p className="text-xl md:text-2xl opacity-80 font-semibold max-w-2xl mx-auto">Used by creators, influencers and brands across the globe.</p>
@@ -209,8 +212,9 @@ export default function Home() {
         </section>
 
         {/* FINAL CTA */}
-        <section className="py-32 bg-linktree-lime px-4 text-center">
-           <div className="max-w-4xl mx-auto">
+        <section className="py-32 animate-bg-cycle px-4 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-white/10" />
+          <div className="relative max-w-4xl mx-auto z-10">
               <h2 className="text-5xl md:text-8xl font-black mb-12 text-linktree-text">The only link in bio you’ll ever need</h2>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                  <Link href="/signup" className="bg-linktree-purple text-white font-bold text-xl px-12 py-6 rounded-full hover:opacity-90 transition-all">

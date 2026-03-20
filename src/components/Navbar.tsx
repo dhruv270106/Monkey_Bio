@@ -66,18 +66,117 @@ export default function Navbar() {
   const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin'
 
   return (
-    <header className={`fixed top-4 left-4 right-4 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-lg rounded-full top-6' : 'bg-white rounded-full'}`}>
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex justify-between items-center h-16 lg:h-20">
+    <header className={`fixed top-6 left-4 right-4 z-50 flex justify-center pointer-events-none`}>
+      <div className="max-w-7xl w-full flex justify-center">
+        <div className={`bg-white rounded-[40px] shadow-sm flex items-center justify-between px-8 py-4 w-full pointer-events-auto transition-all relative ${scrolled ? 'shadow-xl scale-[0.98]' : ''}`}>
           <div className="flex items-center gap-10">
             <Link href="/" className="flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-linktree-text flex items-center justify-center text-linktree-lime font-black text-xl">M</span>
-              <span className="font-black text-2xl tracking-tight text-linktree-text">Monkey</span>
+              <span className="font-black text-2xl tracking-tighter text-linktree-text">Monkey<span className="text-black">bio</span></span>
+              <span className="w-5 h-5 bg-linktree-text rounded-sm rotate-45 mb-1 ml-0.5" />
             </Link>
-            <nav className="hidden lg:flex items-center gap-8">
-              <Link href="#" className="text-sm font-bold text-gray-500 hover:text-black transition-colors">Features</Link>
-              <Link href="/pricing" className="text-sm font-bold text-gray-500 hover:text-black transition-colors">Pricing</Link>
-              <Link href="#" className="text-sm font-bold text-gray-500 hover:text-black transition-colors">Discover</Link>
+            <nav className="hidden lg:flex items-center gap-2">
+              {/* PRODUCTS WITH MEGA MENU */}
+              <div className="group/menu relative">
+                 <button className="text-sm font-bold text-gray-500 hover:text-black px-4 py-2 hover:bg-gray-100 rounded-xl transition-all flex items-center gap-1">
+                   Products
+                 </button>
+                 <div className="absolute top-full left-0 pt-4 hidden group-hover/menu:block">
+                   <motion.div 
+                     initial={{ opacity: 0, y: 10 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     className="bg-white rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-gray-100 p-8 flex gap-8 w-[900px]"
+                   >
+                     <div className="w-1/3 border-r border-gray-100 pr-4">
+                        <ul className="space-y-1">
+                          {['Link in bio + tools', 'Manage your social media', 'Grow and engage your audience', 'Monetize your following', 'Measure your success'].map((item, i) => (
+                            <li key={item} className={`p-4 rounded-2xl flex items-center justify-between group/item cursor-pointer transition-all ${i === 2 ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
+                              <span className="font-bold text-sm text-gray-700">{item}</span>
+                              <i className="fi fi-rr-angle-right text-[10px] text-gray-400"></i>
+                            </li>
+                          ))}
+                        </ul>
+                     </div>
+                     <div className="w-1/3">
+                        <div className="space-y-8 p-4">
+                           <div>
+                              <h4 className="font-bold text-sm mb-2">Collect leads with contact forms</h4>
+                              <p className="text-xs text-gray-400 font-medium">Turn visitors into subscribers</p>
+                           </div>
+                           <div>
+                              <h4 className="font-bold text-sm mb-2">Manage and activate your audience</h4>
+                              <p className="text-xs text-gray-400 font-medium">Organize, tag, and track contacts</p>
+                           </div>
+                           <div>
+                              <h4 className="font-bold text-sm mb-2">Send contacts to email tools</h4>
+                              <p className="text-xs text-gray-400 font-medium">Sync with Mailchimp, Klaviyo, Kit & more</p>
+                           </div>
+                        </div>
+                     </div>
+                     <div className="w-1/3">
+                        <div className="bg-gray-50 rounded-2xl p-6 h-full border border-gray-100">
+                           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6">Featured</p>
+                           <div className="w-full aspect-video bg-linktree-lime/40 rounded-xl mb-6 flex items-center justify-center p-4">
+                              <div className="w-full h-full bg-white rounded shadow-sm" />
+                           </div>
+                           <h4 className="font-bold text-sm mb-2">Connect your email tools, activate your audience</h4>
+                           <p className="text-xs text-gray-400 leading-relaxed font-medium">Send new contacts straight from Linktree to Mailchimp, Klaviyo, Kit and more.</p>
+                        </div>
+                     </div>
+                   </motion.div>
+                 </div>
+              </div>
+
+              <Link href="/templates" className="text-sm font-bold text-gray-500 hover:text-black px-4 py-2 hover:bg-gray-100 rounded-xl transition-all">Templates</Link>
+              <Link href="/marketplace" className="text-sm font-bold text-gray-500 hover:text-black px-4 py-2 hover:bg-gray-100 rounded-xl transition-all">Marketplace</Link>
+              
+              {/* LEARN WITH MEGA MENU */}
+              <div className="group/menu relative">
+                 <button className="text-sm font-bold text-gray-500 hover:text-black px-4 py-2 hover:bg-gray-100 rounded-xl transition-all flex items-center gap-1">
+                   Learn
+                 </button>
+                 <div className="absolute top-full left-[-200px] pt-4 hidden group-hover/menu:block">
+                   <motion.div 
+                     initial={{ opacity: 0, y: 10 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     className="bg-white rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-gray-100 p-8 flex gap-8 w-[800px]"
+                   >
+                     <div className="w-1/3 border-r border-gray-100 pr-4">
+                        <ul className="space-y-1">
+                          {['Resources', 'How to use Linktree'].map((item, i) => (
+                            <li key={item} className={`p-4 rounded-2xl flex items-center justify-between group/item cursor-pointer transition-all ${i === 0 ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
+                              <span className="font-bold text-sm text-gray-700">{item}</span>
+                              <i className="fi fi-rr-angle-right text-[10px] text-gray-400"></i>
+                            </li>
+                          ))}
+                        </ul>
+                     </div>
+                     <div className="w-1/3">
+                        <div className="space-y-8 p-4">
+                           <div>
+                              <h4 className="font-bold text-sm mb-2">Read our blog</h4>
+                              <p className="text-xs text-gray-400 font-medium">All the latest tips, tricks and growth strategies</p>
+                           </div>
+                           <div>
+                              <h4 className="font-bold text-sm mb-2">Success Stories</h4>
+                              <p className="text-xs text-gray-400 font-medium">Real people, real results on Linktree</p>
+                           </div>
+                        </div>
+                     </div>
+                     <div className="w-1/3">
+                        <div className="bg-[#254F1A] rounded-2xl p-6 h-full text-white">
+                           <p className="text-[10px] font-black uppercase tracking-widest opacity-50 mb-6">Learn with Linktree</p>
+                           <div className="w-full aspect-[4/5] bg-white/10 rounded-xl mb-6 flex overflow-hidden">
+                              <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=400&fit=crop" className="w-full h-full object-cover" />
+                           </div>
+                           <h4 className="font-bold text-sm mb-2">Create & sell your own online Course</h4>
+                           <p className="text-xs opacity-70 leading-relaxed">If you've got something to share, you've got something to sell. Easily create and share an online course that...</p>
+                        </div>
+                     </div>
+                   </motion.div>
+                 </div>
+              </div>
+
+              <Link href="/pricing" className="text-sm font-bold text-gray-500 hover:text-black px-4 py-2 hover:bg-gray-100 rounded-xl transition-all">Pricing</Link>
             </nav>
           </div>
 
@@ -142,8 +241,8 @@ export default function Navbar() {
               </div>
             ) : (
               <>
-                <Link href="/login" className="text-sm font-bold text-gray-800 hover:text-black hidden sm:block bg-gray-100 hover:bg-gray-200 px-6 py-4 rounded-full transition-colors">Log in</Link>
-                <Link href="/signup" className="text-sm font-bold bg-linktree-text text-white hover:opacity-90 px-8 py-4 rounded-full transition-all shadow-md transform hover:scale-[1.02]">Sign up free</Link>
+                <Link href="/login" className="text-sm font-bold text-gray-800 hover:text-black bg-gray-100 hover:bg-gray-200 px-6 py-4 rounded-full transition-colors">Log in</Link>
+                <Link href="/signup" className="text-sm font-bold bg-[#1e2330] text-white hover:opacity-90 px-8 py-4 rounded-full transition-all shadow-md">Sign up free</Link>
               </>
             )}
           </div>
