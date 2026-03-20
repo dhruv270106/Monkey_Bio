@@ -2,281 +2,336 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import HeroScroll from '@/components/HeroScroll'
-import { supabase } from '@/lib/supabase'
-import { useDomain } from '@/hooks/useDomain'
+import { Reveal } from '@/components/Reveal'
 
 export default function Home() {
-  const domain = useDomain()
-  const [user, setUser] = useState<any>(null)
   const [username, setUsername] = useState('')
+  const [isClaimed, setIsClaimed] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user || null)
-    })
+    window.scrollTo(0, 0)
   }, [])
 
   return (
-    <div className="bg-white text-linktree-text min-h-screen flex flex-col selection:bg-linktree-lime/30 font-sans">
+    <div className="relative min-h-screen bg-white text-linktree-text selection-lime overflow-x-hidden font-sans">
+      {/* AMBIENT BACKGROUND */}
+      <div className="bg-liquid-mesh" />
       
       <Navbar />
 
-      <main className="flex-1">
-        {/* HERO SECTION */}
-        <section className="relative min-h-screen pt-24 pb-12 lg:pt-32 lg:pb-0 px-4 bg-linktree-lime overflow-hidden flex items-center transition-all duration-1000">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 w-full">
+      <main className="flex flex-col gap-16 pt-28 pb-0">
+        
+        {/* SECTION 1: HERO - THE VIRTUAL STAGE */}
+        <section id="hero" className="relative min-h-[90vh] px-4 flex flex-col justify-center">
+          <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center gap-12">
             <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="lg:w-[55%] text-center lg:text-left z-20"
+              className="lg:w-[60%] flex flex-col gap-8 z-20 text-center lg:text-left"
             >
-              <h1 className="text-5xl md:text-7xl lg:text-[84px] font-black tracking-tighter mb-6 leading-[0.95] text-linktree-text">
-                The only link in bio you'll ever need.
-              </h1>
-              <p className="text-lg md:text-xl font-semibold mb-10 max-w-xl mx-auto lg:mx-0 leading-tight text-linktree-text">
-                Join 50M+ people using Monkey Bio for their link in bio. One link to help you share everything you create, curate and sell from your Instagram, TikTok, Twitter, YouTube and other social media profiles.
-              </p>
+              <Reveal delay={0.1}>
+                <h1 className="text-6xl md:text-8xl lg:text-[100px] font-black leading-[0.85] tracking-[-0.05em] text-gradient-primary">
+                  The only link <br /> in bio you'll <br /> ever need.
+                </h1>
+              </Reveal>
               
-              <div className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto lg:mx-0 mb-6 group">
-                {user ? (
-                  <Link href="/dashboard" className="bg-linktree-text text-linktree-lime font-bold text-xl px-12 py-6 rounded-full hover:scale-105 transition-transform shadow-xl flex-1 flex items-center justify-center">
-                    Go to your Dashboard
-                  </Link>
-                ) : (
+              <Reveal delay={0.3}>
+                <p className="text-xl md:text-2xl font-bold max-w-2xl text-linktree-text/80 leading-relaxed">
+                  Join 50M+ people using <span className="text-linktree-purple">Monkey Bio</span> to share everything you create, curate and sell. One link, infinite possibilities.
+                </p>
+              </Reveal>
+
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mt-4"
+              >
+                {!isClaimed ? (
                   <>
-                    <div className="flex-1 relative bg-white rounded-2xl shadow-sm overflow-hidden flex items-center px-4 md:px-6 py-4 md:py-5 border-2 border-transparent focus-within:border-linktree-text transition-all">
-                      <span className="text-linktree-text/60 font-bold text-lg">monkey.id/</span>
+                    <div className="flex bg-white/50 backdrop-blur-xl border border-white/50 rounded-2xl p-2 gap-2 shadow-2xl ring-linktree-purple/20 transition-all focus-within:ring-4">
+                      <span className="flex items-center pl-4 font-bold text-gray-400">monkey.bio/</span>
                       <input 
                         type="text" 
-                        placeholder="yourname" 
+                        placeholder="yourname"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-full bg-transparent outline-none font-bold text-lg text-linktree-text" 
+                        className="bg-transparent border-none focus:outline-none focus:ring-0 font-bold text-linktree-text flex-1 py-4 px-2"
                       />
                     </div>
-                    <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-bold text-lg px-10 py-5 rounded-full hover:scale-105 transition-transform shadow-xl flex-shrink-0 flex items-center justify-center">
-                      Claim your Monkey Bio
-                    </Link>
+                    <motion.button 
+                      whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(120, 0, 22, 0.15)" }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => username && setIsClaimed(true)}
+                      className="bg-linktree-purple text-white font-black text-xl px-12 py-6 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3"
+                    >
+                      Claim your page <span>→</span>
+                    </motion.button>
                   </>
+                ) : (
+                  <motion.div 
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="flex items-center gap-6 bg-white/80 p-6 rounded-3xl premium-glass"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold">✓</div>
+                    <p className="font-black text-lg">monkey.bio/{username} is available!</p>
+                    <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-black text-lg px-8 py-4 rounded-2xl hover:scale-105 transition-all shadow-lg">
+                      Finish
+                    </Link>
+                  </motion.div>
                 )}
-              </div>
-              
-              <div className="flex items-center justify-center lg:justify-start gap-3 mt-4 text-xs text-linktree-text/70 font-bold">
-                 <p>🔥 Join 50 million+ active creators</p>
-              </div>
+              </motion.div>
             </motion.div>
 
             {/* FULL HEIGHT DESKTOP SCROLL */}
-            <motion.div 
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.2, delay: 0.3 }}
-              className="absolute right-0 top-0 bottom-0 w-1/3 min-w-[500px] hidden lg:block overflow-hidden"
-            >
+            <div className="absolute right-0 top-0 bottom-0 w-2/5 hidden lg:block pointer-events-none">
               <HeroScroll />
-            </motion.div>
+            </div>
           </div>
           
-          {/* MOBILE SCROLL (ONLY ON SM) */}
-          <div className="lg:hidden mt-12 opacity-30 relative h-[400px] flex justify-center">
-             <div className="scale-[0.5] origin-top">
-                <HeroScroll />
-             </div>
-          </div>
+          {/* SCROLL INDICATOR */}
+          <motion.div 
+            animate={{ y: [0, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30"
+          >
+            <p className="text-[10px] tracking-[0.3em] font-black uppercase">Scroll</p>
+            <div className="w-[1px] h-12 bg-black/20" />
+          </motion.div>
         </section>
 
 
-        {/* LOGOS / SOCIAL PROOF */}
-        <section className="py-12 bg-white border-y border-gray-50 flex items-center justify-center">
-           <div className="max-w-7xl mx-auto px-4 overflow-hidden text-linktree-text">
-             <div className="flex flex-wrap justify-center items-center gap-10 lg:gap-20 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
-               <span className="font-black text-2xl tracking-tighter italic">Forbes</span>
-               <span className="font-black text-2xl tracking-tighter">RollingStone</span>
-               <span className="font-black text-2xl tracking-tighter">TechCrunch</span>
-               <span className="font-black text-3xl tracking-tighter italic font-serif">WIRED</span>
-               <span className="font-serif font-extrabold text-2xl tracking-tighter text-3xl">The Guardian</span>
-             </div>
-           </div>
-        </section>
 
-        {/* FEATURE 1: CUSTOMIZE */}
-        <section className="py-24 lg:py-32 bg-linktree-blue overflow-hidden px-4 relative">
-          <div className="absolute inset-0 bg-black/20" />
-          <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24 z-10 text-white">
-            <div className="lg:w-1/2 flex justify-center">
-               <div className="relative w-full max-w-md aspect-[3/4] bg-white rounded-3xl overflow-hidden shadow-2xl transform lg:-rotate-6">
-                  {/* Mock UI */}
-                  <div className="p-8 h-full flex flex-col">
-                    <div className="flex items-center gap-4 mb-8">
-                       <div className="w-12 h-12 rounded-full bg-gray-200" />
-                       <div className="h-4 w-32 bg-gray-100 rounded-full" />
-                    </div>
-                    <div className="space-y-4 flex-1">
-                       <div className="h-12 w-full bg-gray-50 rounded-xl" />
-                       <div className="h-12 w-full bg-gray-50 rounded-xl" />
-                       <div className="h-12 w-full bg-gray-50 rounded-xl" />
-                    </div>
-                  </div>
+        {/* SECTION 2: CUSTOMIZE */}
+        <section id="features" className="py-24 px-4 overflow-visible">
+          <Reveal delay={0.2}>
+            <div className="max-w-6xl mx-auto rounded-[60px] bg-linktree-blue/10 backdrop-blur-3xl p-12 lg:p-24 flex flex-col lg:flex-row items-center gap-20 premium-glass relative overflow-hidden">
+               <div className="absolute -top-32 -left-32 w-64 h-64 bg-linktree-blue/20 blur-[100px] rounded-full" />
+               <div className="lg:w-1/2 order-2 lg:order-1">
+                  <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-linktree-text">Fully customize <br /> your vibe.</h2>
+                  <p className="text-xl md:text-2xl font-bold text-linktree-text/70 mb-12">
+                     Connect everything. Express yourself exactly as you are. All your socials, stores, and stories in one beautiful place.
+                  </p>
+                  <motion.div whileHover={{ scale: 1.02 }} className="inline-block">
+                    <Link href="/signup" className="bg-linktree-purple text-white font-black text-xl px-12 py-6 rounded-2xl shadow-2xl flex items-center gap-3">
+                      Start building <span>→</span>
+                    </Link>
+                  </motion.div>
+               </div>
+               <div className="lg:w-1/2 order-1 lg:order-2 flex justify-center z-10">
+                  <motion.div 
+                    whileInView={{ y: [0, -20, 0] }}
+                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+                    className="relative w-full max-w-sm aspect-[4/5] bg-white rounded-[50px] shadow-[0_50px_100px_-20px_rgba(38,101,214,0.3)] overflow-hidden scale-110 rotate-3 border-[12px] border-white"
+                  >
+                        {/* Mock UI Filled */}
+                        <div className="p-8 h-full flex flex-col bg-white">
+                          <div className="flex items-center gap-4 mb-8">
+                            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=400&h=400&fit=crop" className="w-14 h-14 rounded-full bg-gray-100 object-cover shadow-lg" alt="Profile" />
+                            <div className="flex flex-col">
+                                <p className="font-black text-sm text-linktree-text uppercase tracking-wider">@alex.creator</p>
+                                <p className="text-[10px] font-black text-linktree-purple uppercase">Global Creator</p>
+                            </div>
+                          </div>
+                          <div className="space-y-4 flex-1">
+                            <motion.div whileHover={{ x: 10 }} className="h-14 w-full bg-linktree-lime rounded-2xl flex items-center justify-center font-black text-xs text-linktree-text shadow-md cursor-pointer">
+                                Latest Brand Drop
+                            </motion.div>
+                            <motion.div whileHover={{ x: 10 }} className="h-14 w-full bg-linktree-purple rounded-2xl flex items-center justify-center font-black text-xs text-white shadow-md cursor-pointer">
+                                My Newest Reel
+                            </motion.div>
+                            <motion.div whileHover={{ x: 10 }} className="h-14 w-full bg-linktree-blue rounded-2xl flex items-center justify-center font-black text-xs text-white shadow-md cursor-pointer">
+                                Digital Portfolio
+                            </motion.div>
+                          </div>
+                          <div className="mt-8 pt-8 border-t border-gray-50 flex flex-col items-center gap-2">
+                             <span className="w-8 h-1 bg-gray-100 rounded-full" />
+                             <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Monkey Bio</span>
+                          </div>
+                        </div>
+                  </motion.div>
                </div>
             </div>
-            <div className="lg:w-1/2">
-              <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">Create and customize your Monkey Bio in minutes</h2>
-              <p className="text-xl md:text-2xl font-semibold mb-12 opacity-90">
-                Connect your TikTok, Instagram, Twitter, website, store, videos, music, podcast, events and more. It all comes together in a link in bio landing page designed to convert.
-              </p>
-              <Link href="/signup" className="inline-block bg-linktree-lavender text-linktree-text font-bold text-xl px-12 py-6 rounded-full hover:bg-white transition-all shadow-lg">
-                Get started for free
-              </Link>
-            </div>
-          </div>
+          </Reveal>
         </section>
 
-        {/* FEATURE 2: SHARE */}
-        <section className="py-24 lg:py-32 bg-linktree-maroon px-4 relative">
-          <div className="absolute inset-0 bg-black/30" />
-          <div className="relative max-w-4xl mx-auto text-center z-10 text-white">
-            <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">Share your Monkey Bio from your Instagram, TikTok, Twitter and other bios</h2>
-            <p className="text-xl md:text-2xl font-semibold mb-12 opacity-90 text-[#FFDDDD]">
-              Add your unique Linktree URL to all the platforms and places you find your audience. Then use your QR code to drive your offline audience online.
-            </p>
-            <Link href="/signup" className="inline-block bg-[#FFDDDD] text-linktree-maroon font-bold text-xl px-12 py-6 rounded-full hover:bg-white transition-all shadow-lg">
-              Get started for free
-            </Link>
-          </div>
-        </section>
-
-        {/* FEATURE 3: ANALYZE */}
-        <section className="py-24 lg:py-32 bg-linktree-grey px-4">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-16 lg:gap-24">
-            <div className="lg:w-1/2 flex justify-center">
-               <div className="bg-white p-8 rounded-3xl shadow-2xl w-full">
-                  <div className="flex justify-between items-center mb-8">
-                    <h4 className="font-bold text-xl">Analytics</h4>
-                    <span className="text-sm font-bold text-gray-400">Last 28 days</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 mb-8">
-                    <div className="bg-gray-50 p-6 rounded-2xl">
-                       <p className="text-sm text-gray-500 font-bold mb-2">Views</p>
-                       <p className="text-3xl font-black">12.4k</p>
-                    </div>
-                    <div className="bg-gray-50 p-6 rounded-2xl">
-                       <p className="text-sm text-gray-500 font-bold mb-2">Clicks</p>
-                       <p className="text-3xl font-black">4.8k</p>
-                    </div>
-                  </div>
-                  <div className="h-40 w-full bg-linktree-lime/20 rounded-2xl relative overflow-hidden">
-                     <div className="absolute bottom-0 left-0 w-full h-24 bg-linktree-lime/40" style={{ clipPath: 'polygon(0 100%, 100% 100%, 100% 0, 80% 40%, 60% 20%, 40% 60%, 20% 40%, 0 80%)' }} />
-                  </div>
+        {/* SECTION 3: SHARE - DRAMATIC DARK GLASS */}
+        <section id="share" className="py-24 px-4">
+          <Reveal delay={0.2}>
+            <div className="max-w-6xl mx-auto rounded-[60px] bg-linktree-maroon/90 backdrop-blur-3xl p-12 lg:p-24 text-center dark-premium-glass shadow-[0_50px_100px_-20px_rgba(120,0,22,0.4)] relative overflow-hidden group">
+               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+               <div className="relative z-10 text-white max-w-4xl mx-auto flex flex-col items-center gap-10">
+                  <h2 className="text-6xl md:text-8xl font-black leading-tight tracking-tighter">Share from <br /> everywhere.</h2>
+                  <p className="text-xl md:text-2xl font-bold opacity-80 leading-relaxed text-[#FFDDDD]">
+                    One link for your Instagram, TikTok, Twitter, YouTube and everything else. <br /> Drive your offline audience online with your personalized QR code.
+                  </p>
+                  <motion.div 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link href="/signup" className="bg-[#FFDDDD] text-linktree-maroon font-black text-2xl px-16 py-8 rounded-3xl shadow-2xl transition-all">
+                      Get yours now
+                    </Link>
+                  </motion.div>
                </div>
             </div>
-            <div className="lg:w-1/2">
-              <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-linktree-text">Analyze your audience and keep your followers engaged</h2>
-              <p className="text-xl md:text-2xl font-semibold mb-12 opacity-80 text-linktree-text">
-                Track your audience with our detailed insights. See which links are performing best, where your traffic is coming from and what's converting.
-              </p>
-              <Link href="/signup" className="inline-block bg-linktree-text text-white font-bold text-xl px-12 py-6 rounded-full hover:opacity-90 transition-all shadow-lg">
-                Get started for free
-              </Link>
-            </div>
-          </div>
+          </Reveal>
         </section>
 
-        {/* TESTIMONIALS */}
-        <section className="py-32 bg-linktree-purple text-white px-4 relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="relative max-w-7xl mx-auto z-10">
-              <div className="text-center mb-24">
-                 <h2 className="text-5xl md:text-7xl font-black mb-8">The only link you'll ever need.</h2>
-                 <p className="text-xl md:text-2xl opacity-80 font-semibold max-w-2xl mx-auto">Used by creators, influencers and brands across the globe.</p>
-              </div>
-              
-              <div className="grid md:grid-cols-3 gap-8">
-                 {[
-                   { name: 'Alex Rivera', role: 'Digital Artist', text: 'Monkey Bio has completely changed how I manage my online presence. It\'s simple, beautiful and it works.' },
-                   { name: 'Sarah Chen', role: 'Fitness Coach', text: 'I love how easy it is to customize. I can match my brand colors perfectly and my clients find everything they need.' },
-                   { name: 'Marcus Bell', role: 'Podcaster', text: 'The analytics are a game changer. I actually know which episodes my listeners are clicking on now.' }
-                 ].map((t, i) => (
-                   <div key={i} className="bg-white/10 backdrop-blur-md p-10 rounded-3xl border border-white/10">
-                      <p className="text-xl font-medium mb-8">"{t.text}"</p>
-                      <div>
-                        <p className="font-bold text-lg">{t.name}</p>
-                        <p className="text-sm opacity-60 font-bold">{t.role}</p>
+        {/* SECTION 4: ANALYZE - MINIMALIST HIGH CONTRAST */}
+        <section id="analyze" className="py-24 px-4">
+          <Reveal delay={0.2}>
+            <div className="max-w-6xl mx-auto rounded-[60px] bg-white/40 backdrop-blur-3xl p-12 lg:p-24 flex flex-col lg:flex-row-reverse items-center gap-20 premium-glass">
+                <div className="lg:w-1/2">
+                   <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-linktree-text">Insights that <br /> inspire.</h2>
+                   <p className="text-xl md:text-2xl font-bold text-linktree-text/70 mb-12 leading-relaxed">
+                      Track your growth in real-time. See who's clicking, where they're from, and what's moving the needle for your brand.
+                   </p>
+                   <Link href="/signup" className="inline-block bg-linktree-text text-white font-black text-xl px-12 py-6 rounded-2xl shadow-2xl hover:bg-black transition-all">
+                      Go pro <span className="ml-2">↗</span>
+                   </Link>
+                </div>
+                <div className="lg:w-1/2 w-full">
+                   <motion.div 
+                    whileHover={{ scale: 1.02, rotate: -1 }}
+                    className="bg-white p-10 rounded-[40px] shadow-2xl border border-gray-100"
+                   >
+                        <div className="flex justify-between items-center mb-12">
+                          <h4 className="font-black text-2xl tracking-tight text-linktree-text">Analytics</h4>
+                          <span className="px-4 py-2 bg-gray-50 rounded-full text-xs font-black text-gray-400">LAST 30 DAYS</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-6 mb-12">
+                          <div className="bg-gray-50/50 p-8 rounded-3xl border border-gray-100/50">
+                             <p className="text-xs text-gray-400 font-black mb-4 uppercase tracking-widest">Views</p>
+                             <p className="text-4xl font-black text-linktree-text">4.8M <span className="text-xs text-green-500 ml-1">↑12%</span></p>
+                          </div>
+                          <div className="bg-gray-50/50 p-8 rounded-3xl border border-gray-100/50">
+                             <p className="text-xs text-gray-400 font-black mb-4 uppercase tracking-widest">Clicks</p>
+                             <p className="text-4xl font-black text-linktree-text">2.1M <span className="text-xs text-green-500 ml-1">↑8%</span></p>
+                          </div>
+                        </div>
+                        <div className="space-y-6">
+                           {[ {color: 'bg-linktree-lime', w: '85%'}, {color: 'bg-linktree-purple', w: '65%'}, {color: 'bg-linktree-blue', w: '45%'}].map((item, i) => (
+                             <div key={i} className="flex items-center gap-6">
+                                <div className={`w-12 h-12 rounded-2xl ${item.color} shadow-lg`} />
+                                <div className="flex-1 h-3 bg-gray-50 rounded-full overflow-hidden">
+                                   <motion.div 
+                                      initial={{ width: 0 }}
+                                      whileInView={{ width: item.w }}
+                                      transition={{ duration: 1.5, delay: 0.5 + (i * 0.2) }}
+                                      className="h-full bg-linktree-text rounded-full" 
+                                    />
+                                </div>
+                             </div>
+                           ))}
+                        </div>
+                   </motion.div>
+                </div>
+            </div>
+          </Reveal>
+        </section>
+
+        {/* SECTION 5: TESTIMONIALS - THE BIG QUOTE */}
+        <section id="testimonials" className="py-32 px-4 relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[50vh] bg-linktree-purple/10 blur-[150px] pointer-events-none" />
+          <Reveal delay={0.1}>
+             <div className="max-w-7xl mx-auto rounded-[60px] bg-linktree-purple text-white p-16 lg:p-32 relative overflow-hidden shadow-[0_50px_100px_-20px_rgba(80,34,116,0.5)]">
+                <span className="absolute top-10 left-10 text-[200px] leading-none opacity-10 font-black serif">“</span>
+                <div className="relative z-10 text-center flex flex-col items-center gap-12">
+                   <h2 className="text-4xl md:text-7xl lg:text-[90px] font-black leading-[1.05] tracking-tight max-w-5xl">
+                      "Monkey Bio is how I connect my community across every platform."
+                   </h2>
+                   <div className="flex flex-col items-center gap-4">
+                      <div className="w-20 h-20 rounded-full bg-white/20 p-1">
+                         <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&fit=crop" className="w-full h-full rounded-full object-cover" alt="User" />
+                      </div>
+                      <div className="text-center">
+                         <p className="text-xl font-black">James Miller</p>
+                         <p className="text-sm font-bold opacity-60 uppercase tracking-widest text-center">Creator at Digital Future</p>
                       </div>
                    </div>
-                 ))}
-              </div>
-           </div>
+                </div>
+             </div>
+          </Reveal>
         </section>
 
-        {/* FINAL CTA */}
-        <section className="py-32 bg-linktree-lime px-4 text-center relative overflow-hidden">
-          <div className="relative max-w-4xl mx-auto z-10">
-              <h2 className="text-5xl md:text-8xl font-black mb-12 text-linktree-text">The only link in bio you’ll ever need</h2>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                 <Link href="/signup" className="bg-linktree-purple text-white font-bold text-xl px-12 py-6 rounded-full hover:opacity-90 transition-all">
-                    Sign up for free
-                 </Link>
-                 <Link href="/pricing" className="bg-linktree-text text-white font-bold text-xl px-12 py-6 rounded-full hover:opacity-90 transition-all">
-                    Find out more
-                 </Link>
-              </div>
-           </div>
+        {/* FINAL CTA: THE BOLD LANDING */}
+        <section className="py-24 px-4">
+          <Reveal delay={0.2}>
+             <motion.div 
+              whileHover={{ rotate: 1 }}
+              className="max-w-6xl mx-auto rounded-[70px] bg-linktree-lime p-12 lg:p-32 text-center shadow-[0_50px_100px_-20px_rgba(210,232,35,0.5)]"
+             >
+                <h2 className="text-7xl md:text-9xl font-black mb-16 leading-tight tracking-[-0.05em] text-linktree-text">
+                  The only link you'll ever need.
+                </h2>
+                <div className="flex flex-col md:flex-row justify-center gap-6">
+                   <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-linktree-text text-white font-black text-2xl px-16 py-8 rounded-3xl"
+                   >
+                      Get Started for Free
+                   </motion.button>
+                   <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-white/50 backdrop-blur-xl border border-white/20 text-linktree-text font-black text-2xl px-16 py-8 rounded-3xl"
+                   >
+                      Explore Premium
+                   </motion.button>
+                </div>
+             </motion.div>
+          </Reveal>
         </section>
       </main>
 
-      <footer className="bg-white text-linktree-text py-24 px-4 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-12 text-gray-500">
-          <div className="col-span-2 md:col-span-1">
-             <Link href="/" className="flex items-center gap-2 mb-8">
-              <span className="w-10 h-10 rounded-xl bg-linktree-text flex items-center justify-center text-linktree-lime font-black text-2xl">M</span>
-              <span className="font-black text-2xl tracking-tight">Monkey.</span>
+      {/* REFINED FOOTER - THE ANCHOR */}
+      <footer className="bg-white text-linktree-text pt-40 pb-20 px-8 rounded-t-[80px] shadow-[0_-50px_100px_rgba(0,0,0,0.02)] relative z-20">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-20">
+          <div className="col-span-2">
+             <Link href="/" className="flex items-center gap-3 mb-10 group">
+              <span className="w-14 h-14 rounded-2xl bg-black flex items-center justify-center text-linktree-lime font-black text-3xl transition-transform group-hover:rotate-12">M</span>
+              <span className="font-black text-3xl tracking-tighter">Monkey Bio</span>
              </Link>
-             <div className="flex gap-4">
-                <i className="fi fi-brands-instagram text-2xl"></i>
-                <i className="fi fi-brands-twitter text-2xl"></i>
-                <i className="fi fi-brands-tiktok text-2xl"></i>
+             <p className="text-xl font-bold text-gray-500 max-w-sm mb-12">
+                Join 50 million+ active creators who choose the world's original and most stable link in bio.
+             </p>
+             <div className="flex gap-6 grayscale opacity-40 hover:opacity-100 transition-opacity">
+                {['TW', 'IG', 'YT', 'TK'].map(s => <span key={s} className="font-black text-sm cursor-pointer hover:text-linktree-purple transition-colors uppercase tracking-widest">{s}</span>)}
              </div>
           </div>
-          <div>
-            <h4 className="font-bold text-lg mb-6">Company</h4>
-            <ul className="space-y-4 text-sm font-bold text-gray-500">
-              <li><Link href="#">About</Link></li>
-              <li><Link href="#">Careers</Link></li>
-              <li><Link href="#">Press</Link></li>
-              <li><Link href="#">Social Good</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-lg mb-6">Community</h4>
-            <ul className="space-y-4 text-sm font-bold text-gray-500">
-              <li><Link href="#">Creators</Link></li>
-              <li><Link href="#">Charities</Link></li>
-              <li><Link href="#">Monkey Bio for Teams</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-lg mb-6">Support</h4>
-            <ul className="space-y-4 text-sm font-bold text-gray-500">
-              <li><Link href="#">Help Center</Link></li>
-              <li><Link href="#">Contact</Link></li>
-              <li><Link href="#">Trust Center</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-lg mb-6">Legal</h4>
-            <ul className="space-y-4 text-sm font-bold text-gray-500">
-              <li><Link href="#">Privacy Policy</Link></li>
-              <li><Link href="#">Terms of Service</Link></li>
-              <li><Link href="#">Cookie Policy</Link></li>
-            </ul>
-          </div>
+          
+          {[ 
+            { t: 'Product', links: ['Features', 'Marketplace', 'Templates', 'Video'] },
+            { t: 'Support', links: ['Help Center', 'Community', 'Status', 'Contact'] },
+            { t: 'Company', links: ['About', 'Careers', 'Social Good', 'Contact'] }
+          ].map((col, i) => (
+            <div key={i} className="flex flex-col gap-8">
+               <h4 className="font-black text-lg uppercase tracking-widest text-gray-400">{col.t}</h4>
+               <ul className="flex flex-col gap-6">
+                 {col.links.map(l => (
+                   <li key={l}>
+                      <Link href="#" className="font-bold text-lg text-gray-600 hover:text-linktree-purple transition-all underline-offset-4 hover:underline">{l}</Link>
+                   </li>
+                 ))}
+               </ul>
+            </div>
+          ))}
         </div>
-        <div className="max-w-7xl mx-auto mt-24 pt-8 border-t border-gray-50 text-center text-sm font-bold text-gray-400">
-          <p>© 2026 Monkey Bio. Built with love for creators.</p>
+        
+        <div className="max-w-7xl mx-auto mt-40 pt-12 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-8">
+           <div className="flex gap-10 text-sm font-black text-gray-400">
+              <Link href="#" className="hover:text-black transition-colors">Privacy Policy</Link>
+              <Link href="#" className="hover:text-black transition-colors">Terms of Service</Link>
+              <Link href="#" className="hover:text-black transition-colors">Cookie Policy</Link>
+           </div>
+           <p className="text-sm font-black text-gray-300 uppercase tracking-widest">© 2026 MONKEY BIO. ALL RIGHTS RESERVED.</p>
         </div>
       </footer>
     </div>
