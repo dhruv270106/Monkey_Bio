@@ -30,40 +30,45 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-@keyframes global-cycle {
-  0% { background-color: #D2E823; color: #1e2330; }
-  25% { background-color: #2665D6; color: #FFFFFF; }
-  50% { background-color: #780016; color: #FFDDDD; }
-  75% { background-color: #502274; color: #FFFFFF; }
-  100% { background-color: #D2E823; color: #1e2330; }
+@keyframes mesh-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.animate-global-cycle {
-  animation: global-cycle 25s infinite ease-in-out;
+.animate-proper-bg {
+  background: linear-gradient(-45deg, #D2E823, #2665D6, #780016, #502274);
+  background-size: 400% 400%;
+  animation: mesh-gradient 20s ease infinite;
+}
+
+@keyframes text-contrast {
+  0% { color: #1e2330; }
+  25% { color: #FFFFFF; }
+  50% { color: #FFDDDD; }
+  75% { color: #FFFFFF; }
+  100% { color: #1e2330; }
+}
+
+.animate-proper-text {
+  animation: text-contrast 20s ease infinite;
 }
 
 .glass-section {
-  background: rgba(255, 255, 255, 0.08); /* Slightly more opaque glass */
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(80px);
+  -webkit-backdrop-filter: blur(80px);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
-.animate-global-cycle h1, 
-.animate-global-cycle h2, 
-.animate-global-cycle h3, 
-.animate-global-cycle h4, 
-.animate-global-cycle p, 
-.animate-global-cycle span:not(.no-cycle) {
+/* Ensure text elements within glass sections follow the theme */
+.glass-section h1, .glass-section h2, .glass-section h3, .glass-section p {
   color: inherit !important;
   transition: color 1s ease-in-out;
 }
 
-/* Ensure children inherit the color OR specific text elements do */
-.animate-bg-text-1 h1, .animate-bg-text-1 h2, .animate-bg-text-1 h3, .animate-bg-text-1 p, .animate-bg-text-1 .text-content,
-.animate-bg-text-2 h1, .animate-bg-text-2 h2, .animate-bg-text-2 h3, .animate-bg-text-2 p, .animate-bg-text-2 .text-content,
-.animate-bg-text-3 h1, .animate-bg-text-3 h2, .animate-bg-text-3 h3, .animate-bg-text-3 p, .animate-bg-text-3 .text-content {
-  color: inherit !important;
-  transition: color 1s ease-in-out;
-}
+/* Animations handled by body classes */
+
+/* All text contrast is handled globally */
