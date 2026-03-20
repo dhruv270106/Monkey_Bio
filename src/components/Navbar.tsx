@@ -11,6 +11,7 @@ export default function Navbar() {
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const router = useRouter()
 
   const [scrolled, setScrolled] = useState(false)
@@ -61,194 +62,135 @@ export default function Navbar() {
     await supabase.auth.signOut()
     router.push('/')
     setShowDropdown(false)
+    setIsMenuOpen(false)
   }
 
   const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin'
 
   return (
-    <header className={`fixed top-6 left-4 right-4 z-50 flex justify-center pointer-events-none`}>
-      <div className="max-w-7xl w-full flex justify-center">
-        <div className={`bg-white rounded-[40px] shadow-sm flex items-center justify-between px-8 py-4 w-full pointer-events-auto transition-all relative ${scrolled ? 'shadow-xl scale-[0.98]' : ''}`}>
-          <div className="flex items-center gap-10">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="font-black text-2xl tracking-tighter text-linktree-text">Monkey<span className="text-black">bio</span></span>
-              <span className="w-5 h-5 bg-linktree-text rounded-sm rotate-45 mb-1 ml-0.5" />
-            </Link>
-            <nav className="hidden lg:flex items-center gap-2">
-              {/* PRODUCTS WITH MEGA MENU */}
-              <div className="group/menu relative">
-                 <button className="text-sm font-bold text-gray-500 hover:text-black px-4 py-2 hover:bg-gray-100 rounded-xl transition-all flex items-center gap-1">
-                   Products
-                 </button>
-                 <div className="absolute top-full left-0 pt-4 hidden group-hover/menu:block transition-all duration-500">
-                   <motion.div 
-                     initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                     className="bg-white rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-gray-100 p-8 flex gap-8 w-[950px] overflow-hidden"
-                   >
-                     <div className="w-1/3 border-r border-gray-100 pr-4">
-                        <ul className="space-y-1">
-                          {['Link in bio + tools', 'Manage your social media', 'Grow and engage your audience', 'Monetize your following', 'Measure your success'].map((item, i) => (
-                            <li key={item} className={`p-4 rounded-3xl flex items-center justify-between group/item cursor-pointer transition-all ${i === 2 ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
-                              <span className="font-bold text-sm text-gray-700">{item}</span>
-                              <i className="fi fi-rr-angle-right text-[10px] text-gray-400"></i>
-                            </li>
-                          ))}
-                        </ul>
-                     </div>
-                     <div className="w-1/3">
-                        <div className="space-y-8 p-4">
-                           <div className="hover:translate-x-1 transition-transform cursor-pointer">
-                              <h4 className="font-bold text-sm mb-2 text-linktree-text">Collect leads with contact forms</h4>
-                              <p className="text-xs text-gray-400 font-medium leading-relaxed">Turn visitors into subscribers</p>
-                           </div>
-                           <div className="hover:translate-x-1 transition-transform cursor-pointer">
-                              <h4 className="font-bold text-sm mb-2 text-linktree-text">Manage and activate your audience</h4>
-                              <p className="text-xs text-gray-400 font-medium leading-relaxed">Organize, tag, and track contacts</p>
-                           </div>
-                           <div className="hover:translate-x-1 transition-transform cursor-pointer">
-                              <h4 className="font-bold text-sm mb-2 text-linktree-text">Send contacts to email tools</h4>
-                              <p className="text-xs text-gray-400 font-medium leading-relaxed">Sync with Mailchimp, Klaviyo, Kit & more</p>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="w-1/3">
-                        <div className="bg-gray-50 rounded-[32px] p-6 h-full border border-gray-100 shadow-sm group/promo">
-                           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6">Featured</p>
-                           <div className="w-full aspect-video bg-gradient-to-br from-linktree-lime to-linktree-blue rounded-2xl mb-6 relative overflow-hidden flex items-center justify-center p-6 shadow-xl group-hover/promo:scale-[1.02] transition-transform duration-700">
-                             <div className="absolute inset-0 bg-black/10" />
-                              <img src="https://images.unsplash.com/photo-1621252179027-94459d278660?q=80&w=400&h=300&fit=crop" className="w-full h-full object-cover rounded-lg" />
-                           </div>
-                           <h4 className="font-bold text-sm mb-2 leading-tight text-linktree-text">Connect your email tools, activate your audience</h4>
-                           <p className="text-xs text-gray-400 leading-relaxed font-medium">Send new contacts straight from Linktree to Mailchimp, Klaviyo, Kit and more.</p>
-                        </div>
-                     </div>
-                   </motion.div>
-                 </div>
-              </div>
-
-              <Link href="/templates" className="text-sm font-bold opacity-60 hover:opacity-100 hover:bg-white/10 px-4 py-2 rounded-xl transition-all">Templates</Link>
-              <Link href="/marketplace" className="text-sm font-bold opacity-60 hover:opacity-100 hover:bg-white/10 px-4 py-2 rounded-xl transition-all">Marketplace</Link>
+    <>
+      <header className={`fixed top-4 md:top-6 left-4 right-4 z-50 flex justify-center pointer-events-none`}>
+        <div className="max-w-7xl w-full flex justify-center">
+          <div className={`bg-white rounded-[32px] md:rounded-[40px] shadow-sm flex items-center justify-between px-6 md:px-8 py-3 md:py-4 w-full pointer-events-auto transition-all relative ${scrolled ? 'shadow-xl scale-[0.98]' : ''}`}>
+            
+            <div className="flex items-center gap-10">
+              <Link href="/" className="flex items-center gap-2">
+                <span className="font-black text-xl md:text-2xl tracking-tighter text-linktree-text">Monkey<span className="text-black">bio</span></span>
+                <span className="w-4 h-4 md:w-5 md:h-5 bg-linktree-text rounded-sm rotate-45 mb-1 ml-0.5" />
+              </Link>
               
-              {/* LEARN WITH MEGA MENU */}
-              <div className="group/menu relative">
-                 <button className="text-sm font-bold opacity-60 hover:opacity-100 px-4 py-2 hover:bg-white/10 rounded-xl transition-all flex items-center gap-1">
-                   Learn
-                 </button>
-                 <div className="absolute top-full left-[-200px] pt-4 hidden group-hover/menu:block">
-                   <motion.div 
-                      initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      className="bg-white rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.1)] border border-gray-100 p-8 flex gap-8 w-[800px] overflow-hidden"
-                   >
-                     <div className="w-1/3 border-r border-gray-100 pr-4">
-                        <ul className="space-y-1">
-                          {['Resources', 'How to use Linktree'].map((item, i) => (
-                            <li key={item} className={`p-4 rounded-3xl flex items-center justify-between group/item cursor-pointer transition-all ${i === 0 ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
-                              <span className="font-bold text-sm text-gray-700">{item}</span>
-                              <i className="fi fi-rr-angle-right text-[10px] text-gray-400"></i>
-                            </li>
-                          ))}
-                        </ul>
-                     </div>
-                     <div className="w-1/3">
-                        <div className="space-y-8 p-4">
-                           <div className="hover:translate-x-1 transition-transform cursor-pointer">
-                              <h4 className="font-bold text-sm mb-2 text-linktree-text">Read our blog</h4>
-                              <p className="text-xs text-gray-400 font-medium">All the latest tips, tricks and growth strategies</p>
-                           </div>
-                           <div className="hover:translate-x-1 transition-transform cursor-pointer">
-                              <h4 className="font-bold text-sm mb-2 text-linktree-text">Success Stories</h4>
-                              <p className="text-xs text-gray-400 font-medium">Real people, real results on Linktree</p>
-                           </div>
-                        </div>
-                     </div>
-                     <div className="w-1/3">
-                        <div className="bg-[#254F1A] rounded-[32px] p-6 h-full text-white shadow-xl">
-                           <p className="text-[10px] font-black uppercase tracking-widest opacity-50 mb-6">Learn with Linktree</p>
-                           <div className="w-full aspect-[4/5] bg-white/10 rounded-2xl mb-6 flex overflow-hidden shadow-2xl">
-                              <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=400&fit=crop" className="w-full h-full object-cover scale-110 hover:scale-100 transition-transform duration-1000" />
-                           </div>
-                           <h4 className="font-bold text-sm mb-2 leading-tight">Create & sell your own online Course</h4>
-                           <p className="text-xs opacity-70 leading-relaxed font-medium">If you've got something to share, you've got something to sell. Easily create and share an online course that...</p>
-                        </div>
-                     </div>
-                   </motion.div>
-                 </div>
-              </div>
+              {/* DESKTOP NAV */}
+              <nav className="hidden lg:flex items-center gap-2">
+                <Link href="/templates" className="text-sm font-bold opacity-60 hover:opacity-100 hover:bg-gray-100 px-4 py-2 rounded-xl transition-all">Templates</Link>
+                <Link href="/marketplace" className="text-sm font-bold opacity-60 hover:opacity-100 hover:bg-gray-100 px-4 py-2 rounded-xl transition-all">Marketplace</Link>
+                <Link href="/pricing" className="text-sm font-bold text-gray-500 hover:text-black px-4 py-2 hover:bg-gray-100 rounded-xl transition-all">Pricing</Link>
+              </nav>
+            </div>
 
-              <Link href="/pricing" className="text-sm font-bold text-gray-500 hover:text-black px-4 py-2 hover:bg-gray-100 rounded-xl transition-all">Pricing</Link>
-            </nav>
-          </div>
+            <div className="flex items-center gap-2 md:gap-4">
+              {/* MOBILE HAMBURGER - TO THE LEFT OF USER ICON */}
+              <button 
+                onClick={() => setIsMenuOpen(true)}
+                className="lg:hidden flex flex-col gap-1.5 p-3 hover:bg-gray-100 rounded-2xl transition-all outline-none"
+              >
+                <div className="w-6 h-0.5 bg-black rounded-full" />
+                <div className="w-6 h-0.5 bg-black rounded-full opacity-70" />
+                <div className="w-6 h-0.5 bg-black rounded-full opacity-40" />
+              </button>
 
-          <div className="flex items-center gap-4">
-            {loading ? (
-              <div className="w-10 h-10 rounded-full bg-gray-100 animate-pulse"></div>
-            ) : user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setShowDropdown(!showDropdown)}
-                  className="w-10 h-10 rounded-full border-2 border-linktree-lime overflow-hidden shadow-sm hover:scale-105 transition-all outline-none"
-                >
-                  <img
-                    src={profile?.avatar_url || user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || user.email}&background=random`}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                </button>
+              {loading ? (
+                <div className="w-10 h-10 rounded-full bg-gray-100 animate-pulse"></div>
+              ) : user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="w-10 h-10 rounded-full border-2 border-linktree-lime overflow-hidden shadow-sm transition-all outline-none"
+                  >
+                    <img
+                      src={profile?.avatar_url || user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || user.email}&background=random`}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
 
-                <AnimatePresence>
-                  {showDropdown && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 mt-3 w-64 bg-white rounded-3xl shadow-2xl border border-gray-100 p-2 z-[60]"
-                    >
-                      <div className="px-5 py-4 border-b border-gray-50 mb-1">
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Signed in as</p>
-                        <p className="text-sm font-black text-linktree-text truncate">{profile?.username || user.email}</p>
-                      </div>
-
-                      <Link
-                        href="/dashboard"
-                        onClick={() => setShowDropdown(false)}
-                        className="flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-bold text-gray-600 hover:bg-linktree-lime/20 hover:text-linktree-text transition-all"
+                  <AnimatePresence>
+                    {showDropdown && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 mt-3 w-64 bg-white rounded-3xl shadow-2xl border border-gray-100 p-2 z-[60]"
                       >
-                        <i className="fi fi-rr-apps"></i> Dashboard
-                      </Link>
-
-                      {isAdmin && (
-                        <Link
-                          href="/admin"
-                          onClick={() => setShowDropdown(false)}
-                          className="flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-bold text-gray-600 hover:bg-linktree-lime/20 hover:text-linktree-text transition-all"
-                        >
-                          <i className="fi fi-rr-shield-check"></i> Admin Panel
-                        </Link>
-                      )}
-
-                      <div className="h-px bg-gray-50 my-1"></div>
-
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all text-left"
-                      >
-                        <i className="fi fi-rr-exit"></i> Log out
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <>
-                <Link href="/login" className="text-sm font-bold text-gray-800 hover:text-black bg-gray-100 hover:bg-gray-200 px-6 py-4 rounded-full transition-colors">Log in</Link>
-                <Link href="/signup" className="text-sm font-bold bg-[#1e2330] text-white hover:opacity-90 px-8 py-4 rounded-full transition-all shadow-md">Sign up free</Link>
-              </>
-            )}
+                        <div className="px-5 py-4 border-b border-gray-50 mb-1">
+                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Signed in as</p>
+                          <p className="text-sm font-black text-linktree-text truncate">{profile?.username || user.email}</p>
+                        </div>
+                        <Link href="/dashboard" onClick={() => setShowDropdown(false)} className="flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all">Dashboard</Link>
+                        {isAdmin && <Link href="/admin" onClick={() => setShowDropdown(false)} className="flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all">Admin Panel</Link>}
+                        <div className="h-px bg-gray-50 my-1"></div>
+                        <button onClick={handleLogout} className="w-full text-left flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all">Log out</button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <div className="hidden sm:flex items-center gap-2">
+                  <Link href="/login" className="text-sm font-bold text-gray-800 hover:text-black bg-gray-100 hover:bg-gray-200 px-6 py-4 rounded-full transition-colors">Log in</Link>
+                  <Link href="/signup" className="text-sm font-bold bg-[#1e2330] text-white hover:opacity-90 px-8 py-4 rounded-full transition-all shadow-md">Sign up</Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* MOBILE MENU OVERLAY */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMenuOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100]"
+            />
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed top-4 right-4 bottom-4 w-[min(90%,400px)] bg-white rounded-[40px] z-[110] shadow-2xl flex flex-col p-8"
+            >
+              <div className="flex justify-between items-center mb-12">
+                <span className="font-black text-2xl tracking-tighter">Monkeybio.</span>
+                <button onClick={() => setIsMenuOpen(false)} className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:scale-110 transition-all font-black text-xl">✕</button>
+              </div>
+
+              <div className="flex flex-col gap-8 flex-1">
+                 <Link onClick={() => setIsMenuOpen(false)} href="/" className="text-4xl font-black uppercase tracking-tighter hover:text-linktree-purple">Home</Link>
+                 <Link onClick={() => setIsMenuOpen(false)} href="/templates" className="text-4xl font-black uppercase tracking-tighter hover:text-linktree-purple">Templates</Link>
+                 <Link onClick={() => setIsMenuOpen(false)} href="/marketplace" className="text-4xl font-black uppercase tracking-tighter hover:text-linktree-purple">Marketplace</Link>
+                 <Link onClick={() => setIsMenuOpen(false)} href="/pricing" className="text-4xl font-black uppercase tracking-tighter hover:text-linktree-purple">Pricing</Link>
+              </div>
+
+              {!user && (
+                <div className="flex flex-col gap-4 pt-10 border-t border-gray-100">
+                  <Link onClick={() => setIsMenuOpen(false)} href="/login" className="w-full py-6 bg-gray-100 rounded-[24px] text-center font-black text-xl">Log In</Link>
+                  <Link onClick={() => setIsMenuOpen(false)} href="/signup" className="w-full py-6 bg-linktree-purple text-white rounded-[24px] text-center font-black text-xl">Sign Up Free</Link>
+                </div>
+              )}
+
+              {user && (
+                <div className="flex flex-col gap-4 pt-10 border-t border-gray-100">
+                  <Link onClick={() => setIsMenuOpen(false)} href="/dashboard" className="w-full py-6 bg-gray-100 rounded-[24px] text-center font-black text-xl">Dashboard</Link>
+                  <button onClick={handleLogout} className="w-full py-6 bg-red-50 text-red-500 rounded-[24px] text-center font-black text-xl">Log Out</button>
+                </div>
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
