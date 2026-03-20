@@ -20,13 +20,13 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="bg-transparent text-linktree-text min-h-screen flex flex-col selection:bg-linktree-lime/30 font-sans transition-all duration-1000">
+    <div className="bg-white text-linktree-text min-h-screen flex flex-col selection:bg-linktree-lime/30 font-sans">
       
       <Navbar />
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative min-h-screen pt-24 pb-12 lg:pt-32 lg:pb-0 px-4 glass-section overflow-hidden flex items-center transition-all duration-1000">
+        <section className="relative min-h-screen pt-24 pb-12 lg:pt-32 lg:pb-0 px-4 bg-linktree-lime overflow-hidden flex items-center transition-all duration-1000">
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 w-full">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -34,10 +34,10 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="lg:w-[55%] text-center lg:text-left z-20"
             >
-              <h1 className="text-5xl md:text-7xl lg:text-[84px] font-black tracking-tighter mb-6 leading-[0.95]">
+              <h1 className="text-5xl md:text-7xl lg:text-[84px] font-black tracking-tighter mb-6 leading-[0.95] text-linktree-text">
                 The only link in bio you'll ever need.
               </h1>
-              <p className="text-lg md:text-xl font-semibold mb-10 max-w-xl mx-auto lg:mx-0 leading-tight">
+              <p className="text-lg md:text-xl font-semibold mb-10 max-w-xl mx-auto lg:mx-0 leading-tight text-linktree-text">
                 Join 50M+ people using Monkey Bio for their link in bio. One link to help you share everything you create, curate and sell from your Instagram, TikTok, Twitter, YouTube and other social media profiles.
               </p>
               
@@ -103,8 +103,9 @@ export default function Home() {
         </section>
 
         {/* FEATURE 1: CUSTOMIZE */}
-        <section className="py-24 lg:py-32 glass-section overflow-hidden px-4 relative">
-          <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24 z-10">
+        <section className="py-24 lg:py-32 bg-linktree-blue overflow-hidden px-4 relative">
+          <div className="absolute inset-0 bg-black/20" />
+          <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24 z-10 text-white">
             <div className="lg:w-1/2 flex justify-center">
                <div className="relative w-full max-w-md aspect-[3/4] bg-white rounded-3xl overflow-hidden shadow-2xl transform lg:-rotate-6">
                   {/* Mock UI */}
@@ -134,10 +135,11 @@ export default function Home() {
         </section>
 
         {/* FEATURE 2: SHARE */}
-        <section className="py-24 lg:py-32 glass-section px-4 relative">
-          <div className="relative max-w-4xl mx-auto text-center z-10">
-            <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-white">Share your Monkey Bio from your Instagram, TikTok, Twitter and other bios</h2>
-            <p className="text-xl md:text-2xl font-semibold mb-12 opacity-90">
+        <section className="py-24 lg:py-32 bg-linktree-maroon px-4 relative">
+          <div className="absolute inset-0 bg-black/30" />
+          <div className="relative max-w-4xl mx-auto text-center z-10 text-white">
+            <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">Share your Monkey Bio from your Instagram, TikTok, Twitter and other bios</h2>
+            <p className="text-xl md:text-2xl font-semibold mb-12 opacity-90 text-[#FFDDDD]">
               Add your unique Linktree URL to all the platforms and places you find your audience. Then use your QR code to drive your offline audience online.
             </p>
             <Link href="/signup" className="inline-block bg-[#FFDDDD] text-linktree-maroon font-bold text-xl px-12 py-6 rounded-full hover:bg-white transition-all shadow-lg">
@@ -147,7 +149,7 @@ export default function Home() {
         </section>
 
         {/* FEATURE 3: ANALYZE */}
-        <section className="py-24 lg:py-32 glass-section px-4">
+        <section className="py-24 lg:py-32 bg-linktree-grey px-4">
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-16 lg:gap-24">
             <div className="lg:w-1/2 flex justify-center">
                <div className="bg-white p-8 rounded-3xl shadow-2xl w-full">
@@ -171,8 +173,8 @@ export default function Home() {
                </div>
             </div>
             <div className="lg:w-1/2">
-              <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">Analyze your audience and keep your followers engaged</h2>
-              <p className="text-xl md:text-2xl font-semibold mb-12 opacity-80">
+              <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight text-linktree-text">Analyze your audience and keep your followers engaged</h2>
+              <p className="text-xl md:text-2xl font-semibold mb-12 opacity-80 text-linktree-text">
                 Track your audience with our detailed insights. See which links are performing best, where your traffic is coming from and what's converting.
               </p>
               <Link href="/signup" className="inline-block bg-linktree-text text-white font-bold text-xl px-12 py-6 rounded-full hover:opacity-90 transition-all shadow-lg">
@@ -183,7 +185,8 @@ export default function Home() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section className="py-32 glass-section px-4 relative overflow-hidden">
+        <section className="py-32 bg-linktree-purple text-white px-4 relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/40" />
           <div className="relative max-w-7xl mx-auto z-10">
               <div className="text-center mb-24">
                  <h2 className="text-5xl md:text-7xl font-black mb-8">The only link you'll ever need.</h2>
@@ -209,7 +212,7 @@ export default function Home() {
         </section>
 
         {/* FINAL CTA */}
-        <section className="py-32 glass-section px-4 text-center relative overflow-hidden">
+        <section className="py-32 bg-linktree-lime px-4 text-center relative overflow-hidden">
           <div className="relative max-w-4xl mx-auto z-10">
               <h2 className="text-5xl md:text-8xl font-black mb-12 text-linktree-text">The only link in bio you’ll ever need</h2>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -224,8 +227,8 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="glass-section py-24 px-4 overflow-hidden border-t border-white/10">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-12 relative z-10">
+      <footer className="bg-white text-linktree-text py-24 px-4 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-12 text-gray-500">
           <div className="col-span-2 md:col-span-1">
              <Link href="/" className="flex items-center gap-2 mb-8">
               <span className="w-10 h-10 rounded-xl bg-linktree-text flex items-center justify-center text-linktree-lime font-black text-2xl">M</span>

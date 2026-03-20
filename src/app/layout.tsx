@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body dir="ltr" className={`${inter.className} animate-proper-bg animate-proper-text min-h-screen transition-all duration-1000 selection:bg-black/10`}>{children}</body>
+      <body dir="ltr" className={inter.className}>{children}</body>
     </html>
   )
 }
