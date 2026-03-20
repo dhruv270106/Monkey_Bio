@@ -1172,6 +1172,9 @@ body{
 .w-96{
   width: 24rem;
 }
+.w-40{
+  width: 10rem;
+}
 .min-w-0{
   min-width: 0px;
 }
@@ -1240,6 +1243,9 @@ body{
 }
 .max-w-\[1400px\]{
   max-width: 1400px;
+}
+.max-w-\[320px\]{
+  max-width: 320px;
 }
 .flex-1{
   flex: 1 1 0%;
@@ -1663,6 +1669,9 @@ body{
 }
 .rounded-\[28px\]{
   border-radius: 28px;
+}
+.rounded-\[34px\]{
+  border-radius: 34px;
 }
 .rounded-b-3xl{
   border-bottom-right-radius: 1.5rem;
@@ -2820,6 +2829,10 @@ body{
   padding-left: 3.5rem;
   padding-right: 3.5rem;
 }
+.py-16{
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
 .pb-12{
   padding-bottom: 3rem;
 }
@@ -3049,6 +3062,10 @@ body{
 .text-\[clamp\(40px\2c 8\.5vw\2c 100px\)\]{
   font-size: clamp(40px, 8.5vw, 100px);
 }
+.text-base{
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
 .font-black{
   font-weight: 900;
 }
@@ -3096,6 +3113,9 @@ body{
 }
 .leading-\[0\.88\]{
   line-height: 0.88;
+}
+.leading-\[0\.95\]{
+  line-height: 0.95;
 }
 .tracking-\[-0\.06em\]{
   letter-spacing: -0.06em;
@@ -4615,6 +4635,11 @@ html.lenis {
     padding-bottom: 1.5rem;
   }
 
+  .sm\:px-8{
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
   .sm\:text-6xl{
     font-size: 3.75rem;
     line-height: 1;
@@ -4629,6 +4654,11 @@ html.lenis {
     font-size: 1.875rem;
     line-height: 2.25rem;
   }
+
+  .sm\:text-xl{
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
 }
 
 @media (min-width: 768px){
@@ -4637,12 +4667,48 @@ html.lenis {
     grid-column: span 2 / span 2;
   }
 
+  .md\:mb-20{
+    margin-bottom: 5rem;
+  }
+
+  .md\:block{
+    display: block;
+  }
+
   .md\:flex{
     display: flex;
   }
 
+  .md\:h-64{
+    height: 16rem;
+  }
+
+  .md\:h-80{
+    height: 20rem;
+  }
+
+  .md\:h-96{
+    height: 24rem;
+  }
+
   .md\:w-1\/2{
     width: 50%;
+  }
+
+  .md\:w-64{
+    width: 16rem;
+  }
+
+  .md\:w-80{
+    width: 20rem;
+  }
+
+  .md\:w-96{
+    width: 24rem;
+  }
+
+  .md\:max-w-\[400px\]{
+    max-width: 400px;
   }
 
   .md\:grid-cols-2{
@@ -4665,6 +4731,22 @@ html.lenis {
     align-items: center;
   }
 
+  .md\:gap-8{
+    gap: 2rem;
+  }
+
+  .md\:rounded-\[40px\]{
+    border-radius: 40px;
+  }
+
+  .md\:rounded-\[50px\]{
+    border-radius: 50px;
+  }
+
+  .md\:rounded-\[60px\]{
+    border-radius: 60px;
+  }
+
   .md\:p-24{
     padding: 6rem;
   }
@@ -4677,6 +4759,21 @@ html.lenis {
   .md\:px-12{
     padding-left: 3rem;
     padding-right: 3rem;
+  }
+
+  .md\:px-8{
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .md\:py-10{
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .md\:py-24{
+    padding-top: 6rem;
+    padding-bottom: 6rem;
   }
 
   .md\:text-left{
@@ -4728,6 +4825,10 @@ html.lenis {
     font-size: 2.25rem;
     line-height: 2.5rem;
   }
+
+  .md\:leading-\[0\.75\]{
+    line-height: 0.75;
+  }
 }
 
 @media (min-width: 1024px){
@@ -4750,6 +4851,10 @@ html.lenis {
 
   .lg\:col-span-3{
     grid-column: span 3 / span 3;
+  }
+
+  .lg\:mt-0{
+    margin-top: 0px;
   }
 
   .lg\:block{
@@ -4820,6 +4925,10 @@ html.lenis {
     gap: 2rem;
   }
 
+  .lg\:gap-20{
+    gap: 5rem;
+  }
+
   .lg\:p-12{
     padding: 3rem;
   }
@@ -4842,12 +4951,25 @@ html.lenis {
     padding-right: 5rem;
   }
 
+  .lg\:py-32{
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+
   .lg\:pl-20{
     padding-left: 5rem;
   }
 
   .lg\:pr-20{
     padding-right: 5rem;
+  }
+
+  .lg\:pl-10{
+    padding-left: 2.5rem;
+  }
+
+  .lg\:pr-10{
+    padding-right: 2.5rem;
   }
 
   .lg\:text-\[140px\]{

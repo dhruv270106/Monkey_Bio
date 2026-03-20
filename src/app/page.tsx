@@ -34,33 +34,35 @@ function Section({ id, children, from = "bottom", bgClass = "", imageSrc = "" }:
     offset: ["start end", "end start"]
   })
 
-  const xRaw = useTransform(scrollYProgress, [0, 0.4], [from === "left" ? -250 : from === "right" ? 250 : 0, 0])
-  const yRaw = useTransform(scrollYProgress, [0, 0.4], [from === "bottom" ? 250 : 0, 0])
+  // Faster entry for mobile (arrive by 0.25 instead of 0.4)
+  const xRaw = useTransform(scrollYProgress, [0, 0.3], [from === "left" ? -250 : from === "right" ? 250 : 0, 0])
+  const yRaw = useTransform(scrollYProgress, [0, 0.3], [from === "bottom" ? 250 : 0, 0])
   const x = useSpring(xRaw, { stiffness: 100, damping: 20 })
   const y = useSpring(yRaw, { stiffness: 100, damping: 20 })
   
-  const opacity = useTransform(scrollYProgress, [0, 0.35], [0, 1])
-  const scale = useTransform(scrollYProgress, [0, 0.4], [0.96, 1])
+  const opacity = useTransform(scrollYProgress, [0, 0.25], [0, 1])
+  const scale = useTransform(scrollYProgress, [0, 0.3], [0.96, 1])
 
-  const imgY = useTransform(scrollYProgress, [0, 1], [100, -100])
-  const imgRotate = useTransform(scrollYProgress, [0, 0.5], [from === "left" ? 10 : -10, 0])
+  // Parallax: Reduce range on mobile to avoid cutting
+  const imgY = useTransform(scrollYProgress, [0, 1], [40, -40])
+  const imgRotate = useTransform(scrollYProgress, [0, 0.5], [from === "left" ? 8 : -8, 0])
 
   return (
-    <section id={id} ref={ref} className={`stack-section px-6 md:px-12 lg:px-20 ${bgClass} overflow-hidden relative`}>
-      <FloatingBubble top="top-20" left="left-10" size="w-64 h-64" delay={0.5} />
-      <FloatingBubble top="bottom-20" left="right-20" size="w-80 h-80" delay={1} />
+    <section id={id} ref={ref} className={`stack-section px-4 md:px-12 lg:px-20 ${bgClass} overflow-hidden relative`}>
+      <FloatingBubble top="top-20" left="left-10" size="w-32 h-32 md:w-64 md:h-64" delay={0.5} />
+      <FloatingBubble top="bottom-20" left="right-20" size="w-40 h-40 md:w-80 md:h-80" delay={1} />
       
       <motion.div 
         style={{ x, y, opacity, scale }}
-        className="w-full h-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] items-center gap-20 relative z-20 py-20"
+        className="w-full h-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] items-center gap-10 lg:gap-20 relative z-20 py-16 md:py-24 lg:py-32"
       >
-        <div className={`flex flex-col ${from === "right" ? "lg:order-2 lg:pl-20" : "lg:pr-20"}`}>
+        <div className={`flex flex-col ${from === "right" ? "lg:order-2 lg:pl-10" : "lg:pr-10"}`}>
            {children}
         </div>
-        <motion.div style={{ y: imgY, rotate: imgRotate }} className={`flex justify-center ${from === "right" ? "lg:order-1" : "lg:justify-end"}`}>
+        <motion.div style={{ y: imgY, rotate: imgRotate }} className="flex justify-center lg:justify-end">
            {imageSrc && (
-             <div className="relative w-full max-w-[400px] aspect-[4/5] bg-white rounded-[60px] shadow-2xl overflow-hidden p-2 group">
-                <img src={imageSrc} className="w-full h-full object-cover rounded-[50px] group-hover:scale-105 transition-transform duration-700" />
+             <div className="relative w-full max-w-[320px] md:max-w-[400px] aspect-[4/5] bg-white rounded-[40px] md:rounded-[60px] shadow-2xl overflow-hidden p-2 group mt-10 lg:mt-0">
+                <img src={imageSrc} className="w-full h-full object-cover rounded-[34px] md:rounded-[50px] group-hover:scale-105 transition-transform duration-700" />
              </div>
            )}
         </motion.div>
@@ -92,7 +94,7 @@ export default function Home() {
         
         {/* HERO */}
         <section id="hero" className="stack-section bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-6 md:px-12 lg:px-20 overflow-hidden">
-           <div className="max-w-[1400px] mx-auto w-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] h-full items-center gap-10 relative z-20">
+           <div className="max-w-[1400px] mx-auto w-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] h-full items-center gap-10 relative z-20 pt-20">
               <div className="flex flex-col gap-10 z-30 pr-10 relative">
                 <Reveal delay={0.05} width="100%">
                   <h1 className="text-[clamp(44px,9vw,100px)] font-black leading-[0.85] tracking-[-0.07em] uppercase pb-4">
@@ -106,7 +108,7 @@ export default function Home() {
                 </Reveal>
                 <div className="flex flex-col gap-4 max-w-2xl mt-4">
                   {!isClaimed ? (
-                    <div className="flex flex-row bg-white rounded-[40px] p-2 sm:p-4 gap-2 sm:gap-4 shadow-2xl focus-within:ring-8 transition-all ring-linktree-purple/10 w-full hover:shadow-indigo-500/10">
+                    <div className="flex flex-row bg-white rounded-[40px] p-2 sm:p-4 gap-2 sm:gap-4 shadow-2xl focus-within:ring-8 transition-all ring-linktree-purple/10 w-full">
                       <div className="flex items-center flex-1 px-2 sm:px-4 min-w-0">
                         <span className="font-black text-2xl sm:text-3xl text-gray-200 mr-2 shrink-0">/</span>
                         <input 
@@ -115,12 +117,12 @@ export default function Home() {
                           value={username} onChange={e => setUsername(e.target.value)}
                         />
                       </div>
-                      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => username && setIsClaimed(true)} className="bg-linktree-purple text-white font-black text-lg sm:text-2xl px-6 sm:px-14 py-4 sm:py-6 rounded-[28px] sm:rounded-[40px] shadow-xl shrink-0">Claim It</motion.button>
+                      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => username && setIsClaimed(true)} className="bg-linktree-purple text-white font-black text-[12px] sm:text-2xl px-4 sm:px-14 py-4 sm:py-6 rounded-[28px] sm:rounded-[40px] shadow-xl shrink-0">Claim It</motion.button>
                     </div>
                   ) : (
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex justify-between items-center bg-white p-6 sm:p-10 rounded-[40px] border-4 border-white shadow-2xl w-full">
-                      <p className="font-black text-xl sm:text-3xl">monkey.bio/{username}</p>
-                      <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-black text-lg px-8 py-4 rounded-2xl">IT'S YOURS!</Link>
+                      <p className="font-black text-lg sm:text-3xl">monkey.bio/{username}</p>
+                      <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-black text-base sm:text-xl px-4 sm:px-8 py-4 rounded-2xl">IT'S YOURS!</Link>
                     </motion.div>
                   )}
                 </div>
@@ -132,73 +134,78 @@ export default function Home() {
         {/* CUSTOMIZE */}
         <Section id="features" from="left" bgClass="bg-gradient-to-br from-[#2665D6] via-[#4F8BF8] to-[#1E4FAF] text-white" imageSrc="/images/customize.png">
              <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,7.5vw,94px)] font-black leading-[0.88] uppercase mb-10 pb-6 whitespace-normal">Personalize <br /> Everything.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-2xl font-black text-white/60 mb-12 uppercase tracking-[0.2em]">Your Brand. Your Style. No Code.</p></Reveal>
-             <motion.div whileHover={{ scale: 1.1, x: 20 }} whileTap={{ scale: 0.95 }} className="inline-block mt-4 cursor-pointer">
-                <Link href="/signup" className="bg-[#D2E823] text-[#2665D6] font-black text-2xl px-12 py-6 rounded-[24px] shadow-2xl inline-block hover:bg-white transition-colors">DISCOVER <span>→</span></Link>
+             <Reveal delay={0.2} width="100%"><p className="text-xl md:text-2xl font-black text-white/60 mb-12 uppercase tracking-[0.2em]">Your Brand. Your Style. No Code.</p></Reveal>
+             <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }} className="inline-block mt-4 cursor-pointer">
+                <Link href="/signup" className="bg-[#D2E823] text-[#2665D6] font-black text-xl md:text-2xl px-10 py-5 rounded-[24px] shadow-2xl inline-block hover:bg-white transition-colors uppercase tracking-widest leading-none">DISCOVER ↗</Link>
              </motion.div>
         </Section>
 
         {/* SHARE */}
         <Section id="share" from="right" bgClass="bg-gradient-to-br from-[#780011] via-[#B50019] to-[#54000C] text-white" imageSrc="/images/share.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,8vw,100px)] font-black leading-tight uppercase mb-12 pb-6">Share <br /> Everywhere.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-2xl font-black text-white/50 mb-12 uppercase italic">One Link. All Socials. Everywhere.</p></Reveal>
-             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><Link href="/signup" className="bg-white text-linktree-maroon font-black text-2xl px-14 py-8 rounded-full shadow-2xl inline-flex items-center gap-4 hover:bg-[#D2E823] transition-colors">GET YOURS 🔥</Link></motion.div>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,7.5vw,94px)] font-black leading-tight uppercase mb-12 pb-6">Share <br /> Everywhere.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-xl md:text-2xl font-black text-white/50 mb-12 uppercase italic">One Link. All Socials. Everywhere.</p></Reveal>
+             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><Link href="/signup" className="bg-white text-linktree-maroon font-black text-xl md:text-2xl px-10 py-6 rounded-full shadow-2xl inline-flex items-center gap-4 hover:bg-[#D2E823] transition-colors">GET YOURS 🔥</Link></motion.div>
         </Section>
 
         {/* ANALYZE */}
         <Section id="analyze" from="bottom" bgClass="bg-gradient-to-br from-[#1E1E1E] via-[#2D2D2D] to-[#0D0D0D] text-white" imageSrc="/images/analyze.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,8vw,90px)] font-black uppercase leading-[0.9] mb-8 pb-6">Smart <br /> Data.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-2xl font-black text-white/50 mb-12 uppercase tracking-widest leading-none">Growth. Clicks. Insights.</p></Reveal>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,7.5vw,94px)] font-black uppercase leading-[0.9] mb-8 pb-6">Smart <br /> Data.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-xl md:text-2xl font-black text-white/50 mb-12 uppercase tracking-widest leading-none">Growth. Clicks. Insights.</p></Reveal>
              <motion.div whileHover={{ scale: 1.1, y: -5 }} whileTap={{ scale: 0.9 }}>
-                <Link href="/signup" className="bg-linktree-lime text-black font-black text-2xl px-14 py-8 rounded-[30px] shadow-xl inline-block hover:bg-white transition-all">GO PRO ↗</Link>
+                <Link href="/signup" className="bg-linktree-lime text-black font-black text-xl md:text-2xl px-12 py-6 rounded-[24px] shadow-xl inline-block hover:bg-white transition-all uppercase">GO PRO ↗</Link>
              </motion.div>
         </Section>
 
         {/* MARKETPLACE */}
         <Section id="marketplace" from="left" bgClass="bg-gradient-to-br from-[#8000FF] via-[#A84FFF] to-[#5000AF] text-white" imageSrc="/images/marketplace.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,7.5vw,94px)] font-black leading-[0.8] uppercase mb-10 pb-6">Creator <br /> Marketplace.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-2xl font-black text-white/40 mb-12 uppercase">Sell Digital. Direct. Professional.</p></Reveal>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,7.5vw,94px)] font-black leading-[0.8] uppercase mb-10 pb-6">Marketplace <br /> For Creators.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-xl md:text-2xl font-black text-white/40 mb-12 uppercase">Sell Digital. Direct. Professional.</p></Reveal>
              <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
-                <Link href="/templates" className="bg-linktree-lime text-black font-black text-2xl px-16 py-8 rounded-[32px] shadow-2xl inline-block hover:bg-white transition-all">BROWSE SHOP <span>→</span></Link>
+                <Link href="/templates" className="bg-[#D2E823] text-black font-black text-xl md:text-2xl px-14 py-6 rounded-[30px] shadow-2xl inline-block hover:bg-white transition-all uppercase leading-none">BROWSE SHOP ↗</Link>
              </motion.div>
         </Section>
 
         {/* TEMPLATES */}
         <Section id="templates" from="right" bgClass="bg-gradient-to-br from-[#FF0080] via-[#FF4FBC] to-[#AF0050] text-white" imageSrc="/images/templates.png">
              <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,7.5vw,94px)] font-black leading-[0.9] uppercase mb-10 pb-6">Beautiful <br /> Layouts.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-2xl font-black text-white/60 mb-12 uppercase tracking-tighter italic">Launch Fast. Design Beautifully.</p></Reveal>
-             <motion.div whileHover={{ scale: 1.08, rotate: 2 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/templates" className="bg-black text-white font-black text-2xl px-16 py-8 rounded-[32px] shadow-2xl inline-block hover:bg-[#8000FF] transition-all">VIEW ALL <span>↗</span></Link>
+             <Reveal delay={0.2} width="100%"><p className="text-xl md:text-2xl font-black text-white/60 mb-12 uppercase tracking-tighter italic">Launch Fast. Design Beautifully.</p></Reveal>
+             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/templates" className="bg-black text-white font-black text-xl md:text-2xl px-12 py-6 rounded-[30px] shadow-2xl inline-block hover:bg-[#8000FF] transition-all uppercase tracking-widest">VIEW ALL ↗</Link>
              </motion.div>
         </Section>
 
         {/* MONETIZE */}
         <Section id="monetize" from="left" bgClass="bg-gradient-to-br from-[#FF6B00] via-[#FF9E00] to-[#E65100] text-white" imageSrc="/images/monetize.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,8.5vw,100px)] font-black leading-[0.85] uppercase mb-10 pb-6">Monetize <br /> Your Audience.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-2xl font-black text-white/50 mb-12 uppercase tracking-widest">Support. Tips. Direct Sales.</p></Reveal>
-             <motion.button whileHover={{ scale: 1.1, backgroundColor: '#ffffff', color: '#000000' }} whileTap={{ scale: 0.9 }} className="bg-white text-[#FF6B00] font-black text-2xl px-16 py-8 rounded-[40px] shadow-2xl transition-all">START EARNING</motion.button>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,7.5vw,94px)] font-black leading-[0.85] uppercase mb-10 pb-6">Monetize <br /> Audience.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-xl md:text-2xl font-black text-white/50 mb-12 uppercase tracking-widest">Support. Tips. Direct Sales.</p></Reveal>
+             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="bg-white text-[#FF6B00] font-black text-xl md:text-2xl px-14 py-6 rounded-[40px] shadow-2xl transition-all uppercase tracking-widest">START EARNING</motion.button>
         </Section>
 
         {/* INTEGRATIONS */}
         <Section id="integrations" from="right" bgClass="bg-gradient-to-br from-[#00C2FF] via-[#00E0FF] to-[#0085FF] text-white" imageSrc="/images/integrations.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,8vw,90px)] font-black leading-[0.9] uppercase mb-10 pb-6">Everything <br /> Connected.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-2xl font-black text-white/50 mb-12 uppercase">Spotify. Shopify. Socials. Embed Anything.</p></Reveal>
-             <motion.div whileHover={{ scale: 1.1, y: -5 }} whileTap={{ scale: 0.9 }}>
-                <Link href="/signup" className="bg-white text-[#0085FF] font-black text-2xl px-14 py-8 rounded-[30px] shadow-2xl inline-block hover:bg-black hover:text-white transition-all">VIEW PLUGINS <span>→</span></Link>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(40px,7.5vw,94px)] font-black leading-[0.9] uppercase mb-10 pb-6">Everything <br /> Connected.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-xl md:text-2xl font-black text-white/50 mb-12 uppercase">Spotify. Shopify. Embed Everything.</p></Reveal>
+             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Link href="/signup" className="bg-white text-[#0085FF] font-black text-xl md:text-2xl px-12 py-6 rounded-[30px] shadow-2xl inline-block hover:bg-black hover:text-white transition-all uppercase leading-none">VIEW PLUGINS ↗</Link>
              </motion.div>
         </Section>
 
-        {/* FINAL CTA */}
-        <section id="cta" className="stack-section bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-6 md:px-12 lg:px-20 overflow-hidden relative">
-           <FloatingBubble top="top-20" left="left-20" size="w-96 h-96" color="bg-linktree-purple/10" />
-           <div className="max-w-7xl mx-auto text-center px-8 flex flex-col items-center h-full justify-center relative z-20">
-              <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(48px,11vw,150px)] font-black leading-[0.75] uppercase italic mb-20 pb-8 tracking-tighter">Finish <br /> Strong.</h2></Reveal>
-              <div className="flex flex-col md:flex-row justify-center gap-8 w-full max-w-4xl">
-                 <motion.div whileHover={{ scale: 1.08, y: -10 }} className="flex-1">
-                    <Link href="/signup" className="block w-full bg-linktree-purple text-white font-black text-[clamp(24px,4.5vw,36px)] px-12 py-10 rounded-[40px] shadow-3xl hover:bg-[#40195e] transition-colors">SIGN UP</Link>
+        {/* FINAL CTA - MOBILE SIDE-BY-SIDE FIXED */}
+        <section id="cta" className="stack-section bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-4 md:px-12 lg:px-20 overflow-hidden relative">
+           <FloatingBubble top="top-20" left="left-20" size="w-64 h-64 md:w-96 md:h-96" color="bg-linktree-purple/10" />
+           <div className="max-w-7xl mx-auto text-center px-4 md:px-8 flex flex-col items-center h-full justify-center relative z-20">
+              <Reveal delay={0.1} width="100%">
+                 {/* Increased leading to prevent joint words on mobile */}
+                 <h2 className="text-[clamp(48px,11vw,150px)] font-black leading-[0.95] md:leading-[0.75] uppercase italic mb-12 md:mb-20 pb-8 tracking-tighter">
+                    Finish <br className="hidden md:block" /> Strong.
+                  </h2>
+              </Reveal>
+              <div className="flex flex-row md:flex-row justify-center gap-4 md:gap-8 w-full max-w-4xl">
+                 <motion.div whileHover={{ scale: 1.08, y: -5 }} className="flex-1">
+                    <Link href="/signup" className="block w-full bg-linktree-purple text-white font-black text-base sm:text-2xl md:text-4xl px-4 py-6 md:py-10 rounded-2xl md:rounded-[40px] shadow-3xl text-center">SIGN UP</Link>
                  </motion.div>
-                 <motion.div whileHover={{ scale: 1.08, y: -10 }} className="flex-1">
-                    <Link href="/login" className="block w-full bg-white text-black font-black text-[clamp(24px,4.5vw,36px)] px-12 py-10 rounded-[40px] shadow-3xl hover:bg-gray-100 transition-colors">LOG IN</Link>
+                 <motion.div whileHover={{ scale: 1.08, y: -5 }} className="flex-1">
+                    <Link href="/login" className="block w-full bg-white text-black font-black text-base sm:text-2xl md:text-4xl px-4 py-6 md:py-10 rounded-2xl md:rounded-[40px] shadow-3xl text-center">LOG IN</Link>
                  </motion.div>
               </div>
            </div>
