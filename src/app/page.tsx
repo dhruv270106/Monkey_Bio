@@ -20,7 +20,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="bg-white text-linktree-text min-h-screen flex flex-col selection:bg-linktree-lime/30 font-sans">
+    <div className="bg-transparent text-linktree-text min-h-screen flex flex-col selection:bg-linktree-lime/30 font-sans transition-all duration-1000">
       
       <Navbar />
 

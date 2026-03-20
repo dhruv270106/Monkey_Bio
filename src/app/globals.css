@@ -31,25 +31,23 @@ body {
   scrollbar-width: none;
 }
 @keyframes global-cycle {
-  0% { background-color: #D2E823; color: #254F1A; }
+  0% { background-color: #D2E823; color: #1e2330; }
   25% { background-color: #2665D6; color: #FFFFFF; }
   50% { background-color: #780016; color: #FFDDDD; }
   75% { background-color: #502274; color: #FFFFFF; }
-  100% { background-color: #D2E823; color: #254F1A; }
+  100% { background-color: #D2E823; color: #1e2330; }
 }
 
 .animate-global-cycle {
-  animation: global-cycle 30s infinite ease-in-out;
-  transition: all 2s ease-in-out;
+  animation: global-cycle 25s infinite ease-in-out;
 }
 
 .glass-section {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(60px);
-  -webkit-backdrop-filter: blur(60px);
+  background: rgba(255, 255, 255, 0.08); /* Slightly more opaque glass */
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 .animate-global-cycle h1, 
