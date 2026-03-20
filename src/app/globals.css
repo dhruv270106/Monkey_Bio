@@ -15,18 +15,12 @@
   }
 
   body {
-    @apply antialiased overflow-x-hidden;
+    @apply antialiased overflow-x-hidden bg-white text-linktree-text;
     font-family: 'Outfit', sans-serif;
-    background: #0d0d0d;
-    color: #f7f7f7;
-  }
-  
-  h1, h2, h3, h4, blockquote {
-    font-family: 'Cormorant Garamond', serif;
   }
 }
 
-/* -- LUXURY SECTION STACKING -- */
+/* -- SPRINGS STYLE SCROLL STACKING -- */
 .stack-section {
   @apply sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden;
   will-change: transform;
