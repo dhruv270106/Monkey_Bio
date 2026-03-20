@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body dir="ltr" className={inter.className}>{children}</body>
+      <body dir="ltr" className={`${inter.className} animate-global-cycle min-h-screen transition-colors duration-1000 uppercase-only-names`}>{children}</body>
     </html>
   )
 }

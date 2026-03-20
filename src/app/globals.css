@@ -30,7 +30,7 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-@keyframes bg-text-cycle-1 {
+@keyframes global-cycle {
   0% { background-color: #D2E823; color: #254F1A; }
   25% { background-color: #2665D6; color: #FFFFFF; }
   50% { background-color: #780016; color: #FFDDDD; }
@@ -38,25 +38,29 @@ body {
   100% { background-color: #D2E823; color: #254F1A; }
 }
 
-@keyframes bg-text-cycle-2 {
-  0% { background-color: #2665D6; color: #FFFFFF; }
-  25% { background-color: #780016; color: #FFDDDD; }
-  50% { background-color: #502274; color: #FFFFFF; }
-  75% { background-color: #D2E823; color: #254F1A; }
-  100% { background-color: #2665D6; color: #FFFFFF; }
+.animate-global-cycle {
+  animation: global-cycle 30s infinite ease-in-out;
+  transition: all 2s ease-in-out;
 }
 
-@keyframes bg-text-cycle-3 {
-  0% { background-color: #780016; color: #FFDDDD; }
-  25% { background-color: #502274; color: #FFFFFF; }
-  50% { background-color: #D2E823; color: #254F1A; }
-  75% { background-color: #2665D6; color: #FFFFFF; }
-  100% { background-color: #780016; color: #FFDDDD; }
+.glass-section {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(60px);
+  -webkit-backdrop-filter: blur(60px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.animate-bg-text-1 { animation: bg-text-cycle-1 20s infinite ease-in-out; }
-.animate-bg-text-2 { animation: bg-text-cycle-2 20s infinite ease-in-out; }
-.animate-bg-text-3 { animation: bg-text-cycle-3 20s infinite ease-in-out; }
+.animate-global-cycle h1, 
+.animate-global-cycle h2, 
+.animate-global-cycle h3, 
+.animate-global-cycle h4, 
+.animate-global-cycle p, 
+.animate-global-cycle span:not(.no-cycle) {
+  color: inherit !important;
+  transition: color 1s ease-in-out;
+}
 
 /* Ensure children inherit the color OR specific text elements do */
 .animate-bg-text-1 h1, .animate-bg-text-1 h2, .animate-bg-text-1 h3, .animate-bg-text-1 p, .animate-bg-text-1 .text-content,
