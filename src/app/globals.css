@@ -1,84 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Outfit:wght@100;300;400;500;700;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --linktree-lime: #D2E823;
+    --linktree-purple: #502274;
+    --linktree-blue: #2665D6;
+    --linktree-maroon: #780011;
+    --linktree-text: #1e1e1e;
+    --linktree-charcoal: #0D0D0D;
+  }
 
-
-:root {
-  --foreground-rgb: 15, 23, 42;
-  --background-start-rgb: 250, 250, 250;
-  --background-end-rgb: 255, 255, 255;
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
-  font-family: 'Inter', sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  body {
+    @apply antialiased overflow-x-hidden;
+    font-family: 'Outfit', sans-serif;
+    background: #0d0d0d;
+    color: #f7f7f7;
+  }
+  
+  h1, h2, h3, h4, blockquote {
+    font-family: 'Cormorant Garamond', serif;
   }
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+/* -- LUXURY SECTION STACKING -- */
+.stack-section {
+  @apply sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden;
+  will-change: transform;
 }
 
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-/* -- PREMIUM LIQUID MESH REPLACEMENT -- */
-@keyframes mesh-liquid {
-  0% { transform: scale(1) translate(0, 0); }
-  33% { transform: scale(1.1) translate(5%, 5%); }
-  66% { transform: scale(0.9) translate(-5%, 2%); }
-  100% { transform: scale(1) translate(0, 0); }
+.lux-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
 }
 
-.bg-liquid-mesh {
-  position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  z-index: -10;
-  background: radial-gradient(circle at 50% 50%, #D2E823 0%, transparent 50%),
-              radial-gradient(circle at 10% 10%, #2665D6 0%, transparent 50%),
-              radial-gradient(circle at 90% 90%, #780016 0%, transparent 50%),
-              radial-gradient(circle at 10% 90%, #502274 0%, transparent 50%);
-  filter: blur(80px);
-  opacity: 0.15;
-  animation: mesh-liquid 40s ease-in-out infinite alternate;
+.text-lux-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-b from-white via-white/80 to-transparent;
+}
+
+/* -- SMOOTH SCROLL OVERRIDE -- */
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
 
-.premium-glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+/* Parallax Image Holder */
+.img-reveal-card {
+  @apply relative w-full h-full overflow-hidden rounded-[80px] bg-neutral-900;
 }
 
-.dark-premium-glass {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+.noise-overlay {
+  @apply fixed inset-0 pointer-events-none opacity-[0.03] z-[100];
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-.text-gradient-primary {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-linktree-text via-linktree-purple to-linktree-blue;
+/* Utility for smooth reveal */
+.reveal-up {
+  @apply inline-block overflow-hidden align-bottom;
 }
 
-.selection-lime {
-  @apply selection:bg-linktree-lime/30;
+.reveal-up > * {
+  @apply inline-block;
 }
-
-/* Animations handled by body classes */
-
-/* All text contrast is handled globally */
