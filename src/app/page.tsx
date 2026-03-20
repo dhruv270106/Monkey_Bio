@@ -70,11 +70,12 @@ export default function Home() {
               </div>
             </motion.div>
 
+            {/* FULL HEIGHT DESKTOP SCROLL */}
             <motion.div 
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.3 }}
-              className="lg:w-[45%] relative hidden lg:flex justify-end p-0 items-center"
+              transition={{ duration: 1.2, delay: 0.3 }}
+              className="absolute right-0 top-0 bottom-0 w-1/3 min-w-[500px] hidden lg:block overflow-hidden"
             >
               <HeroScroll />
             </motion.div>
