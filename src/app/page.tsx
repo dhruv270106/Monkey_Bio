@@ -1,3 +1,6 @@
+'use client'
+
+import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import Navbar from '@/components/Navbar'
