@@ -105,9 +105,9 @@ export default function Home() {
       <main className="relative flex flex-col">
         
         {/* HERO SECTION - RESTORED FULL HEIGHT */}
-        <section id="hero" className="relative h-screen min-h-[700px] bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-6 md:px-12 lg:px-24 overflow-hidden flex flex-col items-center justify-center">
+        <section id="hero" className="relative h-screen lg:h-screen min-h-[950px] lg:min-h-[800px] bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-6 md:px-12 lg:px-24 overflow-hidden flex flex-col items-center justify-center">
            <div className="max-w-[1400px] mx-auto w-full h-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] items-center gap-12 relative z-20">
-              <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 md:gap-10 z-30 relative pt-20 lg:pt-0">
+              <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 md:gap-10 z-30 relative pt-40 lg:pt-0 pb-10">
                 <Reveal delay={0.05} width="100%">
                   <h1 className="text-[clamp(44px,9vw,100px)] font-black leading-tight lg:leading-[0.85] tracking-[-0.07em] uppercase pb-4">
                     Everything <br /> You Are. <br /> One Link.
@@ -138,8 +138,8 @@ export default function Home() {
                     </motion.div>
                   )}
                 </div>
-                {/* HERO SCROLL MOBILE */}
-                <div className="block lg:hidden w-full mt-10 pb-10 overflow-visible relative">
+                {/* HERO SCROLL MOBILE - BROUGHT CLOSER TO INPUT */}
+                <div className="block lg:hidden w-full mt-2 pb-24 overflow-visible relative">
                    <HeroScroll />
                 </div>
               </div>
