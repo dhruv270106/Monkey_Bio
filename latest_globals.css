@@ -1,0 +1,79 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Outfit:wght@100;300;400;500;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --linktree-lime: #D2E823;
+    --linktree-purple: #502274;
+    --linktree-blue: #2665D6;
+    --linktree-maroon: #780011;
+    --linktree-text: #1e1e1e;
+    --linktree-charcoal: #0D0D0D;
+  }
+
+  body {
+    @apply antialiased overflow-x-hidden bg-white text-linktree-text;
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+/* -- SPRINGS STYLE SCROLL STACKING -- */
+.stack-section {
+  @apply sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden;
+  will-change: transform;
+}
+
+.lux-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+}
+
+.text-lux-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-b from-white via-white/80 to-transparent;
+}
+
+/* -- SMOOTH SCROLL OVERRIDE -- */
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Parallax Image Holder */
+.img-reveal-card {
+  @apply relative w-full h-full overflow-hidden rounded-[80px] bg-neutral-900;
+}
+
+.noise-overlay {
+  @apply fixed inset-0 pointer-events-none opacity-[0.03] z-[100];
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Utility for smooth reveal */
+.reveal-up {
+  @apply inline-block overflow-hidden align-bottom;
+}
+
+.reveal-up > * {
+  @apply inline-block;
+}

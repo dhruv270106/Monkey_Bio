@@ -20,10 +20,9 @@
   }
 }
 
-/* -- SPRINGS STYLE SCROLL STACKING -- */
+/* -- PREMIUM SECTION SPACING -- */
 .stack-section {
-  @apply sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden;
-  will-change: transform;
+  @apply relative w-full flex flex-col items-center justify-center overflow-hidden;
 }
 
 .lux-glass {
