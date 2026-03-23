@@ -22,15 +22,20 @@ export default function LoginPage() {
       if (data.user) {
         trackActivity('login', `User ${email} signed in via Email.`, data.user.id)
       }
-      window.location.href = '/dashboard'
+      const searchParams = new URLSearchParams(window.location.search)
+      const redirect = searchParams.get('redirect') || '/dashboard'
+      window.location.href = redirect
     }
   }
 
   const loginWithGoogle = async () => {
+    const searchParams = new URLSearchParams(window.location.search)
+    const redirect = searchParams.get('redirect') || '/dashboard'
+    
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirect)}`
       }
     })
   }

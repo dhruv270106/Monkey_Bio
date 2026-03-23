@@ -15,8 +15,11 @@ export default function AuthCallback() {
           .eq('id', session.user.id)
           .single()
 
+        const searchParams = new URLSearchParams(window.location.search)
+        const next = searchParams.get('next') || '/dashboard'
+
         if (profile?.onboarding_completed) {
-          window.location.href = '/dashboard'
+          window.location.href = next
         } else {
           window.location.href = '/onboarding'
         }
