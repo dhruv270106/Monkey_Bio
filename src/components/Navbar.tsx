@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
-// NAVIGATION DATA
+// REVERTED NAVIGATION DATA
 const PRODUCTS_MENU = [
   { title: 'Link in bio + tools', href: '#' },
   { title: 'Manage social media', href: '#' },
@@ -87,6 +87,7 @@ export default function Navbar() {
           
           {/* DESKTOP NAV (HIDDEN ON MOBILE) */}
           <nav className="hidden lg:flex items-center gap-8">
+            <Link href="/about" onMouseEnter={() => setActiveMenu(null)} className="text-[11px] font-black uppercase tracking-[0.2em] text-black/50 hover:text-black px-4 py-2">About</Link>
             <button onMouseEnter={() => setActiveMenu('products')} className={`text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 hover:bg-black/5 rounded-2xl transition-all ${activeMenu === 'products' ? 'text-black bg-black/5' : 'text-black/50'}`}>Products</button>
             <Link href="/templates" onMouseEnter={() => setActiveMenu(null)} className="text-[11px] font-black uppercase tracking-[0.2em] text-black/50 hover:text-black px-4 py-2">Templates</Link>
             <button onMouseEnter={() => setActiveMenu('learn')} className={`text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 hover:bg-black/5 rounded-2xl transition-all ${activeMenu === 'learn' ? 'text-black bg-black/5' : 'text-black/50'}`}>Learn</button>
@@ -191,6 +192,7 @@ export default function Navbar() {
           >
             <div className="bg-white rounded-[40px] shadow-[0_50px_100px_rgba(0,0,0,0.2)] border border-white p-3 mt-4">
                <nav className="flex flex-col gap-1 overflow-y-auto max-h-[70vh] overscroll-contain touch-pan-y pb-20">
+                 <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="px-6 py-5 text-[15px] font-extrabold uppercase tracking-widest text-black/60 hover:text-black border-b border-black/5">About</Link>
                  {/* PRODUCTS */}
                  <div className="border-b border-black/5 mb-1">
                     <button onClick={() => setExpandedSection(expandedSection === 'products' ? null : 'products')} className="w-full flex items-center justify-between px-6 py-5 text-[15px] font-extrabold uppercase tracking-widest text-black/60 hover:text-black">

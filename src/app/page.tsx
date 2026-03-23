@@ -4,8 +4,10 @@ import Link from 'next/link'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import HeroScroll from '@/components/HeroScroll'
 import { Reveal } from '@/components/Reveal'
+import { Instagram, Facebook, Linkedin, Disc, Check } from 'lucide-react'
 import Lenis from 'lenis'
 
 // REUSABLE DECORATIVE BUBBLE
@@ -98,43 +100,53 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="relative bg-white selection-lime overflow-x-hidden font-sans">
-      <div className="noise-overlay" />
+    <div className="min-h-screen bg-[#D2E823] selection:bg-black selection:text-[#D2E823]">
       <Navbar />
-
+      
       <main className="relative flex flex-col">
         
         {/* HERO SECTION - RESTORED FULL HEIGHT */}
-        <section id="hero" className="relative h-screen lg:h-screen min-h-[950px] lg:min-h-[800px] bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-6 md:px-12 lg:px-24 overflow-hidden flex flex-col items-center justify-center">
+        <section id="hero" className="relative h-screen lg:h-screen min-h-[950px] lg:min-h-[800px] bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-6 md:px-12 lg:px-24 overflow-hidden flex flex-col items-center justify-center pt-32 lg:pt-40">
            <div className="max-w-[1400px] mx-auto w-full h-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] items-center gap-12 relative z-20">
-              <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 md:gap-10 z-30 relative pt-40 lg:pt-0 pb-10">
+              <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 md:gap-10 z-30 relative pb-10">
                 <Reveal delay={0.05} width="100%">
                   <h1 className="text-[clamp(44px,9vw,100px)] font-black leading-tight lg:leading-[0.85] tracking-[-0.07em] uppercase pb-4">
                     Everything <br /> You Are. <br /> One Link.
                   </h1>
                 </Reveal>
-                <Reveal delay={0.2} width="100%">
-                  <p className="text-[clamp(18px,2.2vw,24px)] font-black max-w-lg leading-tight opacity-70 pb-6 md:pb-2">
-                     The original link in bio, trusted by <span className="underline decoration-wavy decoration-linktree-purple decoration-4">40M+</span> creators.
+                
+                <Reveal delay={0.15} width="100%">
+                  <p className="text-xl md:text-2xl font-bold tracking-tight opacity-70 max-w-xl leading-relaxed uppercase">
+                    The original link in bio, trusted by <span className="relative inline-block px-1">40M+<span className="absolute left-0 bottom-0 w-full h-1 bg-[#502274] blur-[2px] opacity-20" /></span> creators.
                   </p>
                 </Reveal>
+
                 <div className="flex flex-col gap-4 w-full max-w-[600px] mt-2">
-                  {!isClaimed ? (
-                    <div className="flex flex-row bg-white rounded-[32px] md:rounded-[40px] p-2 sm:p-4 gap-2 sm:gap-4 shadow-2xl focus-within:ring-8 transition-all ring-linktree-purple/10 w-full overflow-hidden mx-auto">
-                      <div className="flex items-center flex-1 px-2 sm:px-4 min-w-0">
-                        <span className="font-black text-xl sm:text-3xl text-gray-200 mr-2 shrink-0">/</span>
-                        <input 
-                          type="text" placeholder="yourname"
-                          className="bg-transparent border-none focus:outline-none focus:ring-0 font-black text-base sm:text-2xl text-black flex-1 py-3 sm:py-4 min-w-0"
-                          value={username} onChange={e => setUsername(e.target.value)}
-                        />
-                      </div>
-                      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => username && setIsClaimed(true)} className="bg-linktree-purple text-white font-black text-xs sm:text-2xl px-6 sm:px-14 py-3 sm:py-6 rounded-2xl md:rounded-[40px] shadow-xl shrink-0">Claim It</motion.button>
+                  <div className={`relative transition-all duration-700 ${isClaimed ? 'scale-95 opacity-50 pointer-events-none' : 'scale-100'}`}>
+                    <div className="absolute inset-0 bg-white/40 blur-3xl rounded-full" />
+                    <div className="relative flex flex-col sm:flex-row items-center gap-4 bg-white/95 backdrop-blur-3xl p-3 pl-8 rounded-[40px] shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white">
+                      <span className="text-xl font-black text-black/30">linktr.ee/</span>
+                      <input 
+                        type="text" 
+                        placeholder="yourname"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="bg-transparent text-xl font-black outline-none w-full placeholder:text-gray-300 uppercase tracking-tighter"
+                      />
+                      <motion.button 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => username && setIsClaimed(true)}
+                        className="w-full sm:w-auto bg-[#422066] text-white px-10 py-6 rounded-[32px] font-black text-xl hover:bg-black transition-all shadow-2xl uppercase tracking-tighter whitespace-nowrap leading-none min-w-[200px]"
+                      >
+                        Claim Yours
+                      </motion.button>
                     </div>
-                  ) : (
-                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex justify-between items-center bg-white p-4 sm:p-10 rounded-[32px] sm:rounded-[40px] border-4 border-white shadow-2xl w-full">
-                      <p className="font-black text-base sm:text-3xl">monkey.bio/{username}</p>
-                      <Link href={`/signup?username=${username}`} className="bg-linktree-purple text-white font-black text-xs sm:text-xl px-4 sm:px-8 py-3 rounded-xl sm:rounded-2xl">IT'S YOURS!</Link>
+                  </div>
+                  
+                  {isClaimed && (
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 bg-white text-green-600 px-8 py-4 rounded-3xl font-black text-sm uppercase self-center sm:self-start shadow-xl border border-green-50">
+                       <Check className="w-5 h-5" /> Username {username} reserved!
                     </motion.div>
                   )}
                 </div>
@@ -143,7 +155,10 @@ export default function Home() {
                    <HeroScroll />
                 </div>
               </div>
-              <div className="relative h-full w-full hidden lg:block overflow-hidden"><HeroScroll /></div>
+
+              <div className="hidden lg:block relative h-full w-full">
+                 <HeroScroll />
+              </div>
            </div>
         </section>
 
@@ -197,7 +212,7 @@ export default function Home() {
              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="bg-white text-[#FF6B00] font-black text-sm md:text-lg px-10 py-5 rounded-3xl shadow-2xl transition-all uppercase tracking-widest font-black">EARN NOW</motion.button>
         </Section>
 
-        {/* INTEGRATIONS SECTION - IMAGE LEFT */}
+        {/* EMBED SECTION - IMAGE LEFT */}
         <Section id="integrations" imageSide="left" bgClass="bg-gradient-to-br from-[#00C2FF] via-[#00E0FF] to-[#0085FF] text-white" imageSrc="/images/integrations.png">
              <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-black leading-tight uppercase mb-4 md:mb-8 font-black">Embed Anything.</h2></Reveal>
              <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-black text-white/50 mb-4 md:mb-10 uppercase font-black">Spotify. Shopify. Connect.</p></Reveal>
@@ -226,8 +241,97 @@ export default function Home() {
            </div>
         </section>
 
-        {/* FOOTER */}
-        <footer className="relative bg-white pt-24 pb-12 px-8 z-30"><div className="max-w-7xl mx-auto flex flex-col gap-16"><div className="flex flex-col md:flex-row justify-between items-start gap-12"><div><h3 className="text-5xl font-black tracking-tighter mb-4">Monkey Bio.</h3><p className="text-xl font-bold text-gray-400">Join 40M+ creators today.</p></div><div className="grid grid-cols-2 md:grid-cols-3 gap-12">{[{t:'Product',links:['Features','Link','Bio']},{t:'Social',links:['Insta','TikTok', 'YouTube']},{t:'Company',links:['About', 'Legal', 'Privacy']}].map((col,i)=>(<div key={i} className="flex flex-col gap-4"><h4 className="font-black text-xs uppercase tracking-widest text-gray-300">{col.t}</h4><ul className="flex flex-col gap-4">{col.links.map(l=>(<li key={l}><Link href="#" className="font-black text-lg text-gray-600 hover:text-black">{l}</Link></li>))}</ul></div>))}</div></div><div className="pt-8 border-t border-gray-100 text-center font-black text-xs text-gray-300 uppercase tracking-widest">© 2026 MONKEY BIO. ALL RIGHTS RESERVED.</div></div></footer>
+        {/* COMPREHENSIVE FOOTER */}
+        <footer className="relative bg-white pt-24 pb-16 px-6 md:px-12 lg:px-24 z-30 overflow-hidden border-t border-gray-100">
+           <div className="max-w-[1400px] mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24 mb-24">
+                 {/* COLUMN 1: COMPANY */}
+                 <div className="flex flex-col gap-6">
+                    <h4 className="font-extrabold text-[15px] uppercase tracking-wider text-black">Company</h4>
+                    <ul className="flex flex-col gap-4">
+                       {['The Linktree Blog', 'Engineering Blog', "What's New", 'About', 'Press', 'Careers', 'Link In Bio', 'Social Good', 'Contact'].map(l => (
+                          <li key={l}>
+                             <Link 
+                                href={l === 'About' ? '/about' : `/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} 
+                                className="text-sm font-bold text-gray-500 hover:text-black transition-colors"
+                             >
+                                {l}
+                             </Link>
+                          </li>
+                       ))}
+                    </ul>
+                 </div>
+                 
+                 {/* COLUMN 2: COMMUNITY */}
+                 <div className="flex flex-col gap-6">
+                    <h4 className="font-extrabold text-[15px] uppercase tracking-wider text-black">Community</h4>
+                    <ul className="flex flex-col gap-4">
+                       {['Linktree for Enterprise', '2023 Creator Report', '2022 Creator Report', 'Charities', 'Creator Profile Directory', 'Explore Templates'].map(l => (
+                          <li key={l}><Link href={`/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm font-bold text-gray-500 hover:text-black transition-colors">{l}</Link></li>
+                       ))}
+                    </ul>
+                 </div>
+
+                 {/* COLUMN 3: SUPPORT */}
+                 <div className="flex flex-col gap-6">
+                    <h4 className="font-extrabold text-[15px] uppercase tracking-wider text-black">Support</h4>
+                    <ul className="flex flex-col gap-4">
+                       {['Help Topics', 'Getting Started', 'Linktree Pro', 'Features & How-Tos', 'FAQs', 'Report a Violation'].map(l => (
+                          <li key={l}><Link href={`/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm font-bold text-gray-500 hover:text-black transition-colors">{l}</Link></li>
+                       ))}
+                    </ul>
+                 </div>
+
+                 {/* COLUMN 4: TRUST & LEGAL */}
+                 <div className="flex flex-col gap-6">
+                    <h4 className="font-extrabold text-[15px] uppercase tracking-wider text-black">Trust & Legal</h4>
+                    <ul className="flex flex-col gap-4">
+                       {['Terms & Conditions', 'Privacy Notice', 'Cookie Notice', 'Trust Center', 'Cookie Preferences', 'Transparency Report', 'Law Enforcement Access Policy', 'Human Rights'].map(l => (
+                          <li key={l}><Link href={`/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm font-bold text-gray-500 hover:text-black transition-colors">{l}</Link></li>
+                       ))}
+                    </ul>
+                 </div>
+              </div>
+
+              {/* BOTTOM ROW: CTAs, APPS, SOCIAL */}
+              <div className="flex flex-col lg:flex-row justify-between items-center gap-12 pt-12 border-t border-gray-100">
+                 <div className="flex items-center gap-4">
+                    <Link href="/login" className="bg-[#F3F3F1] text-black font-black text-xs uppercase px-10 py-5 rounded-[20px] shadow-sm hover:bg-gray-200 transition-colors tracking-widest">Log in</Link>
+                    <Link href="/signup" className="bg-[#D2E823] text-black font-black text-xs uppercase px-8 py-5 rounded-full shadow-lg hover:scale-105 transition-all tracking-widest">Get started for free</Link>
+                 </div>
+
+                 <div className="flex items-center gap-4 flex-wrap justify-center">
+                    {/* APP BADGES PLACEHOLDERS */}
+                    <div className="bg-black text-white px-5 py-3 rounded-2xl flex items-center gap-3 cursor-pointer hover:bg-gray-900 transition-colors">
+                       <span className="text-xl">🍎</span>
+                       <div className="leading-none"><p className="text-[8px] uppercase font-black opacity-60">Download on the</p><p className="text-sm font-black">App Store</p></div>
+                    </div>
+                    <div className="bg-black text-white px-5 py-3 rounded-2xl flex items-center gap-3 cursor-pointer hover:bg-gray-900 transition-colors">
+                       <span className="text-xl">🤖</span>
+                       <div className="leading-none"><p className="text-[8px] uppercase font-black opacity-60">GET IT ON</p><p className="text-sm font-black">Google Play</p></div>
+                    </div>
+
+                    {/* SOCIALS */}
+                    <div className="flex items-center gap-3 ml-4">
+                       {[
+                         { icon: <Instagram className="w-5 h-5" />, label: 'Instagram' },
+                         { icon: <Facebook className="w-5 h-5" />, label: 'Facebook' },
+                         { icon: <Linkedin className="w-5 h-5" />, label: 'LinkedIn' },
+                         { icon: <Disc className="w-5 h-5" />, label: 'Threads' }
+                       ].map((s, i) => (
+                          <div key={i} className="w-11 h-11 bg-[#1E2330] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition-transform active:scale-95" title={s.label}>
+                             {s.icon}
+                          </div>
+                       ))}
+                    </div>
+                 </div>
+              </div>
+
+              <div className="mt-16 text-center text-[10px] font-black uppercase text-gray-300 tracking-[0.3em]">
+                 © 2026 MONKEY BIO. ALL RIGHTS RESERVED.
+              </div>
+           </div>
+        </footer>
       </main>
     </div>
   )
