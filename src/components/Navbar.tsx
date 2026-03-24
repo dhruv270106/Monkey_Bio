@@ -73,7 +73,7 @@ export default function Navbar() {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 ${scrolled ? 'py-2 px-2 sm:py-4 sm:px-12' : 'py-6 px-6 sm:py-8 sm:px-20'}`}
+      className={`fixed top-0 left-0 right-0 z-[200] transition-all duration-700 ${scrolled ? 'py-2 px-2 sm:py-4 sm:px-12' : 'py-6 px-6 sm:py-8 sm:px-20'}`}
       onMouseLeave={() => !isMobileMenuOpen && setActiveMenu(null)}
     >
       <div className={`max-w-[1400px] mx-auto relative transition-all duration-1000 ${scrolled || isMobileMenuOpen ? 'bg-white/95 backdrop-blur-2xl shadow-[0_20px_80px_rgba(0,0,0,0.15)] rounded-full px-4 md:px-8 py-3.5 border border-white' : 'bg-white/40 backdrop-blur-md rounded-[50px] px-6 md:px-10 py-5 border border-white/20'} flex items-center justify-between`}>

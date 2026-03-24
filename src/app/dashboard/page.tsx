@@ -90,9 +90,9 @@ function DashboardContent() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col pt-24 md:pt-32">
       {/* Top Banner */}
-      <div className="bg-[#1e293b] text-white py-2 px-8 flex justify-center items-center gap-4 text-sm font-medium sticky top-0 z-[100]">
+      <div className="bg-[#1e293b] text-white py-2 px-8 flex justify-center items-center gap-4 text-sm font-medium sticky top-0 z-[150]">
           <span>Unlock more tools to grow your audience faster.</span>
           <button className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 px-3 py-1 rounded-full flex items-center gap-2 transition-all">
               <i className="fi fi-rr-bolt text-[10px]"></i> Claim free week
@@ -120,7 +120,7 @@ function DashboardContent() {
              { id: 'planner', icon: 'fi-rr-calendar', label: 'Plan' },
              { id: 'audience', icon: 'fi-rr-users', label: 'Fans' },
            ].map(item => (
-             <button 
+             <button
                key={item.id}
                onClick={() => handleTabChange(item.id)}
                className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === item.id ? 'text-primary' : 'text-gray-300'}`}

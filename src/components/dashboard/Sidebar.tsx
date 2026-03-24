@@ -86,7 +86,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange }: Sidebar
   ]
 
   return (
-    <aside className="w-64 bg-[#f8fafc] border-r border-gray-100 hidden md:flex flex-col flex-shrink-0 relative h-screen sticky top-0">
+    <aside className="w-64 bg-[#f8fafc] border-r border-gray-100 hidden md:flex flex-col flex-shrink-0 relative h-screen sticky top-32">
       {/* User Selector */}
       <div className="p-6 relative z-[110]">
         <div className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-2xl cursor-pointer transition-all group relative">
