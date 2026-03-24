@@ -91,14 +91,18 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
     if (type === 'color') return { backgroundColor: value }
     
     if (type === 'gradient') {
+      if (value.includes('linear-gradient')) return { backgroundImage: value }
+      
       const dirMap: any = {
         'linear-up': 'to top',
         'linear-down': 'to bottom',
         'radial': 'radial'
       }
       const dir = dirMap[direction] || 'to top'
-      if (dir === 'radial') return { backgroundImage: `radial-gradient(circle, ${value}, #00000066)` }
-      return { backgroundImage: `linear-gradient(${dir}, ${value}, #00000066)` }
+      const endColor = userProfile?.custom_bg_end || '#00000066'
+      
+      if (dir === 'radial') return { backgroundImage: `radial-gradient(circle, ${value}, ${endColor})` }
+      return { backgroundImage: `linear-gradient(${dir}, ${value}, ${endColor})` }
     }
 
     if (type === 'image') return { backgroundImage: `url(${value})`, backgroundSize: 'cover', backgroundPosition: 'center' }

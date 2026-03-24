@@ -58,8 +58,8 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
     if (!profile) return
     setSaving(true)
     
-    const { id, username, display_name, avatar_url, bio, social_links, theme, custom_bg, custom_bg_type, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur, button_border_color, button_border_width, button_shadow_color } = profile
-    const dbUpdates = { display_name, avatar_url, bio, social_links, theme, custom_bg, custom_bg_type, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur, button_border_color, button_border_width, button_shadow_color }
+    const { id, username, display_name, avatar_url, bio, social_links, theme, custom_bg, custom_bg_type, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur, button_border_color, button_border_width, button_shadow_color, custom_bg_end, custom_bg_direction, custom_bg_noise, custom_bg_pattern, custom_bg_gradient_mode } = profile
+    const dbUpdates = { display_name, avatar_url, bio, social_links, theme, custom_bg, custom_bg_type, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur, button_border_color, button_border_width, button_shadow_color, custom_bg_end, custom_bg_direction, custom_bg_noise, custom_bg_pattern, custom_bg_gradient_mode }
 
     const { data: { session } } = await supabase.auth.getSession()
     if (session) {
@@ -418,17 +418,26 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                            </div>
 
                            {profile?.custom_bg_gradient_mode === 'custom' ? (
-                              <div className="space-y-6">
-                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Gradient Color</span>
-                                <div className="flex items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-inner">
-                                   <input type="text" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="flex-1 bg-transparent border-none outline-none font-bold text-secondary" />
-                                   <input type="color" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-10 h-10 rounded-full border-4 border-white shadow-lg cursor-pointer" />
+                              <div className="space-y-8">
+                                <div className="space-y-6">
+                                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Start Color</span>
+                                  <div className="flex items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-inner">
+                                     <input type="text" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="flex-1 bg-transparent border-none outline-none font-bold text-secondary" />
+                                     <input type="color" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-10 h-10 rounded-full border-4 border-white shadow-lg cursor-pointer" />
+                                  </div>
+                                </div>
+                                <div className="space-y-6">
+                                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">End Color</span>
+                                  <div className="flex items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-inner">
+                                     <input type="text" value={profile?.custom_bg_end || '#000000'} onChange={(e) => updateProfile({ custom_bg_end: e.target.value })} className="flex-1 bg-transparent border-none outline-none font-bold text-secondary" />
+                                     <input type="color" value={profile?.custom_bg_end || '#000000'} onChange={(e) => updateProfile({ custom_bg_end: e.target.value })} className="w-10 h-10 rounded-full border-4 border-white shadow-lg cursor-pointer" />
+                                  </div>
                                 </div>
                               </div>
                            ) : (
                              <div className="grid grid-cols-4 gap-4">
                                 {PRESET_GRADIENTS.map(grad => (
-                                  <button key={grad} onClick={() => updateProfile({ custom_bg: grad })} className="aspect-video rounded-2xl border-4 border-white shadow-lg transition-transform hover:scale-105" style={{ backgroundImage: grad }} />
+                                  <button key={grad} onClick={() => updateProfile({ custom_bg: grad, custom_bg_gradient_mode: 'pre-made', custom_bg_type: 'gradient' })} className="aspect-video rounded-2xl border-4 border-white shadow-lg transition-transform hover:scale-105" style={{ backgroundImage: grad }} />
                                 ))}
                              </div>
                            )}
