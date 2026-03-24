@@ -166,7 +166,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
         updateProfile({ custom_bg: publicUrl, custom_bg_type: 'video', theme: 'custom' })
         alert(`VIDEO Background Applied Successfully!`)
      } else {
-        alert(`Upload Failed: ${uploadError.message}`)
+        alert(`Upload Failed: ${uploadError.message}. \n\nIMPORTANT: Please go to your Supabase Dashboard -> Storage and create a NEW BUCKET named "bg-assets" and set it to PUBLIC.`)
      }
      setSaving(false)
   }
@@ -190,7 +190,34 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
         alert('Wallpaper Image Optimized & Applied!')
         setShowCropper(false)
       } else {
-         alert('Upload Failed: ' + uploadError.message)
+         alert(`Upload Failed: ${uploadError.message}. \n\nIMPORTANT: Go to Supabase -> Storage and create a PUBLIC bucket named "bg-assets".`)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    setSaving(false)
+  }
+
+  const handleAvatarCropComplete = async (base64: string) => {
+    setSaving(true)
+    try {
+      const res = await fetch(base64)
+      const blob = await res.blob()
+      
+      const fileName = `avatar-${Date.now()}.jpg`
+      const filePath = `${profile.id}/${fileName}`
+      
+      // Try to upload to 'profiles' or 'bg-assets' if missing
+      const { error: uploadError } = await supabase.storage
+        .from('bg-assets')
+        .upload(filePath, blob, { upsert: true })
+
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
+        updateProfile({ avatar_url: publicUrl })
+        setShowCropper(false)
+      } else {
+        alert(`Avatar upload failed: ${uploadError.message}. Please create "bg-assets" bucket in Supabase storage and set it to PUBLIC.`)
       }
     } catch (e) {
       console.error(e)
@@ -408,6 +435,14 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                         </button>
                       ))}
                    </div>
+
+                   <div className="flex items-center justify-between p-8 bg-gray-50/50 rounded-[40px] border border-gray-100">
+                      <div className="flex flex-col">
+                        <span className="font-extrabold text-secondary">Font Color</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Global text color tone</span>
+                      </div>
+                      <input type="color" value={profile?.font_color || '#000000'} onChange={(e) => updateProfile({ font_color: e.target.value })} className="w-16 h-16 rounded-[24px] cursor-pointer border-4 border-white shadow-2xl" />
+                   </div>
                 </div>
               </motion.section>
             )}
@@ -560,8 +595,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
         circularCrop={cropTarget === 'avatar'}
         onCropComplete={(croppedImage) => {
           if (cropTarget === 'avatar') {
-            updateProfile({ avatar_url: croppedImage })
-            setShowCropper(false)
+            handleAvatarCropComplete(croppedImage)
           } else {
             handleWallpaperCropComplete(croppedImage)
           }
