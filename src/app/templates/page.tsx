@@ -16,9 +16,18 @@ export default function TemplatesPage() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-    })
+    async function getUserData() {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        const { data: profile } = await supabase
+          .from('monkey_bio')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+        setUser(profile ?? null)
+      }
+    }
+    getUserData()
   }, [])
 
   const filteredTemplates = TEMPLATES.filter(
@@ -53,6 +62,11 @@ export default function TemplatesPage() {
       localStorage.setItem('pendingTheme', template.themeId)
       router.push('/login?redirect=/templates')
       return
+    }
+
+    if (template.isPremium && user.plan_status !== 'premium') {
+       alert('This is a Premium Template! Please contact the admin to unlock.')
+       return
     }
 
     setLoading(true)
@@ -129,41 +143,56 @@ export default function TemplatesPage() {
             {/* Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-12 gap-x-8">
               <AnimatePresence mode="popLayout">
-                {filteredTemplates.map((template) => (
-                  <motion.div
-                    key={template.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    className="flex flex-col gap-4 cursor-pointer group"
-                    onClick={() => setSelectedTemplate(template)}
-                  >
-                    <div className="aspect-[9/16] bg-gray-50 rounded-[40px] overflow-hidden relative shadow-sm group-hover:shadow-2xl transition-all duration-500 border border-gray-100">
-                        {/* Recursive Mini Preview */}
-                        <div className="absolute inset-0 scale-[1] origin-top">
-                           <ThemePreviewContent 
-                          themeId={template.themeId} 
-                          templateId={template.id} 
-                          overrideImage={template.image} 
-                          isMini 
-                        />
-                        </div>
-
-                        {template.isPremium && (
-                          <div className="absolute top-6 right-6 bg-primary text-secondary px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest shadow-xl z-20">
-                             Premium
+                {filteredTemplates.map((template) => {
+                  const isLocked = template.isPremium && user?.plan_status !== 'premium';
+                  return (
+                    <motion.div
+                      key={template.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className="flex flex-col gap-4 cursor-pointer group"
+                      onClick={() => handleCreateLinktree(template)}
+                    >
+                      <div className="aspect-[9/16] bg-gray-50 rounded-[40px] overflow-hidden relative shadow-sm group-hover:shadow-2xl transition-all duration-500 border border-gray-100">
+                          {/* Recursive Mini Preview */}
+                          <div className={`absolute inset-0 scale-[1] origin-top transition-all ${isLocked ? 'blur-md grayscale opacity-50' : ''}`}>
+                             <ThemePreviewContent 
+                               themeId={template.themeId} 
+                               templateId={template.id} 
+                               overrideImage={template.image} 
+                               isMini 
+                             />
                           </div>
-                        )}
 
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors z-10" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-black text-secondary">{template.name}</h3>
-                      <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">{template.category}</p>
-                    </div>
-                  </motion.div>
-                ))}
+                          {isLocked && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/10 z-[30]">
+                               <div className="w-16 h-16 bg-white/40 backdrop-blur-xl rounded-full flex items-center justify-center text-white shadow-2xl">
+                                  <i className="fi fi-ss-lock text-2xl"></i>
+                               </div>
+                            </div>
+                          )}
+
+                          {template.isPremium && (
+                            <div className={`absolute top-6 right-6 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest shadow-xl z-20 ${
+                              isLocked ? 'bg-gray-400 text-white' : 'bg-primary text-secondary'
+                            }`}>
+                               {isLocked ? 'Locked' : 'Premium'}
+                            </div>
+                          )}
+
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors z-10" />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-secondary flex items-center gap-2">
+                           {template.name} {isLocked && <i className="fi fi-ss-lock text-[10px] text-gray-400"></i>}
+                        </h3>
+                        <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">{template.category}</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </AnimatePresence>
             </div>
           </div>

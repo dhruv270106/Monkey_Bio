@@ -192,21 +192,45 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                   <button onClick={() => setThemeCategory('premium')} className={`px-8 py-3 rounded-[18px] text-[10px] font-black uppercase tracking-widest transition-all ${themeCategory === 'premium' ? 'bg-white text-secondary' : 'text-gray-400'}`}>Premium</button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
-                  {THEMES.filter(t => themeCategory === 'premium' ? t.isPremium : !t.isPremium).map((theme) => (
-                    <button key={theme.id} onClick={() => updateProfile({ theme: theme.id })} className={`group relative flex flex-col gap-3 p-3 rounded-[32px] border-4 transition-all ${profile?.theme === theme.id ? 'border-primary bg-white' : 'border-transparent bg-gray-50/50 hover:bg-white hover:border-gray-100'}`}>
-                      <div className={`aspect-[9/16] w-full rounded-2xl overflow-hidden shadow-inner ${theme.bg} relative transition-all duration-300 group-hover:scale-105`} style={{...(theme.image ? { backgroundImage: `url(${theme.image})`, backgroundSize: 'cover', backgroundPosition: 'center'} : theme.id === 'custom' ? { backgroundColor: profile?.custom_bg || '#ffffff'} : {})}}>
-                        {theme.video && <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover"><source src={theme.video} type="video/mp4" /></video>}
-                        <div className="flex flex-col items-center pt-8 px-4 gap-2">
-                             <div className={`w-6 h-6 rounded-full mb-1 ${theme.text.includes('white') ? 'bg-white/20' : 'bg-black/10'}`}></div>
-                             <div className={`w-full h-2.5 rounded-md ${theme.button.split(' ')[0]} opacity-80`}></div>
-                             <div className={`w-full h-2.5 rounded-md ${theme.button.split(' ')[0]} opacity-80`}></div>
-                        </div>
-                      </div>
-                      <span className="font-extrabold text-[10px] text-center text-secondary uppercase tracking-widest mt-1 opacity-80">{theme.name}</span>
-                    </button>
-                  ))}
-                </div>
+                 <div className="grid grid-cols-2 gap-6">
+                   {THEMES.filter(t => themeCategory === 'premium' ? t.isPremium : !t.isPremium).map((theme) => {
+                     const isLocked = theme.isPremium && profile?.plan_status !== 'premium';
+                     return (
+                       <button 
+                         key={theme.id} 
+                         onClick={() => {
+                           if (isLocked) {
+                             alert('This is a Premium Theme! Please contact the admin to unlock.');
+                             return;
+                           }
+                           updateProfile({ theme: theme.id })
+                         }} 
+                         className={`group relative flex flex-col gap-3 p-3 rounded-[32px] border-4 transition-all ${profile?.theme === theme.id ? 'border-primary bg-white' : 'border-transparent bg-gray-50/50 hover:bg-white hover:border-gray-100'}`}
+                       >
+                         <div className={`aspect-[9/16] w-full rounded-2xl overflow-hidden shadow-inner ${theme.bg} relative transition-all duration-300 group-hover:scale-105 ${isLocked ? 'blur-[8px] opacity-75 grayscale' : ''}`} style={{...(theme.image ? { backgroundImage: `url(${theme.image})`, backgroundSize: 'cover', backgroundPosition: 'center'} : theme.id === 'custom' ? { backgroundColor: profile?.custom_bg || '#ffffff'} : {})}}>
+                           {theme.video && <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover"><source src={theme.video} type="video/mp4" /></video>}
+                           
+                           {isLocked && (
+                             <div className="absolute inset-0 bg-black/20 flex items-center justify-center z-20">
+                               <div className="w-12 h-12 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center text-white shadow-xl">
+                                 <i className="fi fi-ss-lock"></i>
+                               </div>
+                             </div>
+                           )}
+
+                           <div className="flex flex-col items-center pt-8 px-4 gap-2">
+                                <div className={`w-6 h-6 rounded-full mb-1 ${theme.text.includes('white') ? 'bg-white/20' : 'bg-black/10'}`}></div>
+                                <div className={`w-full h-2.5 rounded-md ${theme.button.split(' ')[0]} opacity-80`}></div>
+                                <div className={`w-full h-2.5 rounded-md ${theme.button.split(' ')[0]} opacity-80`}></div>
+                           </div>
+                         </div>
+                         <span className="font-extrabold text-[10px] text-center text-secondary uppercase tracking-widest mt-1 opacity-80">
+                           {theme.name} {isLocked && '🔒'}
+                         </span>
+                       </button>
+                     );
+                   })}
+                 </div>
               </motion.section>
             )}
 

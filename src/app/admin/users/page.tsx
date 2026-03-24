@@ -23,7 +23,8 @@ import {
   CreditCard,
   Ban,
   Trash2,
-  Unlock
+  Unlock,
+  Star
 } from 'lucide-react'
 
 // Define profile interface based on what we've seen and what we planned
@@ -94,6 +95,20 @@ export default function UserManagement() {
     }
   }
 
+  const handleTogglePremium = async (user: UserProfile) => {
+    const newPlan = user.plan_status === 'premium' ? 'free' : 'premium'
+    const { error } = await supabase
+      .from('monkey_bio')
+      .update({ plan_status: newPlan })
+      .eq('id', user.id)
+
+    if (error) {
+       alert(error.message)
+    } else {
+       setUsers(prev => prev.map(u => u.id === user.id ? { ...u, plan_status: newPlan } : u))
+    }
+  }
+
   const handleDeleteUser = async (user: UserProfile) => {
     if (!confirm(`Are you sure you want to PERMANENTLY delete ${user.username}? This cannot be undone.`)) return
 
@@ -124,7 +139,6 @@ export default function UserManagement() {
 
   return (
     <div className="space-y-6">
-      {/* Header & Controls */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-black text-secondary tracking-tight">User Management</h1>
@@ -163,16 +177,15 @@ export default function UserManagement() {
         </div>
       </div>
 
-      {/* Users Table */}
       <div className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50/50 border-b border-gray-50">
                 <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">User Profile</th>
-                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Account Info</th>
-                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
-                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Security</th>
+                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Contact</th>
+                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Premium Access</th>
+                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Account Status</th>
                 <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Last Active</th>
                 <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Actions</th>
               </tr>
@@ -214,48 +227,41 @@ export default function UserManagement() {
                         </div>
                       </div>
                     </td>
+
                     <td className="px-6 py-6 font-medium">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 text-xs text-secondary font-bold">
                            <Mail size={12} className="text-gray-400" /> {user.email}
                         </div>
-                        {user.mobile_number && (
-                          <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                             <Phone size={10} /> {user.mobile_number}
-                          </div>
-                        )}
                         <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
                            <Calendar size={10} /> {new Date(user.signup_date).toLocaleDateString()}
                         </div>
                       </div>
                     </td>
+
                     <td className="px-6 py-6">
-                       <div className="flex flex-col gap-2">
-                          <span className={`w-fit px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                            user.plan_status === 'premium' 
-                              ? 'bg-purple-100 text-purple-600 border border-purple-200' 
-                              : 'bg-blue-100 text-blue-600 border border-blue-200'
-                          }`}>
-                            {user.plan_status}
-                          </span>
-                          <span className={`w-fit px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                            user.payment_status === 'approved' 
-                              ? 'bg-emerald-100 text-emerald-600 border border-emerald-200' 
-                              : user.payment_status === 'pending'
-                              ? 'bg-yellow-100 text-yellow-600 border border-yellow-200'
-                              : 'bg-gray-100 text-gray-400 border border-gray-200'
-                          }`}>
-                            {user.payment_status}
+                       <div className="flex items-center gap-3">
+                          <button 
+                            onClick={() => handleTogglePremium(user)}
+                            className={`relative w-12 h-6 rounded-full transition-all duration-300 ${user.plan_status === 'premium' ? 'bg-[#D2E823]' : 'bg-gray-200'}`}
+                          >
+                             <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-300 ${user.plan_status === 'premium' ? 'left-7' : 'left-1'}`} />
+                          </button>
+                          <span className={`text-[10px] font-black uppercase tracking-widest ${user.plan_status === 'premium' ? 'text-amber-500' : 'text-gray-400'}`}>
+                             {user.plan_status === 'premium' ? 'Premium ON' : 'Free'}
                           </span>
                        </div>
                     </td>
+
                     <td className="px-6 py-6">
-                      <div className="space-y-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        <p className="flex items-center gap-2"><CheckCircle size={10} className="text-primary" /> Email Verified</p>
-                        <p className="flex items-center gap-2 opacity-40"><CheckCircle size={10} /> Mobile Not Verified</p>
-                        <p className="flex items-center gap-2"><ShieldBan size={10} className="text-blue-400" /> RBAC: {user.role}</p>
-                      </div>
+                       <div className="flex flex-col gap-1">
+                          <span className={`w-fit px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${user.is_active ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                            {user.is_active ? 'Active' : 'Blocked'}
+                          </span>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase px-1">Role: {user.role}</span>
+                       </div>
                     </td>
+
                     <td className="px-6 py-6">
                        <div className="text-xs font-bold text-secondary">
                           <p>{user.last_login ? new Date(user.last_login).toLocaleDateString() : 'N/A'}</p>
@@ -264,6 +270,7 @@ export default function UserManagement() {
                           </p>
                        </div>
                     </td>
+
                     <td className="px-8 py-6 text-right">
                        <div className="flex items-center justify-end gap-2">
                           <Link href={`/admin/users/${user.id}`} className="p-2.5 hover:bg-white hover:shadow-md rounded-xl text-gray-400 hover:text-secondary border border-transparent hover:border-gray-100 transition-all">
@@ -292,10 +299,9 @@ export default function UserManagement() {
           </table>
         </div>
         
-        {/* Pagination */}
         <div className="px-8 py-4 bg-gray-50/50 border-t border-gray-50 flex items-center justify-between">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-              Showing <span className="text-secondary font-black">{filteredUsers.length}</span> of <span className="text-secondary font-black">{users.length}</span> Users
+              Showing <span className="text-secondary font-black">{filteredUsers.length}</span> Users
             </p>
             <div className="flex items-center gap-2">
                 <button className="p-2 rounded-xl bg-white border border-gray-100 text-gray-400 hover:text-secondary opacity-50 cursor-not-allowed transition-all">
