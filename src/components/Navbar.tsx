@@ -115,9 +115,17 @@ export default function Navbar() {
                 <button 
                   onMouseEnter={() => setActiveMenu('user')}
                   onClick={() => setActiveMenu(prev => prev === 'user' ? null : 'user')}
-                  className="w-10 h-10 md:w-11 md:h-11 rounded-full border-2 border-white overflow-hidden shadow-lg hover:scale-110 transition-transform bg-gray-100"
+                  className="w-10 h-10 md:w-11 md:h-11 rounded-full border-2 border-black overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:scale-110 active:scale-95 transition-all bg-white flex items-center justify-center"
                 >
-                  <img src={profile?.avatar_url || user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || user.email}`} className="w-full h-full object-cover" />
+                  {profile?.avatar_url || user.user_metadata?.avatar_url ? (
+                    <img 
+                      src={profile?.avatar_url || user.user_metadata?.avatar_url} 
+                      className="w-full h-full object-cover" 
+                      alt="Profile"
+                    />
+                  ) : (
+                    <i className="fi fi-ss-user text-xl text-black"></i>
+                  )}
                 </button>
                 {/* USER DROPDOWN (DESKTOP & MOBILE) */}
                 <AnimatePresence>
