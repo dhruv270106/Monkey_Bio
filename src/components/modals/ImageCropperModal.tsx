@@ -51,8 +51,23 @@ export default function ImageCropperModal({
     const canvas = document.createElement('canvas')
     const scaleX = imgRef.current.naturalWidth / imgRef.current.width
     const scaleY = imgRef.current.naturalHeight / imgRef.current.height
-    canvas.width = completedCrop.width
-    canvas.height = completedCrop.height
+    
+    const MAX_AVATAR_SIZE = 512
+    let width = completedCrop.width
+    let height = completedCrop.height
+
+    if (width > MAX_AVATAR_SIZE || height > MAX_AVATAR_SIZE) {
+      if (width > height) {
+        height *= MAX_AVATAR_SIZE / width
+        width = MAX_AVATAR_SIZE
+      } else {
+        width *= MAX_AVATAR_SIZE / height
+        height = MAX_AVATAR_SIZE
+      }
+    }
+
+    canvas.width = width
+    canvas.height = height
     const ctx = canvas.getContext('2d')
 
     if (!ctx) return
@@ -65,11 +80,11 @@ export default function ImageCropperModal({
       completedCrop.height * scaleY,
       0,
       0,
-      completedCrop.width,
-      completedCrop.height
+      width,
+      height
     )
 
-    const base64Image = canvas.toDataURL('image/jpeg', 0.9)
+    const base64Image = canvas.toDataURL('image/jpeg', 0.7)
     onCropComplete(base64Image)
     onClose()
   }

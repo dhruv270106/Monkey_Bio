@@ -77,10 +77,46 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
     setSaving(false)
   }
 
+  const compressImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = (e) => {
+        const img = new Image()
+        img.src = e.target?.result as string
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          let width = img.width
+          let height = img.height
+          const MAX_SIZE = 1200
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width
+              width = MAX_SIZE
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height
+              height = MAX_SIZE
+            }
+          }
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          ctx?.drawImage(img, 0, 0, width, height)
+          canvas.toBlob((blob) => {
+            resolve(blob as Blob)
+          }, 'image/jpeg', 0.6) // 0.6 quality for small size
+        }
+      }
+    })
+  }
+
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // Show cropper after reading as data URL
     const reader = new FileReader()
     reader.onloadend = () => {
       setSelectedImage(reader.result as string)
@@ -94,19 +130,42 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
      if (!file) return
 
      setSaving(true)
-     const fileExt = file.name.split('.').pop()
-     const fileName = `${Math.random()}.${fileExt}`
+     console.log(`Starting ${type} upload:`, file.name, file.size)
+
+     let uploadFile: Blob | File = file
+
+     if (type === 'image') {
+        uploadFile = await compressImage(file)
+        console.log('Image compressed to:', uploadFile.size)
+     } else if (type === 'video') {
+        if (file.size > 20 * 1024 * 1024) {
+           alert('Video too large! Please upload a file smaller than 20MB for best performance.')
+           setSaving(false)
+           return
+        }
+     }
+
+     const fileExt = type === 'image' ? 'jpg' : file.name.split('.').pop()
+     const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${fileExt}`
      const filePath = `${profile.id}/${fileName}`
 
-     const { error: uploadError, data } = await supabase.storage
+     console.log('Destination path:', filePath)
+
+     const { error: uploadError } = await supabase.storage
        .from('bg-assets')
-       .upload(filePath, file)
+       .upload(filePath, uploadFile, {
+         cacheControl: '3600',
+         upsert: true // Allow overwriting if something goes wrong
+       })
 
      if (!uploadError) {
+        console.log('Upload successful!')
         const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
         updateProfile({ custom_bg: publicUrl, custom_bg_type: type, theme: 'custom' })
+        alert(`${type.toUpperCase()} Background Applied Successfully!`)
      } else {
-        alert('Upload Error: ' + uploadError.message)
+        console.error('Supabase Upload Error:', uploadError)
+        alert(`Upload Failed: ${uploadError.message}. \n\nTip: Ensure the 'bg-assets' bucket exists and is set to PUBLIC in your Supabase dashboard.`)
      }
      setSaving(false)
   }
@@ -326,50 +385,126 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
             )}
 
             {activeTab === 'Colors' && (
-              <motion.section key="colors" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
-                 <div className="space-y-2">
-                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Background</h2>
-                  <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Interactive Wallpaper engine</p>
+              <motion.section key="colors" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-12">
+                 <div className="space-y-4">
+                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Wallpaper engine</h2>
+                  <p className="text-sm text-gray-400 font-bold uppercase tracking-widest pl-1">Interactive background designer</p>
                 </div>
 
-                <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-12">
-                   <div className="grid grid-cols-4 gap-4">
-                      {['color', 'gradient', 'image', 'video'].map(type => (
-                        <button key={type} onClick={() => updateProfile({ custom_bg_type: type, theme: 'custom' })} className={`flex flex-col items-center gap-3 p-6 rounded-[30px] border-[5px] transition-all capitalize font-black text-[10px] tracking-widest ${profile?.custom_bg_type === type ? 'border-secondary bg-gray-50' : 'border-transparent bg-gray-50/50'}`}>
-                           <i className={`fi ${type === 'color' ? 'fi-rr-palette' : type === 'gradient' ? 'fi-rr-kerning' : type === 'image' ? 'fi-rr-picture' : 'fi-rr-play-alt'} text-xl`}></i>
-                           {type}
-                        </button>
-                      ))}
+                <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-12 transition-all">
+                   <div className="space-y-6">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] pl-2">Wallpaper Style</label>
+                      <div className="grid grid-cols-6 gap-3">
+                        {['color', 'gradient', 'blur', 'pattern', 'image', 'video'].map(type => (
+                          <button key={type} onClick={() => updateProfile({ custom_bg_type: type, theme: 'custom' })} className={`group flex flex-col items-center gap-3 transition-all ${profile?.custom_bg_type === type ? 'scale-110' : 'opacity-60 hover:opacity-100 hover:scale-105'}`}>
+                             <div className={`w-14 h-14 rounded-[18px] border-4 flex items-center justify-center transition-all ${profile?.custom_bg_type === type ? 'border-secondary shadow-lg rotate-3' : 'border-gray-100'}`}>
+                                <i className={`fi ${type === 'color' ? 'fi-ss-palette' : type === 'gradient' ? 'fi-ss-kerning' : type === 'blur' ? 'fi-ss-layer-plus' : type === 'pattern' ? 'fi-ss-grid' : type === 'image' ? 'fi-ss-picture' : 'fi-ss-play-alt'} text-xl ${profile?.custom_bg_type === type ? 'text-secondary' : 'text-gray-300'}`}></i>
+                             </div>
+                             <span className="text-[10px] font-black uppercase tracking-tight text-gray-400">{type === 'color' ? 'Fill' : type}</span>
+                          </button>
+                        ))}
+                      </div>
                    </div>
 
-                   <div className="p-10 bg-gray-50/50 rounded-[40px] border border-gray-100 space-y-10">
-                      {profile?.custom_bg_type === 'color' && (
-                         <div className="flex items-center justify-between">
-                            <div className="flex flex-col"><span className="font-black text-secondary">Solid Background</span><span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Uniform color fill</span></div>
-                            <input type="color" value={profile?.custom_bg || '#ffffff'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-20 h-20 rounded-[30px] border-[8px] border-white shadow-2xl cursor-pointer" />
-                         </div>
-                      )}
+                   <AnimatePresence mode="wait">
                       {profile?.custom_bg_type === 'gradient' && (
-                         <div className="space-y-6">
-                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Preset Gradients</span>
-                            <div className="grid grid-cols-3 gap-4">
-                               {PRESET_GRADIENTS.map(grad => (
-                                 <button key={grad} onClick={() => updateProfile({ custom_bg: grad })} className="aspect-video rounded-2xl border-4 border-white shadow-lg transition-transform hover:scale-105" style={{ backgroundImage: grad }} />
-                               ))}
-                            </div>
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-10 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
+                           <div className="flex gap-4 mb-4">
+                              {['custom', 'pre-made'].map(st => (
+                                <button key={st} onClick={() => updateProfile({ custom_bg_gradient_mode: st })} className={`flex-1 py-4 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${profile?.custom_bg_gradient_mode === st ? 'bg-secondary text-white shadow-xl' : 'bg-white text-gray-400 border border-gray-100'}`}>
+                                  {st}
+                                </button>
+                              ))}
+                           </div>
+
+                           {profile?.custom_bg_gradient_mode === 'custom' ? (
+                              <div className="space-y-6">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Gradient Color</span>
+                                <div className="flex items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-inner">
+                                   <input type="text" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="flex-1 bg-transparent border-none outline-none font-bold text-secondary" />
+                                   <input type="color" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-10 h-10 rounded-full border-4 border-white shadow-lg cursor-pointer" />
+                                </div>
+                              </div>
+                           ) : (
+                             <div className="grid grid-cols-4 gap-4">
+                                {PRESET_GRADIENTS.map(grad => (
+                                  <button key={grad} onClick={() => updateProfile({ custom_bg: grad })} className="aspect-video rounded-2xl border-4 border-white shadow-lg transition-transform hover:scale-105" style={{ backgroundImage: grad }} />
+                                ))}
+                             </div>
+                           )}
+
+                           <div className="space-y-6">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Gradient Direction</span>
+                              <div className="grid grid-cols-3 gap-4">
+                                {[
+                                  { id: 'linear-up', icon: 'fi-rr-arrow-up', label: 'Linear UP' },
+                                  { id: 'linear-down', icon: 'fi-rr-arrow-down', label: 'Linear DOWN' },
+                                  { id: 'radial', icon: 'fi-rr-rect-radial', label: 'Radial' }
+                                ].map(dir => (
+                                  <button key={dir.id} onClick={() => updateProfile({ custom_bg_direction: dir.id })} className={`flex flex-col items-center gap-2 p-5 rounded-[28px] border-4 transition-all ${profile?.custom_bg_direction === dir.id ? 'bg-secondary text-white border-secondary shadow-lg' : 'bg-white border-transparent text-gray-400 hover:border-gray-200'}`}>
+                                     <i className={`fi ${dir.icon} text-lg`}></i>
+                                     <span className="text-[9px] font-black uppercase tracking-widest">{dir.label}</span>
+                                  </button>
+                                ))}
+                              </div>
+                           </div>
+
+                           <div className="flex items-center justify-between p-6 bg-white rounded-3xl border border-gray-50">
+                              <div className="flex flex-col">
+                                <span className="font-black text-secondary text-sm">Noise</span>
+                                <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Add subtle grain texture</span>
+                              </div>
+                              <button onClick={() => updateProfile({ custom_bg_noise: !profile?.custom_bg_noise })} className={`w-14 h-8 rounded-full p-1 transition-all ${profile?.custom_bg_noise ? 'bg-secondary' : 'bg-gray-200'}`}>
+                                 <div className={`w-6 h-6 rounded-full bg-white transition-all ${profile?.custom_bg_noise ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                              </button>
+                           </div>
+                        </motion.div>
+                      )}
+
+                      {profile?.custom_bg_type === 'pattern' && (
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
+                           <div className="space-y-6">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Background Color</span>
+                              <div className="flex items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-inner">
+                                 <input type="text" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="flex-1 bg-transparent border-none outline-none font-bold text-secondary" />
+                                 <input type="color" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-10 h-10 rounded-full border-4 border-white shadow-lg cursor-pointer" />
+                              </div>
+                           </div>
+
+                           <div className="space-y-6">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Pattern Selection</span>
+                              <div className="grid grid-cols-4 gap-4">
+                                {['Grid', 'Morph', 'Organic', 'Matrix'].map(pat => (
+                                  <button key={pat} onClick={() => updateProfile({ custom_bg_pattern: pat.toLowerCase() })} className={`flex flex-col items-center gap-3 p-4 rounded-[28px] border-4 transition-all bg-white ${profile?.custom_bg_pattern === pat.toLowerCase() ? 'border-secondary shadow-lg' : 'border-transparent hover:border-gray-200'}`}>
+                                     <div className={`w-full aspect-[4/3] rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-100`}>
+                                        <div className={`w-full h-full opacity-50 ${pat.toLowerCase() === 'grid' ? 'bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px]' : pat.toLowerCase() === 'morph' ? 'bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-100 to-gray-700' : pat.toLowerCase() === 'organic' ? 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-gray-200 via-white to-gray-200' : 'bg-[linear-gradient(45deg,rgba(0,0,0,0.1)_25%,transparent_25%,transparent_50%,rgba(0,0,0,0.1)_50%,rgba(0,0,0,0.1)_75%,transparent_75%,transparent)] [background-size:20px_20px]'}`}></div>
+                                     </div>
+                                     <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{pat}</span>
+                                  </button>
+                                ))}
+                              </div>
+                           </div>
+                        </motion.div>
+                      )}
+
+                      {profile?.custom_bg_type === 'color' && (
+                         <div className="p-10 bg-gray-50/50 rounded-[40px] border border-gray-100 flex items-center justify-between">
+                            <div className="flex flex-col"><span className="font-black text-secondary">Solid Fill</span><span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Uniform color coverage</span></div>
+                            <input type="color" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-20 h-20 rounded-[30px] border-[8px] border-white shadow-2xl cursor-pointer" />
                          </div>
                       )}
+
                       {(profile?.custom_bg_type === 'image' || profile?.custom_bg_type === 'video') && (
-                         <div className="space-y-6">
+                         <div className="p-10 bg-gray-50/50 rounded-[40px] border border-gray-100 space-y-6">
                             <div className="w-full aspect-video rounded-[36px] bg-white border-4 border-dashed border-gray-200 flex flex-col items-center justify-center gap-4 relative group overflow-hidden">
                                {profile?.custom_bg && profile?.custom_bg_type === 'image' && <img src={profile.custom_bg} className="absolute inset-0 w-full h-full object-cover" />}
                                <i className={`fi ${profile?.custom_bg_type === 'image' ? 'fi-rr-cloud-upload' : 'fi-rr-play'} text-4xl text-gray-300`}></i>
-                               <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Upload local {profile?.custom_bg_type} asset</span>
+                               <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Upload local {profile?.custom_bg_type} asset (Max 20MB)</span>
                                <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleCustomBgUpload(e, profile?.custom_bg_type as any)} accept={profile?.custom_bg_type === 'image' ? 'image/*' : 'video/*'} />
                             </div>
                          </div>
                       )}
-                   </div>
+                   </AnimatePresence>
                 </div>
               </motion.section>
             )}

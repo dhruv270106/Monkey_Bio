@@ -21,7 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body dir="ltr" className={inter.className}>
         <Navbar />
-        {children}
+        <main className="min-h-screen pt-24 md:pt-32 overflow-x-hidden">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

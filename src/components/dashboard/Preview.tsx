@@ -62,12 +62,47 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
     }
 
     const type = userProfile?.custom_bg_type || 'color'
-    const value = userProfile?.custom_bg || '#ffffff'
+    const value = userProfile?.custom_bg || '#6A373A'
+    const direction = userProfile?.custom_bg_direction || 'linear-up'
+    const pattern = userProfile?.custom_bg_pattern || 'grid'
+
+    if (type === 'blur') {
+       return { 
+         backgroundColor: value,
+         backgroundImage: `radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(0,0,0,0.1) 0%, transparent 50%)`,
+         backdropFilter: 'blur(30px)' 
+       }
+    }
+
+    if (type === 'pattern') {
+        const patternMap: any = {
+          grid: 'radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px)',
+          morph: 'conic-gradient(from 180deg at 50% 50%, #ffffff33 0deg, transparent 90deg)',
+          organic: 'radial-gradient(circle at 50% 50%, rgba(0,0,0,0.05) 0%, transparent 70%)',
+          matrix: 'linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.02) 50%, rgba(0,0,0,0.02) 75%, transparent 75%, transparent)'
+        }
+        return { 
+          backgroundColor: value,
+          backgroundImage: patternMap[pattern] || patternMap.grid,
+          backgroundSize: '20px 20px'
+        }
+    }
 
     if (type === 'color') return { backgroundColor: value }
-    if (type === 'gradient') return { backgroundImage: value }
+    
+    if (type === 'gradient') {
+      const dirMap: any = {
+        'linear-up': 'to top',
+        'linear-down': 'to bottom',
+        'radial': 'radial'
+      }
+      const dir = dirMap[direction] || 'to top'
+      if (dir === 'radial') return { backgroundImage: `radial-gradient(circle, ${value}, #00000066)` }
+      return { backgroundImage: `linear-gradient(${dir}, ${value}, #00000066)` }
+    }
+
     if (type === 'image') return { backgroundImage: `url(${value})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-    return { backgroundColor: '#000000' } // Fallback for video
+    return { backgroundColor: '#000000' }
   }
 
   return (
@@ -126,6 +161,10 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                  ...getBackgroundStyle()
                }}
              >
+                {/* Noise Grain Overlay */}
+                {userProfile?.custom_bg_noise && (
+                  <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay z-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat"></div>
+                )}
                {((userProfile?.theme === 'custom' && userProfile?.custom_bg_type === 'video') || selectedTheme.video) && (
                  <video
                    autoPlay
