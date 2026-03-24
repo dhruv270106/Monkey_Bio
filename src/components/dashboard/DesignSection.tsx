@@ -112,11 +112,12 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
     })
   }
 
+  const [cropTarget, setCropTarget] = useState<'avatar' | 'wallpaper'>('avatar')
+
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
-    // Show cropper after reading as data URL
+    setCropTarget('avatar')
     const reader = new FileReader()
     reader.onloadend = () => {
       setSelectedImage(reader.result as string)
@@ -129,45 +130,72 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
      const file = e.target.files?.[0]
      if (!file) return
 
-     setSaving(true)
-     console.log(`Starting ${type} upload:`, file.name, file.size)
-
-     let uploadFile: Blob | File = file
-
      if (type === 'image') {
-        uploadFile = await compressImage(file)
-        console.log('Image compressed to:', uploadFile.size)
-     } else if (type === 'video') {
-        if (file.size > 20 * 1024 * 1024) {
-           alert('Video too large! Please upload a file smaller than 20MB for best performance.')
-           setSaving(false)
-           return
+        setCropTarget('wallpaper')
+        const reader = new FileReader()
+        reader.onloadend = () => {
+           setSelectedImage(reader.result as string)
+           setShowCropper(true)
         }
+        reader.readAsDataURL(file)
+        return
      }
 
-     const fileExt = type === 'image' ? 'jpg' : file.name.split('.').pop()
+     setSaving(true)
+     console.log(`Starting video upload:`, file.name, file.size)
+
+     if (file.size > 20 * 1024 * 1024) {
+        alert('Video too large! Please upload a file smaller than 20MB for best performance.')
+        setSaving(false)
+        return
+     }
+
+     const fileExt = file.name.split('.').pop()
      const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${fileExt}`
      const filePath = `${profile.id}/${fileName}`
 
-     console.log('Destination path:', filePath)
-
      const { error: uploadError } = await supabase.storage
        .from('bg-assets')
-       .upload(filePath, uploadFile, {
+       .upload(filePath, file, {
          cacheControl: '3600',
-         upsert: true // Allow overwriting if something goes wrong
+         upsert: true
        })
 
      if (!uploadError) {
-        console.log('Upload successful!')
         const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
-        updateProfile({ custom_bg: publicUrl, custom_bg_type: type, theme: 'custom' })
-        alert(`${type.toUpperCase()} Background Applied Successfully!`)
+        updateProfile({ custom_bg: publicUrl, custom_bg_type: 'video', theme: 'custom' })
+        alert(`VIDEO Background Applied Successfully!`)
      } else {
-        console.error('Supabase Upload Error:', uploadError)
-        alert(`Upload Failed: ${uploadError.message}. \n\nTip: Ensure the 'bg-assets' bucket exists and is set to PUBLIC in your Supabase dashboard.`)
+        alert(`Upload Failed: ${uploadError.message}`)
      }
      setSaving(false)
+  }
+
+  const handleWallpaperCropComplete = async (base64: string) => {
+    setSaving(true)
+    try {
+      const res = await fetch(base64)
+      const blob = await res.blob()
+      
+      const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.jpg`
+      const filePath = `${profile.id}/${fileName}`
+      
+      const { error: uploadError } = await supabase.storage
+        .from('bg-assets')
+        .upload(filePath, blob, { upsert: true })
+
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
+        updateProfile({ custom_bg: publicUrl, custom_bg_type: 'image', theme: 'custom' })
+        alert('Wallpaper Image Optimized & Applied!')
+        setShowCropper(false)
+      } else {
+         alert('Upload Failed: ' + uploadError.message)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    setSaving(false)
   }
 
   return (
@@ -519,12 +547,26 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
             )}
             </AnimatePresence>
 
-            </div>
+                    </div>
           </div>
         </div>
       </div>
 
-      <ImageCropperModal isOpen={showCropper} imageSrc={selectedImage} onClose={() => setShowCropper(false)} onCropComplete={(croppedImage) => updateProfile({ avatar_url: croppedImage })} />
+      <ImageCropperModal 
+        isOpen={showCropper} 
+        imageSrc={selectedImage} 
+        onClose={() => setShowCropper(false)} 
+        aspect={cropTarget === 'avatar' ? 1/1 : 9/16}
+        circularCrop={cropTarget === 'avatar'}
+        onCropComplete={(croppedImage) => {
+          if (cropTarget === 'avatar') {
+            updateProfile({ avatar_url: croppedImage })
+            setShowCropper(false)
+          } else {
+            handleWallpaperCropComplete(croppedImage)
+          }
+        }} 
+      />
     </div>
   )
 }
