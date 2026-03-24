@@ -289,15 +289,15 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                 </div>
 
                 <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-10">
-                  <div className="flex items-center gap-12">
-                    <div className="w-32 h-32 rounded-full bg-white overflow-hidden border-[10px] border-white shadow-2xl relative group">
+                  <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                    <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-white overflow-hidden border-[8px] md:border-[10px] border-white shadow-2xl relative group shrink-0">
                         <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.display_name || 'U'}&background=random`} className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center text-white pointer-events-none">
                            <i className="fi fi-rr-camera text-2xl"></i>
                         </div>
                         <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} accept="image/*" />
                     </div>
-                    <div className="flex-1 space-y-4">
+                    <div className="flex-1 space-y-4 text-center md:text-left">
                        <h4 className="font-black text-secondary">Profile Image</h4>
                        <p className="text-xs text-gray-400 leading-relaxed font-bold">Use a high resolution square image for the best appearance on mobile devices.</p>
                        <div className="flex gap-3">
@@ -386,12 +386,12 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                   <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Interactive element styling</p>
                 </div>
 
-                <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-12">
+                <div className="bg-white p-6 md:p-10 rounded-[40px] md:rounded-[50px] border border-gray-100 shadow-sm space-y-8 md:space-y-12">
                    <div className="space-y-6">
                       <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] pl-2">Variant Style</label>
-                      <div className="grid grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                         {['Solid', 'Glass', 'Outline'].map(type => (
-                          <button key={type} onClick={() => updateProfile({ button_variant: type.toLowerCase() })} className={`flex flex-col items-center gap-4 p-6 rounded-[36px] border-[5px] transition-all bg-gray-50/50 ${profile?.button_variant === type.toLowerCase() ? 'border-secondary bg-white shadow-xl' : 'border-transparent'}`}>
+                          <button key={type} onClick={() => updateProfile({ button_variant: type.toLowerCase() })} className={`flex flex-col items-center gap-4 p-5 md:p-6 rounded-[28px] md:rounded-[36px] border-[5px] transition-all bg-gray-50/50 ${profile?.button_variant === type.toLowerCase() ? 'border-secondary bg-white shadow-xl' : 'border-transparent'}`}>
                             <div className={`w-full h-12 rounded-xl border-2 ${type === 'Glass' ? 'bg-gray-200/40 border-gray-200' : type === 'Outline' ? 'bg-transparent border-slate-300' : 'bg-slate-800 border-slate-800'}`}></div>
                             <span className="text-[10px] font-black uppercase tracking-widest text-secondary">{type}</span>
                           </button>
@@ -401,19 +401,19 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
 
                    <div className="space-y-6">
                       <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] pl-2">Border Settings</label>
-                      <div className="flex items-center gap-6 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100 divide-x divide-gray-200">
-                         <div className="flex-1 space-y-4 px-2">
+                      <div className="flex flex-col md:flex-row items-center gap-6 p-6 md:p-10 bg-gray-50/50 rounded-[30px] md:rounded-[40px] border border-gray-100 md:divide-x divide-gray-200">
+                         <div className="w-full md:flex-1 space-y-4 px-2">
                             <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Color</span>
                             <input type="color" value={profile?.button_border_color || '#000000'} onChange={(e) => updateProfile({ button_border_color: e.target.value })} className="w-full h-14 rounded-2xl cursor-pointer border-4 border-white shadow-sm" />
                          </div>
-                         <div className="flex-1 space-y-4 px-8">
+                         <div className="w-full md:flex-1 space-y-4 px-2 md:px-8">
                             <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Width ({profile?.button_border_width || 0}px)</span>
                             <input type="range" min="0" max="10" value={profile?.button_border_width || 0} onChange={(e) => updateProfile({ button_border_width: parseInt(e.target.value) })} className="w-full accent-secondary" />
                          </div>
                       </div>
                    </div>
 
-                   <div className="flex items-center justify-between p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
+                   <div className="flex items-center justify-between p-6 md:p-10 bg-gray-50/50 rounded-[30px] md:rounded-[40px] border border-gray-100">
                       <div className="flex flex-col">
                         <span className="font-extrabold text-secondary">Elevation Shadow</span>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hard 3D Shadow Effect</span>

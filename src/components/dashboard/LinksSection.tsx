@@ -167,7 +167,7 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
          </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-12 bg-white no-scrollbar">
+      <div className="flex-1 overflow-y-auto p-6 md:p-12 bg-white no-scrollbar">
         <div className="max-w-xl mx-auto space-y-8 pb-32">
           
           {/* Profile Header */}

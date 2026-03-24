@@ -51,16 +51,16 @@ export default function AudienceSection({ profile }: AudienceSectionProps) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-12 bg-white no-scrollbar">
+    <div className="flex-1 overflow-y-auto p-6 md:p-12 bg-white no-scrollbar pb-32">
       <div className="max-w-4xl mx-auto space-y-8">
-        <h1 className="font-bold text-3xl mb-8">Audience</h1>
+        <h1 className="font-bold text-[28px] md:text-3xl mb-8">Audience</h1>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12">
           <div className="bg-gray-50 p-8 rounded-[40px] border border-gray-100 flex flex-col gap-2">
             <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Total Audience</span>
             <p className="text-3xl font-black text-secondary">{messages.length}</p>
           </div>
-          <div className="bg-gray-50 p-8 rounded-[40px] border border-gray-100 flex flex-col gap-2 col-span-2">
+          <div className="bg-gray-50 p-8 rounded-[40px] border border-gray-100 flex flex-col gap-2 md:col-span-2">
             <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Profile Stats</span>
             <div className="flex items-center gap-6 mt-2">
               <div className="flex items-center gap-2">

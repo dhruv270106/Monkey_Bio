@@ -99,7 +99,7 @@ function DashboardContent() {
           </button>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
         <Sidebar 
           userProfile={profile} 
           activeTab={activeTab} 
@@ -107,11 +107,33 @@ function DashboardContent() {
         />
 
         {/* Main Content Area */}
-        <main className="flex-1 flex flex-col bg-white overflow-hidden">
+        <main className="flex-1 flex flex-col bg-white overflow-hidden pb-24 md:pb-0">
           {renderSection()}
         </main>
 
-        {/* Real-time Preview */}
+        {/* Mobile Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-gray-100 flex md:hidden items-center justify-around py-4 px-2 z-[100] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+           {[
+             { id: 'links', icon: 'fi-rr-link', label: 'Links' },
+             { id: 'design', icon: 'fi-rr-palette', label: 'Design' },
+             { id: 'insights', icon: 'fi-rr-stats', label: 'Stats' },
+             { id: 'planner', icon: 'fi-rr-calendar', label: 'Plan' },
+             { id: 'audience', icon: 'fi-rr-users', label: 'Fans' },
+           ].map(item => (
+             <button 
+               key={item.id}
+               onClick={() => handleTabChange(item.id)}
+               className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === item.id ? 'text-primary' : 'text-gray-300'}`}
+             >
+                <div className={`w-12 h-10 rounded-2xl flex items-center justify-center transition-all ${activeTab === item.id ? 'bg-primary/10' : ''}`}>
+                  <i className={`fi ${item.icon} text-lg`}></i>
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+             </button>
+           ))}
+        </div>
+
+        {/* Real-time Preview - Desktop Only */}
         <Preview 
           userProfile={profile} 
           links={links} 

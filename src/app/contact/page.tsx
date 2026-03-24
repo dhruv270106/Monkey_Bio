@@ -108,20 +108,20 @@ export default function ContactPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-white pt-32 lg:pt-40 pb-20 overflow-hidden font-sans">
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#D2E823]/10 rounded-full blur-[120px] -z-10 -translate-y-1/2 translate-x-1/2" />
+    <div className="min-h-screen bg-white pt-24 md:pt-32 lg:pt-40 pb-20 overflow-hidden font-sans">
+      <div className="absolute top-0 right-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-[#D2E823]/10 rounded-full blur-[120px] -z-10 -translate-y-1/2 translate-x-1/2" />
       <main className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         {/* HERO SECTION */}
-        <div className="relative z-10 mb-32 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 items-center">
-           <div className="max-w-4xl">
+        <div className="relative z-10 mb-16 md:mb-32 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 items-center">
+           <div className="max-w-4xl text-center lg:text-left">
               <Reveal delay={0.1} width="100%">
-                 <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-[-0.04em] uppercase mb-8">
+                 <h1 className="text-[12vw] sm:text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-[-0.04em] uppercase mb-8">
                     Let&apos;s talk <br /> 
                     <span className="text-secondary italic">Human to Human.</span>
                  </h1>
               </Reveal>
               <Reveal delay={0.2} width="100%">
-                 <p className="text-xl md:text-2xl font-bold text-gray-500 uppercase tracking-tight max-w-2xl leading-relaxed">
+                 <p className="text-lg md:text-2xl font-bold text-gray-500 uppercase tracking-tight max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                     Got questions, ideas, or just want to say hi? <br className="hidden md:block" /> 
                     Whether you&apos;re a creator or a brand, our team is here for you.
                  </p>
@@ -131,7 +131,7 @@ export default function ContactPage() {
              initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
              animate={{ opacity: 1, scale: 1, rotate: 0 }}
              transition={{ duration: 1, ease: "easeOut" }}
-             className="relative aspect-square flex items-center justify-center bg-gray-50/50 rounded-[60px] border-[16px] border-gray-50 shadow-2xl overflow-hidden"
+             className="relative aspect-square w-full max-w-[400px] mx-auto flex items-center justify-center bg-gray-50/50 rounded-[40px] md:rounded-[60px] border-[8px] md:border-[16px] border-gray-50 shadow-2xl overflow-hidden"
            >
               <div className="absolute inset-0 bg-[#D2E823]/10 rounded-full blur-[80px]" />
               <img 
@@ -142,16 +142,16 @@ export default function ContactPage() {
            </motion.div>
         </div>
 
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 mb-16 md:mb-32">
            {contactInfo.map((info, i) => (
              <motion.a 
                key={i} href={info.href} target="_blank" rel="noopener noreferrer"
                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-               className="p-10 bg-gray-50 rounded-[40px] border border-gray-100 flex flex-col gap-8 hover:bg-white hover:shadow-2xl transition-all"
+               className="p-8 md:p-10 bg-gray-50 rounded-[30px] md:rounded-[40px] border border-gray-100 flex flex-col gap-6 md:gap-8 hover:bg-white hover:shadow-2xl transition-all"
              >
-                <div className={`w-14 h-14 ${info.color} rounded-2xl flex items-center justify-center`}>{info.icon}</div>
-                <div><span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{info.label}</span><h3 className="text-xl font-black">{info.value}</h3></div>
+                <div className={`w-12 h-12 md:w-14 md:h-14 ${info.color} rounded-2xl flex items-center justify-center shrink-0`}>{info.icon}</div>
+                <div><span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{info.label}</span><h3 className="text-lg md:text-xl font-black">{info.value}</h3></div>
              </motion.a>
            ))}
         </section>
