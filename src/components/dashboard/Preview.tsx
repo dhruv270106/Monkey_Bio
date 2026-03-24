@@ -20,25 +20,30 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
     const radius = userProfile?.button_radius || 'xl'
     const customBg = userProfile?.custom_button_bg || (selectedTheme.button.includes('bg-white') ? '#ffffff' : '#000000')
     const customColor = userProfile?.font_color || (selectedTheme.text.includes('white') ? '#ffffff' : '#000000')
+    const borderColor = userProfile?.button_border_color || '#000000'
+    const borderWidth = userProfile?.button_border_width || 0
+    const shadowColor = userProfile?.button_shadow_color || 'transparent'
 
     let baseStyle: any = {
       fontFamily: userProfile?.font_family || 'inherit',
       color: customColor,
       borderRadius: radius === 'none' ? '0px' : radius === 'md' ? '12px' : radius === 'xl' ? '24px' : '9999px',
+      border: borderWidth > 0 ? `${borderWidth}px solid ${borderColor}` : 'none',
+      boxShadow: shadowColor !== 'transparent' ? `4px 4px 0px ${shadowColor}` : 'none',
     }
 
     if (variant === 'outline') {
       baseStyle = {
         ...baseStyle,
         backgroundColor: 'transparent',
-        border: `2px solid ${customBg}`,
+        border: `${borderWidth || 2}px solid ${customBg}`,
       }
     } else if (variant === 'glass') {
       baseStyle = {
         ...baseStyle,
         backgroundColor: `${customBg}20`,
         backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        border: borderWidth > 0 ? `${borderWidth}px solid ${borderColor}` : '1px solid rgba(255,255,255,0.1)',
       }
     } else {
       baseStyle = {
@@ -48,6 +53,21 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
     }
 
     return baseStyle
+  }
+
+  const getBackgroundStyle = () => {
+    if (userProfile?.theme !== 'custom') {
+       if (selectedTheme.image) return { backgroundImage: `url(${selectedTheme.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+       return {}
+    }
+
+    const type = userProfile?.custom_bg_type || 'color'
+    const value = userProfile?.custom_bg || '#ffffff'
+
+    if (type === 'color') return { backgroundColor: value }
+    if (type === 'gradient') return { backgroundImage: value }
+    if (type === 'image') return { backgroundImage: `url(${value})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    return { backgroundColor: '#000000' } // Fallback for video
   }
 
   return (
@@ -103,31 +123,20 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
                  filter: userProfile?.bg_blur ? `blur(${userProfile.bg_blur}px)` : 'none',
                  transform: userProfile?.bg_blur ? 'scale(1.1)' : 'scale(1)',
                  willChange: 'transform, filter',
-                 ...(selectedTheme.grid && !selectedTheme.video ? {
-                   backgroundImage: selectedTheme.text.includes('white') 
-                     ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
-                     : 'linear-gradient(#0000000a 1px, transparent 1px), linear-gradient(90deg, #0000000a 1px, transparent 1px)',
-                   backgroundSize: '25px 25px',
-                 } : selectedTheme.image ? {
-                   backgroundImage: `url(${selectedTheme.image})`,
-                   backgroundSize: 'cover',
-                   backgroundPosition: 'center'
-                 } : selectedTheme.id === 'custom' ? {
-                   backgroundColor: userProfile?.custom_bg || '#ffffff',
-                   backgroundImage: 'none'
-                 } : {})
+                 ...getBackgroundStyle()
                }}
              >
-               {selectedTheme.video && (
+               {((userProfile?.theme === 'custom' && userProfile?.custom_bg_type === 'video') || selectedTheme.video) && (
                  <video
                    autoPlay
                    loop
                    muted
                    playsInline
-                   poster={selectedTheme.image}
+                   poster={userProfile?.theme === 'custom' ? undefined : selectedTheme.image}
                    className="absolute inset-0 w-full h-full object-cover"
+                   key={userProfile?.custom_bg || selectedTheme.video}
                  >
-                   <source src={selectedTheme.video} type="video/mp4" />
+                   <source src={userProfile?.theme === 'custom' ? userProfile?.custom_bg : selectedTheme.video} type="video/mp4" />
                  </video>
                )}
              </div>

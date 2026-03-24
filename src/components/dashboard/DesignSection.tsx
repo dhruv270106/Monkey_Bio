@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { THEMES, Theme } from '@/data/themes'
 import ImageCropperModal from '@/components/modals/ImageCropperModal'
@@ -22,11 +22,11 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
   const [themeCategory, setThemeCategory] = useState('free')
 
   const TABS = [
-    { id: 'Header', icon: 'fi-rr-user' },
-    { id: 'Theme', icon: 'fi-rr-palette' },
-    { id: 'Text', icon: 'fi-rr-text' },
-    { id: 'Buttons', icon: 'fi-rr-apps' },
-    { id: 'Colors', icon: 'fi-rr-paint-brush' },
+    { id: 'Header', icon: 'fi-ss-user', label: 'PROFILE' },
+    { id: 'Theme', icon: 'fi-ss-palette', label: 'THEMES' },
+    { id: 'Buttons', icon: 'fi-ss-apps-add', label: 'BUTTONS' },
+    { id: 'Fonts', icon: 'fi-ss-text', label: 'FONTS' },
+    { id: 'Colors', icon: 'fi-ss-picture', label: 'WALLPAPER' },
   ]
 
   const FONTS = [
@@ -39,6 +39,15 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
     'Teko', 'Titillium Web', 'Varela Round', 'Work Sans', 'Zilla Slab'
   ]
 
+  const PRESET_GRADIENTS = [
+    'linear-gradient(135deg, #fceabb 0%, #f8b500 100%)',
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(135deg, #5ee7df 0%, #b490ca 100%)',
+    'linear-gradient(135deg, #c3cfe2 0%, #c3cfe2 100%)',
+    'linear-gradient(135deg, #00dbde 0%, #fc00ff 100%)'
+  ]
+
   const updateProfile = (updates: any) => {
     if (!profile) return
     setProfile({ ...profile, ...updates })
@@ -49,8 +58,8 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
     if (!profile) return
     setSaving(true)
     
-    const { id, username, display_name, avatar_url, bio, social_links, theme, custom_bg, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur } = profile
-    const dbUpdates = { display_name, avatar_url, bio, social_links, theme, custom_bg, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur }
+    const { id, username, display_name, avatar_url, bio, social_links, theme, custom_bg, custom_bg_type, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur, button_border_color, button_border_width, button_shadow_color } = profile
+    const dbUpdates = { display_name, avatar_url, bio, social_links, theme, custom_bg, custom_bg_type, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur, button_border_color, button_border_width, button_shadow_color }
 
     const { data: { session } } = await supabase.auth.getSession()
     if (session) {
@@ -80,8 +89,30 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
     reader.readAsDataURL(file)
   }
 
+  const handleCustomBgUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+     const file = e.target.files?.[0]
+     if (!file) return
+
+     setSaving(true)
+     const fileExt = file.name.split('.').pop()
+     const fileName = `${Math.random()}.${fileExt}`
+     const filePath = `${profile.id}/${fileName}`
+
+     const { error: uploadError, data } = await supabase.storage
+       .from('bg-assets')
+       .upload(filePath, file)
+
+     if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
+        updateProfile({ custom_bg: publicUrl, custom_bg_type: type, theme: 'custom' })
+     } else {
+        alert('Upload Error: ' + uploadError.message)
+     }
+     setSaving(false)
+  }
+
   return (
-    <div className="flex-1 flex flex-col bg-white overflow-hidden">
+    <div className="flex-1 flex flex-col bg-white overflow-hidden h-full">
       {profile?.font_family && (
         <link 
           href={`https://fonts.googleapis.com/css2?family=${profile.font_family.replace(/ /g, '+')}:wght@400;700;900&display=swap`} 
@@ -90,87 +121,89 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
       )}
 
       {/* Toolbar */}
-      <div className="h-16 px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0">
-         <h1 className="font-bold text-xl">{activeTab}</h1>
-         <div className="flex items-center gap-4">
-           {saving ? (
-             <span className="text-xs font-bold text-primary animate-pulse flex items-center gap-2">
-               <i className="fi fi-rr-cloud-upload"></i> Saving...
-             </span>
-           ) : hasChanges ? (
-             <span className="text-xs font-bold text-orange-400 flex items-center gap-2">
-               <i className="fi fi-rr-info"></i> Unsaved
-             </span>
-           ) : (
-             <span className="text-xs font-bold text-green-400 flex items-center gap-2">
-               <i className="fi fi-rr-check"></i> Saved
-             </span>
+      <div className="h-20 px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0 z-50">
+         <div className="flex flex-col">
+            <h1 className="font-extrabold text-2xl text-secondary">Design Workspace</h1>
+            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Live Customization • {activeTab}</span>
+         </div>
+         <div className="flex items-center gap-6">
+           <AnimatePresence>
+           {hasChanges && (
+             <motion.span initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-xs font-bold text-orange-500 bg-orange-50 px-4 py-2 rounded-full border border-orange-100 italic">
+                Unsaved changes detected
+             </motion.span>
            )}
+           </AnimatePresence>
            <button 
              onClick={handleSave}
              disabled={saving}
-             className={`font-black px-6 py-2 rounded-full text-sm shadow-lg transition-all ${saving ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-primary text-secondary hover:scale-105'}`}
+             className={`font-black px-10 py-3.5 rounded-full text-sm shadow-2xl transition-all ${saving ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-secondary text-white hover:shadow-primary/20 hover:scale-[1.02] active:scale-95'}`}
            >
-             Save
+             {saving ? 'Saving...' : 'Publish Changes'}
            </button>
          </div>
       </div>
 
       <div className="flex-1 flex overflow-hidden">
-        {/* Design Tab Sidebar */}
-        <div className="w-24 bg-white border-r border-gray-100 flex flex-col items-center py-8 gap-8 flex-shrink-0 overflow-y-auto no-scrollbar">
+        {/* Navigation Sidebar */}
+        <div className="w-24 bg-white border-r border-gray-50 flex flex-col items-center py-10 gap-10 flex-shrink-0 overflow-y-auto no-scrollbar">
           {TABS.map(tab => (
             <button 
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center gap-2 transition-all shrink-0 ${activeTab === tab.id ? 'text-secondary' : 'text-gray-300 hover:text-gray-400'}`}
+              className={`flex flex-col items-center gap-2 transition-all shrink-0 ${activeTab === tab.id ? 'text-secondary' : 'text-gray-300 hover:text-gray-500 hover:scale-110'}`}
             >
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${activeTab === tab.id ? 'bg-gray-50' : 'bg-transparent'}`}>
-                <i className={`fi ${tab.icon} text-lg`}></i>
+              <div className={`w-14 h-14 rounded-[22px] flex items-center justify-center transition-all ${activeTab === tab.id ? 'bg-secondary text-white shadow-xl rotate-12' : 'bg-transparent'}`}>
+                <i className={`fi ${tab.icon} text-xl`}></i>
               </div>
-              <span className={`text-[10px] font-black uppercase tracking-tighter ${activeTab === tab.id ? 'opacity-100' : 'opacity-0'}`}>{tab.id}</span>
+              <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${activeTab === tab.id ? 'opacity-100' : 'opacity-40'}`}>{tab.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Content Area */}
-        <div className="flex-1 bg-gray-50/30 p-8 overflow-hidden flex flex-col">
-          <div className="flex-1 bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden flex flex-col max-w-2xl mx-auto w-full">
-            <div className="flex-1 overflow-y-auto p-10 no-scrollbar pb-32">
-              <div className="space-y-12">
+        {/* Scrollable Container */}
+        <div className="flex-1 bg-gray-50/30 overflow-hidden relative">
+          <div className="absolute inset-0 overflow-y-auto p-12 no-scrollbar pb-40">
+            <div className="max-w-2xl mx-auto space-y-16">
             
+            <AnimatePresence mode="wait">
             {activeTab === 'Header' && (
-              <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                <h2 className="text-xl font-black">Profile Header</h2>
-                <div className="bg-gray-50/50 p-8 rounded-[40px] border border-gray-100 space-y-8">
-                  <div className="flex items-center gap-8">
-                    <div className="relative group">
-                      <div className="w-24 h-24 rounded-full bg-white overflow-hidden border-4 border-white shadow-xl cursor-pointer relative">
-                        <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.display_name || 'User'}&background=random`} className="w-full h-full object-cover" />
-                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-10" onChange={handleAvatarUpload} accept="image/*" />
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-white">
-                          <i className="fi fi-rr-camera"></i>
+              <motion.section key="header" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Identity</h2>
+                  <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Manage your profile appearances</p>
+                </div>
+
+                <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-10">
+                  <div className="flex items-center gap-12">
+                    <div className="w-32 h-32 rounded-full bg-white overflow-hidden border-[10px] border-white shadow-2xl relative group">
+                        <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.display_name || 'U'}&background=random`} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center text-white pointer-events-none">
+                           <i className="fi fi-rr-camera text-2xl"></i>
                         </div>
-                      </div>
-                    </div>
-                    <div className="flex-1 flex flex-col gap-3">
-                      <button className="w-full py-3 bg-secondary text-white font-black rounded-full text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-lg relative overflow-hidden">
-                        Pick an image
                         <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} accept="image/*" />
-                      </button>
-                      <button onClick={() => updateProfile({ avatar_url: '' })} className="w-full py-3 bg-white border-2 border-gray-100 text-secondary font-black rounded-full text-sm hover:bg-gray-50 transition-all">Remove</button>
+                    </div>
+                    <div className="flex-1 space-y-4">
+                       <h4 className="font-black text-secondary">Profile Image</h4>
+                       <p className="text-xs text-gray-400 leading-relaxed font-bold">Use a high resolution square image for the best appearance on mobile devices.</p>
+                       <div className="flex gap-3">
+                         <button className="flex-1 py-3 bg-secondary text-white rounded-2xl text-[11px] font-black uppercase tracking-widest relative">
+                            Upload Photo
+                            <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} accept="image/*" />
+                         </button>
+                         <button onClick={() => updateProfile({ avatar_url: '' })} className="flex-1 py-3 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:text-red-500 hover:border-red-100 transition-all">Remove</button>
+                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-[10px] font-black uppercase text-gray-400 mb-2 block tracking-widest pl-2">Profile Title</label>
-                      <input type="text" value={profile?.display_name || ''} onChange={(e) => updateProfile({ display_name: e.target.value })} className="w-full px-6 py-4 bg-white rounded-2xl border-2 border-transparent focus:border-primary/50 outline-none font-bold text-secondary shadow-sm transition-all" />
+                  <div className="space-y-8 pt-6">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em] pl-2">Display Name</label>
+                      <input type="text" value={profile?.display_name || ''} onChange={(e) => updateProfile({ display_name: e.target.value })} className="w-full px-8 py-5 bg-gray-50/50 rounded-[24px] border-2 border-transparent focus:border-secondary focus:bg-white outline-none font-bold text-secondary transition-all shadow-inner" />
                     </div>
-                    <div>
-                      <label className="text-[10px] font-black uppercase text-gray-400 mb-2 block tracking-widest pl-2">Bio</label>
-                      <textarea maxLength={200} value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full px-6 py-4 bg-white rounded-2xl border-2 border-transparent focus:border-primary/50 outline-none font-bold text-secondary shadow-sm transition-all h-32 resize-none" />
-                      <p className="text-right text-[10px] text-gray-400 font-bold mt-2 pr-2">{profile?.bio?.length || 0}/200</p>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em] pl-2">Biography</label>
+                      <textarea maxLength={200} value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full px-8 py-5 bg-gray-50/50 rounded-[24px] border-2 border-transparent focus:border-secondary focus:bg-white outline-none font-bold text-secondary transition-all h-40 shadow-inner resize-none" />
                     </div>
                   </div>
                 </div>
@@ -178,112 +211,170 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
             )}
 
             {activeTab === 'Theme' && (
-              <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+              <motion.section key="theme" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-12">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-black">Themes</h2>
-                  <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-3xl border border-gray-100">
-                    <i className="fi fi-rr-opacity text-gray-400"></i>
-                    <input type="range" min="0" max="20" value={profile?.bg_blur || 0} onChange={(e) => updateProfile({ bg_blur: parseInt(e.target.value) })} className="accent-primary h-1 w-24 rounded-lg cursor-pointer mt-1" />
-                  </div>
+                   <div className="space-y-2">
+                     <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Themes</h2>
+                     <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Premium curated layouts</p>
+                   </div>
+                   <div className="flex items-center gap-3 bg-white p-2 rounded-full border border-gray-100 shadow-sm">
+                      <button onClick={() => setThemeCategory('free')} className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${themeCategory === 'free' ? 'bg-secondary text-white' : 'text-gray-400'}`}>Free</button>
+                      <button onClick={() => setThemeCategory('premium')} className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${themeCategory === 'premium' ? 'bg-[#D2E823] text-secondary' : 'text-gray-400'}`}>Premium</button>
+                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 bg-gray-50/50 p-1.5 rounded-[24px] w-fit border border-gray-100">
-                  <button onClick={() => setThemeCategory('free')} className={`px-8 py-3 rounded-[18px] text-[10px] font-black uppercase tracking-widest transition-all ${themeCategory === 'free' ? 'bg-white text-secondary' : 'text-gray-400'}`}>Free</button>
-                  <button onClick={() => setThemeCategory('premium')} className={`px-8 py-3 rounded-[18px] text-[10px] font-black uppercase tracking-widest transition-all ${themeCategory === 'premium' ? 'bg-white text-secondary' : 'text-gray-400'}`}>Premium</button>
-                </div>
-
-                 <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-10">
                    {THEMES.filter(t => themeCategory === 'premium' ? t.isPremium : !t.isPremium).map((theme) => {
                      const isLocked = theme.isPremium && profile?.plan_status !== 'premium';
                      return (
                        <button 
                          key={theme.id} 
-                         onClick={() => {
-                           if (isLocked) {
-                             alert('This is a Premium Theme! Please contact the admin to unlock.');
-                             return;
-                           }
-                           updateProfile({ theme: theme.id })
-                         }} 
-                         className={`group relative flex flex-col gap-3 p-3 rounded-[32px] border-4 transition-all ${profile?.theme === theme.id ? 'border-primary bg-white' : 'border-transparent bg-gray-50/50 hover:bg-white hover:border-gray-100'}`}
+                         onClick={() => isLocked ? alert('Please contact admin to unlock premium themes.') : updateProfile({ theme: theme.id })} 
+                         className={`group relative flex flex-col gap-4 p-5 rounded-[50px] border-[6px] transition-all bg-white hover:shadow-2xl ${profile?.theme === theme.id ? 'border-secondary shadow-xl' : 'border-transparent'}`}
                        >
-                         <div className={`aspect-[9/16] w-full rounded-2xl overflow-hidden shadow-inner ${theme.bg} relative transition-all duration-300 group-hover:scale-105 ${isLocked ? 'blur-[8px] opacity-75 grayscale' : ''}`} style={{...(theme.image ? { backgroundImage: `url(${theme.image})`, backgroundSize: 'cover', backgroundPosition: 'center'} : theme.id === 'custom' ? { backgroundColor: profile?.custom_bg || '#ffffff'} : {})}}>
-                           {theme.video && <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover"><source src={theme.video} type="video/mp4" /></video>}
-                           
+                         <div className={`aspect-[9/16] w-full rounded-[36px] overflow-hidden relative shadow-inner ${theme.bg} transition-all duration-700 group-hover:scale-[1.05] ${isLocked ? 'blur-md grayscale opacity-40' : ''}`} style={{...(theme.image ? { backgroundImage: `url(${theme.image})`, backgroundSize: 'cover', backgroundPosition: 'center'} : theme.id === 'custom' ? { backgroundColor: profile?.custom_bg || '#ffffff'} : {})}}>
+                           {theme.video && <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-80 backdrop-blur-sm"><source src={theme.video} type="video/mp4" /></video>}
                            {isLocked && (
-                             <div className="absolute inset-0 bg-black/20 flex items-center justify-center z-20">
-                               <div className="w-12 h-12 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center text-white shadow-xl">
-                                 <i className="fi fi-ss-lock"></i>
+                             <div className="absolute inset-0 flex items-center justify-center z-20">
+                               <div className="w-16 h-16 bg-white/30 backdrop-blur-xl rounded-full flex items-center justify-center text-white shadow-2xl scale-125">
+                                 <i className="fi fi-ss-lock text-xl"></i>
                                </div>
                              </div>
                            )}
-
-                           <div className="flex flex-col items-center pt-8 px-4 gap-2">
-                                <div className={`w-6 h-6 rounded-full mb-1 ${theme.text.includes('white') ? 'bg-white/20' : 'bg-black/10'}`}></div>
-                                <div className={`w-full h-2.5 rounded-md ${theme.button.split(' ')[0]} opacity-80`}></div>
-                                <div className={`w-full h-2.5 rounded-md ${theme.button.split(' ')[0]} opacity-80`}></div>
+                           <div className="flex flex-col items-center pt-12 px-8 gap-4">
+                                <div className={`w-10 h-10 rounded-full mb-1 ${theme.text.includes('white') ? 'bg-white/20' : 'bg-black/10'}`}></div>
+                                <div className={`w-full h-4 rounded-full ${theme.button.split(' ')[0]} opacity-80`}></div>
+                                <div className={`w-full h-4 rounded-full ${theme.button.split(' ')[0]} opacity-80`}></div>
                            </div>
                          </div>
-                         <span className="font-extrabold text-[10px] text-center text-secondary uppercase tracking-widest mt-1 opacity-80">
-                           {theme.name} {isLocked && '🔒'}
-                         </span>
+                         <h5 className="font-black text-xs text-secondary uppercase tracking-[0.3em] text-center">{theme.name}</h5>
                        </button>
                      );
                    })}
-                 </div>
-              </motion.section>
-            )}
-
-            {activeTab === 'Text' && (
-              <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
-                <h2 className="text-xl font-black">Typography</h2>
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest pl-2">Font Style</label>
-                    <input type="text" placeholder="Search fonts..." className="w-full px-10 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-primary/50 outline-none font-bold text-secondary shadow-sm transition-all" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} />
-                    <div className="grid grid-cols-2 gap-2 mt-2 h-48 overflow-y-auto no-scrollbar bg-gray-50 p-2 rounded-2xl border border-gray-100">
-                      {FONTS.filter(f => f.toLowerCase().includes(fontSearch.toLowerCase())).map(font => (
-                        <button key={font} onClick={() => updateProfile({ font_family: font })} className={`p-4 rounded-xl text-left transition-all ${profile?.font_family === font ? 'bg-white shadow-sm border border-primary/20 scale-95' : 'hover:bg-white'}`} style={{ fontFamily: font }}>
-                          <span className="font-bold">{font}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               </motion.section>
             )}
 
             {activeTab === 'Buttons' && (
-              <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
-                <h2 className="text-xl font-black">Button Style</h2>
-                <div className="grid grid-cols-3 gap-4">
-                  {['Solid', 'Glass', 'Outline'].map(type => (
-                    <button key={type} onClick={() => updateProfile({ button_variant: type.toLowerCase() })} className={`flex flex-col items-center gap-3 p-4 rounded-3xl border-2 transition-all ${profile?.button_variant === type.toLowerCase() ? 'border-primary bg-white' : 'border-transparent bg-gray-50/50 hover:bg-white'}`}>
-                       <div className={`w-full h-12 rounded-xl border-2 ${type === 'Glass' ? 'bg-gray-100 opacity-40 border-gray-200' : type === 'Outline' ? 'bg-transparent border-slate-200' : 'bg-slate-800 border-slate-800'}`}></div>
-                       <span className="text-xs font-bold text-gray-500">{type}</span>
-                    </button>
-                  ))}
+              <motion.section key="buttons" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Buttons</h2>
+                  <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Interactive element styling</p>
+                </div>
+
+                <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-12">
+                   <div className="space-y-6">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] pl-2">Variant Style</label>
+                      <div className="grid grid-cols-3 gap-6">
+                        {['Solid', 'Glass', 'Outline'].map(type => (
+                          <button key={type} onClick={() => updateProfile({ button_variant: type.toLowerCase() })} className={`flex flex-col items-center gap-4 p-6 rounded-[36px] border-[5px] transition-all bg-gray-50/50 ${profile?.button_variant === type.toLowerCase() ? 'border-secondary bg-white shadow-xl' : 'border-transparent'}`}>
+                            <div className={`w-full h-12 rounded-xl border-2 ${type === 'Glass' ? 'bg-gray-200/40 border-gray-200' : type === 'Outline' ? 'bg-transparent border-slate-300' : 'bg-slate-800 border-slate-800'}`}></div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-secondary">{type}</span>
+                          </button>
+                        ))}
+                      </div>
+                   </div>
+
+                   <div className="space-y-6">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] pl-2">Border Settings</label>
+                      <div className="flex items-center gap-6 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100 divide-x divide-gray-200">
+                         <div className="flex-1 space-y-4 px-2">
+                            <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Color</span>
+                            <input type="color" value={profile?.button_border_color || '#000000'} onChange={(e) => updateProfile({ button_border_color: e.target.value })} className="w-full h-14 rounded-2xl cursor-pointer border-4 border-white shadow-sm" />
+                         </div>
+                         <div className="flex-1 space-y-4 px-8">
+                            <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Width ({profile?.button_border_width || 0}px)</span>
+                            <input type="range" min="0" max="10" value={profile?.button_border_width || 0} onChange={(e) => updateProfile({ button_border_width: parseInt(e.target.value) })} className="w-full accent-secondary" />
+                         </div>
+                      </div>
+                   </div>
+
+                   <div className="flex items-center justify-between p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
+                      <div className="flex flex-col">
+                        <span className="font-extrabold text-secondary">Elevation Shadow</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hard 3D Shadow Effect</span>
+                      </div>
+                      <input type="color" value={profile?.button_shadow_color || 'transparent'} onChange={(e) => updateProfile({ button_shadow_color: e.target.value })} className="w-16 h-16 rounded-[24px] cursor-pointer border-4 border-white shadow-2xl" />
+                   </div>
+                </div>
+              </motion.section>
+            )}
+
+            {activeTab === 'Fonts' && (
+              <motion.section key="fonts" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
+                 <div className="space-y-2">
+                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Typography</h2>
+                  <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Visual voice & Tone</p>
+                </div>
+
+                <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-10">
+                   <div className="relative">
+                      <i className="fi fi-rr-search absolute left-8 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                      <input type="text" placeholder="Search typography family..." className="w-full pl-20 pr-10 py-6 bg-gray-50/50 rounded-[30px] border border-transparent focus:border-secondary transition-all font-bold outline-none shadow-inner" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} />
+                   </div>
+
+                   <div className="grid grid-cols-2 gap-4 h-[440px] overflow-y-auto no-scrollbar bg-gray-50/30 p-6 rounded-[40px] border border-gray-100">
+                      {FONTS.filter(f => f.toLowerCase().includes(fontSearch.toLowerCase())).map(font => (
+                        <button key={font} onClick={() => updateProfile({ font_family: font })} className={`p-8 rounded-[28px] text-left transition-all border-4 ${profile?.font_family === font ? 'bg-secondary text-white border-secondary shadow-2xl scale-95' : 'bg-white border-transparent hover:border-gray-200 shadow-sm'}`} style={{ fontFamily: font }}>
+                          <span className="text-2xl font-black">{font}</span>
+                          <p className="text-[9px] mt-2 font-black uppercase tracking-[0.3em] opacity-60 italic">Design Preview</p>
+                        </button>
+                      ))}
+                   </div>
                 </div>
               </motion.section>
             )}
 
             {activeTab === 'Colors' && (
-              <motion.section initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                <h2 className="text-xl font-black">Colors</h2>
-                <div className="p-8 bg-gray-50/50 rounded-[40px] border border-gray-100 space-y-6">
-                     <div className="flex items-center justify-between">
-                        <span className="font-bold text-gray-400">Button Color</span>
-                        <input type="color" value={profile?.custom_button_bg || '#ffffff'} onChange={(e) => updateProfile({ custom_button_bg: e.target.value })} className="w-12 h-12 rounded-lg border-2 border-white shadow-sm cursor-pointer" />
-                     </div>
-                     <div className="flex items-center justify-between">
-                        <span className="font-bold text-gray-400">Background Color</span>
-                        <input type="color" value={profile?.custom_bg || '#ffffff'} onChange={(e) => updateProfile({ custom_bg: e.target.value, theme: 'custom' })} className="w-12 h-12 rounded-lg border-2 border-white shadow-sm cursor-pointer" />
-                     </div>
+              <motion.section key="colors" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
+                 <div className="space-y-2">
+                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Background</h2>
+                  <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Interactive Wallpaper engine</p>
+                </div>
+
+                <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-12">
+                   <div className="grid grid-cols-4 gap-4">
+                      {['color', 'gradient', 'image', 'video'].map(type => (
+                        <button key={type} onClick={() => updateProfile({ custom_bg_type: type, theme: 'custom' })} className={`flex flex-col items-center gap-3 p-6 rounded-[30px] border-[5px] transition-all capitalize font-black text-[10px] tracking-widest ${profile?.custom_bg_type === type ? 'border-secondary bg-gray-50' : 'border-transparent bg-gray-50/50'}`}>
+                           <i className={`fi ${type === 'color' ? 'fi-rr-palette' : type === 'gradient' ? 'fi-rr-kerning' : type === 'image' ? 'fi-rr-picture' : 'fi-rr-play-alt'} text-xl`}></i>
+                           {type}
+                        </button>
+                      ))}
+                   </div>
+
+                   <div className="p-10 bg-gray-50/50 rounded-[40px] border border-gray-100 space-y-10">
+                      {profile?.custom_bg_type === 'color' && (
+                         <div className="flex items-center justify-between">
+                            <div className="flex flex-col"><span className="font-black text-secondary">Solid Background</span><span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Uniform color fill</span></div>
+                            <input type="color" value={profile?.custom_bg || '#ffffff'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-20 h-20 rounded-[30px] border-[8px] border-white shadow-2xl cursor-pointer" />
+                         </div>
+                      )}
+                      {profile?.custom_bg_type === 'gradient' && (
+                         <div className="space-y-6">
+                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Preset Gradients</span>
+                            <div className="grid grid-cols-3 gap-4">
+                               {PRESET_GRADIENTS.map(grad => (
+                                 <button key={grad} onClick={() => updateProfile({ custom_bg: grad })} className="aspect-video rounded-2xl border-4 border-white shadow-lg transition-transform hover:scale-105" style={{ backgroundImage: grad }} />
+                               ))}
+                            </div>
+                         </div>
+                      )}
+                      {(profile?.custom_bg_type === 'image' || profile?.custom_bg_type === 'video') && (
+                         <div className="space-y-6">
+                            <div className="w-full aspect-video rounded-[36px] bg-white border-4 border-dashed border-gray-200 flex flex-col items-center justify-center gap-4 relative group overflow-hidden">
+                               {profile?.custom_bg && profile?.custom_bg_type === 'image' && <img src={profile.custom_bg} className="absolute inset-0 w-full h-full object-cover" />}
+                               <i className={`fi ${profile?.custom_bg_type === 'image' ? 'fi-rr-cloud-upload' : 'fi-rr-play'} text-4xl text-gray-300`}></i>
+                               <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Upload local {profile?.custom_bg_type} asset</span>
+                               <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleCustomBgUpload(e, profile?.custom_bg_type as any)} accept={profile?.custom_bg_type === 'image' ? 'image/*' : 'video/*'} />
+                            </div>
+                         </div>
+                      )}
+                   </div>
                 </div>
               </motion.section>
             )}
+            </AnimatePresence>
 
-              </div>
             </div>
           </div>
         </div>
