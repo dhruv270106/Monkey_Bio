@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import Navbar from '@/components/Navbar'
 import { TEMPLATES, TEMPLATE_CATEGORIES, Template } from '@/data/templates'
 import { THEMES, Theme } from '@/data/themes'
 import { supabase } from '@/lib/supabase'
@@ -76,7 +75,6 @@ export default function TemplatesPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Navbar />
 
       <main className="flex-1 flex flex-col pt-32 px-4 max-w-[1400px] mx-auto w-full pb-20">
         <div className="flex flex-col md:flex-row gap-12 flex-1">

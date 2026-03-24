@@ -3,8 +3,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
 import Lenis from 'lenis'
 import { ArrowLeft, ArrowRight, Zap, Target, Rocket, Users, Globe, Layers, BarChart3, Palette, ShieldCheck, Cpu, Smartphone, Layout, Share2, TrendingUp, Sparkles, MessageCircle, Instagram, Twitter, Linkedin, Check, Music, Heart, Camera, ShoppingBag } from 'lucide-react'
 
@@ -199,7 +197,6 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-white selection:bg-[#D2E823] selection:text-black">
-      <Navbar />
       
       <main className="relative z-10 antialiased font-sans">
         <CustomMosaicHero />
@@ -211,7 +208,6 @@ export default function AboutPage() {
         <FinalCTA />
       </main>
 
-      <Footer />
     </div>
   )
 }

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
-import Navbar from '@/components/Navbar'
 import { 
   Check, 
   Minus,
@@ -271,7 +270,6 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-white font-outfit">
-      <Navbar />
       
       {/* Hero Section */}
       <section className="pt-32 pb-16 px-6 max-w-7xl mx-auto text-center">

@@ -3,7 +3,6 @@
 import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import Navbar from '@/components/Navbar'
 import { ArrowLeft, Sparkles, Check, Globe, Users, Shield, Zap, Target, BookOpen, Heart, Briefcase, Mail, Scale, BarChart3, Fingerprint, Code, Cpu, ExternalLink, Calendar, Search } from 'lucide-react'
 import { useParams } from 'next/navigation'
 
@@ -23,7 +22,6 @@ export default function FooterPage() {
     ]
     return (
       <div className="min-h-screen bg-[#0A0A0B] text-white selection:bg-purple-500 selection:text-white">
-        <Navbar />
         <main className="pt-40 pb-20 px-6 md:px-12 lg:px-24">
            <div className="max-w-[1400px] mx-auto">
               <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-purple-400 hover:text-white mb-12 transition-all"><ArrowLeft className="w-4 h-4" /> Home</Link>
@@ -57,7 +55,6 @@ export default function FooterPage() {
   if (slug.includes('privacy') || slug.includes('terms') || slug.includes('cookie') || slug.includes('legal')) {
     return (
       <div className="min-h-screen bg-white text-black selection:bg-blue-600 selection:text-white">
-        <Navbar />
         <main className="pt-40 pb-20 px-6 md:px-12 lg:px-24">
            <div className="max-w-[900px] mx-auto">
               <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-600 mb-12"><ArrowLeft className="w-4 h-4" /> Home</Link>
@@ -83,7 +80,6 @@ export default function FooterPage() {
   if (slug.includes('careers')) {
     return (
       <div className="min-h-screen bg-[#D2E823] text-black">
-        <Navbar />
         <main className="pt-40 pb-0">
            <div className="px-6 md:px-12 lg:px-24 max-w-[1400px] mx-auto mb-20 text-center flex flex-col items-center">
               <h1 className="text-[clamp(60px,15vw,200px)] font-black uppercase tracking-[-0.08em] leading-[0.75] italic mb-12">Building <br /> The Jungle.</h1>
@@ -109,7 +105,6 @@ export default function FooterPage() {
   const isAbout = slug.includes('about')
   return (
     <div className="min-h-screen bg-white text-black">
-      <Navbar />
       <main className="pt-44 pb-20 px-6 md:px-12 lg:px-24">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24">
            <div>
