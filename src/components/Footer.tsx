@@ -16,7 +16,7 @@ export default function Footer() {
                    {['The Linktree Blog', 'Engineering Blog', "What's New", 'About', 'Press', 'Careers', 'Link In Bio', 'Social Good', 'Contact'].map(l => (
                       <li key={l}>
                          <Link 
-                            href={l === 'About' ? '/about' : `/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} 
+                            href={l === 'About' ? '/about' : l === 'Contact' ? '/contact' : `/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} 
                             className="text-sm font-bold text-gray-500 hover:text-black transition-colors"
                          >
                             {l}
@@ -31,7 +31,14 @@ export default function Footer() {
                 <h4 className="font-extrabold text-[15px] uppercase tracking-wider text-black">Community</h4>
                 <ul className="flex flex-col gap-4">
                    {['Linktree for Enterprise', '2023 Creator Report', '2022 Creator Report', 'Charities', 'Creator Profile Directory', 'Explore Templates'].map(l => (
-                      <li key={l}><Link href={`/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm font-bold text-gray-500 hover:text-black transition-colors">{l}</Link></li>
+                      <li key={l}>
+                        <Link 
+                           href={l === 'Explore Templates' ? '/templates' : `/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} 
+                           className="text-sm font-bold text-gray-500 hover:text-black transition-colors"
+                        >
+                           {l}
+                        </Link>
+                     </li>
                    ))}
                 </ul>
              </div>

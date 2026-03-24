@@ -1,5 +1,7 @@
 {
+  "/footer/[slug]/page": "app/footer/[slug]/page.js",
   "/page": "app/page.js",
-  "/[username]/page": "app/[username]/page.js",
-  "/pricing/page": "app/pricing/page.js"
+  "/templates/page": "app/templates/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/[username]/page": "app/[username]/page.js"
 }

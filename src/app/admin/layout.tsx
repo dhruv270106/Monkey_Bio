@@ -19,11 +19,13 @@ import {
   X,
   ChevronRight,
   TrendingUp,
-  Package
+  Package,
+  MessageSquare
 } from 'lucide-react'
 
 const navItems = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { label: 'Inbox', href: '/admin/messages', icon: MessageSquare },
   { label: 'User Management', href: '/admin/users', icon: Users },
   { label: 'Payments & Billing', href: '/admin/payments', icon: CreditCard, badge: '4' },
   { label: 'Premium Themes', href: '/admin/themes', icon: Palette },

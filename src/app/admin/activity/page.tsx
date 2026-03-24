@@ -23,7 +23,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Terminal,
-  RefreshCcw
+  RefreshCcw,
+  MessageSquare,
+  XCircle
 } from 'lucide-react'
 
 interface LogEntry {
@@ -34,6 +36,7 @@ interface LogEntry {
   ip_address?: string
   device_info?: string
   created_at: string
+  metadata?: any
   user_profiles?: {
     username: string
     display_name: string
@@ -49,10 +52,9 @@ const iconMap: Record<string, any> = {
   theme_change: Palette,
   security_alert: ShieldAlert,
   admin_action: ShieldCheck,
+  contact_message: MessageSquare,
   default: Terminal
 }
-
-import { XCircle } from 'lucide-react'
 
 const colorMap: Record<string, string> = {
   signup: 'bg-blue-500',
@@ -63,6 +65,7 @@ const colorMap: Record<string, string> = {
   theme_change: 'bg-purple-500',
   security_alert: 'bg-orange-500',
   admin_action: 'bg-indigo-500',
+  contact_message: 'bg-[#D2E823]',
   default: 'bg-slate-500'
 }
 
@@ -174,6 +177,15 @@ export default function ActivityLogs() {
                            </td>
                            <td className="px-6 py-6">
                               <p className="text-sm font-bold text-secondary max-w-sm">{log.description}</p>
+                              {log.event_type === 'contact_message' && log.metadata && (
+                                <div className="mt-4 p-4 bg-gray-50 border border-black/5 rounded-2xl flex flex-col gap-2">
+                                   <div className="flex items-center gap-2">
+                                      <span className="text-[10px] font-black uppercase text-gray-400">Subject:</span>
+                                      <span className="text-[10px] font-black uppercase text-secondary">{log.metadata.subject}</span>
+                                   </div>
+                                   <p className="text-xs font-bold text-black/60 italic">&quot;{log.metadata.message}&quot;</p>
+                                </div>
+                              )}
                            </td>
                            <td className="px-6 py-6">
                               <div className="flex flex-col gap-2">

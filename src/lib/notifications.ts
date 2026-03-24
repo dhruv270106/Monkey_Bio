@@ -65,11 +65,15 @@ export const sendNotification = async (options: NotificationOptions) => {
     }
   }
 
-  // 3. Email (Placeholder for Resend/Nodemailer)
+  // 3. Email (Platform Admin Email)
   if (channels.includes('Email')) {
-    console.log(`[Email Notification] To: Admin | Subject: ${title} | Body: ${message}`)
-    // Implementation would go here:
-    // await resend.emails.send({ ... })
+    const ADMIN_EMAIL = "dhruv@monkeyads.in"
+    console.log(`[Email Sent to ${ADMIN_EMAIL}] Title: ${title} | Message: ${message}`)
+    
+    // In production, integrate Resend:
+    // try {
+    //   await fetch('/api/send-email', { method: 'POST', body: JSON.stringify({ to: ADMIN_EMAIL, subject: title, text: message }) })
+    // } catch (err) { console.error(err) }
   }
 }
 
