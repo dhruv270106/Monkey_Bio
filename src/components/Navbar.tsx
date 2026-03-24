@@ -122,17 +122,48 @@ export default function Navbar() {
                 {/* USER DROPDOWN (DESKTOP & MOBILE) */}
                 <AnimatePresence>
                   {activeMenu === 'user' && (
-                    <motion.div initial={{ opacity: 0, y: 15, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 15, scale: 0.95 }} className="absolute right-0 mt-4 w-60 bg-white/98 backdrop-blur-3xl rounded-[32px] shadow-3xl border border-white p-2 z-[110]">
-                       <div className="px-6 py-4 border-b border-black/5 mb-1">
-                          <p className="text-[10px] font-black text-gray-400 pb-1 uppercase tracking-widest">Hey,</p>
+                    <motion.div 
+                      initial={{ opacity: 0, y: 15, scale: 0.95 }} 
+                      animate={{ opacity: 1, y: 0, scale: 1 }} 
+                      exit={{ opacity: 0, y: 15, scale: 0.95 }} 
+                      className="absolute right-0 mt-4 w-60 bg-white rounded-[32px] shadow-[0_30px_90px_rgba(0,0,0,0.2)] border border-gray-100 p-2 z-[110]"
+                    >
+                       <div className="px-6 py-5 border-b border-gray-50 mb-1">
+                          <p className="text-[10px] font-black text-gray-400 pb-1 uppercase tracking-[0.2em]">Signed in as</p>
                           <p className="text-sm font-black text-black truncate">{profile?.username || user.email}</p>
                        </div>
-                       <Link href="/dashboard" onClick={() => setActiveMenu(null)} className="flex items-center gap-3 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-black/60 hover:bg-black/5 hover:text-black">Dashboard</Link>
-                       {profile?.role === 'admin' && (
-                         <Link href="/admin" onClick={() => setActiveMenu(null)} className="flex items-center gap-3 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-linktree-purple hover:bg-linktree-purple/5 transition-colors">Admin Panel</Link>
-                       )}
-                       <div className="h-px bg-black/5 my-1 mx-4" />
-                       <button onClick={handleLogout} className="w-full text-left flex items-center gap-3 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50">Log out</button>
+                       
+                       <div className="p-1 space-y-1">
+                          <Link 
+                            href="/dashboard" 
+                            onClick={() => setActiveMenu(null)} 
+                            className="flex items-center gap-3 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-black/60 hover:bg-gray-50 hover:text-black transition-all"
+                          >
+                            <i className="fi fi-rr-apps text-base"></i>
+                            Dashboard
+                          </Link>
+
+                          {profile?.role?.toLowerCase() === 'admin' && (
+                            <Link 
+                              href="/admin" 
+                              onClick={() => setActiveMenu(null)} 
+                              className="flex items-center gap-3 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-[#9c27b0] bg-purple-50 hover:bg-purple-100 transition-all"
+                            >
+                               <i className="fi fi-ss-shield-check text-base"></i>
+                               Admin Panel
+                            </Link>
+                          )}
+
+                          <div className="h-px bg-gray-50 my-2 mx-4" />
+                          
+                          <button 
+                            onClick={handleLogout} 
+                            className="w-full text-left flex items-center gap-3 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 transition-all"
+                          >
+                             <i className="fi fi-rr-exit text-base"></i>
+                             Log out
+                          </button>
+                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
