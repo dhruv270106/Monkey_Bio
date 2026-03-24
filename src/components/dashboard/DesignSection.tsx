@@ -199,7 +199,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-white overflow-hidden h-full">
+    <div className="flex-1 flex flex-col bg-white overflow-hidden h-full pt-28 md:pt-36">
       {profile?.font_family && (
         <link 
           href={`https://fonts.googleapis.com/css2?family=${profile.font_family.replace(/ /g, '+')}:wght@400;700;900&display=swap`} 
@@ -208,7 +208,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
       )}
 
       {/* Toolbar */}
-      <div className="h-20 px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0 z-50">
+      <div className="px-8 py-6 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0 z-50">
          <div className="flex flex-col">
             <h1 className="font-extrabold text-2xl text-secondary">Design Workspace</h1>
             <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Live Customization • {activeTab}</span>
