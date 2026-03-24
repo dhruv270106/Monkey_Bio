@@ -241,20 +241,20 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
             <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Live Customization • {activeTab}</span>
          </div>
          <div className="flex items-center gap-6">
-           <AnimatePresence>
-           {hasChanges && (
-             <motion.span initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-xs font-bold text-orange-500 bg-orange-50 px-4 py-2 rounded-full border border-orange-100 italic">
-                Unsaved changes detected
-             </motion.span>
-           )}
-           </AnimatePresence>
-           <button 
-             onClick={handleSave}
-             disabled={saving}
-             className={`font-black px-10 py-3.5 rounded-full text-sm shadow-2xl transition-all ${saving ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-secondary text-white hover:shadow-primary/20 hover:scale-[1.02] active:scale-95'}`}
-           >
-             {saving ? 'Saving...' : 'Publish Changes'}
-           </button>
+            <AnimatePresence>
+            {hasChanges && (
+              <motion.span initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-xs font-bold text-orange-500 bg-orange-50 px-4 py-2 rounded-full border border-orange-100 italic">
+                 Unsaved changes detected
+              </motion.span>
+            )}
+            </AnimatePresence>
+            <button 
+              onClick={handleSave}
+              disabled={saving}
+              className={`font-black px-10 py-3.5 rounded-full text-sm shadow-2xl transition-all ${saving ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-secondary text-white hover:shadow-primary/20 hover:scale-[1.02] active:scale-95'}`}
+            >
+              {saving ? 'Saving...' : 'Publish Changes'}
+            </button>
          </div>
       </div>
 
@@ -343,10 +343,20 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                      return (
                        <button 
                          key={theme.id} 
-                         onClick={() => isLocked ? alert('Please contact admin to unlock premium themes.') : updateProfile({ theme: theme.id })} 
+                         onClick={() => {
+                           if (isLocked) {
+                             alert('Please contact admin to unlock premium themes.')
+                             return
+                           }
+                           updateProfile({ theme: theme.id })
+                           if (theme.id === 'custom') setActiveTab('Colors')
+                         }} 
                          className={`group relative flex flex-col gap-4 p-5 rounded-[50px] border-[6px] transition-all bg-white hover:shadow-2xl ${profile?.theme === theme.id ? 'border-secondary shadow-xl' : 'border-transparent'}`}
                        >
-                         <div className={`aspect-[9/16] w-full rounded-[36px] overflow-hidden relative shadow-inner ${theme.bg} transition-all duration-700 group-hover:scale-[1.05] ${isLocked ? 'blur-md grayscale opacity-40' : ''}`} style={{...(theme.image ? { backgroundImage: `url(${theme.image})`, backgroundSize: 'cover', backgroundPosition: 'center'} : theme.id === 'custom' ? { backgroundColor: profile?.custom_bg || '#ffffff'} : {})}}>
+                         <div className={`aspect-[9/16] w-full rounded-[36px] overflow-hidden relative shadow-inner ${theme.bg} transition-all duration-700 group-hover:scale-[1.05] ${isLocked ? 'blur-md grayscale opacity-40' : ''}`} style={{...(theme.image ? { backgroundImage: `url(${theme.image})`, backgroundSize: 'cover', backgroundPosition: 'center'} : theme.id === 'custom' ? { background: profile?.custom_bg_type === 'gradient' ? profile.custom_bg : (profile?.custom_bg || '#ffffff')} : {})}}>
+                           {theme.id === 'custom' && (
+                             <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                           )}
                            {theme.video && <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-80 backdrop-blur-sm"><source src={theme.video} type="video/mp4" /></video>}
                            {isLocked && (
                              <div className="absolute inset-0 flex items-center justify-center z-20">
@@ -355,7 +365,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                                </div>
                              </div>
                            )}
-                           <div className="flex flex-col items-center pt-12 px-8 gap-4">
+                           <div className="flex flex-col items-center pt-12 px-8 gap-4 relative z-10">
                                 <div className={`w-10 h-10 rounded-full mb-1 ${theme.text.includes('white') ? 'bg-white/20' : 'bg-black/10'}`}></div>
                                 <div className={`w-full h-4 rounded-full ${theme.button.split(' ')[0]} opacity-80`}></div>
                                 <div className={`w-full h-4 rounded-full ${theme.button.split(' ')[0]} opacity-80`}></div>
@@ -533,7 +543,26 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                         </motion.div>
                       )}
 
-                      {profile?.custom_bg_type === 'pattern' && (
+                       {profile?.custom_bg_type === 'blur' && (
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-8 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
+                           <div className="space-y-6">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Atmospheric Hue</span>
+                              <div className="flex items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-inner">
+                                 <input type="text" value={profile?.custom_bg || '#E0E7FF'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="flex-1 bg-transparent border-none outline-none font-bold text-secondary text-lg" />
+                                 <input type="color" value={profile?.custom_bg || '#E0E7FF'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-12 h-12 rounded-full border-4 border-white shadow-lg cursor-pointer" />
+                              </div>
+                           </div>
+                           <div className="space-y-6">
+                              <div className="flex justify-between items-end">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Diffusion Level</span>
+                                <span className="text-xl font-black text-secondary italic">{profile?.bg_blur || 40}px</span>
+                              </div>
+                              <input type="range" min="10" max="100" value={profile?.bg_blur || 40} onChange={(e) => updateProfile({ bg_blur: parseInt(e.target.value) })} className="w-full h-2 bg-white rounded-full appearance-none cursor-pointer accent-secondary" />
+                           </div>
+                        </motion.div>
+                       )}
+
+                       {profile?.custom_bg_type === 'pattern' && (
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
                            <div className="space-y-6">
                               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Background Color</span>
