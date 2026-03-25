@@ -198,29 +198,31 @@ function DashboardContent() {
              )}
            </AnimatePresence>
 
-           {/* MAIN BOTTOM BAR */}
-           <div className="bg-white/95 backdrop-blur-xl border-t border-gray-100 flex items-center justify-around py-4 px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] relative z-[160]">
-              {NAV_GROUPS.map(group => {
-                const isItemInGroupActive = group.items.some(i => i.id === activeTab)
-                const isGroupOpen = openGroup === group.id
+           {/* MAIN BOTTOM BAR - HIDE IF IN DESIGN TAB */}
+           {!activeTab?.includes('design') && (
+            <div className="bg-white/95 backdrop-blur-xl border-t border-gray-100 flex items-center justify-around py-4 px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] relative z-[160]">
+                {NAV_GROUPS.map(group => {
+                  const isItemInGroupActive = group.items.some(i => i.id === activeTab)
+                  const isGroupOpen = openGroup === group.id
 
-                return (
-                  <button
-                    key={group.id}
-                    onClick={() => setOpenGroup(isGroupOpen ? null : group.id)}
-                    className={`flex flex-col items-center gap-1.5 transition-all relative ${isItemInGroupActive ? 'text-primary' : 'text-gray-300'}`}
-                  >
-                    <div className={`w-14 h-12 rounded-[22px] flex items-center justify-center transition-all ${isItemInGroupActive ? 'bg-primary/10' : ''}`}>
-                       <i className={`fi ${group.icon} text-xl md:text-2xl`}></i>
-                    </div>
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">{group.label}</span>
-                    {isItemInGroupActive && !isGroupOpen && (
-                      <motion.div layoutId="active-dot" className="absolute -top-1 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_10px_#502274]" />
-                    )}
-                  </button>
-                )
-              })}
-           </div>
+                  return (
+                    <button
+                      key={group.id}
+                      onClick={() => setOpenGroup(isGroupOpen ? null : group.id)}
+                      className={`flex flex-col items-center gap-1.5 transition-all relative ${isItemInGroupActive ? 'text-primary' : 'text-gray-300'}`}
+                    >
+                      <div className={`w-14 h-12 rounded-[22px] flex items-center justify-center transition-all ${isItemInGroupActive ? 'bg-primary/10' : ''}`}>
+                        <i className={`fi ${group.icon} text-xl md:text-2xl`}></i>
+                      </div>
+                      <span className="text-[9px] font-black uppercase tracking-[0.2em]">{group.label}</span>
+                      {isItemInGroupActive && !isGroupOpen && (
+                        <motion.div layoutId="active-dot" className="absolute -top-1 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_10px_#502274]" />
+                      )}
+                    </button>
+                  )
+                })}
+            </div>
+           )}
         </div>
 
         <Preview userProfile={profile} links={links} socialLinks={profile?.social_links} />
