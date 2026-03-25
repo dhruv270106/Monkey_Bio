@@ -137,9 +137,9 @@ function DashboardContent() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col pt-0 overflow-x-hidden">
+    <div className="h-screen bg-white flex flex-col overflow-hidden">
       {/* Top Banner */}
-      <div className="bg-[#1e293b] text-white py-2 px-4 md:px-8 flex justify-center items-center gap-4 text-xs md:text-sm font-medium sticky top-0 z-[160]">
+      <div className="bg-[#1e293b] text-white py-2 px-4 md:px-8 flex justify-center items-center gap-4 text-xs md:text-sm font-medium shrink-0 z-[160]">
           <span className="truncate text-center">Unlock more tools to grow your audience faster.</span>
           <button className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 px-3 py-1 rounded-full flex items-center gap-2 transition-all shrink-0">
               <i className="fi fi-rr-bolt text-xs"></i> <span>Claim week</span>
@@ -159,11 +159,11 @@ function DashboardContent() {
         </div>
       )}
 
-      <div className="flex-1 flex relative overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
         <Sidebar userProfile={profile} activeTab={activeTab} onTabChange={handleTabChange} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-        <main className="flex-1 flex flex-col bg-white overflow-x-hidden overflow-y-auto pb-32 md:pb-0 min-w-0">
-          <div className="w-full">
+        <main className="flex-1 overflow-hidden min-w-0 bg-white">
+          <div className="w-full h-full flex flex-col overflow-hidden">
             {renderSection()}
           </div>
         </main>

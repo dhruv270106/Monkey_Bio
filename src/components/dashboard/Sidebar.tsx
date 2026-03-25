@@ -263,7 +263,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className="w-64 bg-[#f8fafc] border-r border-gray-100 hidden md:flex flex-col flex-shrink-0 relative h-screen sticky top-32 overflow-hidden">
+      <aside className="w-64 bg-[#f8fafc] border-r border-gray-100 hidden md:flex flex-col flex-shrink-0 relative h-full overflow-hidden">
         <SidebarContent />
       </aside>
     </>

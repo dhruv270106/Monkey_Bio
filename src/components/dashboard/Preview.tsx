@@ -110,7 +110,7 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
   }
 
   return (
-    <aside className="w-[480px] bg-white border-l border-gray-100 hidden lg:flex flex-col items-center flex-shrink-0 relative h-screen sticky top-0 overflow-hidden">
+    <aside className="w-[480px] bg-white border-l border-gray-100 hidden lg:flex flex-col items-center flex-shrink-0 relative h-full overflow-hidden">
       {/* Dynamic Font Loader */}
       {userProfile?.font_family && (
         <link 
