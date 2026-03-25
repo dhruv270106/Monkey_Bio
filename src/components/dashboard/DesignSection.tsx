@@ -87,7 +87,6 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
        }
        reader.readAsDataURL(file)
     } else {
-       // Video upload logic
        const fileName = `bg-video-${Date.now()}.mp4`
        const filePath = `${profile.id}/${fileName}`
        const { error: uploadError } = await supabase.storage.from('bg-assets').upload(filePath, file, { upsert: true })
@@ -121,6 +120,8 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
     { id: 'style', icon: 'fi-rr-swatches', label: 'Style', isIcon: true },
   ]
 
+  const currentTheme = THEMES.find(t => t.id === profile?.theme) || THEMES[0]
+
   const renderSheetContent = () => {
     switch (activeSheet) {
       case 'theme':
@@ -146,7 +147,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                       </div>
                    </button>
                    {THEMES.filter(t => (themeTab === 'premium' ? t.isPremium : !t.isPremium)).map(theme => (
-                     <button key={theme.id} onClick={() => updateProfile({ theme: theme.id })} className="flex flex-col items-center gap-2 group">
+                     <button key={theme.id} onClick={() => updateProfile({ theme: theme.id, custom_bg_type: '' })} className="flex flex-col items-center gap-2 group">
                         <div className={`aspect-[3/4] w-full rounded-[24px] overflow-hidden border-2 transition-all relative ${profile?.theme === theme.id ? 'border-secondary' : 'border-transparent'} ${theme.bg}`}>
                            {theme.image && <img src={theme.image} className="w-full h-full object-cover" />}
                            <div className="absolute inset-0 flex items-center justify-center">
@@ -187,7 +188,6 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
       case 'wallpaper':
         return (
           <div className="flex flex-col h-[550px]">
-             {/* Types Toolbar */}
              <div className="grid grid-cols-5 gap-2 mb-6 shrink-0">
                 {[
                   { id: 'color', label: 'Color', icon: 'fi-rr-palette' },
@@ -209,7 +209,6 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                 ))}
              </div>
              
-             {/* Content Area */}
              <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
                 {profile?.custom_bg_type === 'color' && (
                   <div className="space-y-6">
@@ -223,6 +222,10 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                              style={{ backgroundColor: c }} 
                           />
                         ))}
+                        <div className="relative w-full aspect-square rounded-full border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden">
+                           <i className="fi fi-rr-plus text-gray-300"></i>
+                           <input type="color" value={pendingColor} onChange={(e) => setPendingColor(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer" />
+                        </div>
                      </div>
                      <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-3xl">
                         <div className="w-14 h-14 rounded-2xl shadow-inner border border-white" style={{ backgroundColor: pendingColor }} />
@@ -244,9 +247,6 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                           className={`w-full aspect-video rounded-2xl border-2 transition-all relative overflow-hidden ${profile?.custom_bg === g ? 'border-secondary' : 'border-transparent shadow-sm'}`} 
                         >
                            <div className="absolute inset-0" style={{ backgroundImage: g }} />
-                           <div className="absolute inset-0 flex items-center justify-center bg-black/5 opacity-0 hover:opacity-100 transition-opacity">
-                              <i className="fi fi-rr-check text-white"></i>
-                           </div>
                         </button>
                       ))}
                    </div>
@@ -260,10 +260,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                           onClick={() => updateProfile({ custom_bg_pattern: p.id, custom_bg_type: 'pattern', theme: 'custom', custom_bg: '#6A373A' })} 
                           className={`w-full aspect-video rounded-2xl border-2 transition-all relative overflow-hidden bg-gray-50 ${profile?.custom_bg_pattern === p.id ? 'border-secondary' : 'border-transparent shadow-sm'}`} 
                         >
-                           <div 
-                              className="absolute inset-0 opacity-20" 
-                              style={{ backgroundImage: p.css, backgroundSize: p.size }} 
-                           />
+                           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: p.css, backgroundSize: p.size }} />
                            <span className="relative z-10 text-[9px] font-black uppercase text-gray-400">{p.id}</span>
                         </button>
                       ))}
@@ -275,10 +272,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                      <div className="w-16 h-16 rounded-3xl bg-white shadow-xl flex items-center justify-center text-secondary">
                         <i className="fi fi-rr-picture text-3xl"></i>
                      </div>
-                     <div>
-                        <p className="font-black text-secondary text-sm">Pick an Image</p>
-                        <p className="text-[10px] font-bold text-gray-300">JPG, PNG or WEBP up to 5MB</p>
-                     </div>
+                     <p className="font-black text-secondary text-sm">Pick an Image</p>
                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleCustomBgUpload(e, 'image')} />
                   </div>
                 )}
@@ -288,10 +282,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                      <div className="w-16 h-16 rounded-3xl bg-white shadow-xl flex items-center justify-center text-primary">
                         <i className="fi fi-rr-play-alt text-3xl"></i>
                      </div>
-                     <div>
-                        <p className="font-black text-secondary text-sm">Upload Video</p>
-                        <p className="text-[10px] font-bold text-gray-300">MP4 recommended (Max 20MB)</p>
-                     </div>
+                     <p className="font-black text-secondary text-sm">Upload Video</p>
                      <input type="file" accept="video/mp4" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleCustomBgUpload(e, 'video')} />
                   </div>
                 )}
@@ -335,14 +326,14 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                 )}
                 {activeSubTab === 'Colors' && (
                   <div className="p-6 bg-gray-50 rounded-[32px] space-y-8">
-                     <div className="flex items-center justify-between">
+                     <div className="flex items-center justify-between font-inter">
                         <div>
                            <p className="text-[10px] font-black uppercase text-secondary">Main Text</p>
                            <p className="text-[9px] font-bold text-gray-400 mt-0.5">Title and username color</p>
                         </div>
                         <input type="color" value={profile?.font_color || '#000000'} onChange={(e) => updateProfile({ font_color: e.target.value })} className="w-12 h-12 rounded-full cursor-pointer shadow-lg border-2 border-white" />
                      </div>
-                     <div className="flex items-center justify-between">
+                     <div className="flex items-center justify-between font-inter">
                         <div>
                            <p className="text-[10px] font-black uppercase text-secondary">Button Background</p>
                            <p className="text-[9px] font-bold text-gray-400 mt-0.5">Override theme button color</p>
@@ -376,14 +367,15 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                className="w-full max-w-[320px] aspect-[9/18] rounded-[52px] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.12)] border-[10px] border-[#020617] bg-white pointer-events-none relative"
             >
-               <div className="w-full h-full overflow-hidden flex flex-col">
+               <div className="w-full h-full overflow-hidden flex flex-col transition-all duration-700">
                   <div 
-                    className={`absolute inset-0 z-0 ${(THEMES.find(t=>t.id===profile?.theme)||THEMES[0])?.bg} transition-all duration-700`}
+                    className={`absolute inset-0 z-0 ${currentTheme.bg} transition-all duration-700`}
                     style={{
                       ...(profile?.custom_bg_type === 'color' ? { backgroundColor: profile.custom_bg } : {}),
                       ...(profile?.custom_bg_type === 'gradient' ? { backgroundImage: profile.custom_bg } : {}),
-                      ...(profile?.custom_bg_type === 'pattern' ? { backgroundImage: (PATTERNS.find(p=>p.id===profile?.custom_bg_pattern)||PATTERNS[0]).css, backgroundSize: (PATTERNS.find(p=>p.id===profile?.custom_bg_pattern)||PATTERNS[0]).size } : {}),
+                      ...(profile?.custom_bg_type === 'pattern' ? { backgroundImage: (PATTERNS.find(p=>p.id===profile?.custom_bg_pattern)||PATTERNS[0]).css, backgroundSize: (PATTERNS.find(p=>p.id===profile?.custom_bg_pattern)||PATTERNS[0]).size, backgroundColor: profile?.custom_bg } : {}),
                       ...(profile?.custom_bg_type === 'image' ? { backgroundImage: `url(${profile.custom_bg})`, backgroundSize: 'cover' } : {}),
+                      ...(profile?.theme !== 'custom' && !currentTheme.image ? {} : currentTheme.image ? { backgroundImage: `url(${currentTheme.image})`, backgroundSize: 'cover' } : {})
                     }}
                   >
                      {profile?.custom_bg_type === 'video' && (
@@ -416,29 +408,21 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
 
          <AnimatePresence>
             {activeSheet && (
-               <motion.div 
-                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                 onClick={() => setActiveSheet(null)}
-                 className="fixed inset-0 bg-black/40 z-[150]"
-               />
+               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActiveSheet(null)} className="fixed inset-0 bg-black/40 z-[150]" />
             )}
          </AnimatePresence>
 
          <AnimatePresence>
             {activeSheet && (
-               <motion.div 
-                 initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                 className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[40px] px-6 pt-2 pb-24 z-[180] shadow-[0_-20px_60px_rgba(0,0,0,0.2)] max-h-[85vh] flex flex-col"
-               >
+               <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[40px] px-6 pt-2 pb-24 z-[180] shadow-[0_-20px_60px_rgba(0,0,0,0.2)] max-h-[85vh] flex flex-col">
                   <div className="w-12 h-1.5 bg-gray-100 rounded-full mx-auto mb-6 shrink-0" />
-                  <div className="flex items-center justify-between mb-4 shrink-0">
+                  <div className="flex items-center justify-between mb-4 shrink-0 px-2 space-x-1">
                      <h3 className="font-black text-xl uppercase tracking-tighter text-secondary">{activeSheet}</h3>
                      <button onClick={() => setActiveSheet(null)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-secondary border border-gray-100 active:scale-90 transition-transform">
                         <i className="fi fi-rr-cross-small text-xl pt-0.5"></i>
                      </button>
                   </div>
-                  <div className="flex-1 overflow-hidden">
+                  <div className="flex-1 overflow-hidden px-2">
                     {renderSheetContent()}
                   </div>
                </motion.div>
@@ -447,20 +431,9 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
 
          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around py-4 px-6 z-[170] shadow-[0_-10px_40px_rgba(0,0,0,0.08)] pb-safe">
             {NAV_ITEMS.map(item => (
-              <button 
-                key={item.id}
-                onClick={() => {
-                   setActiveSheet(item.id)
-                   if (item.id === 'style') setActiveSubTab('Text')
-                }}
-                className={`flex flex-col items-center gap-1.5 transition-all outline-none ${activeSheet === item.id ? 'text-secondary' : 'text-gray-300'}`}
-              >
+              <button key={item.id} onClick={() => { setActiveSheet(item.id); if (item.id === 'style') setActiveSubTab('Text') }} className={`flex flex-col items-center gap-1.5 transition-all outline-none ${activeSheet === item.id ? 'text-secondary' : 'text-gray-300'}`}>
                  <div className={`w-14 h-11 rounded-[20px] flex items-center justify-center transition-all ${activeSheet === item.id ? 'bg-gray-100/80 scale-105' : ''}`}>
-                    {item.isIcon ? (
-                      <i className={`fi ${item.icon} text-lg`}></i>
-                    ) : (
-                      <span className="font-black text-lg">{item.icon}</span>
-                    )}
+                    {item.isIcon ? <i className={`fi ${item.icon} text-lg`}></i> : <span className="font-black text-lg">{item.icon}</span>}
                  </div>
                  <span className="text-[10px] font-black uppercase tracking-tight">{item.label}</span>
               </button>
