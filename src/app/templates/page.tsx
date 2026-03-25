@@ -399,43 +399,79 @@ export default function TemplatesPage() {
         </div>
       </section>
 
-      {/* --- TESTIMONIALS --- */}
-      <section className="py-24 md:py-32 bg-[#0c0f0f] text-white px-6 relative overflow-hidden">
+      {/* --- TESTIMONIALS CAROUSEL --- */}
+      <section className="py-24 md:py-32 bg-[#0c0f0f] text-white overflow-hidden relative">
         <div className="absolute top-0 left-0 w-96 h-96 bg-[#576100]/20 rounded-full blur-[120px] -ml-40 -mt-40" />
-        <div className="max-w-7xl mx-auto relative z-10 text-center">
-          <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-20 uppercase">What Creators Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
-            {[
-              {
-                name: "Elena Rodriguez",
-                role: "Digital Artist",
-                text: "Monkey Bio changed how I monetize my content. The premium templates are editorial-grade and stunning."
-              },
-              {
-                name: "Alex Rivera",
-                role: "Growth Coach",
-                text: "Finally a tool that understands the creator journey. I setup my business link in under 2 minutes."
-              }
-            ].map((t, i) => (
-              <motion.div 
-                key={i}
-                variants={fadeIn}
-                className="p-12 bg-white/5 rounded-[3rem] border border-white/10 backdrop-blur-md relative group hover:bg-white/10 transition-colors"
-              >
-                <p className="text-2xl font-medium text-white/90 leading-relaxed mb-8 italic">
-                    "{t.text}"
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-500">
-                    <img src={`https://i.pravatar.cc/150?u=${t.name}`} alt={t.name} />
-                  </div>
-                  <div>
-                    <p className="font-black uppercase tracking-tighter text-[#d8ef2c]">{t.name}</p>
-                    <p className="text-xs font-bold uppercase tracking-widest text-white/40">{t.role}</p>
+        <div className="max-w-[1600px] mx-auto relative z-10">
+          <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-20 uppercase text-center">What Creators Say</h2>
+          
+          <div className="relative">
+            <motion.div 
+              initial={{ x: 0 }}
+              animate={{ x: "-50%" }}
+              transition={{ 
+                duration: 30, 
+                repeat: Infinity, 
+                ease: "linear" 
+              }}
+              className="flex gap-8 w-fit"
+            >
+              {[
+                {
+                  name: "Elena Rodriguez",
+                  role: "Digital Artist",
+                  text: "Monkey Bio changed how I monetize my content. The premium templates are editorial-grade and stunning."
+                },
+                {
+                  name: "Alex Rivera",
+                  role: "Growth Coach",
+                  text: "Finally a tool that understands the creator journey. I setup my business link in under 2 minutes."
+                },
+                {
+                  name: "Sarah Jenkins",
+                  role: "Content Creator",
+                  text: "The easiest way to bridge all my social platforms. The design flexibility is unlike any other link-in-bio tool."
+                }
+              ].concat([
+                {
+                  name: "Elena Rodriguez",
+                  role: "Digital Artist",
+                  text: "Monkey Bio changed how I monetize my content. The premium templates are editorial-grade and stunning."
+                },
+                {
+                  name: "Alex Rivera",
+                  role: "Growth Coach",
+                  text: "Finally a tool that understands the creator journey. I setup my business link in under 2 minutes."
+                },
+                {
+                  name: "Sarah Jenkins",
+                  role: "Content Creator",
+                  text: "The easiest way to bridge all my social platforms. The design flexibility is unlike any other link-in-bio tool."
+                }
+              ]).map((t, i) => (
+                <div 
+                  key={i}
+                  className="w-[85vw] md:w-[calc(33.333% - 21.33px)] min-w-[320px] md:min-w-[400px] p-8 md:p-12 bg-white/5 rounded-[3rem] border border-white/10 backdrop-blur-md relative group hover:bg-white/10 transition-colors shrink-0"
+                >
+                  <p className="text-xl md:text-2xl font-medium text-white/90 leading-relaxed mb-8 italic">
+                      "{t.text}"
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-500 shadow-xl">
+                      <img src={`https://i.pravatar.cc/150?u=${t.name}`} alt={t.name} />
+                    </div>
+                    <div>
+                      <p className="font-black uppercase tracking-tighter text-[#d8ef2c]">{t.name}</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-white/40">{t.role}</p>
+                    </div>
                   </div>
                 </div>
-              </motion.div>
-            ))}
+              ))}
+            </motion.div>
+            
+            {/* Fade Gradients */}
+            <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#0c0f0f] to-transparent z-20 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#0c0f0f] to-transparent z-20 pointer-events-none" />
           </div>
         </div>
       </section>

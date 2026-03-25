@@ -103,18 +103,18 @@ export default function Home() {
       
       <main className="relative flex flex-col">
         
-        {/* HERO SECTION - RESTORED FULL HEIGHT */}
-        <section id="hero" className="relative h-screen lg:h-screen min-h-[850px] lg:min-h-[800px] bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-6 md:px-12 lg:px-24 overflow-hidden flex flex-col items-center justify-center pt-20 lg:pt-40">
-           <div className="max-w-[1400px] mx-auto w-full h-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] items-center gap-12 relative z-20">
-              <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 md:gap-10 z-30 relative pb-10">
+        {/* HERO SECTION - COMPACT MOBILE OPTIMIZED */}
+        <section id="hero" className="relative h-screen lg:h-screen min-h-[850px] lg:min-h-[800px] bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-6 md:px-12 lg:px-24 overflow-hidden flex flex-col items-center justify-start pt-24 lg:pt-40 lg:justify-center">
+           <div className="max-w-[1400px] mx-auto w-full h-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] items-start lg:items-center gap-4 lg:gap-12 relative z-20">
+              <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-2 md:gap-10 z-30 relative pt-4 lg:pt-0">
                 <Reveal delay={0.05} width="100%">
-                  <h1 className="text-[clamp(44px,9vw,100px)] font-black leading-tight lg:leading-[0.85] tracking-[-0.07em] uppercase pb-4">
+                  <h1 className="text-[clamp(44px,9vw,100px)] font-black leading-[0.9] lg:leading-[0.85] tracking-[-0.07em] uppercase pb-1">
                     Everything <br /> You Are. <br /> One Link.
                   </h1>
                 </Reveal>
                 
                 <Reveal delay={0.15} width="100%">
-                  <p className="text-xl md:text-2xl font-bold tracking-tight opacity-70 max-w-xl leading-relaxed uppercase">
+                  <p className="text-lg md:text-2xl font-bold tracking-tight opacity-70 max-w-xl leading-relaxed uppercase mb-2">
                     The original link in bio, trusted by <span className="relative inline-block px-1">40M+<span className="absolute left-0 bottom-0 w-full h-1 bg-[#502274] blur-[2px] opacity-20" /></span> creators.
                   </p>
                 </Reveal>
@@ -122,7 +122,7 @@ export default function Home() {
                 <div className="flex flex-col gap-4 w-full max-w-[600px] mt-2">
                   <div className={`relative transition-all duration-700 ${isClaimed ? 'scale-95 opacity-50 pointer-events-none' : 'scale-100'}`}>
                     <div className="absolute inset-0 bg-white/40 blur-3xl rounded-full" />
-                    <div className="relative flex flex-col sm:flex-row items-center gap-3 bg-white/95 backdrop-blur-3xl p-2 sm:p-3 pl-6 sm:pl-8 rounded-[30px] sm:rounded-[40px] shadow-[0_30px_80px_rgba(0,0,0,0.12)] border border-white">
+                    <div className="relative flex flex-col sm:flex-row items-center gap-3 bg-white/95 backdrop-blur-3xl p-2 sm:p-3 pl-6 sm:pl-8 rounded-[32px] sm:rounded-[40px] shadow-[0_30px_80px_rgba(0,0,0,0.12)] border border-white">
                       <span className="text-lg sm:text-xl font-black text-black/30">linktr.ee/</span>
                       <input 
                         type="text" 
@@ -135,7 +135,7 @@ export default function Home() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => username && setIsClaimed(true)}
-                        className="w-full sm:w-auto bg-[#422066] text-white px-8 py-5 sm:px-10 sm:py-6 rounded-[24px] sm:rounded-[32px] font-black text-lg sm:text-xl hover:bg-black transition-all shadow-2xl uppercase tracking-tighter whitespace-nowrap leading-none min-w-[160px] sm:min-w-[200px]"
+                        className="w-full sm:w-auto bg-[#422066] text-white px-8 py-4 sm:px-10 sm:py-6 rounded-[24px] sm:rounded-[32px] font-black text-lg sm:text-xl hover:bg-black transition-all shadow-2xl uppercase tracking-tighter whitespace-nowrap leading-none min-w-[160px] sm:min-w-[200px]"
                       >
                         Claim Yours
                       </motion.button>
@@ -143,13 +143,13 @@ export default function Home() {
                   </div>
                   
                   {isClaimed && (
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 bg-white text-green-600 px-8 py-4 rounded-3xl font-black text-sm uppercase self-center sm:self-start shadow-xl border border-green-50">
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 bg-white text-green-600 px-8 py-4 rounded-3xl font-black text-sm uppercase self-center sm:self-start shadow-xl border border-green-50">
                        <Check className="w-5 h-5" /> Username {username} reserved!
                     </motion.div>
                   )}
                 </div>
-                {/* HERO SCROLL MOBILE - BROUGHT CLOSER TO INPUT */}
-                <div className="block lg:hidden w-full mt-2 pb-24 overflow-visible relative">
+                {/* HERO SCROLL MOBILE - BROUGHT EVEN CLOSER */}
+                <div className="block lg:hidden w-full mt-4 pb-10 overflow-visible relative">
                    <HeroScroll />
                 </div>
               </div>
