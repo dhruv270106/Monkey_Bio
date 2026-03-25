@@ -16,7 +16,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 const NAV_GROUPS = [
   {
     id: 'linktree',
-    label: 'Linktree',
+    label: 'My Linktree',
     icon: 'fi-rr-link',
     items: [
       { id: 'links', label: 'Links', icon: 'fi-rr-link', color: 'text-purple-500' },
@@ -25,10 +25,10 @@ const NAV_GROUPS = [
   },
   {
     id: 'analytics',
-    label: 'Stats',
+    label: 'Analytics',
     icon: 'fi-rr-stats',
     items: [
-      { id: 'audience', label: 'Fans', icon: 'fi-rr-users', color: 'text-orange-500' },
+      { id: 'audience', label: 'Audience', icon: 'fi-rr-users', color: 'text-orange-500' },
       { id: 'insights', label: 'Insights', icon: 'fi-rr-stats', color: 'text-cyan-500' },
     ]
   },
@@ -37,8 +37,8 @@ const NAV_GROUPS = [
     label: 'Tools',
     icon: 'fi-rr-apps',
     items: [
-      { id: 'planner', label: 'Plan', icon: 'fi-rr-calendar', color: 'text-blue-500' },
-      { id: 'autoreply', label: 'Reply', icon: 'fi-rr-comment-alt', color: 'text-primary' },
+      { id: 'planner', label: 'Social planner', icon: 'fi-rr-calendar', color: 'text-blue-500' },
+      { id: 'autoreply', label: 'Auto-reply', icon: 'fi-rr-comment-alt', color: 'text-primary' },
     ]
   }
 ]
