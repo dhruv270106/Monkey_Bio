@@ -279,7 +279,7 @@ export default function TemplatesPage() {
               initial={{ scale: 0.9, y: 30, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
               exit={{ scale: 0.9, y: 30, opacity: 0 }}
-              className="relative w-full max-w-6xl bg-white rounded-[3rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] flex flex-col md:flex-row h-[90vh] md:h-auto max-h-[90vh] border border-white/20"
+              className="relative w-full max-w-6xl bg-white rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] flex flex-col md:flex-row h-[95vh] md:h-auto max-h-[95vh] border border-white/20"
             >
               <button 
                 onClick={() => setSelectedTemplate(null)}
@@ -288,60 +288,61 @@ export default function TemplatesPage() {
                 <X size={20} />
               </button>
 
-              {/* Left Side: Info */}
-              <div className="flex-1 p-10 md:p-20 flex flex-col justify-center overflow-y-auto">
-                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-8">
+              {/* Top Side (Mobile) / Right Side (Desktop): Mock Phone Preview */}
+              <div className="w-full md:w-[45%] bg-[#0c0f0f] p-6 md:p-20 flex items-center justify-center relative overflow-hidden shrink-0 h-[40%] md:h-auto order-1 md:order-2">
+                  {/* Phone Shell */}
+                  <div className="w-full max-w-[160px] md:max-w-[320px] aspect-[9/19] rounded-[24px] md:rounded-[48px] border-[6px] md:border-[12px] border-[#1e2323] shadow-2xl relative overflow-hidden bg-white ring-1 ring-white/10 scale-90 md:scale-100">
+                     <ThemePreviewContent 
+                       themeId={selectedTemplate.themeId} 
+                       templateId={selectedTemplate.id} 
+                       overrideImage={selectedTemplate.image} 
+                       isMini={true}
+                     />
+                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 md:w-32 h-4 md:h-8 bg-[#1e2323] rounded-b-[10px] md:rounded-b-[20px] z-50 shadow-inner"></div>
+                  </div>
+
+                  {/* Decorative Glows */}
+                  <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#d8ef2c]/10 rounded-full blur-[100px]" />
+                  <div className="absolute -top-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-[100px]" />
+              </div>
+
+              {/* Bottom Side (Mobile) / Left Side (Desktop): Info */}
+              <div className="flex-1 p-6 md:p-20 flex flex-col justify-start md:justify-center overflow-y-auto order-2 md:order-1 h-[60%] md:h-auto">
+                <nav className="hidden md:flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-8">
                    <span>Templates</span>
                    <ChevronRight size={10} />
                    <span className="text-[#576100]">{selectedTemplate.name}</span>
                 </nav>
 
-                <h2 className="text-5xl md:text-7xl font-black text-[#2d2f2f] mb-8 uppercase tracking-tighter leading-none">
+                <h2 className="text-3xl md:text-7xl font-black text-[#2d2f2f] mb-4 md:mb-8 uppercase tracking-tighter leading-none">
                     {selectedTemplate.name}
                 </h2>
-                <p className="text-xl font-medium text-[#5a5c5c] mb-12 leading-relaxed">
+                <p className="text-sm md:text-xl font-medium text-[#5a5c5c] mb-6 md:mb-12 leading-relaxed">
                   {selectedTemplate.description}
                 </p>
 
-                <div className="grid grid-cols-2 gap-4 mb-12">
-                   <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                      <Zap className="text-[#576100] mb-3" size={20} />
-                      <p className="font-black text-[10px] uppercase tracking-widest text-[#2d2f2f]">Fast Loading</p>
+                <div className="grid grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-12">
+                   <div className="p-4 md:p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                      <Zap className="text-[#576100] mb-2 md:mb-3" size={16} />
+                      <p className="font-black text-[8px] md:text-[10px] uppercase tracking-widest text-[#2d2f2f]">Fast Loading</p>
                    </div>
-                   <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                      <Sparkles className="text-[#576100] mb-3" size={20} />
-                      <p className="font-black text-[10px] uppercase tracking-widest text-[#2d2f2f]">SEO Optimized</p>
+                   <div className="p-4 md:p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                      <Sparkles className="text-[#576100] mb-2 md:mb-3" size={16} />
+                      <p className="font-black text-[8px] md:text-[10px] uppercase tracking-widest text-[#2d2f2f]">SEO Optimized</p>
                    </div>
                 </div>
 
                 <button
                   onClick={() => handleCreateLinktree(selectedTemplate)}
                   disabled={loading}
-                  className="w-full md:w-fit px-12 py-6 bg-[#d8ef2c] hover:bg-[#cbe01d] text-[#4d5700] font-black rounded-full text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4 uppercase tracking-[0.1em]"
+                  className="w-full md:w-fit px-8 py-5 md:px-12 md:py-6 bg-[#d8ef2c] hover:bg-[#cbe01d] text-[#4d5700] font-black rounded-full text-lg md:text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4 uppercase tracking-[0.1em]"
                 >
                   {loading ? (
-                    <div className="w-6 h-6 border-4 border-[#4d5700]/20 border-t-[#4d5700] rounded-full animate-spin" />
+                    <div className="w-5 h-5 md:w-6 md:h-6 border-4 border-[#4d5700]/20 border-t-[#4d5700] rounded-full animate-spin" />
                   ) : (
-                    <>Use Template <ArrowRight size={20} /></>
+                    <>Use Template <ArrowRight size={18} /></>
                   )}
                 </button>
-              </div>
-
-              {/* Right Side: Mock Phone Preview */}
-              <div className="w-full md:w-[45%] bg-[#0c0f0f] p-8 md:p-20 flex items-center justify-center relative overflow-hidden shrink-0">
-                  {/* Phone Shell */}
-                  <div className="w-full max-w-[320px] aspect-[9/19] rounded-[48px] border-[12px] border-[#1e2323] shadow-2xl relative overflow-hidden bg-white ring-1 ring-white/10">
-                     <ThemePreviewContent 
-                       themeId={selectedTemplate.themeId} 
-                       templateId={selectedTemplate.id} 
-                       overrideImage={selectedTemplate.image} 
-                     />
-                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-8 bg-[#1e2323] rounded-b-[20px] z-50 shadow-inner"></div>
-                  </div>
-
-                  {/* Decorative Glows */}
-                  <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#d8ef2c]/10 rounded-full blur-[100px]" />
-                  <div className="absolute -top-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-[100px]" />
               </div>
             </motion.div>
           </div>
@@ -455,9 +456,9 @@ export default function TemplatesPage() {
           </h2>
           <button 
              onClick={() => router.push('/signup')}
-             className="px-12 py-6 bg-[#4d5700] text-[#d8ef2c] rounded-full text-xl md:text-2xl font-black hover:scale-105 active:scale-95 transition-all shadow-2xl relative z-10 flex items-center gap-4 uppercase tracking-widest"
+             className="px-6 py-4 md:px-12 md:py-6 bg-[#4d5700] text-[#d8ef2c] rounded-full text-base md:text-2xl font-black hover:scale-105 active:scale-95 transition-all shadow-2xl relative z-10 flex items-center gap-3 md:gap-4 uppercase tracking-widest whitespace-nowrap"
           >
-              Get Started Free <ArrowRight size={24} />
+              Get Started Free <ArrowRight size={18} className="md:w-6 md:h-6" />
           </button>
         </motion.div>
       </section>

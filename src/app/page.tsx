@@ -104,7 +104,7 @@ export default function Home() {
       <main className="relative flex flex-col">
         
         {/* HERO SECTION - RESTORED FULL HEIGHT */}
-        <section id="hero" className="relative h-screen lg:h-screen min-h-[950px] lg:min-h-[800px] bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-6 md:px-12 lg:px-24 overflow-hidden flex flex-col items-center justify-center pt-32 lg:pt-40">
+        <section id="hero" className="relative h-screen lg:h-screen min-h-[850px] lg:min-h-[800px] bg-gradient-to-br from-[#D2E823] via-[#E9F861] to-[#D2E823] text-black px-6 md:px-12 lg:px-24 overflow-hidden flex flex-col items-center justify-center pt-20 lg:pt-40">
            <div className="max-w-[1400px] mx-auto w-full h-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] items-center gap-12 relative z-20">
               <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 md:gap-10 z-30 relative pb-10">
                 <Reveal delay={0.05} width="100%">
@@ -122,20 +122,20 @@ export default function Home() {
                 <div className="flex flex-col gap-4 w-full max-w-[600px] mt-2">
                   <div className={`relative transition-all duration-700 ${isClaimed ? 'scale-95 opacity-50 pointer-events-none' : 'scale-100'}`}>
                     <div className="absolute inset-0 bg-white/40 blur-3xl rounded-full" />
-                    <div className="relative flex flex-col sm:flex-row items-center gap-4 bg-white/95 backdrop-blur-3xl p-3 pl-8 rounded-[40px] shadow-[0_40px_100px_rgba(0,0,0,0.15)] border border-white">
-                      <span className="text-xl font-black text-black/30">linktr.ee/</span>
+                    <div className="relative flex flex-col sm:flex-row items-center gap-3 bg-white/95 backdrop-blur-3xl p-2 sm:p-3 pl-6 sm:pl-8 rounded-[30px] sm:rounded-[40px] shadow-[0_30px_80px_rgba(0,0,0,0.12)] border border-white">
+                      <span className="text-lg sm:text-xl font-black text-black/30">linktr.ee/</span>
                       <input 
                         type="text" 
                         placeholder="yourname"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="bg-transparent text-xl font-black outline-none w-full placeholder:text-gray-300 uppercase tracking-tighter"
+                        className="bg-transparent text-lg sm:text-xl font-black outline-none w-full placeholder:text-gray-300 uppercase tracking-tighter"
                       />
                       <motion.button 
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => username && setIsClaimed(true)}
-                        className="w-full sm:w-auto bg-[#422066] text-white px-10 py-6 rounded-[32px] font-black text-xl hover:bg-black transition-all shadow-2xl uppercase tracking-tighter whitespace-nowrap leading-none min-w-[200px]"
+                        className="w-full sm:w-auto bg-[#422066] text-white px-8 py-5 sm:px-10 sm:py-6 rounded-[24px] sm:rounded-[32px] font-black text-lg sm:text-xl hover:bg-black transition-all shadow-2xl uppercase tracking-tighter whitespace-nowrap leading-none min-w-[160px] sm:min-w-[200px]"
                       >
                         Claim Yours
                       </motion.button>
