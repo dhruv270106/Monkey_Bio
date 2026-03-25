@@ -1,0 +1,635 @@
+﻿'use client'
+
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { supabase } from '@/lib/supabase'
+import { THEMES, Theme } from '@/data/themes'
+import ImageCropperModal from '@/components/modals/ImageCropperModal'
+
+interface DesignSectionProps {
+  profile: any
+  setProfile: (profile: any) => void
+  hasChanges: boolean
+  setHasChanges: (hasChanges: boolean) => void
+}
+
+export default function DesignSection({ profile, setProfile, hasChanges, setHasChanges }: DesignSectionProps) {
+  const [saving, setSaving] = useState(false)
+  const [showCropper, setShowCropper] = useState(false)
+  const [selectedImage, setSelectedImage] = useState('')
+  const [activeTab, setActiveTab] = useState('Header')
+  const [fontSearch, setFontSearch] = useState('')
+  const [themeCategory, setThemeCategory] = useState('free')
+
+  const TABS = [
+    { id: 'Header', icon: 'fi-ss-user', label: 'PROFILE' },
+    { id: 'Theme', icon: 'fi-ss-palette', label: 'THEMES' },
+    { id: 'Buttons', icon: 'fi-ss-apps-add', label: 'BUTTONS' },
+    { id: 'Fonts', icon: 'fi-ss-text', label: 'FONTS' },
+    { id: 'Colors', icon: 'fi-ss-picture', label: 'WALLPAPER' },
+  ]
+
+  const FONTS = [
+    'Inter', 'Roboto', 'Outfit', 'Playfair Display', 'Poppins', 'Montserrat', 'Open Sans', 'Lato', 'Ubuntu', 'Lora',
+    'Dancing Script', 'Pacifico', 'Caveat', 'Satisfy', 'Oswald', 'Raleway', 'Nunito', 'Merriweather', 'Bebas Neue',
+    'Abel', 'Abril Fatface', 'Arvo', 'Assistant', 'Barlow', 'Bitter', 'Cabin', 'Cairo', 'Catamaran', 'Comfortaa',
+    'Dosis', 'Exo 2', 'Fira Sans', 'Heebo', 'Inconsolata', 'Josefin Sans', 'Kanit', 'Karla', 'Libre Baskerville',
+    'Libre Franklin', 'Lobster', 'Maven Pro', 'Muli', 'Noticia Text', 'Notosans', 'Old Standard TT', 'Overpass', 
+    'Oxygen', 'PT Sans', 'PT Serif', 'Quicksand', 'Questrial', 'Righteous', 'Rubik', 'Shadows Into Light', 'Spectral', 
+    'Teko', 'Titillium Web', 'Varela Round', 'Work Sans', 'Zilla Slab'
+  ]
+
+  const PRESET_GRADIENTS = [
+    'linear-gradient(135deg, #fceabb 0%, #f8b500 100%)',
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(135deg, #5ee7df 0%, #b490ca 100%)',
+    'linear-gradient(135deg, #c3cfe2 0%, #c3cfe2 100%)',
+    'linear-gradient(135deg, #00dbde 0%, #fc00ff 100%)'
+  ]
+
+  const updateProfile = (updates: any) => {
+    if (!profile) return
+    setProfile({ ...profile, ...updates })
+    setHasChanges(true)
+  }
+
+  const handleSave = async () => {
+    if (!profile) return
+    setSaving(true)
+    
+    const { id, username, display_name, avatar_url, bio, social_links, theme, custom_bg, custom_bg_type, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur, button_border_color, button_border_width, button_shadow_color, custom_bg_end, custom_bg_direction, custom_bg_noise, custom_bg_pattern, custom_bg_gradient_mode } = profile
+    const dbUpdates = { display_name, avatar_url, bio, social_links, theme, custom_bg, custom_bg_type, custom_button_bg, font_family, font_size, font_color, button_variant, button_radius, bg_blur, button_border_color, button_border_width, button_shadow_color, custom_bg_end, custom_bg_direction, custom_bg_noise, custom_bg_pattern, custom_bg_gradient_mode }
+
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session) {
+      const { error } = await supabase
+        .from('monkey_bio')
+        .update(dbUpdates)
+        .eq('id', session.user.id)
+      
+      if (!error) {
+        setHasChanges(false)
+      } else {
+        alert('Error saving changes: ' + error.message)
+      }
+    }
+    setSaving(false)
+  }
+
+  const compressImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = (e) => {
+        const img = new Image()
+        img.src = e.target?.result as string
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          let width = img.width
+          let height = img.height
+          const MAX_SIZE = 1200
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width
+              width = MAX_SIZE
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height
+              height = MAX_SIZE
+            }
+          }
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          ctx?.drawImage(img, 0, 0, width, height)
+          canvas.toBlob((blob) => {
+            resolve(blob as Blob)
+          }, 'image/jpeg', 0.6) // 0.6 quality for small size
+        }
+      }
+    })
+  }
+
+  const [cropTarget, setCropTarget] = useState<'avatar' | 'wallpaper'>('avatar')
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setCropTarget('avatar')
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setSelectedImage(reader.result as string)
+      setShowCropper(true)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleCustomBgUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+     const file = e.target.files?.[0]
+     if (!file) return
+
+     if (type === 'image') {
+        setCropTarget('wallpaper')
+        const reader = new FileReader()
+        reader.onloadend = () => {
+           setSelectedImage(reader.result as string)
+           setShowCropper(true)
+        }
+        reader.readAsDataURL(file)
+        return
+     }
+
+     setSaving(true)
+     console.log(`Starting video upload:`, file.name, file.size)
+
+     if (file.size > 20 * 1024 * 1024) {
+        alert('Video too large! Please upload a file smaller than 20MB for best performance.')
+        setSaving(false)
+        return
+     }
+
+     const fileExt = file.name.split('.').pop()
+     const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${fileExt}`
+     const filePath = `${profile.id}/${fileName}`
+
+     const { error: uploadError } = await supabase.storage
+       .from('bg-assets')
+       .upload(filePath, file, {
+         cacheControl: '3600',
+         upsert: true
+       })
+
+     if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
+        updateProfile({ custom_bg: publicUrl, custom_bg_type: 'video', theme: 'custom' })
+        alert(`VIDEO Background Applied Successfully!`)
+     } else {
+        alert(`Upload Failed: ${uploadError.message}. \n\nIMPORTANT: Please go to your Supabase Dashboard -> Storage and create a NEW BUCKET named "bg-assets" and set it to PUBLIC.`)
+     }
+     setSaving(false)
+  }
+
+  const handleWallpaperCropComplete = async (base64: string) => {
+    setSaving(true)
+    try {
+      const res = await fetch(base64)
+      const blob = await res.blob()
+      
+      const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.jpg`
+      const filePath = `${profile.id}/${fileName}`
+      
+      const { error: uploadError } = await supabase.storage
+        .from('bg-assets')
+        .upload(filePath, blob, { upsert: true })
+
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
+        updateProfile({ custom_bg: publicUrl, custom_bg_type: 'image', theme: 'custom' })
+        alert('Wallpaper Image Optimized & Applied!')
+        setShowCropper(false)
+      } else {
+         alert(`Upload Failed: ${uploadError.message}. \n\nIMPORTANT: Go to Supabase -> Storage and create a PUBLIC bucket named "bg-assets".`)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    setSaving(false)
+  }
+
+  const handleAvatarCropComplete = async (base64: string) => {
+    setSaving(true)
+    try {
+      const res = await fetch(base64)
+      const blob = await res.blob()
+      
+      const fileName = `avatar-${Date.now()}.jpg`
+      const filePath = `${profile.id}/${fileName}`
+      
+      // Try to upload to 'profiles' or 'bg-assets' if missing
+      const { error: uploadError } = await supabase.storage
+        .from('bg-assets')
+        .upload(filePath, blob, { upsert: true })
+
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
+        updateProfile({ avatar_url: publicUrl })
+        setShowCropper(false)
+      } else {
+        alert(`Avatar upload failed: ${uploadError.message}. Please create "bg-assets" bucket in Supabase storage and set it to PUBLIC.`)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    setSaving(false)
+  }
+
+  return (
+    <div className="flex-1 flex flex-col bg-white overflow-hidden h-full pt-28 md:pt-36">
+      {profile?.font_family && (
+        <link 
+          href={`https://fonts.googleapis.com/css2?family=${profile.font_family.replace(/ /g, '+')}:wght@400;700;900&display=swap`} 
+          rel="stylesheet" 
+        />
+      )}
+
+      {/* Toolbar */}
+      <div className="px-8 py-6 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0 z-50">
+         <div className="flex flex-col">
+            <h1 className="font-extrabold text-2xl text-secondary">Design Workspace</h1>
+            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Live Customization ΓÇó {activeTab}</span>
+         </div>
+         <div className="flex items-center gap-6">
+            <AnimatePresence>
+            {hasChanges && (
+              <motion.span initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-xs font-bold text-orange-500 bg-orange-50 px-4 py-2 rounded-full border border-orange-100 italic">
+                 Unsaved changes detected
+              </motion.span>
+            )}
+            </AnimatePresence>
+            <button 
+              onClick={handleSave}
+              disabled={saving}
+              className={`font-black px-10 py-3.5 rounded-full text-sm shadow-2xl transition-all ${saving ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-secondary text-white hover:shadow-primary/20 hover:scale-[1.02] active:scale-95'}`}
+            >
+              {saving ? 'Saving...' : 'Publish Changes'}
+            </button>
+         </div>
+      </div>
+
+      <div className="flex-1 flex overflow-hidden">
+        {/* Navigation Sidebar */}
+        <div className="w-24 bg-white border-r border-gray-50 flex flex-col items-center py-10 gap-10 flex-shrink-0 overflow-y-auto no-scrollbar">
+          {TABS.map(tab => (
+            <button 
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex flex-col items-center gap-2 transition-all shrink-0 ${activeTab === tab.id ? 'text-secondary' : 'text-gray-300 hover:text-gray-500 hover:scale-110'}`}
+            >
+              <div className={`w-14 h-14 rounded-[22px] flex items-center justify-center transition-all ${activeTab === tab.id ? 'bg-secondary text-white shadow-xl rotate-12' : 'bg-transparent'}`}>
+                <i className={`fi ${tab.icon} text-xl`}></i>
+              </div>
+              <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${activeTab === tab.id ? 'opacity-100' : 'opacity-40'}`}>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Scrollable Container */}
+        <div className="flex-1 bg-gray-50/30 overflow-hidden relative">
+          <div className="absolute inset-0 overflow-y-auto p-12 no-scrollbar pb-40">
+            <div className="max-w-2xl mx-auto space-y-16">
+            
+            <AnimatePresence mode="wait">
+            {activeTab === 'Header' && (
+              <motion.section key="header" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Identity</h2>
+                  <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Manage your profile appearances</p>
+                </div>
+
+                <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-10">
+                  <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                    <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-white overflow-hidden border-[8px] md:border-[10px] border-white shadow-2xl relative group shrink-0">
+                        <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.display_name || 'U'}&background=random`} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center text-white pointer-events-none">
+                           <i className="fi fi-rr-camera text-2xl"></i>
+                        </div>
+                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} accept="image/*" />
+                    </div>
+                    <div className="flex-1 space-y-4 text-center md:text-left">
+                       <h4 className="font-black text-secondary">Profile Image</h4>
+                       <p className="text-xs text-gray-400 leading-relaxed font-bold">Use a high resolution square image for the best appearance on mobile devices.</p>
+                       <div className="flex gap-3">
+                         <button className="flex-1 py-3 bg-secondary text-white rounded-2xl text-[11px] font-black uppercase tracking-widest relative">
+                            Upload Photo
+                            <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} accept="image/*" />
+                         </button>
+                         <button onClick={() => updateProfile({ avatar_url: '' })} className="flex-1 py-3 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:text-red-500 hover:border-red-100 transition-all">Remove</button>
+                       </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-8 pt-6">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em] pl-2">Display Name</label>
+                      <input type="text" value={profile?.display_name || ''} onChange={(e) => updateProfile({ display_name: e.target.value })} className="w-full px-8 py-5 bg-gray-50/50 rounded-[24px] border-2 border-transparent focus:border-secondary focus:bg-white outline-none font-bold text-secondary transition-all shadow-inner" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em] pl-2">Biography</label>
+                      <textarea maxLength={200} value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full px-8 py-5 bg-gray-50/50 rounded-[24px] border-2 border-transparent focus:border-secondary focus:bg-white outline-none font-bold text-secondary transition-all h-40 shadow-inner resize-none" />
+                    </div>
+                  </div>
+                </div>
+              </motion.section>
+            )}
+
+            {activeTab === 'Theme' && (
+              <motion.section key="theme" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-12">
+                <div className="flex items-center justify-between">
+                   <div className="space-y-2">
+                     <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Themes</h2>
+                     <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Premium curated layouts</p>
+                   </div>
+                   <div className="flex items-center gap-3 bg-white p-2 rounded-full border border-gray-100 shadow-sm">
+                      <button onClick={() => setThemeCategory('free')} className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${themeCategory === 'free' ? 'bg-secondary text-white' : 'text-gray-400'}`}>Free</button>
+                      <button onClick={() => setThemeCategory('premium')} className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${themeCategory === 'premium' ? 'bg-[#D2E823] text-secondary' : 'text-gray-400'}`}>Premium</button>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-10">
+                   {THEMES.filter(t => themeCategory === 'premium' ? t.isPremium : !t.isPremium).map((theme) => {
+                     const isLocked = theme.isPremium && profile?.plan_status !== 'premium';
+                     return (
+                       <button 
+                         key={theme.id} 
+                         onClick={() => {
+                           if (isLocked) {
+                             alert('Please contact admin to unlock premium themes.')
+                             return
+                           }
+                           updateProfile({ theme: theme.id })
+                           if (theme.id === 'custom') setActiveTab('Colors')
+                         }} 
+                         className={`group relative flex flex-col gap-4 p-5 rounded-[50px] border-[6px] transition-all bg-white hover:shadow-2xl ${profile?.theme === theme.id ? 'border-secondary shadow-xl' : 'border-transparent'}`}
+                       >
+                         <div className={`aspect-[9/16] w-full rounded-[36px] overflow-hidden relative shadow-inner ${theme.bg} transition-all duration-700 group-hover:scale-[1.05] ${isLocked ? 'blur-md grayscale opacity-40' : ''}`} style={{...(theme.image ? { backgroundImage: `url(${theme.image})`, backgroundSize: 'cover', backgroundPosition: 'center'} : theme.id === 'custom' ? { background: profile?.custom_bg_type === 'gradient' ? profile.custom_bg : (profile?.custom_bg || '#ffffff')} : {})}}>
+                           {theme.id === 'custom' && (
+                             <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                           )}
+                           {theme.video && <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-80 backdrop-blur-sm"><source src={theme.video} type="video/mp4" /></video>}
+                           {isLocked && (
+                             <div className="absolute inset-0 flex items-center justify-center z-20">
+                               <div className="w-16 h-16 bg-white/30 backdrop-blur-xl rounded-full flex items-center justify-center text-white shadow-2xl scale-125">
+                                 <i className="fi fi-ss-lock text-xl"></i>
+                               </div>
+                             </div>
+                           )}
+                           <div className="flex flex-col items-center pt-12 px-8 gap-4 relative z-10">
+                                <div className={`w-10 h-10 rounded-full mb-1 ${theme.text.includes('white') ? 'bg-white/20' : 'bg-black/10'}`}></div>
+                                <div className={`w-full h-4 rounded-full ${theme.button.split(' ')[0]} opacity-80`}></div>
+                                <div className={`w-full h-4 rounded-full ${theme.button.split(' ')[0]} opacity-80`}></div>
+                           </div>
+                         </div>
+                         <h5 className="font-black text-xs text-secondary uppercase tracking-[0.3em] text-center">{theme.name}</h5>
+                       </button>
+                     );
+                   })}
+                </div>
+              </motion.section>
+            )}
+
+            {activeTab === 'Buttons' && (
+              <motion.section key="buttons" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Buttons</h2>
+                  <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Interactive element styling</p>
+                </div>
+
+                <div className="bg-white p-6 md:p-10 rounded-[40px] md:rounded-[50px] border border-gray-100 shadow-sm space-y-8 md:space-y-12">
+                   <div className="space-y-6">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] pl-2">Variant Style</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+                        {['Solid', 'Glass', 'Outline'].map(type => (
+                          <button key={type} onClick={() => updateProfile({ button_variant: type.toLowerCase() })} className={`flex flex-col items-center gap-4 p-5 md:p-6 rounded-[28px] md:rounded-[36px] border-[5px] transition-all bg-gray-50/50 ${profile?.button_variant === type.toLowerCase() ? 'border-secondary bg-white shadow-xl' : 'border-transparent'}`}>
+                            <div className={`w-full h-12 rounded-xl border-2 ${type === 'Glass' ? 'bg-gray-200/40 border-gray-200' : type === 'Outline' ? 'bg-transparent border-slate-300' : 'bg-slate-800 border-slate-800'}`}></div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-secondary">{type}</span>
+                          </button>
+                        ))}
+                      </div>
+                   </div>
+
+                   <div className="space-y-6">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] pl-2">Border Settings</label>
+                      <div className="flex flex-col md:flex-row items-center gap-6 p-6 md:p-10 bg-gray-50/50 rounded-[30px] md:rounded-[40px] border border-gray-100 md:divide-x divide-gray-200">
+                         <div className="w-full md:flex-1 space-y-4 px-2">
+                            <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Color</span>
+                            <input type="color" value={profile?.button_border_color || '#000000'} onChange={(e) => updateProfile({ button_border_color: e.target.value })} className="w-full h-14 rounded-2xl cursor-pointer border-4 border-white shadow-sm" />
+                         </div>
+                         <div className="w-full md:flex-1 space-y-4 px-2 md:px-8">
+                            <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Width ({profile?.button_border_width || 0}px)</span>
+                            <input type="range" min="0" max="10" value={profile?.button_border_width || 0} onChange={(e) => updateProfile({ button_border_width: parseInt(e.target.value) })} className="w-full accent-secondary" />
+                         </div>
+                      </div>
+                   </div>
+
+                   <div className="flex items-center justify-between p-6 md:p-10 bg-gray-50/50 rounded-[30px] md:rounded-[40px] border border-gray-100">
+                      <div className="flex flex-col">
+                        <span className="font-extrabold text-secondary">Elevation Shadow</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hard 3D Shadow Effect</span>
+                      </div>
+                      <input type="color" value={profile?.button_shadow_color || 'transparent'} onChange={(e) => updateProfile({ button_shadow_color: e.target.value })} className="w-16 h-16 rounded-[24px] cursor-pointer border-4 border-white shadow-2xl" />
+                   </div>
+                </div>
+              </motion.section>
+            )}
+
+            {activeTab === 'Fonts' && (
+              <motion.section key="fonts" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
+                 <div className="space-y-2">
+                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Typography</h2>
+                  <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Visual voice & Tone</p>
+                </div>
+
+                <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-10">
+                   <div className="relative">
+                      <i className="fi fi-rr-search absolute left-8 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                      <input type="text" placeholder="Search typography family..." className="w-full pl-20 pr-10 py-6 bg-gray-50/50 rounded-[30px] border border-transparent focus:border-secondary transition-all font-bold outline-none shadow-inner" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} />
+                   </div>
+
+                   <div className="grid grid-cols-2 gap-4 h-[440px] overflow-y-auto no-scrollbar bg-gray-50/30 p-6 rounded-[40px] border border-gray-100">
+                      {FONTS.filter(f => f.toLowerCase().includes(fontSearch.toLowerCase())).map(font => (
+                        <button key={font} onClick={() => updateProfile({ font_family: font })} className={`p-8 rounded-[28px] text-left transition-all border-4 ${profile?.font_family === font ? 'bg-secondary text-white border-secondary shadow-2xl scale-95' : 'bg-white border-transparent hover:border-gray-200 shadow-sm'}`} style={{ fontFamily: font }}>
+                          <span className="text-2xl font-black">{font}</span>
+                          <p className="text-[9px] mt-2 font-black uppercase tracking-[0.3em] opacity-60 italic">Design Preview</p>
+                        </button>
+                      ))}
+                   </div>
+
+                   <div className="flex items-center justify-between p-8 bg-gray-50/50 rounded-[40px] border border-gray-100">
+                      <div className="flex flex-col">
+                        <span className="font-extrabold text-secondary">Font Color</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Global text color tone</span>
+                      </div>
+                      <input type="color" value={profile?.font_color || '#000000'} onChange={(e) => updateProfile({ font_color: e.target.value })} className="w-16 h-16 rounded-[24px] cursor-pointer border-4 border-white shadow-2xl" />
+                   </div>
+                </div>
+              </motion.section>
+            )}
+
+            {activeTab === 'Colors' && (
+              <motion.section key="colors" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-12">
+                 <div className="space-y-4">
+                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Wallpaper engine</h2>
+                  <p className="text-sm text-gray-400 font-bold uppercase tracking-widest pl-1">Interactive background designer</p>
+                </div>
+
+                <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm space-y-12 transition-all">
+                   <div className="space-y-6">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] pl-2">Wallpaper Style</label>
+                      <div className="grid grid-cols-6 gap-3">
+                        {['color', 'gradient', 'blur', 'pattern', 'image', 'video'].map(type => (
+                          <button key={type} onClick={() => updateProfile({ custom_bg_type: type, theme: 'custom' })} className={`group flex flex-col items-center gap-3 transition-all ${profile?.custom_bg_type === type ? 'scale-110' : 'opacity-60 hover:opacity-100 hover:scale-105'}`}>
+                             <div className={`w-14 h-14 rounded-[18px] border-4 flex items-center justify-center transition-all ${profile?.custom_bg_type === type ? 'border-secondary shadow-lg rotate-3' : 'border-gray-100'}`}>
+                                <i className={`fi ${type === 'color' ? 'fi-ss-palette' : type === 'gradient' ? 'fi-ss-kerning' : type === 'blur' ? 'fi-ss-layer-plus' : type === 'pattern' ? 'fi-ss-grid' : type === 'image' ? 'fi-ss-picture' : 'fi-ss-play-alt'} text-xl ${profile?.custom_bg_type === type ? 'text-secondary' : 'text-gray-300'}`}></i>
+                             </div>
+                             <span className="text-[10px] font-black uppercase tracking-tight text-gray-400">{type === 'color' ? 'Fill' : type}</span>
+                          </button>
+                        ))}
+                      </div>
+                   </div>
+
+                   <AnimatePresence mode="wait">
+                      {profile?.custom_bg_type === 'gradient' && (
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-10 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
+                           <div className="flex gap-4 mb-4">
+                              {['custom', 'pre-made'].map(st => (
+                                <button key={st} onClick={() => updateProfile({ custom_bg_gradient_mode: st })} className={`flex-1 py-4 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${profile?.custom_bg_gradient_mode === st ? 'bg-secondary text-white shadow-xl' : 'bg-white text-gray-400 border border-gray-100'}`}>
+                                  {st}
+                                </button>
+                              ))}
+                           </div>
+
+                           {profile?.custom_bg_gradient_mode === 'custom' ? (
+                              <div className="space-y-8">
+                                <div className="space-y-6">
+                                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Start Color</span>
+                                  <div className="flex items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-inner">
+                                     <input type="text" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="flex-1 bg-transparent border-none outline-none font-bold text-secondary" />
+                                     <input type="color" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-10 h-10 rounded-full border-4 border-white shadow-lg cursor-pointer" />
+                                  </div>
+                                </div>
+                                <div className="space-y-6">
+                                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">End Color</span>
+                                  <div className="flex items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-inner">
+                                     <input type="text" value={profile?.custom_bg_end || '#000000'} onChange={(e) => updateProfile({ custom_bg_end: e.target.value })} className="flex-1 bg-transparent border-none outline-none font-bold text-secondary" />
+                                     <input type="color" value={profile?.custom_bg_end || '#000000'} onChange={(e) => updateProfile({ custom_bg_end: e.target.value })} className="w-10 h-10 rounded-full border-4 border-white shadow-lg cursor-pointer" />
+                                  </div>
+                                </div>
+                              </div>
+                           ) : (
+                             <div className="grid grid-cols-4 gap-4">
+                                {PRESET_GRADIENTS.map(grad => (
+                                  <button key={grad} onClick={() => updateProfile({ custom_bg: grad, custom_bg_gradient_mode: 'pre-made', custom_bg_type: 'gradient' })} className="aspect-video rounded-2xl border-4 border-white shadow-lg transition-transform hover:scale-105" style={{ backgroundImage: grad }} />
+                                ))}
+                             </div>
+                           )}
+
+                           <div className="space-y-6">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Gradient Direction</span>
+                              <div className="grid grid-cols-3 gap-4">
+                                {[
+                                  { id: 'linear-up', icon: 'fi-rr-arrow-up', label: 'Linear UP' },
+                                  { id: 'linear-down', icon: 'fi-rr-arrow-down', label: 'Linear DOWN' },
+                                  { id: 'radial', icon: 'fi-rr-rect-radial', label: 'Radial' }
+                                ].map(dir => (
+                                  <button key={dir.id} onClick={() => updateProfile({ custom_bg_direction: dir.id })} className={`flex flex-col items-center gap-2 p-5 rounded-[28px] border-4 transition-all ${profile?.custom_bg_direction === dir.id ? 'bg-secondary text-white border-secondary shadow-lg' : 'bg-white border-transparent text-gray-400 hover:border-gray-200'}`}>
+                                     <i className={`fi ${dir.icon} text-lg`}></i>
+                                     <span className="text-[9px] font-black uppercase tracking-widest">{dir.label}</span>
+                                  </button>
+                                ))}
+                              </div>
+                           </div>
+
+                           <div className="flex items-center justify-between p-6 bg-white rounded-3xl border border-gray-50">
+                              <div className="flex flex-col">
+                                <span className="font-black text-secondary text-sm">Noise</span>
+                                <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Add subtle grain texture</span>
+                              </div>
+                              <button onClick={() => updateProfile({ custom_bg_noise: !profile?.custom_bg_noise })} className={`w-14 h-8 rounded-full p-1 transition-all ${profile?.custom_bg_noise ? 'bg-secondary' : 'bg-gray-200'}`}>
+                                 <div className={`w-6 h-6 rounded-full bg-white transition-all ${profile?.custom_bg_noise ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                              </button>
+                           </div>
+                        </motion.div>
+                      )}
+
+                       {profile?.custom_bg_type === 'blur' && (
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-8 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
+                           <div className="space-y-6">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Atmospheric Hue</span>
+                              <div className="flex items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-inner">
+                                 <input type="text" value={profile?.custom_bg || '#E0E7FF'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="flex-1 bg-transparent border-none outline-none font-bold text-secondary text-lg" />
+                                 <input type="color" value={profile?.custom_bg || '#E0E7FF'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-12 h-12 rounded-full border-4 border-white shadow-lg cursor-pointer" />
+                              </div>
+                           </div>
+                           <div className="space-y-6">
+                              <div className="flex justify-between items-end">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Diffusion Level</span>
+                                <span className="text-xl font-black text-secondary italic">{profile?.bg_blur || 40}px</span>
+                              </div>
+                              <input type="range" min="10" max="100" value={profile?.bg_blur || 40} onChange={(e) => updateProfile({ bg_blur: parseInt(e.target.value) })} className="w-full h-2 bg-white rounded-full appearance-none cursor-pointer accent-secondary" />
+                           </div>
+                        </motion.div>
+                       )}
+
+                       {profile?.custom_bg_type === 'pattern' && (
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
+                           <div className="space-y-6">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Background Color</span>
+                              <div className="flex items-center gap-6 bg-white p-6 rounded-[30px] border border-gray-100 shadow-inner">
+                                 <input type="text" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="flex-1 bg-transparent border-none outline-none font-bold text-secondary" />
+                                 <input type="color" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-10 h-10 rounded-full border-4 border-white shadow-lg cursor-pointer" />
+                              </div>
+                           </div>
+
+                           <div className="space-y-6">
+                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Pattern Selection</span>
+                              <div className="grid grid-cols-4 gap-4">
+                                {['Grid', 'Morph', 'Organic', 'Matrix'].map(pat => (
+                                  <button key={pat} onClick={() => updateProfile({ custom_bg_pattern: pat.toLowerCase() })} className={`flex flex-col items-center gap-3 p-4 rounded-[28px] border-4 transition-all bg-white ${profile?.custom_bg_pattern === pat.toLowerCase() ? 'border-secondary shadow-lg' : 'border-transparent hover:border-gray-200'}`}>
+                                     <div className={`w-full aspect-[4/3] rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-100`}>
+                                        <div className={`w-full h-full opacity-50 ${pat.toLowerCase() === 'grid' ? 'bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:20px_20px]' : pat.toLowerCase() === 'morph' ? 'bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-100 to-gray-700' : pat.toLowerCase() === 'organic' ? 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-gray-200 via-white to-gray-200' : 'bg-[linear-gradient(45deg,rgba(0,0,0,0.1)_25%,transparent_25%,transparent_50%,rgba(0,0,0,0.1)_50%,rgba(0,0,0,0.1)_75%,transparent_75%,transparent)] [background-size:20px_20px]'}`}></div>
+                                     </div>
+                                     <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{pat}</span>
+                                  </button>
+                                ))}
+                              </div>
+                           </div>
+                        </motion.div>
+                      )}
+
+                      {profile?.custom_bg_type === 'color' && (
+                         <div className="p-10 bg-gray-50/50 rounded-[40px] border border-gray-100 flex items-center justify-between">
+                            <div className="flex flex-col"><span className="font-black text-secondary">Solid Fill</span><span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Uniform color coverage</span></div>
+                            <input type="color" value={profile?.custom_bg || '#6A373A'} onChange={(e) => updateProfile({ custom_bg: e.target.value })} className="w-20 h-20 rounded-[30px] border-[8px] border-white shadow-2xl cursor-pointer" />
+                         </div>
+                      )}
+
+                      {(profile?.custom_bg_type === 'image' || profile?.custom_bg_type === 'video') && (
+                         <div className="p-10 bg-gray-50/50 rounded-[40px] border border-gray-100 space-y-6">
+                            <div className="w-full aspect-video rounded-[36px] bg-white border-4 border-dashed border-gray-200 flex flex-col items-center justify-center gap-4 relative group overflow-hidden">
+                               {profile?.custom_bg && profile?.custom_bg_type === 'image' && <img src={profile.custom_bg} className="absolute inset-0 w-full h-full object-cover" />}
+                               <i className={`fi ${profile?.custom_bg_type === 'image' ? 'fi-rr-cloud-upload' : 'fi-rr-play'} text-4xl text-gray-300`}></i>
+                               <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Upload local {profile?.custom_bg_type} asset (Max 20MB)</span>
+                               <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleCustomBgUpload(e, profile?.custom_bg_type as any)} accept={profile?.custom_bg_type === 'image' ? 'image/*' : 'video/*'} />
+                            </div>
+                         </div>
+                      )}
+                   </AnimatePresence>
+                </div>
+              </motion.section>
+            )}
+            </AnimatePresence>
+
+                    </div>
+          </div>
+        </div>
+      </div>
+
+      <ImageCropperModal 
+        isOpen={showCropper} 
+        imageSrc={selectedImage} 
+        onClose={() => setShowCropper(false)} 
+        aspect={cropTarget === 'avatar' ? 1/1 : 9/16}
+        circularCrop={cropTarget === 'avatar'}
+        onCropComplete={(croppedImage) => {
+          if (cropTarget === 'avatar') {
+            handleAvatarCropComplete(croppedImage)
+          } else {
+            handleWallpaperCropComplete(croppedImage)
+          }
+        }} 
+      />
+    </div>
+  )
+}
