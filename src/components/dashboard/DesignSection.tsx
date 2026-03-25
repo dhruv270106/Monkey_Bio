@@ -8,6 +8,7 @@ import { PLATFORMS } from '@/data/platforms'
 import { APPS } from '@/data/apps'
 import ImageCropperModal from '@/components/modals/ImageCropperModal'
 import Link from 'next/link'
+import DeviceMockup from './DeviceMockup'
 
 interface DesignSectionProps {
   profile: any
@@ -144,45 +145,6 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
 
   const selectedTheme = (THEMES.find(t => t.id === profile?.theme) || THEMES[0]) as Theme
 
-  const getButtonStyle = () => {
-    const variant = profile?.button_variant || 'solid'
-    const radius = profile?.button_radius || 'xl'
-    const customBg = profile?.custom_button_bg || (selectedTheme.button.includes('bg-white') ? '#ffffff' : '#000000')
-    const customColor = profile?.font_color || (selectedTheme.text.includes('white') ? '#ffffff' : '#000000')
-
-    let baseStyle: any = {
-      fontFamily: profile?.font_family || 'inherit',
-      color: customColor,
-      borderRadius: radius === 'none' ? '0px' : radius === 'md' ? '12px' : radius === 'xl' ? '24px' : '9999px',
-    }
-
-    if (variant === 'outline') {
-      baseStyle = { ...baseStyle, backgroundColor: 'transparent', border: `2px solid ${customBg}` }
-    } else if (variant === 'glass') {
-      baseStyle = { ...baseStyle, backgroundColor: `${customBg}20`, backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)' }
-    } else {
-      baseStyle = { ...baseStyle, backgroundColor: customBg }
-    }
-    return baseStyle
-  }
-
-  const getBackgroundStyle = () => {
-    if (profile?.theme !== 'custom') {
-       if (selectedTheme.image) return { backgroundImage: `url(${selectedTheme.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-       return {}
-    }
-    const type = profile?.custom_bg_type || 'color'
-    const value = profile?.custom_bg || '#6A373A'
-    if (type === 'pattern') {
-        const p = PATTERNS.find(pat => pat.id === profile?.custom_bg_pattern) || PATTERNS[0]
-        return { backgroundColor: value, backgroundImage: p.css, backgroundSize: p.size }
-    }
-    if (type === 'color') return { backgroundColor: value }
-    if (type === 'gradient') return { backgroundImage: value }
-    if (type === 'image') return { backgroundImage: `url(${value})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-    return { backgroundColor: '#000000' }
-  }
-
   const renderSheetContent = () => {
     switch (activeSheet) {
       case 'theme':
@@ -301,28 +263,13 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
          </div>
 
          <div className="flex-1 flex flex-col items-center justify-center p-4 relative overflow-hidden bg-gray-50/50">
-            <motion.div 
-               animate={{ scale: activeSheet ? 0.6 : 1, y: activeSheet ? -120 : 0 }}
-               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-               className={`w-full max-w-[320px] aspect-[9/18.5] rounded-[52px] border-[10px] border-[#020617] shadow-[0_40px_100px_rgba(0,0,0,0.15)] relative overflow-hidden flex flex-col items-center bg-white ${selectedTheme.text}`}
-            >
-               <div className={`absolute inset-0 transition-all duration-700 ${selectedTheme.bg}`} style={getBackgroundStyle()} />
-               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-[#020617] rounded-b-[16px] z-50" />
-               <div className="relative z-10 w-full h-full overflow-y-auto no-scrollbar flex flex-col items-center p-8 pt-12">
-                   <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-16 h-16 rounded-full border-2 border-white/20 mb-6 shadow-lg object-cover" />
-                   <h3 className="font-black text-xl mb-1 tracking-tight" style={{ color: profile?.font_color || 'inherit' }}>{profile?.display_name || 'Your Name'}</h3>
-                   <h3 className="text-[10px] font-bold opacity-70 mb-4" style={{ color: profile?.font_color || 'inherit' }}>@{profile?.username}</h3>
-                   <p className="text-[11px] text-center px-4 mb-6 font-bold opacity-80" style={{ color: profile?.font_color || 'inherit' }}>{profile?.bio}</p>
-                   <div className="flex flex-wrap justify-center gap-4 mb-10 w-full">
-                      {profile?.social_links && Object.entries(profile.social_links).slice(0, 5).map(([p, url]: [string, any]) => url && <i key={p} className={`fi ${PLATFORMS[p]?.icon || 'fi-rr-link'} text-2xl`} style={{ color: profile?.font_color || 'inherit' }} />)}
-                   </div>
-                   <div className="w-full space-y-3">
-                      {links && links.filter(l => l.active).slice(0,3).map((link, i) => (
-                        <div key={i} className="w-full py-2.5 px-3 rounded-xl border flex items-center justify-center font-bold text-[11px]" style={getButtonStyle()}>{link.title}</div>
-                      ))}
-                   </div>
-               </div>
-            </motion.div>
+            <DeviceMockup 
+               userProfile={profile} 
+               links={links} 
+               socialLinks={profile?.social_links} 
+               scale={activeSheet ? 0.6 : 1} 
+               yOffset={activeSheet ? -120 : 0} 
+            />
          </div>
 
          {/* Bottom Control Sheets */}
