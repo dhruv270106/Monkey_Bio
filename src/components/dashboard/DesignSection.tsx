@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { THEMES, Theme } from '@/data/themes'
+import { PLATFORMS } from '@/data/platforms'
 import ImageCropperModal from '@/components/modals/ImageCropperModal'
 
 interface DesignSectionProps {
@@ -369,15 +370,19 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
             >
                <div className="w-full h-full overflow-hidden flex flex-col transition-all duration-700">
                   <div 
-                    className={`absolute inset-0 z-0 ${currentTheme.bg} transition-all duration-700`}
+                    className="absolute inset-0 z-0 bg-cover bg-center transition-all duration-700"
                     style={{
                       ...(profile?.custom_bg_type === 'color' ? { backgroundColor: profile.custom_bg } : {}),
                       ...(profile?.custom_bg_type === 'gradient' ? { backgroundImage: profile.custom_bg } : {}),
                       ...(profile?.custom_bg_type === 'pattern' ? { backgroundImage: (PATTERNS.find(p=>p.id===profile?.custom_bg_pattern)||PATTERNS[0]).css, backgroundSize: (PATTERNS.find(p=>p.id===profile?.custom_bg_pattern)||PATTERNS[0]).size, backgroundColor: profile?.custom_bg } : {}),
-                      ...(profile?.custom_bg_type === 'image' ? { backgroundImage: `url(${profile.custom_bg})`, backgroundSize: 'cover' } : {}),
-                      ...(profile?.theme !== 'custom' && !currentTheme.image ? {} : currentTheme.image ? { backgroundImage: `url(${currentTheme.image})`, backgroundSize: 'cover' } : {})
+                      ...(profile?.custom_bg_type === 'image' ? { backgroundImage: `url(${profile.custom_bg})` } : {}),
+                      ...(profile?.theme !== 'custom' && !currentTheme.image ? { backgroundColor: 'transparent' } : currentTheme.image ? { backgroundImage: `url(${currentTheme.image})` } : {}),
+                      ...(profile?.theme !== 'custom' && !currentTheme.image && currentTheme.bg ? { backgroundImage: 'none' } : {})
                     }}
                   >
+                     {profile?.theme !== 'custom' && (
+                        <div className={`absolute inset-0 ${currentTheme.bg}`} style={{ backgroundSize: 'cover' }} />
+                     )}
                      {profile?.custom_bg_type === 'video' && (
                         <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
                            <source src={profile.custom_bg} type="video/mp4" />
@@ -387,10 +392,18 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                   <div className="relative z-10 flex flex-col items-center p-8 pt-12" style={{ fontFamily: profile?.font_family || 'inherit' }}>
                      <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-20 h-20 rounded-full border-4 border-white mb-4 shadow-lg object-cover" />
                      <h3 className="font-black text-2xl mb-1 tracking-tight" style={{ color: profile?.font_color || '#000000' }}>@{profile?.username}</h3>
-                     <p className="text-[11px] font-bold opacity-70 text-center line-clamp-3 leading-relaxed" style={{ color: profile?.font_color || '#000000' }}>{profile?.bio || 'One link for everything'}</p>
+                     <p className="text-[11px] font-bold opacity-70 text-center line-clamp-3 leading-relaxed mb-6" style={{ color: profile?.font_color || '#000000' }}>{profile?.bio || 'One link for everything'}</p>
                      
-                     <div className="w-full mt-10 space-y-4">
-                        {[1,2,3].map(i => (
+                     <div className="flex flex-wrap justify-center gap-4 mb-8 w-full">
+                        {profile?.social_links && Object.entries(profile.social_links).slice(0, 5).map(([platform, url]: [string, any]) => (
+                           url && (
+                              <i key={platform} className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'} text-xl`} style={{ color: profile?.font_color || '#000000' }}></i>
+                           )
+                        ))}
+                     </div>
+
+                     <div className="w-full mt-2 space-y-4">
+                        {[1,2].map(i => (
                           <div 
                             key={i} 
                             className={`w-full h-14 rounded-2xl transition-all border shadow-sm ${profile?.button_variant === 'outline' ? 'bg-transparent border-white/50' : profile?.button_variant === 'glass' ? 'bg-white/20 backdrop-blur-md border-white/30' : 'bg-white border-transparent'}`} 
