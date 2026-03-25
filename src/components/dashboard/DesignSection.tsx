@@ -20,12 +20,33 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
   const [themeTab, setThemeTab] = useState<'free' | 'premium'>('free')
   const [activeCategory, setActiveCategory] = useState('All')
   const [activeSubTab, setActiveSubTab] = useState('Text')
+  const [pendingColor, setPendingColor] = useState('#6A373A')
 
   const THEME_CATEGORIES = ['All', 'Simple', 'Creative', 'Professional', 'Anime', 'Business', 'Abstract']
 
   const FONTS = [
     'Inter', 'Roboto', 'Outfit', 'Playfair Display', 'Poppins', 'Montserrat', 'Open Sans', 'Lato', 'Ubuntu', 'Lora',
     'Dancing Script', 'Pacifico', 'Caveat', 'Satisfy', 'Oswald', 'Raleway', 'Nunito', 'Merriweather'
+  ]
+
+  const PRESET_GRADIENTS = [
+    'linear-gradient(to top, #30cfd0 0%, #330867 100%)',
+    'linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%)',
+    'linear-gradient(to top, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(to top, #48c6ef 0%, #6f86d6 100%)',
+    'linear-gradient(to top, #fa709a 0%, #fee140 100%)',
+    'linear-gradient(to right, #43e97b 0%, #38f9d7 100%)',
+    'linear-gradient(to right, #fa709a 0%, #fee140 100%)',
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+  ]
+
+  const PRESET_COLORS = ['#000000', '#FFFFFF', '#6A373A', '#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#8B5CF6', '#06B6D4']
+
+  const PATTERNS = [
+     { id: 'grid', css: 'radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px)', size: '20px 20px' },
+     { id: 'dots', css: 'radial-gradient(rgba(0,0,0,0.2) 2px, transparent 2px)', size: '30px 30px' },
+     { id: 'diagonal', css: 'linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.05) 75%, transparent 75%, transparent)', size: '20px 20px' },
+     { id: 'waves', css: 'repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.05) 10px), repeating-radial-gradient(circle at 100% 100%, transparent 0, rgba(0,0,0,0.05) 10px)', size: '40px 40px' }
   ]
 
   const updateProfile = async (updates: any) => {
@@ -54,16 +75,27 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
     reader.readAsDataURL(file)
   }
 
-  const handleCustomBgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCustomBgUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
     const file = e.target.files?.[0]
     if (!file) return
-    setCropTarget('wallpaper')
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setSelectedImage(reader.result as string)
-      setShowCropper(true)
+    if (type === 'image') {
+       setCropTarget('wallpaper')
+       const reader = new FileReader()
+       reader.onloadend = () => {
+          setSelectedImage(reader.result as string)
+          setShowCropper(true)
+       }
+       reader.readAsDataURL(file)
+    } else {
+       // Video upload logic
+       const fileName = `bg-video-${Date.now()}.mp4`
+       const filePath = `${profile.id}/${fileName}`
+       const { error: uploadError } = await supabase.storage.from('bg-assets').upload(filePath, file, { upsert: true })
+       if (!uploadError) {
+          const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
+          updateProfile({ custom_bg: publicUrl, custom_bg_type: 'video', theme: 'custom' })
+       }
     }
-    reader.readAsDataURL(file)
   }
 
   const handleCropComplete = async (base64: string) => {
@@ -94,12 +126,10 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
       case 'theme':
         return (
           <div className="flex flex-col h-[500px]">
-             {/* Free/Premium Tabs */}
              <div className="flex bg-gray-50 p-1 rounded-2xl mb-4 shrink-0">
                 <button onClick={() => setThemeTab('free')} className={`flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'free' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Free</button>
                 <button onClick={() => setThemeTab('premium')} className={`flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'premium' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Premium</button>
              </div>
-             {/* Horizontal Categories */}
              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 mb-4 shrink-0">
                 {THEME_CATEGORIES.map(cat => (
                   <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${activeCategory === cat ? 'bg-secondary text-white' : 'bg-gray-50 text-gray-400'}`}>
@@ -107,7 +137,6 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                   </button>
                 ))}
              </div>
-             {/* Vertical Grid Scroll */}
              <div className="flex-1 overflow-y-auto no-scrollbar pb-20">
                 <div className="grid grid-cols-3 gap-3">
                    <button onClick={() => updateProfile({ theme: 'custom' })} className="flex flex-col items-center gap-2 group">
@@ -145,41 +174,126 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
              </div>
              <div className="space-y-4">
                <div className="space-y-2">
-                 <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Profile Username</label>
-                 <input type="text" value={profile?.username || ''} disabled className="w-full h-14 px-6 rounded-2xl bg-gray-50 text-gray-400 font-bold outline-none" />
-               </div>
-               <div className="space-y-2">
                  <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Display Name</label>
-                 <input type="text" value={profile?.display_name || ''} onChange={(e) => updateProfile({ display_name: e.target.value })} className="w-full h-14 px-6 rounded-2xl bg-gray-50 text-secondary font-black outline-none border-2 border-transparent focus:border-secondary/10 transition-all" />
+                 <input type="text" value={profile?.display_name || ''} onChange={(e) => updateProfile({ display_name: e.target.value })} className="w-full h-14 px-6 rounded-2xl bg-gray-50 text-secondary font-black outline-none border-2 border-transparent focus:border-secondary/10 transition-all font-inter" />
                </div>
                <div className="space-y-2">
                  <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Bio</label>
-                 <textarea value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full h-32 p-6 rounded-2xl bg-gray-50 text-secondary font-bold outline-none border-2 border-transparent focus:border-secondary/10 transition-all resize-none" placeholder="Tell the world who you are..." />
+                 <textarea value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full h-32 p-6 rounded-2xl bg-gray-50 text-secondary font-bold outline-none border-2 border-transparent focus:border-secondary/10 transition-all resize-none font-inter" placeholder="Tell the world who you are..." />
                </div>
              </div>
           </div>
         )
       case 'wallpaper':
         return (
-          <div className="space-y-6 pb-20 overflow-y-auto no-scrollbar h-[350px]">
-             <div className="grid grid-cols-4 gap-2">
-                {['color', 'gradient', 'pattern', 'image'].map(type => (
-                  <button key={type} onClick={() => updateProfile({ custom_bg_type: type, theme: 'custom' })} className={`flex flex-col items-center p-3 rounded-2xl border-2 transition-all ${profile?.custom_bg_type === type ? 'border-secondary bg-secondary/5' : 'border-gray-50'}`}>
-                     <i className={`fi ${type==='color'?'fi-rr-palette':type==='gradient'?'fi-rr-swatchbook':type==='pattern'?'fi-rr-grid':'fi-rr-picture'} text-lg ${profile?.custom_bg_type === type ? 'text-secondary' : 'text-gray-300'}`}></i>
-                     <span className="text-[8px] font-black uppercase mt-1.5 tracking-tighter">{type}</span>
+          <div className="flex flex-col h-[550px]">
+             {/* Types Toolbar */}
+             <div className="grid grid-cols-5 gap-2 mb-6 shrink-0">
+                {[
+                  { id: 'color', label: 'Color', icon: 'fi-rr-palette' },
+                  { id: 'gradient', label: 'Gradient', icon: 'fi-rr-swatchbook' },
+                  { id: 'pattern', label: 'Pattern', icon: 'fi-rr-grid' },
+                  { id: 'image', label: 'Image', icon: 'fi-rr-picture' },
+                  { id: 'video', label: 'Video', icon: 'fi-rr-play-alt' },
+                ].map(type => (
+                  <button 
+                    key={type.id} 
+                    onClick={() => updateProfile({ custom_bg_type: type.id, theme: 'custom' })} 
+                    className={`flex flex-col items-center gap-1.5 p-2 rounded-2xl border-2 transition-all ${profile?.custom_bg_type === type.id ? 'border-secondary bg-secondary/5' : 'border-gray-50'}`}
+                  >
+                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${profile?.custom_bg_type === type.id ? 'bg-primary text-white' : 'bg-gray-50 text-gray-400'}`}>
+                        <i className={`fi ${type.icon} text-lg`}></i>
+                     </div>
+                     <span className="text-[8px] font-black uppercase tracking-widest">{type.label}</span>
                   </button>
                 ))}
              </div>
-             <div className="p-4 bg-gray-50 rounded-3xl">
-                {profile?.custom_bg_type === 'image' && (
-                  <div className="relative h-32 rounded-2xl overflow-hidden bg-white border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2">
-                     <i className="fi fi-rr-picture text-2xl text-gray-200"></i>
-                     <span className="text-[10px] font-black text-gray-400 uppercase">Upload Wallpaper</span>
-                     <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleCustomBgUpload} />
+             
+             {/* Content Area */}
+             <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
+                {profile?.custom_bg_type === 'color' && (
+                  <div className="space-y-6">
+                     <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Select Color</p>
+                     <div className="grid grid-cols-5 gap-3">
+                        {PRESET_COLORS.map(c => (
+                          <button 
+                             key={c} 
+                             onClick={() => setPendingColor(c)} 
+                             className={`w-full aspect-square rounded-full border-4 transition-all scale-100 active:scale-90 ${pendingColor === c ? 'border-secondary' : 'border-white shadow-sm'}`} 
+                             style={{ backgroundColor: c }} 
+                          />
+                        ))}
+                     </div>
+                     <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-3xl">
+                        <div className="w-14 h-14 rounded-2xl shadow-inner border border-white" style={{ backgroundColor: pendingColor }} />
+                        <div className="flex-1">
+                           <p className="text-xs font-black text-secondary">Custom Palette</p>
+                           <p className="text-[10px] font-bold text-gray-300">{pendingColor.toUpperCase()}</p>
+                        </div>
+                        <button onClick={() => updateProfile({ custom_bg: pendingColor, custom_bg_type: 'color', theme: 'custom' })} className="px-6 py-2.5 bg-secondary text-white text-[10px] font-black uppercase rounded-full shadow-lg active:scale-95 transition-all">Set Color</button>
+                     </div>
                   </div>
                 )}
-                {profile?.custom_bg_type === 'color' && (
-                  <input type="color" value={profile?.custom_bg || '#ffffff'} onChange={(e) => updateProfile({ custom_bg: e.target.value, theme: 'custom' })} className="w-full h-12 rounded-xl border-none cursor-pointer" />
+
+                {profile?.custom_bg_type === 'gradient' && (
+                   <div className="grid grid-cols-2 gap-3">
+                      {PRESET_GRADIENTS.map((g, i) => (
+                        <button 
+                          key={i} 
+                          onClick={() => updateProfile({ custom_bg: g, custom_bg_type: 'gradient', theme: 'custom' })} 
+                          className={`w-full aspect-video rounded-2xl border-2 transition-all relative overflow-hidden ${profile?.custom_bg === g ? 'border-secondary' : 'border-transparent shadow-sm'}`} 
+                        >
+                           <div className="absolute inset-0" style={{ backgroundImage: g }} />
+                           <div className="absolute inset-0 flex items-center justify-center bg-black/5 opacity-0 hover:opacity-100 transition-opacity">
+                              <i className="fi fi-rr-check text-white"></i>
+                           </div>
+                        </button>
+                      ))}
+                   </div>
+                )}
+
+                {profile?.custom_bg_type === 'pattern' && (
+                   <div className="grid grid-cols-2 gap-3">
+                      {PATTERNS.map((p, i) => (
+                        <button 
+                          key={i} 
+                          onClick={() => updateProfile({ custom_bg_pattern: p.id, custom_bg_type: 'pattern', theme: 'custom', custom_bg: '#6A373A' })} 
+                          className={`w-full aspect-video rounded-2xl border-2 transition-all relative overflow-hidden bg-gray-50 ${profile?.custom_bg_pattern === p.id ? 'border-secondary' : 'border-transparent shadow-sm'}`} 
+                        >
+                           <div 
+                              className="absolute inset-0 opacity-20" 
+                              style={{ backgroundImage: p.css, backgroundSize: p.size }} 
+                           />
+                           <span className="relative z-10 text-[9px] font-black uppercase text-gray-400">{p.id}</span>
+                        </button>
+                      ))}
+                   </div>
+                )}
+
+                {profile?.custom_bg_type === 'image' && (
+                  <div className="relative group p-10 border-4 border-dashed border-gray-100 bg-gray-50 rounded-[40px] flex flex-col items-center justify-center gap-4 text-center">
+                     <div className="w-16 h-16 rounded-3xl bg-white shadow-xl flex items-center justify-center text-secondary">
+                        <i className="fi fi-rr-picture text-3xl"></i>
+                     </div>
+                     <div>
+                        <p className="font-black text-secondary text-sm">Pick an Image</p>
+                        <p className="text-[10px] font-bold text-gray-300">JPG, PNG or WEBP up to 5MB</p>
+                     </div>
+                     <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleCustomBgUpload(e, 'image')} />
+                  </div>
+                )}
+
+                {profile?.custom_bg_type === 'video' && (
+                  <div className="relative group p-10 border-4 border-dashed border-gray-100 bg-gray-50 rounded-[40px] flex flex-col items-center justify-center gap-4 text-center">
+                     <div className="w-16 h-16 rounded-3xl bg-white shadow-xl flex items-center justify-center text-primary">
+                        <i className="fi fi-rr-play-alt text-3xl"></i>
+                     </div>
+                     <div>
+                        <p className="font-black text-secondary text-sm">Upload Video</p>
+                        <p className="text-[10px] font-bold text-gray-300">MP4 recommended (Max 20MB)</p>
+                     </div>
+                     <input type="file" accept="video/mp4" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleCustomBgUpload(e, 'video')} />
+                  </div>
                 )}
              </div>
           </div>
@@ -209,13 +323,31 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                           {v} Style
                         </button>
                       ))}
+                      <div className="pt-6 space-y-4">
+                         <p className="text-[10px] font-black uppercase text-gray-400">Button Curvature</p>
+                         <div className="flex gap-2">
+                            {['extra_none', 'extra_md', 'extra_xl', 'extra_full'].map(r => (
+                              <button key={r} onClick={() => updateProfile({ button_radius: r.split('_')[1] })} className={`px-4 py-2 rounded-lg border flex-1 text-[10px] font-bold ${profile?.button_radius === r.split('_')[1] ? 'bg-secondary text-white' : 'bg-white text-gray-400'}`}>{r.split('_')[1]}</button>
+                            ))}
+                         </div>
+                      </div>
                    </div>
                 )}
                 {activeSubTab === 'Colors' && (
-                  <div className="p-6 bg-gray-50 rounded-[32px] space-y-6">
+                  <div className="p-6 bg-gray-50 rounded-[32px] space-y-8">
                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-black uppercase text-gray-400">Main Font Color</span>
+                        <div>
+                           <p className="text-[10px] font-black uppercase text-secondary">Main Text</p>
+                           <p className="text-[9px] font-bold text-gray-400 mt-0.5">Title and username color</p>
+                        </div>
                         <input type="color" value={profile?.font_color || '#000000'} onChange={(e) => updateProfile({ font_color: e.target.value })} className="w-12 h-12 rounded-full cursor-pointer shadow-lg border-2 border-white" />
+                     </div>
+                     <div className="flex items-center justify-between">
+                        <div>
+                           <p className="text-[10px] font-black uppercase text-secondary">Button Background</p>
+                           <p className="text-[9px] font-bold text-gray-400 mt-0.5">Override theme button color</p>
+                        </div>
+                        <input type="color" value={profile?.custom_button_bg || '#ffffff'} onChange={(e) => updateProfile({ custom_button_bg: e.target.value })} className="w-12 h-12 rounded-full cursor-pointer shadow-lg border-2 border-white" />
                      </div>
                   </div>
                 )}
@@ -228,16 +360,13 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
 
   return (
     <div className="flex-1 flex flex-col bg-white overflow-hidden h-screen">
-      {/* MOBILE UI */}
       <div className="md:hidden flex flex-col h-full relative">
-         {/* Top bar (Static) */}
-         <div className="flex items-center justify-between px-6 py-4 bg-white z-[100] shrink-0">
-            <button className="w-10 h-10 flex items-center justify-center text-secondary"><i className="fi fi-rr-angle-small-left text-2xl"></i></button>
-            <h1 className="font-black text-lg">Design</h1>
-            <button className="w-10 h-10 flex items-center justify-center text-secondary"><i className="fi fi-rr-share-square text-lg"></i></button>
+         <div className="flex items-center justify-between px-6 py-4 bg-white z-[100] shrink-0 border-b border-gray-50">
+            <button className="w-10 h-10 flex items-center justify-center text-secondary active:scale-90 transition-transform"><i className="fi fi-rr-angle-small-left text-2xl"></i></button>
+            <h1 className="font-black text-lg tracking-tight">Design</h1>
+            <button className="w-10 h-10 flex items-center justify-center text-secondary active:scale-90 transition-transform"><i className="fi fi-rr-share-square text-lg"></i></button>
          </div>
 
-         {/* Preview Area (Scalable Hinterlayer) */}
          <div className="flex-1 flex flex-col items-center justify-center p-4 relative overflow-hidden bg-gray-50/50">
             <motion.div 
                animate={{ 
@@ -245,29 +374,38 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                  y: activeSheet ? -100 : 0
                }}
                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-               className="w-full max-w-[320px] aspect-[9/18] rounded-[52px] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.12)] border-[10px] border-black bg-white pointer-events-none relative"
+               className="w-full max-w-[320px] aspect-[9/18] rounded-[52px] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.12)] border-[10px] border-[#020617] bg-white pointer-events-none relative"
             >
                <div className="w-full h-full overflow-hidden flex flex-col">
-                  {/* LIVE BACKGROUND PREVIEW */}
                   <div 
-                    className={`absolute inset-0 z-0 ${(THEMES.find(t=>t.id===profile?.theme)||THEMES[0])?.bg}`}
+                    className={`absolute inset-0 z-0 ${(THEMES.find(t=>t.id===profile?.theme)||THEMES[0])?.bg} transition-all duration-700`}
                     style={{
                       ...(profile?.custom_bg_type === 'color' ? { backgroundColor: profile.custom_bg } : {}),
                       ...(profile?.custom_bg_type === 'gradient' ? { backgroundImage: profile.custom_bg } : {}),
+                      ...(profile?.custom_bg_type === 'pattern' ? { backgroundImage: (PATTERNS.find(p=>p.id===profile?.custom_bg_pattern)||PATTERNS[0]).css, backgroundSize: (PATTERNS.find(p=>p.id===profile?.custom_bg_pattern)||PATTERNS[0]).size } : {}),
                       ...(profile?.custom_bg_type === 'image' ? { backgroundImage: `url(${profile.custom_bg})`, backgroundSize: 'cover' } : {}),
                     }}
-                  />
-                  {/* LIVE CONTENT PREVIEW */}
+                  >
+                     {profile?.custom_bg_type === 'video' && (
+                        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+                           <source src={profile.custom_bg} type="video/mp4" />
+                        </video>
+                     )}
+                  </div>
                   <div className="relative z-10 flex flex-col items-center p-8 pt-12" style={{ fontFamily: profile?.font_family || 'inherit' }}>
-                     <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-20 h-20 rounded-full border-4 border-white mb-4 shadow-lg" />
-                     <h3 className="font-black text-2xl mb-1" style={{ color: profile?.font_color || '#000000' }}>@{profile?.username}</h3>
-                     <p className="text-sm font-bold opacity-70 text-center line-clamp-2" style={{ color: profile?.font_color || '#000000' }}>{profile?.bio}</p>
+                     <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-20 h-20 rounded-full border-4 border-white mb-4 shadow-lg object-cover" />
+                     <h3 className="font-black text-2xl mb-1 tracking-tight" style={{ color: profile?.font_color || '#000000' }}>@{profile?.username}</h3>
+                     <p className="text-[11px] font-bold opacity-70 text-center line-clamp-3 leading-relaxed" style={{ color: profile?.font_color || '#000000' }}>{profile?.bio || 'One link for everything'}</p>
                      
                      <div className="w-full mt-10 space-y-4">
                         {[1,2,3].map(i => (
                           <div 
                             key={i} 
-                            className={`w-full h-14 rounded-2xl transition-all border ${profile?.button_variant === 'outline' ? 'bg-transparent border-white/50' : profile?.button_variant === 'glass' ? 'bg-white/20 backdrop-blur-md border-white/30' : 'bg-white shadow-sm border-transparent'}`} 
+                            className={`w-full h-14 rounded-2xl transition-all border shadow-sm ${profile?.button_variant === 'outline' ? 'bg-transparent border-white/50' : profile?.button_variant === 'glass' ? 'bg-white/20 backdrop-blur-md border-white/30' : 'bg-white border-transparent'}`} 
+                            style={{ 
+                               borderRadius: profile?.button_radius === 'none' ? '0px' : profile?.button_radius === 'full' ? '9999px' : profile?.button_radius === 'md' ? '12px' : '24px',
+                               backgroundColor: profile?.button_variant === 'solid' ? (profile?.custom_button_bg || '#ffffff') : 'transparent'
+                            }}
                           />
                         ))}
                      </div>
@@ -276,13 +414,10 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
             </motion.div>
          </div>
 
-         {/* Bottom Sheet Overlay */}
          <AnimatePresence>
             {activeSheet && (
                <motion.div 
-                 initial={{ opacity: 0 }} 
-                 animate={{ opacity: 1 }} 
-                 exit={{ opacity: 0 }}
+                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                  onClick={() => setActiveSheet(null)}
                  className="fixed inset-0 bg-black/40 z-[150]"
                />
@@ -292,19 +427,14 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
          <AnimatePresence>
             {activeSheet && (
                <motion.div 
-                 initial={{ y: '100%' }}
-                 animate={{ y: 0 }}
-                 exit={{ y: '100%' }}
+                 initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
                  transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                 className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[40px] px-6 pt-2 pb-6 z-[160] shadow-[0_-20px_60px_rgba(0,0,0,0.2)] max-h-[80vh] flex flex-col"
+                 className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[40px] px-6 pt-2 pb-24 z-[180] shadow-[0_-20px_60px_rgba(0,0,0,0.2)] max-h-[85vh] flex flex-col"
                >
                   <div className="w-12 h-1.5 bg-gray-100 rounded-full mx-auto mb-6 shrink-0" />
                   <div className="flex items-center justify-between mb-4 shrink-0">
                      <h3 className="font-black text-xl uppercase tracking-tighter text-secondary">{activeSheet}</h3>
-                     <button 
-                        onClick={() => setActiveSheet(null)} 
-                        className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-secondary border border-gray-100 active:scale-90 transition-transform"
-                     >
+                     <button onClick={() => setActiveSheet(null)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-secondary border border-gray-100 active:scale-90 transition-transform">
                         <i className="fi fi-rr-cross-small text-xl pt-0.5"></i>
                      </button>
                   </div>
@@ -315,8 +445,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
             )}
          </AnimatePresence>
 
-         {/* Mobile Bottom Tab Bar (Static at bottom) */}
-         <div className="bg-white border-t border-gray-100 flex items-center justify-around py-4 px-6 z-[140] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] shrink-0">
+         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around py-4 px-6 z-[170] shadow-[0_-10px_40px_rgba(0,0,0,0.08)] pb-safe">
             {NAV_ITEMS.map(item => (
               <button 
                 key={item.id}
@@ -324,7 +453,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                    setActiveSheet(item.id)
                    if (item.id === 'style') setActiveSubTab('Text')
                 }}
-                className={`flex flex-col items-center gap-1.5 transition-all ${activeSheet === item.id ? 'text-secondary' : 'text-gray-300 hover:text-gray-400'}`}
+                className={`flex flex-col items-center gap-1.5 transition-all outline-none ${activeSheet === item.id ? 'text-secondary' : 'text-gray-300'}`}
               >
                  <div className={`w-14 h-11 rounded-[20px] flex items-center justify-center transition-all ${activeSheet === item.id ? 'bg-gray-100/80 scale-105' : ''}`}>
                     {item.isIcon ? (
