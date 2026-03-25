@@ -122,7 +122,7 @@ function DashboardContent() {
       case 'links':
         return <LinksSection profile={profile} links={links} setLinks={setLinks} setProfile={setProfile} refreshData={fetchData} />
       case 'design':
-        return <DesignSection profile={profile} setProfile={setProfile} hasChanges={hasDesignChanges} setHasChanges={setHasDesignChanges} />
+        return <DesignSection profile={profile} setProfile={setProfile} hasChanges={hasDesignChanges} setHasChanges={setHasDesignChanges} links={links} onBack={() => handleTabChange('links')} />
       case 'audience':
         return <AudienceSection profile={profile} />
       case 'insights':
@@ -146,16 +146,18 @@ function DashboardContent() {
           </button>
       </div>
 
-      {/* Mobile Top Header */}
-      <div className="flex md:hidden items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-[36px] z-[150]">
-          <div className="flex items-center gap-3">
-             <button onClick={() => setIsSidebarOpen(true)} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-secondary border border-gray-100"><i className="fi fi-rr-menu-burger text-lg"></i></button>
-             <p className="font-black text-xs md:text-sm uppercase tracking-[0.2em] text-secondary">{activeTab}</p>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-primary/10 overflow-hidden border border-primary/20">
-             <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
-          </div>
-      </div>
+      {/* Mobile Top Header - HIDE IF IN DESIGN TAB */}
+      {!activeTab?.includes('design') && (
+        <div className="flex md:hidden items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-[36px] z-[150]">
+            <div className="flex items-center gap-3">
+               <button onClick={() => setIsSidebarOpen(true)} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-secondary border border-gray-100"><i className="fi fi-rr-menu-burger text-lg"></i></button>
+               <p className="font-black text-xs md:text-sm uppercase tracking-[0.2em] text-secondary">{activeTab}</p>
+            </div>
+            <div className="w-8 h-8 rounded-full bg-primary/10 overflow-hidden border border-primary/20">
+               <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
+            </div>
+        </div>
+      )}
 
       <div className="flex-1 flex relative overflow-hidden">
         <Sidebar userProfile={profile} activeTab={activeTab} onTabChange={handleTabChange} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
