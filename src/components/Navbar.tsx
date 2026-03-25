@@ -17,7 +17,8 @@ const PRODUCTS_MENU = [
 
 const LEARN_MENU = [
   { title: 'Resources', href: '#' },
-  { title: 'How to use Linktree', href: '#' }
+  { title: 'How to use Linktree', href: '#' },
+  { title: 'Social Good', href: '/social-good' }
 ]
 
 export default function Navbar() {

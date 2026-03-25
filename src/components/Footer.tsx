@@ -16,7 +16,7 @@ export default function Footer() {
                    {['The Linktree Blog', 'Engineering Blog', "What's New", 'About', 'Press', 'Careers', 'Link In Bio', 'Social Good', 'Contact'].map(l => (
                       <li key={l}>
                          <Link 
-                            href={l === 'About' ? '/about' : l === 'Contact' ? '/contact' : `/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} 
+                            href={l === 'About' ? '/about' : l === 'Contact' ? '/contact' : l === 'Social Good' ? '/social-good' : `/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} 
                             className="text-sm font-bold text-gray-500 hover:text-black transition-colors"
                          >
                             {l}
