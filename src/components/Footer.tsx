@@ -3,8 +3,15 @@
 import React from 'react'
 import Link from 'next/link'
 import { Instagram, Facebook, Linkedin, Disc } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
 export default function Footer() {
+  const pathname = usePathname()
+
+  if (pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin')) {
+    return null
+  }
+
   return (
     <footer className="relative bg-white pt-24 pb-16 px-6 md:px-12 lg:px-24 z-30 overflow-hidden border-t border-gray-100">
        <div className="max-w-[1400px] mx-auto">

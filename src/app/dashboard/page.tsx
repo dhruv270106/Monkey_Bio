@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/dashboard/Sidebar'
@@ -11,6 +11,37 @@ import AudienceSection from '@/components/dashboard/AudienceSection'
 import InsightsSection from '@/components/dashboard/InsightsSection'
 import PlannerSection from '@/components/dashboard/PlannerSection'
 import AutoReplySection from '@/components/dashboard/AutoReplySection'
+import { motion, AnimatePresence } from 'framer-motion'
+
+const NAV_GROUPS = [
+  {
+    id: 'linktree',
+    label: 'Linktree',
+    icon: 'fi-rr-link',
+    items: [
+      { id: 'links', label: 'Links', icon: 'fi-rr-link', color: 'text-purple-500' },
+      { id: 'design', label: 'Design', icon: 'fi-rr-palette', color: 'text-pink-500' },
+    ]
+  },
+  {
+    id: 'analytics',
+    label: 'Stats',
+    icon: 'fi-rr-stats',
+    items: [
+      { id: 'audience', label: 'Fans', icon: 'fi-rr-users', color: 'text-orange-500' },
+      { id: 'insights', label: 'Insights', icon: 'fi-rr-stats', color: 'text-cyan-500' },
+    ]
+  },
+  {
+    id: 'tools',
+    label: 'Tools',
+    icon: 'fi-rr-apps',
+    items: [
+      { id: 'planner', label: 'Plan', icon: 'fi-rr-calendar', color: 'text-blue-500' },
+      { id: 'autoreply', label: 'Reply', icon: 'fi-rr-comment-alt', color: 'text-primary' },
+    ]
+  }
+]
 
 function DashboardContent() {
   const router = useRouter()
@@ -20,12 +51,28 @@ function DashboardContent() {
   const [profile, setProfile] = useState<any>(null)
   const [links, setLinks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState(tabFromQuery) // 'links', 'design', 'audience', 'insights', 'planner', 'autoreply'
+  const [activeTab, setActiveTab] = useState(tabFromQuery)
   const [hasDesignChanges, setHasDesignChanges] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [openGroup, setOpenGroup] = useState<string | null>(null)
+  
+  const bottomNavRef = useRef<HTMLDivElement>(null)
 
-  // Sync state with URL
+  // Close group menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (bottomNavRef.current && !bottomNavRef.current.contains(event.target as Node)) {
+        setOpenGroup(null)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab)
+    setIsSidebarOpen(false)
+    setOpenGroup(null)
     router.replace(`/dashboard?tab=${newTab}`, { scroll: false })
   }
 
@@ -90,55 +137,93 @@ function DashboardContent() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col pt-24 md:pt-32">
+    <div className="min-h-screen bg-white flex flex-col pt-0 overflow-x-hidden">
       {/* Top Banner */}
-      <div className="bg-[#1e293b] text-white py-2 px-8 flex justify-center items-center gap-4 text-sm font-medium sticky top-0 z-[150]">
-          <span>Unlock more tools to grow your audience faster.</span>
-          <button className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 px-3 py-1 rounded-full flex items-center gap-2 transition-all">
-              <i className="fi fi-rr-bolt text-[10px]"></i> Claim free week
+      <div className="bg-[#1e293b] text-white py-2 px-4 md:px-8 flex justify-center items-center gap-4 text-xs md:text-sm font-medium sticky top-0 z-[160]">
+          <span className="truncate text-center">Unlock more tools to grow your audience faster.</span>
+          <button className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 px-3 py-1 rounded-full flex items-center gap-2 transition-all shrink-0">
+              <i className="fi fi-rr-bolt text-xs"></i> <span>Claim week</span>
           </button>
       </div>
 
-      <div className="flex-1 flex overflow-hidden relative">
-        <Sidebar 
-          userProfile={profile} 
-          activeTab={activeTab} 
-          onTabChange={handleTabChange} 
-        />
+      {/* Mobile Top Header */}
+      <div className="flex md:hidden items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-[36px] z-[150]">
+          <div className="flex items-center gap-3">
+             <button onClick={() => setIsSidebarOpen(true)} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-secondary border border-gray-100"><i className="fi fi-rr-menu-burger text-lg"></i></button>
+             <p className="font-black text-xs md:text-sm uppercase tracking-[0.2em] text-secondary">{activeTab}</p>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-primary/10 overflow-hidden border border-primary/20">
+             <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
+          </div>
+      </div>
 
-        {/* Main Content Area */}
-        <main className="flex-1 flex flex-col bg-white overflow-hidden pb-24 md:pb-0">
-          {renderSection()}
+      <div className="flex-1 flex relative overflow-hidden">
+        <Sidebar userProfile={profile} activeTab={activeTab} onTabChange={handleTabChange} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+        <main className="flex-1 flex flex-col bg-white overflow-x-hidden overflow-y-auto pb-32 md:pb-0 min-w-0">
+          <div className="w-full">
+            {renderSection()}
+          </div>
         </main>
 
-        {/* Mobile Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-gray-100 flex md:hidden items-center justify-around py-4 px-2 z-[100] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-           {[
-             { id: 'links', icon: 'fi-rr-link', label: 'Links' },
-             { id: 'design', icon: 'fi-rr-palette', label: 'Design' },
-             { id: 'insights', icon: 'fi-rr-stats', label: 'Stats' },
-             { id: 'planner', icon: 'fi-rr-calendar', label: 'Plan' },
-             { id: 'audience', icon: 'fi-rr-users', label: 'Fans' },
-           ].map(item => (
-             <button
-               key={item.id}
-               onClick={() => handleTabChange(item.id)}
-               className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === item.id ? 'text-primary' : 'text-gray-300'}`}
-             >
-                <div className={`w-12 h-10 rounded-2xl flex items-center justify-center transition-all ${activeTab === item.id ? 'bg-primary/10' : ''}`}>
-                  <i className={`fi ${item.icon} text-lg`}></i>
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
-             </button>
-           ))}
+        {/* REFINED MOBILE BOTTOM NAVIGATION - CATEGORY BASED POPUP */}
+        <div ref={bottomNavRef} className="fixed bottom-0 left-0 right-0 z-[160] md:hidden">
+           {/* POPUP MENU */}
+           <AnimatePresence>
+             {openGroup && (
+               <motion.div 
+                 initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                 animate={{ opacity: 1, y: 0, scale: 1 }}
+                 exit={{ opacity: 0, y: 20, scale: 0.9 }}
+                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                 className="absolute bottom-[90%] left-6 right-6 bg-white/95 backdrop-blur-xl border border-gray-100 rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] p-2 z-[200] flex flex-col gap-1"
+               >
+                  <p className="text-[9px] font-black uppercase text-gray-300 tracking-[0.3em] px-4 py-3 border-b border-gray-50">
+                    {NAV_GROUPS.find(g => g.id === openGroup)?.label} tools
+                  </p>
+                  {NAV_GROUPS.find(g => g.id === openGroup)?.items.map(item => (
+                    <button 
+                      key={item.id} 
+                      onClick={() => handleTabChange(item.id)}
+                      className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${activeTab === item.id ? 'bg-primary/10 text-primary' : 'hover:bg-gray-50 text-gray-500'}`}
+                    >
+                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === item.id ? 'bg-primary text-white' : 'bg-gray-50'}`}>
+                          <i className={`fi ${item.icon} text-lg`}></i>
+                       </div>
+                       <span className="font-black text-xs uppercase tracking-widest">{item.label}</span>
+                       {activeTab === item.id && <i className="fi fi-rr-check text-xs ml-auto"></i>}
+                    </button>
+                  ))}
+               </motion.div>
+             )}
+           </AnimatePresence>
+
+           {/* MAIN BOTTOM BAR */}
+           <div className="bg-white/95 backdrop-blur-xl border-t border-gray-100 flex items-center justify-around py-4 px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] relative z-[160]">
+              {NAV_GROUPS.map(group => {
+                const isItemInGroupActive = group.items.some(i => i.id === activeTab)
+                const isGroupOpen = openGroup === group.id
+
+                return (
+                  <button
+                    key={group.id}
+                    onClick={() => setOpenGroup(isGroupOpen ? null : group.id)}
+                    className={`flex flex-col items-center gap-1.5 transition-all relative ${isItemInGroupActive ? 'text-primary' : 'text-gray-300'}`}
+                  >
+                    <div className={`w-14 h-12 rounded-[22px] flex items-center justify-center transition-all ${isItemInGroupActive ? 'bg-primary/10' : ''}`}>
+                       <i className={`fi ${group.icon} text-xl md:text-2xl`}></i>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">{group.label}</span>
+                    {isItemInGroupActive && !isGroupOpen && (
+                      <motion.div layoutId="active-dot" className="absolute -top-1 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_10px_#502274]" />
+                    )}
+                  </button>
+                )
+              })}
+           </div>
         </div>
 
-        {/* Real-time Preview - Desktop Only */}
-        <Preview 
-          userProfile={profile} 
-          links={links} 
-          socialLinks={profile?.social_links} 
-        />
+        <Preview userProfile={profile} links={links} socialLinks={profile?.social_links} />
       </div>
     </div>
   )

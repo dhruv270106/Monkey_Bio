@@ -101,16 +101,16 @@ export default function InsightsSection({ profile }: InsightsSectionProps) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-12 bg-white no-scrollbar">
-      <div className="max-w-5xl mx-auto space-y-12">
-        <div className="flex items-center justify-between">
-           <h1 className="font-bold text-3xl">Insights</h1>
-           <div className="flex items-center gap-2 bg-gray-50 p-1 rounded-xl shrink-0">
+    <div className="flex-1 overflow-y-auto p-4 md:p-12 bg-white no-scrollbar">
+      <div className="max-w-5xl mx-auto space-y-8 md:space-y-12">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+           <h1 className="font-bold text-2xl md:text-3xl">Insights</h1>
+           <div className="flex items-center gap-2 bg-gray-50 p-1 rounded-xl self-start sm:self-auto shrink-0">
               {['24h', '7d', '30d'].map(range => (
                 <button 
                   key={range}
                   onClick={() => setTimeRange(range)}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-black transition-all ${timeRange === range ? 'bg-white text-secondary shadow-sm' : 'text-gray-400 hover:text-secondary'}`}
+                  className={`px-3 md:px-4 py-1 md:py-1.5 rounded-lg text-[10px] md:text-xs font-black transition-all ${timeRange === range ? 'bg-white text-secondary shadow-sm' : 'text-gray-400 hover:text-secondary'}`}
                 >
                   {range.toUpperCase()}
                 </button>
@@ -135,15 +135,15 @@ export default function InsightsSection({ profile }: InsightsSectionProps) {
           ))}
         </div>
 
-        <div className="bg-gray-50 rounded-[40px] p-10 border border-gray-100 flex flex-col gap-8 h-[400px]">
-          <div className="flex items-center justify-between">
+        <div className="bg-gray-50 rounded-[30px] md:rounded-[40px] p-6 md:p-10 border border-gray-100 flex flex-col gap-6 md:gap-8 h-[350px] md:h-[400px]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 className="text-xl font-black text-secondary">Activity</h3>
-              <p className="text-sm font-bold text-gray-400">Profile clicks & views</p>
+              <h3 className="text-lg md:text-xl font-black text-secondary">Activity</h3>
+              <p className="text-xs md:text-sm font-bold text-gray-400">Profile clicks & views</p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-primary"></span> <span className="text-[10px] font-black text-gray-400 uppercase">Views</span></div>
-              <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-blue-500"></span> <span className="text-[10px] font-black text-gray-400 uppercase">Clicks</span></div>
+              <div className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-primary"></span> <span className="text-[9px] md:text-[10px] font-black text-gray-400 uppercase">Views</span></div>
+              <div className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span> <span className="text-[9px] md:text-[10px] font-black text-gray-400 uppercase">Clicks</span></div>
             </div>
           </div>
           

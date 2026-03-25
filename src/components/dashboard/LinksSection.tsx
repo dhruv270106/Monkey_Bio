@@ -140,9 +140,9 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
       />
 
       {/* Toolbar */}
-      <div className="h-16 px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0">
-         <h1 className="font-bold text-xl">Links</h1>
-         <div className="flex items-center gap-3">
+      <div className="h-16 px-4 md:px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0 sticky top-0 md:relative z-[60]">
+         <h1 className="font-black text-lg md:text-xl uppercase tracking-tighter">Links</h1>
+         <div className="flex items-center gap-2 md:gap-3">
               <button 
                 onClick={() => {
                   const url = `https://${domain}/${profile?.username}`
@@ -153,16 +153,16 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
                     alert('Link copied to clipboard!')
                   }
                 }}
-                className="flex items-center gap-2 px-4 py-2 border border-blue-100 bg-blue-50/50 text-blue-600 rounded-full font-bold text-sm hover:bg-blue-100 transition-all active:scale-95"
+                className="flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 border border-blue-100 bg-blue-50/50 text-blue-600 rounded-full font-bold text-[10px] md:text-sm hover:bg-blue-100 transition-all active:scale-95 shrink-0"
               >
-                  <i className="fi fi-rr-share text-xs"></i> Share
+                  <i className="fi fi-rr-share text-[10px]"></i> Share
               </button>
               <button 
                 onClick={refreshData} 
-                className="p-2 border border-gray-200 rounded-full hover:bg-gray-50 flex items-center justify-center transition-all active:rotate-180"
+                className="p-1.5 md:p-2 border border-gray-200 rounded-full hover:bg-gray-50 flex items-center justify-center transition-all active:rotate-180 shrink-0"
                 title="Refresh Data"
               >
-                 <i className="fi fi-rr-refresh text-gray-400 text-sm"></i>
+                 <i className="fi fi-rr-refresh text-gray-400 text-xs md:text-sm"></i>
               </button>
          </div>
       </div>
@@ -171,9 +171,9 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
         <div className="max-w-xl mx-auto space-y-8 pb-32">
           
           {/* Profile Header */}
-          <div className="flex items-center gap-6 mb-12 bg-gray-50/50 p-8 rounded-[40px] border border-gray-100">
+          <div className="flex items-center gap-4 md:gap-6 mb-8 md:mb-12 bg-gray-50/50 p-4 md:p-8 rounded-[30px] md:rounded-[40px] border border-gray-100">
               <div className="relative group">
-                  <div className="w-24 h-24 rounded-full bg-white overflow-hidden border-4 border-white shadow-xl cursor-pointer relative">
+                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white overflow-hidden border-2 md:border-4 border-white shadow-xl cursor-pointer relative">
                       <img 
                         src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.display_name || 'User'}&background=random`} 
                         className="w-full h-full object-cover" 
@@ -181,13 +181,13 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
                       />
                   </div>
               </div>
-              <div>
-                  <h2 className="text-2xl font-black flex items-center gap-2">
+              <div className="min-w-0 flex-1">
+                  <h2 className="text-xl md:text-2xl font-black flex items-center gap-2 truncate">
                     {profile?.display_name || 'User'} 
-                    <i className="fi fi-sr-badge-check text-primary text-xl"></i>
+                    <i className="fi fi-sr-badge-check text-primary text-lg md:text-xl shrink-0"></i>
                   </h2>
-                  <div className="flex items-center gap-4 mt-3">
-                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                  <div className="flex items-center gap-4 mt-2 md:mt-3">
+                     <span className="text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1 truncate">
                         <i className="fi fi-rr-link text-[10px]"></i> {domain}/{profile?.username}
                      </span>
                   </div>
@@ -205,20 +205,20 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
           </div>
 
            {/* Social Icons Section */}
-           <div className="bg-[#fdf2e3] border border-[#e8dcc8] rounded-[40px] p-8">
-              <div className="flex items-center justify-between mb-6">
+           <div className="bg-[#fdf2e3] border border-[#e8dcc8] rounded-[30px] md:rounded-[40px] p-6 md:p-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                   <div>
-                      <h3 className="font-black text-xl text-secondary">Social Cards</h3>
-                      <p className="text-sm text-secondary/60">Manage your link cards ({links.length}/20)</p>
+                      <h3 className="font-black text-lg md:text-xl text-secondary uppercase tracking-tight">Social Cards</h3>
+                      <p className="text-xs text-secondary/60 font-bold">Manage your link cards ({links.length}/20)</p>
                   </div>
                   <button 
                     onClick={() => setIsManageModalOpen(true)}
-                    className="px-5 py-2.5 bg-white border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-100 transition-all shadow-sm"
+                    className="px-5 py-2.5 bg-white border border-gray-200 rounded-full font-bold text-xs md:text-sm hover:bg-gray-100 transition-all shadow-sm shrink-0"
                   >
                      <i className="fi fi-rr-settings-sliders mr-2"></i> Manage
                   </button>
               </div>
-              <div className="flex flex-wrap gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap gap-3">
                   {links.map((link) => {
                     const appConfig = APPS.find(a => a.id === link.platform)
                     return (
@@ -227,19 +227,19 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
                         href={link.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="bg-white p-4 pr-12 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4 group hover:-translate-y-1 hover:shadow-md transition-all cursor-pointer relative"
+                        className="bg-white p-3 md:p-4 pr-10 md:pr-12 rounded-2xl md:rounded-3xl border border-gray-100 shadow-sm flex items-center gap-3 md:gap-4 group hover:-translate-y-1 hover:shadow-md transition-all cursor-pointer relative min-w-0"
                       >
-                         <div className="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center">
+                         <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-gray-50 flex items-center justify-center shrink-0">
                             {link.thumbnail ? (
                               <img src={link.thumbnail} className="w-full h-full object-cover rounded-xl" />
                             ) : (
-                              <i className={`fi ${appConfig?.icon || 'fi-rr-link'} text-xl ${appConfig?.color || 'text-secondary'}`}></i>
+                              <i className={`fi ${appConfig?.icon || 'fi-rr-link'} text-lg md:text-xl ${appConfig?.color || 'text-secondary'}`}></i>
                             )}
                          </div>
-                         <div>
-                            <p className="text-xs font-black truncate max-w-[120px]">{link.title}</p>
+                         <div className="min-w-0">
+                            <p className="text-[10px] md:text-xs font-black truncate">{link.title}</p>
                          </div>
-                         <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <div className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                             <i className="fi fi-rr-arrow-up-right text-[10px] text-primary"></i>
                          </div>
                       </a>
@@ -265,41 +265,41 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
             ) : (
               <Reorder.Group axis="y" values={links} onReorder={updateLinks} className="space-y-4">
                 {links.map((link) => (
-                  <Reorder.Item 
+                   <Reorder.Item 
                     key={link.id} 
                     value={link} 
-                    className={`bg-white border border-gray-100 rounded-[32px] p-5 shadow-sm hover:shadow-lg transition-all group relative border-l-[6px] ${link.highlighted ? 'border-l-yellow-400' : 'border-l-primary'}`}
+                    className={`bg-white border border-gray-100 rounded-[28px] md:rounded-[32px] p-4 md:p-5 shadow-sm hover:shadow-lg transition-all group relative border-l-[6px] ${link.highlighted ? 'border-l-yellow-400' : 'border-l-primary'}`}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="cursor-grab active:cursor-grabbing text-gray-300 hover:text-secondary transition-colors p-1">
+                    <div className="flex items-center gap-3 md:gap-4">
+                      <div className="cursor-grab active:cursor-grabbing text-gray-300 hover:text-secondary transition-colors p-1 hidden sm:block">
                          <i className="fi fi-rr-grip-vertical text-sm"></i>
                       </div>
-                      <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100 overflow-hidden">
+                      <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100 overflow-hidden">
                          {link.thumbnail ? (
                            <img src={link.thumbnail} className="w-full h-full object-cover" />
                          ) : (
-                           <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-lg text-secondary opacity-70`}></i>
+                           <i className={`fi ${APPS.find(a => a.id === link.platform)?.icon || 'fi-rr-link'} text-base md:text-lg text-secondary opacity-70`}></i>
                          )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                           <h3 className="font-black text-lg text-secondary w-full mr-4 truncate">
+                        <div className="flex items-center justify-between mb-0.5 md:mb-1 gap-2">
+                           <h3 className="font-black text-base md:text-lg text-secondary truncate">
                              {link.title}
                            </h3>
-                           <div className="flex items-center gap-4">
-                              <button onClick={() => toggleLink(link.id)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${link.active ? 'bg-primary' : 'bg-gray-200'}`}>
-                                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${link.active ? 'translate-x-6' : 'translate-x-1'}`} />
+                           <div className="flex items-center gap-4 shrink-0">
+                              <button onClick={() => toggleLink(link.id)} className={`relative inline-flex h-5 w-9 md:h-6 md:w-11 items-center rounded-full transition-colors ${link.active ? 'bg-primary' : 'bg-gray-200'}`}>
+                                  <span className={`inline-block h-3 w-3 md:h-4 md:w-4 transform rounded-full bg-white transition-transform ${link.active ? 'translate-x-5 md:translate-x-6' : 'translate-x-1'}`} />
                               </button>
                            </div>
                         </div>
-                        <p className="text-xs font-medium text-gray-400 block w-full truncate">
+                        <p className="text-[10px] md:text-xs font-medium text-gray-400 block w-full truncate italic">
                           {link.url}
                         </p>
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <div className="flex items-center gap-6">
+                    <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        <div className="flex items-center gap-4 md:gap-6">
                            <button 
                              onClick={() => toggleHighlight(link.id)}
                              className={`${link.highlighted ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'} flex items-center transition-colors`}
