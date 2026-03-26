@@ -181,24 +181,22 @@ export default function DesignSection({ profile, setProfile, links, onBack }: De
 
   return (
     <div className="flex-1 flex flex-col bg-white overflow-hidden h-full">
-      
-      {/* LAPTOP / DESKTOP VIEW - Restore Previous Ribbon Layout */}
-      <div className="hidden md:flex flex-col h-full bg-white">
-          <div className="px-8 py-6 flex items-center justify-between border-b border-gray-50 flex-shrink-0">
+      <div className="flex flex-col h-full bg-white">
+          <div className="px-4 md:px-8 py-4 md:py-6 flex items-center justify-between border-b border-gray-50 flex-shrink-0 bg-white z-[70]">
              <div className="flex flex-col">
-                <h1 className="font-extrabold text-2xl text-secondary uppercase tracking-tighter">Design Workspace</h1>
-                <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Live Customization ΓÇó {activeDesktopTab}</span>
+                <h1 className="font-extrabold text-lg md:text-2xl text-secondary uppercase tracking-tighter shrink-0">Design Workspace</h1>
+                <span className="hidden md:block text-[10px] font-black uppercase text-gray-400 tracking-widest">Live Customization ΓÇó {activeDesktopTab}</span>
              </div>
              <div className="flex items-center gap-6">
                 <AnimatePresence mode="wait">
                    {saveStatus === 'saving' && (
-                     <motion.div key="saving" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-primary font-bold text-xs bg-primary/5 px-4 py-2 rounded-full border border-primary/10">
+                     <motion.div key="saving" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-primary font-bold text-[10px] md:text-xs bg-primary/5 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-primary/10">
                         <i className="fi fi-rr-spinner animate-spin"></i>
                         <span>Saving...</span>
                      </motion.div>
                    )}
                    {saveStatus === 'saved' && (
-                     <motion.div key="saved" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-green-500 font-bold text-xs bg-green-50 px-4 py-2 rounded-full border border-green-100">
+                     <motion.div key="saved" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-green-500 font-bold text-[10px] md:text-xs bg-green-50 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-green-100">
                         <i className="fi fi-rr-check"></i>
                         <span>Updated</span>
                      </motion.div>
@@ -208,62 +206,62 @@ export default function DesignSection({ profile, setProfile, links, onBack }: De
           </div>
 
           <div className="flex-1 flex overflow-hidden">
-             {/* Left Ribbon Navigation */}
-             <div className="w-24 border-r border-gray-50 flex flex-col items-center py-10 gap-10 overflow-y-auto no-scrollbar">
+             {/* Unified Navigation - Ribbon for desktop, simplified for mobile */}
+             <div className="w-16 md:w-24 border-r border-gray-50 flex flex-col items-center py-6 md:py-10 gap-6 md:gap-10 overflow-y-auto no-scrollbar bg-white z-[60]">
                 {DESKTOP_TABS.map(tab => (
-                   <button key={tab.id} onClick={() => setActiveDesktopTab(tab.id)} className={`flex flex-col items-center gap-2 transition-all shrink-0 ${activeDesktopTab === tab.id ? 'text-secondary' : 'text-gray-300 hover:text-gray-500'}`}>
-                      <div className={`w-14 h-14 rounded-[22px] flex items-center justify-center transition-all ${activeDesktopTab === tab.id ? 'bg-secondary text-white shadow-xl rotate-12' : 'bg-transparent'}`}>
-                         <i className={`fi ${tab.icon} text-xl`}></i>
+                   <button key={tab.id} onClick={() => setActiveDesktopTab(tab.id)} className={`flex flex-col items-center gap-1.5 md:gap-2 transition-all shrink-0 ${activeDesktopTab === tab.id ? 'text-secondary font-black' : 'text-gray-300 hover:text-gray-500'}`}>
+                      <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-[22px] flex items-center justify-center transition-all ${activeDesktopTab === tab.id ? 'bg-secondary text-white shadow-lg md:shadow-xl rotate-12' : 'bg-transparent'}`}>
+                         <i className={`fi ${tab.icon} text-lg md:text-xl`}></i>
                       </div>
-                      <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${activeDesktopTab === tab.id ? 'opacity-100' : 'opacity-40'}`}>{tab.label}</span>
+                      <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] ${activeDesktopTab === tab.id ? 'opacity-100' : 'opacity-40'}`}>{tab.label.slice(0, 4)}</span>
                    </button>
                 ))}
              </div>
 
              {/* Dynamic Content Area */}
              <div className="flex-1 bg-gray-50/20 overflow-hidden relative">
-                <div className="absolute inset-0 overflow-y-auto p-12 no-scrollbar pb-40">
-                   <div className="max-w-2xl mx-auto space-y-16">
+                <div className="absolute inset-0 overflow-y-auto p-4 md:p-12 no-scrollbar pb-40">
+                   <div className="max-w-2xl mx-auto space-y-10 md:space-y-16">
                       <AnimatePresence mode="wait">
                          {activeDesktopTab === 'Header' && (
-                            <motion.section key="header" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
-                               <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Identity</h2>
-                               <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm">
+                            <motion.section key="header" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 md:space-y-10">
+                               <h2 className="text-xl md:text-3xl font-black text-secondary uppercase tracking-tighter italic">Identity</h2>
+                               <div className="bg-white p-6 md:p-10 rounded-[30px] md:rounded-[50px] border border-gray-100 shadow-sm">
                                   <HeaderSettings profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} isDesktop />
                                </div>
                             </motion.section>
                          )}
                          {activeDesktopTab === 'Theme' && (
-                            <motion.section key="theme" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
-                               <h2 className="text-3xl font-extrabold text-secondary uppercase tracking-tighter italic">Themes</h2>
+                            <motion.section key="theme" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 md:space-y-10">
+                               <h2 className="text-xl md:text-3xl font-extrabold text-secondary uppercase tracking-tighter italic">Themes</h2>
                                <ThemeSettings profile={profile} themeTab={themeTab} setThemeTab={setThemeTab} activeCategory={activeCategory} setActiveCategory={setActiveCategory} THEME_CATEGORIES={THEME_CATEGORIES} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} isDesktop />
                             </motion.section>
                          )}
                          {activeDesktopTab === 'Buttons' && (
-                            <motion.section key="buttons" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
-                               <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Buttons</h2>
+                            <motion.section key="buttons" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 md:space-y-10">
+                               <h2 className="text-xl md:text-3xl font-black text-secondary uppercase tracking-tighter italic">Buttons</h2>
                                <StyleSettings profile={profile} activeSubTab="Buttons" setActiveSubTab={() => {}} updateProfile={updateProfile} FONTS={FONTS} isDesktop />
                             </motion.section>
                          )}
                          {activeDesktopTab === 'Fonts' && (
-                            <motion.section key="fonts" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
+                            <motion.section key="fonts" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 md:space-y-10">
                                <div className="flex items-center justify-between">
-                                  <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Typography</h2>
-                                  <input type="text" placeholder="Search fonts..." className="px-6 py-3 bg-white border border-gray-100 rounded-full text-xs font-bold outline-none focus:border-secondary transition-all" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} />
+                                  <h2 className="text-xl md:text-3xl font-black text-secondary uppercase tracking-tighter italic">Typography</h2>
+                                  <input type="text" placeholder="Search..." className="w-24 md:w-auto px-4 py-2 bg-white border border-gray-100 rounded-full text-[10px] md:text-xs font-bold outline-none focus:border-secondary transition-all" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} />
                                </div>
-                               <div className="grid grid-cols-2 gap-4 h-[400px] overflow-y-auto no-scrollbar bg-white p-6 rounded-[40px] border border-gray-100">
+                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 max-h-[400px] overflow-y-auto no-scrollbar bg-white p-4 md:p-6 rounded-[30px] md:rounded-[40px] border border-gray-100">
                                   {FONTS.filter(f => f.toLowerCase().includes(fontSearch.toLowerCase())).map(font => (
-                                     <button key={font} onClick={() => updateProfile({ font_family: font })} className={`p-8 rounded-[28px] text-left transition-all border-2 ${profile?.font_family === font ? 'bg-secondary text-white border-secondary' : 'bg-gray-50 border-transparent'}`} style={{ fontFamily: font }}>
-                                        <span className="text-xl font-black">{font}</span>
+                                     <button key={font} onClick={() => updateProfile({ font_family: font })} className={`p-4 md:p-8 rounded-[20px] md:rounded-[28px] text-left transition-all border-2 ${profile?.font_family === font ? 'bg-secondary text-white border-secondary' : 'bg-gray-50 border-transparent'}`} style={{ fontFamily: font }}>
+                                        <span className="text-base md:text-xl font-black">{font}</span>
                                      </button>
                                   ))}
                                </div>
                             </motion.section>
                          )}
                          {activeDesktopTab === 'Wallpaper' && (
-                           <motion.section key="wallpaper" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
-                              <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Wallpaper Engine</h2>
-                              <div className="bg-white p-10 rounded-[50px] border border-gray-100 shadow-sm">
+                           <motion.section key="wallpaper" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 md:space-y-10">
+                              <h2 className="text-xl md:text-3xl font-black text-secondary uppercase tracking-tighter italic">Wallpaper Engine</h2>
+                              <div className="bg-white p-6 md:p-10 rounded-[30px] md:rounded-[50px] border border-gray-100 shadow-sm">
                                  <WallpaperSettings profile={profile} pendingColor={pendingColor} setPendingColor={setPendingColor} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} PATTERNS={PATTERNS} PRESET_COLORS={PRESET_COLORS} PRESET_GRADIENTS={PRESET_GRADIENTS} isDesktop />
                               </div>
                            </motion.section>
@@ -274,75 +272,6 @@ export default function DesignSection({ profile, setProfile, links, onBack }: De
              </div>
           </div>
       </div>
-
-      {/* MOBILE MOBILE VIEW - Fullscreen Workspace with Sheets (UNCHANGED) */}
-      <div className="md:hidden flex flex-col h-screen relative bg-white">
-         <div className="flex items-center justify-between px-6 py-4 bg-white z-[100] shrink-0 border-b border-gray-50">
-            <div className="flex items-center gap-4">
-               <button onClick={onBack} className="w-10 h-10 flex items-center justify-center text-secondary bg-gray-50 rounded-xl border border-gray-100">
-                  <i className="fi fi-rr-angle-left text-xl"></i>
-               </button>
-               <Link href="/" className="flex items-center gap-2">
-                  <span className="w-8 h-8 rounded-xl flex items-center justify-center font-black text-lg bg-black text-linktree-lime">M</span>
-                  <span className="font-black text-lg tracking-tighter uppercase text-black">Monkey</span>
-               </Link>
-            </div>
-            <button className="w-10 h-10 flex items-center justify-center text-secondary bg-gray-50 rounded-xl border border-gray-100"><i className="fi fi-rr-share-square text-lg"></i></button>
-         </div>
-
-         <div className="flex-1 flex flex-col items-center justify-center p-4 relative overflow-hidden bg-gray-50/50">
-            <DeviceMockup 
-               userProfile={profile} 
-               links={links} 
-               socialLinks={profile?.social_links} 
-               scale={activeSheet ? 0.6 : 1} 
-               yOffset={activeSheet ? -120 : 0} 
-            />
-         </div>
-
-         {/* Bottom Control Sheets */}
-         <AnimatePresence>
-            {activeSheet && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActiveSheet(null)} className="fixed inset-0 bg-black/40 z-[150]" />}
-         </AnimatePresence>
-         <AnimatePresence>
-            {activeSheet && (
-               <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[40px] px-6 pt-2 pb-6 z-[180] shadow-[0_-20px_60px_rgba(0,0,0,0.4)] max-h-[60vh] flex flex-col">
-                  <div className="w-12 h-1.5 bg-gray-100 rounded-full mx-auto mb-6 shrink-0" />
-                  <div className="flex items-center justify-between mb-4 shrink-0 px-2">
-                     <h3 className="font-extrabold text-xl uppercase tracking-tighter text-secondary">{activeSheet}</h3>
-                  </div>
-                  <div className="flex-1 overflow-hidden px-2">{renderSheetContent()}</div>
-                  <div className="flex justify-end mt-4 mb-2">
-                     <button 
-                       onClick={handleMobileSave} 
-                       className="px-10 py-4 bg-secondary text-white rounded-2xl font-extrabold text-sm shadow-xl active:scale-95 transition-all flex items-center gap-2"
-                     >
-                       {saveStatus === 'saving' ? (
-                          <>
-                             <i className="fi fi-rr-spinner animate-spin"></i>
-                             <span>Saving...</span>
-                          </>
-                       ) : (
-                          'Save'
-                       )}
-                     </button>
-                  </div>
-               </motion.div>
-            )}
-         </AnimatePresence>
-
-         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around py-4 px-6 z-[170] shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
-            {NAV_ITEMS.map(item => (
-              <button key={item.id} onClick={() => { setActiveSheet(item.id); if (item.id === 'style') setActiveSubTab('Text') }} className={`flex flex-col items-center gap-1.5 transition-all outline-none ${activeSheet === item.id ? 'text-secondary' : 'text-gray-300'}`}>
-                 <div className={`w-14 h-11 rounded-[20px] flex items-center justify-center transition-all ${activeSheet === item.id ? 'bg-gray-100/80 scale-105' : ''}`}>
-                    {item.isIcon ? <i className={`fi ${item.icon} text-lg`}></i> : <span className="font-black text-lg">{item.icon}</span>}
-                 </div>
-                 <span className="text-[10px] font-black uppercase tracking-tight">{item.label}</span>
-              </button>
-            ))}
-         </div>
-      </div>
-
       <ImageCropperModal isOpen={showCropper} imageSrc={selectedImage} onClose={() => setShowCropper(false)} aspect={cropTarget === 'avatar' ? 1/1 : 9/16} circularCrop={cropTarget === 'avatar'} onCropComplete={handleCropComplete} />
     </div>
   )

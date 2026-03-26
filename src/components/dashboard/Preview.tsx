@@ -13,7 +13,7 @@ export default function Preview({ userProfile, links, socialLinks }: PreviewProp
   const domain = useDomain()
 
   return (
-    <aside className="w-[480px] bg-white border-l border-gray-100 hidden lg:flex flex-col items-center flex-shrink-0 relative h-full overflow-hidden">
+    <aside className="w-full lg:w-[480px] bg-white border-l border-gray-100 flex flex-col items-center flex-shrink-0 relative h-full overflow-hidden">
       {/* Dynamic Font Loader */}
       {userProfile?.font_family && (
         <link 

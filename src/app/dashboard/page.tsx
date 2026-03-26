@@ -225,9 +225,16 @@ function DashboardContent() {
       <div className="flex-1 flex overflow-hidden relative">
         <Sidebar userProfile={profile} activeTab={activeTab} onTabChange={handleTabChange} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-        <main className="flex-1 overflow-hidden min-w-0 bg-white">
-          <div className="w-full h-full flex flex-col overflow-hidden">
-            {renderSection()}
+        <main className="flex-1 overflow-hidden min-w-0 bg-white relative">
+          <div className="w-full h-full flex flex-col lg:flex-row overflow-hidden">
+            <div className="flex-1 overflow-hidden flex flex-col">
+              {renderSection()}
+            </div>
+            
+            {/* Unified Preview - Hidden on mobile when NOT in Design tab to save space, but accessible */}
+            <div className={`${activeTab === 'design' ? 'flex' : 'hidden lg:flex'} w-full lg:w-[480px] h-[50dvh] lg:h-full shrink-0`}>
+               <Preview userProfile={profile} links={links} socialLinks={profile?.social_links} />
+            </div>
           </div>
         </main>
 
@@ -290,7 +297,7 @@ function DashboardContent() {
            )}
         </div>
 
-        <Preview userProfile={profile} links={links} socialLinks={profile?.social_links} />
+
       </div>
     </div>
   )
