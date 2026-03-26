@@ -43,7 +43,7 @@ const PLANS_CONTENT: Record<string, Plan> = {
     name: 'Free',
     monthlyPrice: 0,
     yearlyPrice: 0,
-    description: 'For your personal Linktree',
+    description: 'For your personal Monkey Bio',
     features: [
       'Unlimited links',
       'Social icons, videos & embeds',
@@ -132,7 +132,7 @@ const FEATURE_CATEGORIES = [
     label: 'Monetization',
     icon: <DollarSign size={18} />,
     features: [
-      { name: 'Linktree Shop', plans: [true, true, true, true] },
+      { name: 'Monkey Bio Shop', plans: [true, true, true, true] },
       { name: 'Digital Products', plans: [true, true, true, true] },
       { name: 'Online Courses', plans: [true, true, true, true] },
       { name: 'Tip Jar', plans: [true, true, true, true] },
@@ -146,7 +146,7 @@ const FEATURE_CATEGORIES = [
     icon: <Brush size={18} />,
     features: [
       { name: 'Standard Themes', plans: [true, true, true, true] },
-      { name: 'Hide Linktree Footer', plans: [false, false, true, true] },
+      { name: 'Hide Monkey Bio Footer', plans: [false, false, true, true] },
       { name: 'Custom Backgrounds', plans: [false, true, true, true] },
       { name: 'Custom Fonts', plans: [false, true, true, true] },
       { name: 'Custom Colors', plans: [false, true, true, true] },
@@ -187,7 +187,7 @@ const FEATURE_CATEGORIES = [
     icon: <Users size={18} />,
     features: [
       { name: 'Add Admins', plans: [false, false, true, true] },
-      { name: 'Multiple Linktrees', plans: [false, false, false, true] },
+      { name: 'Multiple Monkey Bios', plans: [false, false, false, true] },
       { name: 'Support Response Time', plans: ['48h', '24h', '24h', 'VIP'] },
       { name: 'Multi-factor Auth', plans: [true, true, true, true] },
       { name: 'Concierge Onboarding', plans: [false, false, false, true] },
@@ -371,7 +371,7 @@ export default function PricingPage() {
                 Get more ways <br /> to <span className="text-[#D2E823]">earn money.</span>
               </h2>
               <p className="text-gray-400 font-semibold mb-12 max-w-md">
-                Make more and manage less by adding digital stores to your Linktree. No more jumping between apps.
+                Make more and manage less by adding digital stores to your Monkey Bio. No more jumping between apps.
               </p>
               
               <div className="space-y-6">
@@ -399,7 +399,7 @@ export default function PricingPage() {
                     <div className="space-y-8">
                        <div className="flex items-center justify-between border-b pb-4">
                           <span className="font-extrabold text-xl">Digital Products</span>
-                          <span className="text-[#502274] font-extrabold">Linktree Earn</span>
+                          <span className="text-[#502274] font-extrabold">Monkey Bio Earn</span>
                        </div>
                        <div className="flex items-center justify-between border-b pb-4">
                           <span className="font-semibold text-gray-400">Setup Time</span>

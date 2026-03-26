@@ -123,7 +123,7 @@ export default function Home() {
                   <div className={`relative transition-all duration-700 ${isClaimed ? 'scale-95 opacity-50 pointer-events-none' : 'scale-100'}`}>
                     <div className="absolute inset-0 bg-white/40 blur-3xl rounded-full" />
                     <div className="relative flex flex-col sm:flex-row items-center gap-3 bg-white/95 backdrop-blur-3xl p-2 sm:p-3 pl-6 sm:pl-8 rounded-[32px] sm:rounded-[40px] shadow-[0_30px_80px_rgba(0,0,0,0.12)] border border-white">
-                      <span className="text-lg sm:text-xl font-extrabold text-black/30">linktr.ee/</span>
+                      <span className="text-lg sm:text-xl font-extrabold text-black/30">monkey-bio.com/</span>
                       <input 
                         type="text" 
                         placeholder="yourname"
@@ -203,12 +203,7 @@ export default function Home() {
              </motion.div>
         </Section>
 
-        {/* MONETIZE SECTION - IMAGE RIGHT */}
-        <Section id="monetize" imageSide="right" bgClass="bg-gradient-to-br from-[#FF6B00] via-[#FF9E00] to-[#E65100] text-white" imageSrc="/images/monetize.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Monetize Audience.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/50 mb-4 md:mb-10 uppercase tracking-widest font-extrabold">Support. Tips. Sales.</p></Reveal>
-             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="bg-white text-[#FF6B00] font-extrabold text-sm md:text-lg px-10 py-5 rounded-3xl shadow-2xl transition-all uppercase tracking-widest font-extrabold">EARN NOW</motion.button>
-        </Section>
+
 
         {/* EMBED SECTION - IMAGE LEFT */}
         <Section id="integrations" imageSide="left" bgClass="bg-gradient-to-br from-[#00C2FF] via-[#00E0FF] to-[#0085FF] text-white" imageSrc="/images/integrations.png">

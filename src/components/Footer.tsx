@@ -20,7 +20,7 @@ export default function Footer() {
              <div className="flex flex-col gap-6">
                 <h4 className="font-extrabold text-[15px] uppercase tracking-wider text-black">Company</h4>
                 <ul className="flex flex-col gap-4">
-                   {['The Linktree Blog', 'Engineering Blog', "What's New", 'About', 'Press', 'Careers', 'Link In Bio', 'Social Good', 'Contact'].map(l => (
+                   {['The Monkey Bio Blog', 'Engineering Blog', "What's New", 'About', 'Press', 'Careers', 'Link In Bio', 'Social Good', 'Contact'].map(l => (
                       <li key={l}>
                          <Link 
                             href={l === 'About' ? '/about' : l === 'Contact' ? '/contact' : l === 'Social Good' ? '/social-good' : `/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} 
@@ -37,7 +37,7 @@ export default function Footer() {
              <div className="flex flex-col gap-6">
                 <h4 className="font-extrabold text-[15px] uppercase tracking-wider text-black">Community</h4>
                 <ul className="flex flex-col gap-4">
-                   {['Linktree for Enterprise', '2023 Creator Report', '2022 Creator Report', 'Charities', 'Creator Profile Directory', 'Explore Templates'].map(l => (
+                   {['Monkey Bio for Enterprise', '2023 Creator Report', '2022 Creator Report', 'Charities', 'Creator Profile Directory', 'Explore Templates'].map(l => (
                       <li key={l}>
                         <Link 
                            href={l === 'Explore Templates' ? '/templates' : `/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} 
@@ -54,7 +54,7 @@ export default function Footer() {
              <div className="flex flex-col gap-6">
                 <h4 className="font-extrabold text-[15px] uppercase tracking-wider text-black">Support</h4>
                 <ul className="flex flex-col gap-4">
-                   {['Help Topics', 'Getting Started', 'Linktree Pro', 'Features & How-Tos', 'FAQs', 'Report a Violation'].map(l => (
+                   {['Help Topics', 'Getting Started', 'Monkey Bio Pro', 'Features & How-Tos', 'FAQs', 'Report a Violation'].map(l => (
                       <li key={l}><Link href={`/footer/${l.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm font-bold text-gray-500 hover:text-black transition-colors">{l}</Link></li>
                    ))}
                 </ul>

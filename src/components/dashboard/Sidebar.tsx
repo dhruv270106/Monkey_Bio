@@ -70,7 +70,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
 
   const navGroups = [
     {
-      label: 'My Linktree',
+      label: 'My Monkey Bio',
       items: [
         { label: 'Links', id: 'links', icon: 'fi-rr-link', color: 'text-purple-500' },
         { label: 'Design', id: 'design', icon: 'fi-rr-palette', color: 'text-pink-500' },
