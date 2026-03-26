@@ -52,9 +52,12 @@ function DashboardContent() {
   const [links, setLinks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState(tabFromQuery)
-  const [hasDesignChanges, setHasDesignChanges] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [openGroup, setOpenGroup] = useState<string | null>(null)
+  
+  // Real-time synchronization lock
+  const isUpdatingRef = useRef(false)
+  const lastUpdateRef = useRef<number>(0)
   
   const bottomNavRef = useRef<HTMLDivElement>(null)
 
@@ -111,10 +114,16 @@ function DashboardContent() {
             table: 'monkey_bio',
             filter: `id=eq.${session.user.id}`
           }, (payload) => {
-            console.log('Real-time profile update received:', payload.new)
-            setProfile(payload.new)
-            if (payload.new.links) setLinks(payload.new.links)
-            setHasDesignChanges(false) // Reset unsaved indicator if change is synced
+            // ONLY update if we are NOT currently pushed an update ourselves 
+            // OR if the update is significantly newer than our last push
+            const now = Date.now()
+            if (!isUpdatingRef.current && (now - lastUpdateRef.current > 2000)) {
+               console.log('Real-time sync applied:', payload.new)
+               setProfile(payload.new)
+               if (payload.new.links) setLinks(payload.new.links)
+            } else {
+               console.log('Real-time sync ignored (local changes pending)')
+            }
           })
           .subscribe()
 
@@ -126,6 +135,35 @@ function DashboardContent() {
       console.error("Dashboard error:", e)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const globalUpdateProfile = async (updates: any) => {
+    if (!profile) return
+    
+    // 1. Update local state immediately
+    const newProfile = { ...profile, ...updates }
+    setProfile(newProfile)
+    if (updates.links) setLinks(updates.links)
+
+    // 2. Set the lock
+    isUpdatingRef.current = true
+    lastUpdateRef.current = Date.now()
+
+    // 3. Commit to DB
+    try {
+       const { data: { session } } = await supabase.auth.getSession()
+       if (session) {
+          const { error } = await supabase.from('monkey_bio').update(updates).eq('id', session.user.id)
+          if (error) throw error
+       }
+    } catch (err) {
+       console.error("Global update error:", err)
+    } finally {
+       // Release lock after a short delay to allow DB state to stabilize
+       setTimeout(() => {
+          isUpdatingRef.current = false
+       }, 1000)
     }
   }
 
@@ -145,9 +183,9 @@ function DashboardContent() {
   const renderSection = () => {
     switch (activeTab) {
       case 'links':
-        return <LinksSection profile={profile} links={links} setLinks={setLinks} setProfile={setProfile} refreshData={fetchData} />
+        return <LinksSection profile={profile} links={links} setLinks={setLinks} setProfile={globalUpdateProfile} refreshData={fetchData} />
       case 'design':
-        return <DesignSection profile={profile} setProfile={setProfile} links={links} onBack={() => handleTabChange('links')} />
+        return <DesignSection profile={profile} setProfile={globalUpdateProfile} links={links} onBack={() => handleTabChange('links')} />
       case 'audience':
         return <AudienceSection profile={profile} />
       case 'insights':
@@ -157,7 +195,7 @@ function DashboardContent() {
       case 'autoreply':
         return <AutoReplySection profile={profile} />
       default:
-        return <LinksSection profile={profile} links={links} setLinks={setLinks} setProfile={setProfile} refreshData={fetchData} />
+        return <LinksSection profile={profile} links={links} setLinks={setLinks} setProfile={globalUpdateProfile} refreshData={fetchData} />
     }
   }
 

@@ -44,30 +44,14 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
       return 0
     })
     
-    setLinks(sortedLinks)
-    setProfile((prev: any) => {
-      if (!prev) return null
-      return {
-        ...prev,
-        links: sortedLinks
-      }
-    })
-    
     setSaveStatus('saving')
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session) {
-      const { error } = await supabase
-        .from('monkey_bio')
-        .update({ links: sortedLinks })
-        .eq('id', session.user.id)
-      
-      if (!error) {
-        setSaveStatus('saved')
-        setTimeout(() => setSaveStatus('idle'), 2000)
-      } else {
-        setSaveStatus('idle')
-      }
-    }
+    // Update through parent (global persistence)
+    setProfile({ links: sortedLinks })
+    // Local delay for the Save/Updated indicator
+    setTimeout(() => {
+       setSaveStatus('saved')
+       setTimeout(() => setSaveStatus('idle'), 2000)
+    }, 800)
   }
 
   const toggleHighlight = async (id: string) => {

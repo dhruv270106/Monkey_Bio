@@ -73,55 +73,34 @@ export default function DesignSection({ profile, setProfile, links, onBack }: De
     { id: 'Wallpaper', icon: 'fi-ss-picture', label: 'WALLPAPER' },
   ]
 
-  const commitToDB = async (updates: any) => {
-    setSaveStatus('saving')
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        const { error } = await supabase.from('monkey_bio').update(updates).eq('id', session.user.id)
-        if (error) throw error
-        setSaveStatus('saved')
-        setTimeout(() => setSaveStatus('idle'), 2000)
-        setPendingChanges({})
-      }
-    } catch (err) {
-      console.error("Auto-save error:", err)
-      setSaveStatus('idle')
-    }
-  }
-
   const updateProfile = async (updates: any) => {
     if (!profile) return
     
-    // 1. Immediate Visual Update
-    const newProfile = { ...profile, ...updates }
-    setProfile(newProfile)
+    // 1. Update through parent (which handles sync and DB)
+    setProfile(updates)
 
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
 
     if (isMobile) {
-      // 2a. Mobile: Accumulate changes until manual Save
-      setPendingChanges((prev: any) => ({ ...prev, ...updates }))
+      // For mobile, we just track that we are saving to show the spinner
+      setSaveStatus('saving')
+      setTimeout(() => {
+        setSaveStatus('saved')
+        setTimeout(() => setSaveStatus('idle'), 2000)
+      }, 800)
     } else {
-      // 2b. Laptop: Auto-save with Debounce
+      // For laptop, show auto-save status
+      setSaveStatus('saving')
       if (saveTimeout) clearTimeout(saveTimeout)
-      
-      const newChanges = { ...pendingChanges, ...updates }
-      setPendingChanges(newChanges)
-      setSaveStatus('saving') 
-
       const timeout = setTimeout(() => {
-        commitToDB(newChanges)
-      }, 1000) // 1 second debounce
-      
+        setSaveStatus('saved')
+        setTimeout(() => setSaveStatus('idle'), 2000)
+      }, 1000)
       setSaveTimeout(timeout)
     }
   }
 
   const handleMobileSave = async () => {
-     if (Object.keys(pendingChanges).length > 0) {
-        await commitToDB(pendingChanges)
-     }
      setActiveSheet(null)
   }
 
@@ -385,18 +364,7 @@ function ThemeSettings({ profile, themeTab, setThemeTab, activeCategory, setActi
        )}
        <div className={`overflow-y-auto no-scrollbar ${isDesktop ? '' : 'flex-1 pb-10'}`}>
           <div className={`grid gap-4 ${isDesktop ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-3'}`}>
-             <div className="flex flex-col items-center gap-2 group relative">
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="absolute inset-0 opacity-0 cursor-pointer z-10" 
-                  onChange={(e) => handleCustomBgUpload(e, 'image')} 
-                />
-                <div className="aspect-[3/4] w-full rounded-[24px] bg-gray-50 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 group-hover:bg-gray-100 transition-colors">
-                  <i className="fi fi-rr-paintbrush text-xl text-gray-300"></i>
-                  <span className="text-[8px] font-extrabold uppercase text-gray-400">Custom</span>
-                </div>
-             </div>
+
              {THEMES.filter(t => (themeTab === 'premium' ? t.isPremium : !t.isPremium)).map(theme => (
                <button key={theme.id} onClick={() => updateProfile({ theme: theme.id, custom_bg_type: '' })} className="flex flex-col items-center gap-2 group">
                   <div className={`aspect-[3/4] w-full rounded-[24px] overflow-hidden border-2 transition-all relative ${profile?.theme === theme.id ? 'border-secondary shadow-xl' : 'border-transparent'} ${theme.bg}`}>
@@ -462,13 +430,7 @@ function WallpaperSettings({ profile, pendingColor, setPendingColor, updateProfi
                   {PRESET_COLORS.map((c: any) => (
                     <button key={c} onClick={() => { setPendingColor(c); updateProfile({ custom_bg: c, custom_bg_type: 'color', theme: 'custom' }) }} className={`aspect-square rounded-full border-4 transition-all ${profile?.custom_bg === c ? 'border-secondary' : 'border-white shadow-sm'}`} style={{ backgroundColor: c }} />
                   ))}
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="relative aspect-square w-full rounded-full border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden" style={{ backgroundColor: profile?.custom_bg_type === 'color' && !PRESET_COLORS.includes(profile?.custom_bg) ? profile?.custom_bg : 'transparent' }}>
-                      <i className={`fi fi-rr-plus ${profile?.custom_bg_type === 'color' && !PRESET_COLORS.includes(profile?.custom_bg) ? 'text-white' : 'text-gray-300'}`}></i>
-                      <input type="color" value={pendingColor} onChange={(e) => { setPendingColor(e.target.value); updateProfile({ custom_bg: e.target.value, custom_bg_type: 'color', theme: 'custom' }) }} className="absolute inset-0 opacity-0 cursor-pointer" />
-                    </div>
-                    <span className="text-[8px] font-extrabold text-gray-400 uppercase">Custom</span>
-                  </div>
+
                </div>
             </div>
           )}
