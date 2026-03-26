@@ -101,6 +101,26 @@ function DashboardContent() {
         }
         setProfile(profileData)
         setLinks(profileData.links || [])
+
+        // Subscribe to real-time updates for THIS profile
+        const channel = supabase
+          .channel(`sync-${session.user.id}`)
+          .on('postgres_changes', { 
+            event: 'UPDATE', 
+            schema: 'public', 
+            table: 'monkey_bio',
+            filter: `id=eq.${session.user.id}`
+          }, (payload) => {
+            console.log('Real-time profile update received:', payload.new)
+            setProfile(payload.new)
+            if (payload.new.links) setLinks(payload.new.links)
+            setHasDesignChanges(false) // Reset unsaved indicator if change is synced
+          })
+          .subscribe()
+
+        return () => {
+          supabase.removeChannel(channel)
+        }
       }
     } catch (e) {
       console.error("Dashboard error:", e)

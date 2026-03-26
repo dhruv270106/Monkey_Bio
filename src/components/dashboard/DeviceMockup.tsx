@@ -72,45 +72,44 @@ export default function DeviceMockup({ userProfile, links = [], socialLinks = {}
 
     const type = userProfile?.custom_bg_type || 'color'
     const value = userProfile?.custom_bg || '#6A373A'
-    const direction = userProfile?.custom_bg_direction || 'linear-up'
-    const pattern = userProfile?.custom_bg_pattern || 'grid'
+    const pattern = userProfile?.custom_bg_pattern || ''
 
-    if (type === 'blur') {
-       return { 
-         backgroundColor: value,
-         backgroundImage: `radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(0,0,0,0.1) 0%, transparent 50%)`,
-         backdropFilter: 'blur(30px)' 
-       }
-    }
+    let style: any = {}
 
-    if (type === 'pattern') {
-        const p = PATTERNS.find(pat => pat.id === pattern) || PATTERNS[0]
-        return { 
-          backgroundColor: value,
-          backgroundImage: p.css,
-          backgroundSize: p.size
-        }
-    }
-
-    if (type === 'color') return { backgroundColor: value }
-    
-    if (type === 'gradient') {
-      if (typeof value === 'string' && value.includes('linear-gradient')) return { backgroundImage: value }
-      
-      const dirMap: any = {
-        'linear-up': 'to top',
-        'linear-down': 'to bottom',
-        'radial': 'radial'
+    // Base Layer (Color/Gradient/Image)
+    if (type === 'color') style.backgroundColor = value
+    else if (type === 'gradient') {
+      if (typeof value === 'string' && value.includes('linear-gradient')) style.backgroundImage = value
+      else {
+        const direction = userProfile?.custom_bg_direction || 'linear-up'
+        const dirMap: any = { 'linear-up': 'to top', 'linear-down': 'to bottom', 'radial': 'radial' }
+        const dir = dirMap[direction] || 'to top'
+        const endColor = userProfile?.custom_bg_end || '#00000066'
+        if (dir === 'radial') style.backgroundImage = `radial-gradient(circle, ${value}, ${endColor})`
+        else style.backgroundImage = `linear-gradient(${dir}, ${value}, ${endColor})`
       }
-      const dir = dirMap[direction] || 'to top'
-      const endColor = userProfile?.custom_bg_end || '#00000066'
-      
-      if (dir === 'radial') return { backgroundImage: `radial-gradient(circle, ${value}, ${endColor})` }
-      return { backgroundImage: `linear-gradient(${dir}, ${value}, ${endColor})` }
+    }
+    else if (type === 'image') {
+      style.backgroundImage = `url(${value})`
+      style.backgroundSize = 'cover'
+      style.backgroundPosition = 'center'
     }
 
-    if (type === 'image') return { backgroundImage: `url(${value})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-    return { backgroundColor: '#000000' }
+    // Pattern Overlay (Additive)
+    if (pattern) {
+      const p = PATTERNS.find(pat => pat.id === pattern)
+      if (p) {
+        if (style.backgroundImage) {
+          style.backgroundImage = `${p.css}, ${style.backgroundImage}`
+          style.backgroundSize = `${p.size}, ${style.backgroundSize || 'auto'}`
+        } else {
+          style.backgroundImage = p.css
+          style.backgroundSize = p.size
+        }
+      }
+    }
+
+    return style
   }
 
   return (
@@ -207,9 +206,12 @@ export default function DeviceMockup({ userProfile, links = [], socialLinks = {}
               {Array.isArray(links) && links.filter((l: any) => l.active).map((link: any, i: number) => {
                 const isFeatured = link.layout === 'featured'
                 return (
-                  <div 
+                  <a 
                     key={i} 
-                    className={`w-full transition-all text-[11px] font-bold shadow-sm flex ${isFeatured ? 'flex-col overflow-hidden' : 'items-center py-2.5 px-3'} group`}
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`w-full transition-all text-[11px] font-bold shadow-sm flex ${isFeatured ? 'flex-col overflow-hidden' : 'items-center py-2.5 px-3'} group cursor-pointer`}
                     style={getButtonStyle()}
                   >
                     {isFeatured ? (
@@ -241,7 +243,7 @@ export default function DeviceMockup({ userProfile, links = [], socialLinks = {}
                         </div>
                       </>
                     )}
-                  </div>
+                  </a>
                 )
               })}
               {(!Array.isArray(links) || links.filter((l: any) => l.active).length === 0) && (

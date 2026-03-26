@@ -140,7 +140,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
     { id: 'theme', icon: 'Aa', label: 'Theme', isIcon: false },
     { id: 'header', icon: 'fi-rr-user', label: 'Header', isIcon: true },
     { id: 'wallpaper', icon: 'fi-rr-picture', label: 'Wallpaper', isIcon: true },
-    { id: 'style', icon: 'fi-rr-swatches', label: 'Style', isIcon: true },
+    { id: 'style', icon: 'fi-rr-magic-wand', label: 'Style', isIcon: true },
   ]
 
   const selectedTheme = (THEMES.find(t => t.id === profile?.theme) || THEMES[0]) as Theme
@@ -148,7 +148,7 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
   const renderSheetContent = () => {
     switch (activeSheet) {
       case 'theme':
-        return <ThemeSettings profile={profile} themeTab={themeTab} setThemeTab={setThemeTab} activeCategory={activeCategory} setActiveCategory={setActiveCategory} THEME_CATEGORIES={THEME_CATEGORIES} updateProfile={updateProfile} />
+        return <ThemeSettings profile={profile} themeTab={themeTab} setThemeTab={setThemeTab} activeCategory={activeCategory} setActiveCategory={setActiveCategory} THEME_CATEGORIES={THEME_CATEGORIES} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} />
       case 'header':
         return <HeaderSettings profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} />
       case 'wallpaper':
@@ -207,8 +207,8 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                          )}
                          {activeDesktopTab === 'Theme' && (
                             <motion.section key="theme" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
-                               <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter italic">Themes</h2>
-                               <ThemeSettings profile={profile} themeTab={themeTab} setThemeTab={setThemeTab} activeCategory={activeCategory} setActiveCategory={setActiveCategory} THEME_CATEGORIES={THEME_CATEGORIES} updateProfile={updateProfile} isDesktop />
+                               <h2 className="text-3xl font-extrabold text-secondary uppercase tracking-tighter italic">Themes</h2>
+                               <ThemeSettings profile={profile} themeTab={themeTab} setThemeTab={setThemeTab} activeCategory={activeCategory} setActiveCategory={setActiveCategory} THEME_CATEGORIES={THEME_CATEGORIES} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} isDesktop />
                             </motion.section>
                          )}
                          {activeDesktopTab === 'Buttons' && (
@@ -278,13 +278,20 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
          </AnimatePresence>
          <AnimatePresence>
             {activeSheet && (
-               <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[40px] px-6 pt-2 pb-24 z-[180] shadow-[0_-20px_60px_rgba(0,0,0,0.2)] max-h-[85vh] flex flex-col">
+               <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[40px] px-6 pt-2 pb-6 z-[180] shadow-[0_-20px_60px_rgba(0,0,0,0.4)] max-h-[60vh] flex flex-col">
                   <div className="w-12 h-1.5 bg-gray-100 rounded-full mx-auto mb-6 shrink-0" />
                   <div className="flex items-center justify-between mb-4 shrink-0 px-2">
-                     <h3 className="font-black text-xl uppercase tracking-tighter text-secondary">{activeSheet}</h3>
-                     <button onClick={() => setActiveSheet(null)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-secondary border border-gray-100 transition-transform active:scale-90"><i className="fi fi-rr-cross-small text-xl pt-0.5"></i></button>
+                     <h3 className="font-extrabold text-xl uppercase tracking-tighter text-secondary">{activeSheet}</h3>
                   </div>
                   <div className="flex-1 overflow-hidden px-2">{renderSheetContent()}</div>
+                  <div className="flex justify-end mt-4 mb-2">
+                     <button 
+                       onClick={() => setActiveSheet(null)} 
+                       className="px-10 py-4 bg-secondary text-white rounded-2xl font-extrabold text-sm shadow-xl active:scale-95 transition-all"
+                     >
+                       Save
+                     </button>
+                  </div>
                </motion.div>
             )}
          </AnimatePresence>
@@ -306,35 +313,41 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
   )
 }
 
-function ThemeSettings({ profile, themeTab, setThemeTab, activeCategory, setActiveCategory, THEME_CATEGORIES, updateProfile, isDesktop }: any) {
+function ThemeSettings({ profile, themeTab, setThemeTab, activeCategory, setActiveCategory, THEME_CATEGORIES, updateProfile, handleCustomBgUpload, isDesktop }: any) {
   return (
-    <div className={`flex flex-col ${isDesktop ? 'gap-6' : 'h-[500px]'}`}>
+    <div className={`flex flex-col ${isDesktop ? 'gap-6' : 'h-[350px]'}`}>
        <div className="flex bg-gray-50 p-1 rounded-2xl shrink-0">
-          <button onClick={() => setThemeTab('free')} className={`flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'free' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Free</button>
-          <button onClick={() => setThemeTab('premium')} className={`flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'premium' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Premium</button>
+          <button onClick={() => setThemeTab('free')} className={`flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'free' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Free</button>
+          <button onClick={() => setThemeTab('premium')} className={`flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'premium' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Premium</button>
        </div>
        {!isDesktop && (
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 shrink-0">
              {THEME_CATEGORIES.map((cat: any) => (
-               <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${activeCategory === cat ? 'bg-secondary text-white' : 'bg-gray-50 text-gray-400'}`}>{cat}</button>
+               <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest whitespace-nowrap transition-all ${activeCategory === cat ? 'bg-secondary text-white' : 'bg-gray-50 text-gray-400'}`}>{cat}</button>
              ))}
           </div>
        )}
-       <div className={`overflow-y-auto no-scrollbar ${isDesktop ? '' : 'flex-1 pb-20'}`}>
+       <div className={`overflow-y-auto no-scrollbar ${isDesktop ? '' : 'flex-1 pb-10'}`}>
           <div className={`grid gap-4 ${isDesktop ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-3'}`}>
-             <button onClick={() => updateProfile({ theme: 'custom' })} className="flex flex-col items-center gap-2 group">
+             <div className="flex flex-col items-center gap-2 group relative">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                  onChange={(e) => handleCustomBgUpload(e, 'image')} 
+                />
                 <div className="aspect-[3/4] w-full rounded-[24px] bg-gray-50 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 group-hover:bg-gray-100 transition-colors">
                   <i className="fi fi-rr-paintbrush text-xl text-gray-300"></i>
-                  <span className="text-[8px] font-black uppercase text-gray-400">Custom</span>
+                  <span className="text-[8px] font-extrabold uppercase text-gray-400">Custom</span>
                 </div>
-             </button>
+             </div>
              {THEMES.filter(t => (themeTab === 'premium' ? t.isPremium : !t.isPremium)).map(theme => (
                <button key={theme.id} onClick={() => updateProfile({ theme: theme.id, custom_bg_type: '' })} className="flex flex-col items-center gap-2 group">
                   <div className={`aspect-[3/4] w-full rounded-[24px] overflow-hidden border-2 transition-all relative ${profile?.theme === theme.id ? 'border-secondary shadow-xl' : 'border-transparent'} ${theme.bg}`}>
                      {theme.image && <img src={theme.image} className="w-full h-full object-cover" />}
-                     <div className="absolute inset-0 flex items-center justify-center"><span className={`${theme.text.split(' ')[0]} font-black text-xl`}>Aa</span></div>
+                     <div className="absolute inset-0 flex items-center justify-center"><span className={`${theme.text.split(' ')[0]} font-extrabold text-xl`}>Aa</span></div>
                   </div>
-                  <span className="text-[9px] font-bold text-gray-500 uppercase">{theme.name}</span>
+                  <span className="text-[9px] font-semibold text-gray-500 uppercase">{theme.name}</span>
                </button>
              ))}
           </div>
@@ -386,14 +399,20 @@ function WallpaperSettings({ profile, pendingColor, setPendingColor, updateProfi
             </button>
           ))}
        </div>
-       <div className={`${isDesktop ? '' : 'flex-1 overflow-y-auto no-scrollbar pb-24'}`}>
+       <div className={`${isDesktop ? '' : 'flex-1 overflow-y-auto no-scrollbar pb-10'}`}>
           {profile?.custom_bg_type === 'color' && (
             <div className="space-y-6">
                <div className={`grid gap-2 sm:gap-3 ${isDesktop ? 'grid-cols-10' : 'grid-cols-5'}`}>
                   {PRESET_COLORS.map((c: any) => (
                     <button key={c} onClick={() => { setPendingColor(c); updateProfile({ custom_bg: c, custom_bg_type: 'color', theme: 'custom' }) }} className={`aspect-square rounded-full border-4 transition-all ${profile?.custom_bg === c ? 'border-secondary' : 'border-white shadow-sm'}`} style={{ backgroundColor: c }} />
                   ))}
-                  <div className="relative aspect-square rounded-full border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden"><i className="fi fi-rr-plus text-gray-300"></i><input type="color" value={pendingColor} onChange={(e) => { setPendingColor(e.target.value); updateProfile({ custom_bg: e.target.value, custom_bg_type: 'color', theme: 'custom' }) }} className="absolute inset-0 opacity-0 cursor-pointer" /></div>
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="relative aspect-square w-full rounded-full border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden" style={{ backgroundColor: profile?.custom_bg_type === 'color' && !PRESET_COLORS.includes(profile?.custom_bg) ? profile?.custom_bg : 'transparent' }}>
+                      <i className={`fi fi-rr-plus ${profile?.custom_bg_type === 'color' && !PRESET_COLORS.includes(profile?.custom_bg) ? 'text-white' : 'text-gray-300'}`}></i>
+                      <input type="color" value={pendingColor} onChange={(e) => { setPendingColor(e.target.value); updateProfile({ custom_bg: e.target.value, custom_bg_type: 'color', theme: 'custom' }) }} className="absolute inset-0 opacity-0 cursor-pointer" />
+                    </div>
+                    <span className="text-[8px] font-extrabold text-gray-400 uppercase">Custom</span>
+                  </div>
                </div>
             </div>
           )}
@@ -425,30 +444,47 @@ function WallpaperSettings({ profile, pendingColor, setPendingColor, updateProfi
 
 function StyleSettings({ profile, activeSubTab, setActiveSubTab, updateProfile, FONTS, isDesktop }: any) {
   return (
-    <div className={`flex flex-col ${isDesktop ? 'gap-8' : 'h-[400px]'}`}>
+    <div className={`flex flex-col ${isDesktop ? 'gap-8' : 'h-[350px]'}`}>
        {!isDesktop && (
           <div className="flex border-b border-gray-100 shrink-0">
              {['Text', 'Buttons', 'Colors'].map(t => (
-               <button key={t} onClick={() => setActiveSubTab(t)} className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest ${activeSubTab === t ? 'border-b-4 border-secondary text-secondary' : 'text-gray-400'}`}>{t}</button>
+               <button key={t} onClick={() => setActiveSubTab(t)} className={`flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest ${activeSubTab === t ? 'border-b-4 border-secondary text-secondary' : 'text-gray-400'}`}>{t}</button>
              ))}
           </div>
        )}
-       <div className={`${isDesktop ? '' : 'flex-1 overflow-y-auto no-scrollbar pb-20 pt-4'}`}>
+       <div className={`${isDesktop ? '' : 'flex-1 overflow-y-auto no-scrollbar pb-10 pt-4'}`}>
+          {(isDesktop || activeSubTab === 'Text') && (
+            <div className="space-y-6 h-full">
+               <label className="text-[10px] font-extrabold uppercase text-gray-400 tracking-[0.4em] pl-2">Font Family</label>
+               <div className="grid grid-cols-2 gap-3 pb-20">
+                  {FONTS.map((font: string) => (
+                    <button 
+                      key={font} 
+                      onClick={() => updateProfile({ font_family: font })} 
+                      className={`p-4 rounded-xl border-2 text-left transition-all ${profile?.font_family === font ? 'border-secondary bg-secondary/5' : 'border-gray-50'}`}
+                      style={{ fontFamily: font }}
+                    >
+                       <span className="text-sm font-extrabold">{font}</span>
+                    </button>
+                  ))}
+               </div>
+            </div>
+          )}
           {(isDesktop || activeSubTab === 'Buttons') && (
              <div className="space-y-10">
                 <div className="space-y-6">
-                   <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] pl-2">Variant Style</label>
+                   <label className="text-[10px] font-extrabold uppercase text-gray-400 tracking-[0.4em] pl-2">Variant Style</label>
                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                      {['solid', 'outline', 'glass'].map(v => (
-                       <button key={v} onClick={() => updateProfile({ button_variant: v })} className={`h-14 rounded-2xl border-2 flex items-center justify-center font-black uppercase text-[10px] tracking-widest transition-all ${profile?.button_variant === v ? 'border-secondary text-secondary bg-secondary/5 shadow-lg' : 'border-gray-50 text-gray-400 bg-gray-50/50'}`}>{v}</button>
+                       <button key={v} onClick={() => updateProfile({ button_variant: v })} className={`h-14 rounded-2xl border-2 flex items-center justify-center font-extrabold uppercase text-[10px] tracking-widest transition-all ${profile?.button_variant === v ? 'border-secondary text-secondary bg-secondary/5 shadow-lg' : 'border-gray-50 text-gray-400 bg-gray-50/50'}`}>{v}</button>
                      ))}
                    </div>
                 </div>
                 <div className="space-y-6">
-                   <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] pl-2">Curvature Settings</label>
+                   <label className="text-[10px] font-extrabold uppercase text-gray-400 tracking-[0.4em] pl-2">Curvature Settings</label>
                    <div className="flex gap-3">
                       {['none', 'md', 'xl', 'full'].map(r => (
-                        <button key={r} onClick={() => updateProfile({ button_radius: r })} className={`flex-1 h-12 rounded-xl border-2 flex items-center justify-center text-[10px] font-black transition-all ${profile?.button_radius === r ? 'bg-secondary text-white border-secondary shadow-lg' : 'bg-white text-gray-400 border-gray-100'}`}>{r.toUpperCase()}</button>
+                        <button key={r} onClick={() => updateProfile({ button_radius: r })} className={`flex-1 h-12 rounded-xl border-2 flex items-center justify-center text-[10px] font-extrabold transition-all ${profile?.button_radius === r ? 'bg-secondary text-white border-secondary shadow-lg' : 'bg-white text-gray-400 border-gray-100'}`}>{r.toUpperCase()}</button>
                       ))}
                    </div>
                 </div>
@@ -457,11 +493,11 @@ function StyleSettings({ profile, activeSubTab, setActiveSubTab, updateProfile, 
           {(isDesktop || activeSubTab === 'Colors') && (
             <div className={`space-y-8 ${isDesktop ? 'mt-12' : ''}`}>
                <div className="flex items-center justify-between p-8 bg-gray-50/50 rounded-[40px] border border-gray-100">
-                  <div className="flex flex-col"><span className="font-extrabold text-secondary">Font Color</span><span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Global text color tone</span></div>
+                  <div className="flex flex-col"><span className="font-extrabold text-secondary">Font Color</span><span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Global text color tone</span></div>
                   <input type="color" value={profile?.font_color || '#000000'} onChange={(e) => updateProfile({ font_color: e.target.value })} className="w-16 h-16 rounded-[24px] cursor-pointer border-4 border-white shadow-2xl" />
                </div>
                <div className="flex items-center justify-between p-8 bg-gray-50/50 rounded-[40px] border border-gray-100">
-                  <div className="flex flex-col"><span className="font-extrabold text-secondary">Button Color</span><span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Override theme color</span></div>
+                  <div className="flex flex-col"><span className="font-extrabold text-secondary">Button Color</span><span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Override theme color</span></div>
                   <input type="color" value={profile?.custom_button_bg || '#ffffff'} onChange={(e) => updateProfile({ custom_button_bg: e.target.value })} className="w-16 h-16 rounded-[24px] cursor-pointer border-4 border-white shadow-2xl" />
                </div>
             </div>
