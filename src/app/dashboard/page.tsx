@@ -144,7 +144,7 @@ function DashboardContent() {
   return (
     <div className="h-[100dvh] bg-white flex flex-col overflow-hidden">
       {/* Top Banner */}
-      <div className="bg-[#1e293b] text-white py-2 px-4 md:px-8 flex justify-center items-center gap-4 text-xs md:text-sm font-medium shrink-0 z-[160]">
+      <div className="bg-[#1e293b] text-white py-2 px-4 md:px-8 flex justify-center items-center gap-4 text-xs md:text-sm font-semibold shrink-0 z-[160]">
           <span className="truncate text-center">Unlock more tools to grow your audience faster.</span>
           <button className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 px-3 py-1 rounded-full flex items-center gap-2 transition-all shrink-0">
               <i className="fi fi-rr-bolt text-xs"></i> <span>Claim week</span>
@@ -156,7 +156,7 @@ function DashboardContent() {
         <div className="flex md:hidden items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-[36px] z-[150]">
             <div className="flex items-center gap-3">
                <button onClick={() => setIsSidebarOpen(true)} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-secondary border border-gray-100"><i className="fi fi-rr-menu-burger text-lg"></i></button>
-               <p className="font-black text-xs md:text-sm uppercase tracking-[0.2em] text-secondary">{activeTab}</p>
+               <p className="font-extrabold text-xs md:text-sm uppercase tracking-[0.2em] text-secondary">{activeTab}</p>
             </div>
             <div className="w-8 h-8 rounded-full bg-primary/10 overflow-hidden border border-primary/20">
                <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
@@ -185,7 +185,7 @@ function DashboardContent() {
                  transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                  className="absolute bottom-[90%] left-6 right-6 bg-white/95 backdrop-blur-xl border border-gray-100 rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] p-2 z-[200] flex flex-col gap-1"
                >
-                  <p className="text-[9px] font-black uppercase text-gray-400 tracking-[0.3em] px-4 py-3 border-b border-gray-50">
+                  <p className="text-[9px] font-extrabold uppercase text-gray-400 tracking-[0.3em] px-4 py-3 border-b border-gray-50">
                     {NAV_GROUPS.find(g => g.id === openGroup)?.label || 'Menu'} tools
                   </p>
                   {NAV_GROUPS.find(g => g.id === openGroup)?.items?.map(item => (
@@ -197,7 +197,7 @@ function DashboardContent() {
                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === item.id ? 'bg-primary text-white' : 'bg-gray-50'}`}>
                           <i className={`fi ${item.icon} text-lg`}></i>
                        </div>
-                       <span className="font-black text-xs uppercase tracking-widest">{item.label}</span>
+                       <span className="font-extrabold text-xs uppercase tracking-widest">{item.label}</span>
                        {activeTab === item.id && <i className="fi fi-rr-check text-xs ml-auto"></i>}
                     </button>
                   ))}
@@ -221,7 +221,7 @@ function DashboardContent() {
                       <div className={`w-14 h-12 rounded-[22px] flex items-center justify-center transition-all ${isItemInGroupActive ? 'bg-primary/10' : ''}`}>
                         <i className={`fi ${group.icon} text-xl md:text-2xl`}></i>
                       </div>
-                      <span className="text-[9px] font-black uppercase tracking-[0.2em]">{group.label}</span>
+                      <span className="text-[9px] font-extrabold uppercase tracking-[0.2em]">{group.label}</span>
                       {isItemInGroupActive && !isGroupOpen && (
                         <motion.div layoutId="active-dot" className="absolute -top-1 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_10px_#502274]" />
                       )}

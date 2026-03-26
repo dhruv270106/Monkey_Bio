@@ -141,7 +141,7 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
 
       {/* Toolbar */}
       <div className="h-16 px-4 md:px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0 sticky top-0 md:relative z-[60]">
-         <h1 className="font-black text-lg md:text-xl uppercase tracking-tighter">Links</h1>
+         <h1 className="font-extrabold text-lg md:text-xl uppercase tracking-tighter">Links</h1>
          <div className="flex items-center gap-2 md:gap-3">
               <button 
                 onClick={() => {
@@ -153,7 +153,7 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
                     alert('Link copied to clipboard!')
                   }
                 }}
-                className="flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 border border-blue-100 bg-blue-50/50 text-blue-600 rounded-full font-bold text-[10px] md:text-sm hover:bg-blue-100 transition-all active:scale-95 shrink-0"
+                className="flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 border border-blue-100 bg-blue-50/50 text-blue-600 rounded-full font-semibold text-[10px] md:text-sm hover:bg-blue-100 transition-all active:scale-95 shrink-0"
               >
                   <i className="fi fi-rr-share text-[10px]"></i> Share
               </button>
@@ -182,12 +182,12 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
                   </div>
               </div>
               <div className="min-w-0 flex-1">
-                  <h2 className="text-xl md:text-2xl font-black flex items-center gap-2 truncate">
+                  <h2 className="text-xl md:text-2xl font-extrabold flex items-center gap-2 truncate">
                     {profile?.display_name || 'User'} 
                     <i className="fi fi-sr-badge-check text-primary text-lg md:text-xl shrink-0"></i>
                   </h2>
                   <div className="flex items-center gap-4 mt-2 md:mt-3">
-                     <span className="text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1 truncate">
+                     <span className="text-[9px] md:text-[10px] text-gray-400 font-semibold uppercase tracking-widest flex items-center gap-1 truncate">
                         <i className="fi fi-rr-link text-[10px]"></i> {domain}/{profile?.username}
                      </span>
                   </div>
@@ -198,7 +198,7 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
           <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md pb-6 pt-4">
               <button 
                 onClick={() => setIsAddModalOpen(true)}
-                className="w-full py-5 bg-[#8b3eff] text-white font-black rounded-[40px] text-lg hover:bg-[#7221e6] transition-all flex items-center justify-center gap-2 group shadow-xl active:scale-95"
+                className="w-full py-5 bg-[#8b3eff] text-white font-extrabold rounded-[40px] text-lg hover:bg-[#7221e6] transition-all flex items-center justify-center gap-2 group shadow-xl active:scale-95"
               >
                   <i className="fi fi-rr-plus text-sm"></i> Add Link
               </button>
@@ -208,12 +208,12 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
            <div className="bg-[#fdf2e3] border border-[#e8dcc8] rounded-[30px] md:rounded-[40px] p-6 md:p-8">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                   <div>
-                      <h3 className="font-black text-lg md:text-xl text-secondary uppercase tracking-tight">Social Cards</h3>
-                      <p className="text-xs text-secondary/60 font-bold">Manage your link cards ({links.length}/20)</p>
+                      <h3 className="font-extrabold text-lg md:text-xl text-secondary uppercase tracking-tight">Social Cards</h3>
+                      <p className="text-xs text-secondary/60 font-semibold">Manage your link cards ({links.length}/20)</p>
                   </div>
                   <button 
                     onClick={() => setIsManageModalOpen(true)}
-                    className="px-5 py-2.5 bg-white border border-gray-200 rounded-full font-bold text-xs md:text-sm hover:bg-gray-100 transition-all shadow-sm shrink-0"
+                    className="px-5 py-2.5 bg-white border border-gray-200 rounded-full font-semibold text-xs md:text-sm hover:bg-gray-100 transition-all shadow-sm shrink-0"
                   >
                      <i className="fi fi-rr-settings-sliders mr-2"></i> Manage
                   </button>
@@ -237,7 +237,7 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
                             )}
                          </div>
                          <div className="min-w-0">
-                            <p className="text-[10px] md:text-xs font-black truncate">{link.title}</p>
+                            <p className="text-[10px] md:text-xs font-extrabold truncate">{link.title}</p>
                          </div>
                          <div className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                             <i className="fi fi-rr-arrow-up-right text-[10px] text-primary"></i>
@@ -247,7 +247,7 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
                   })}
                   {links.length === 0 && (
                     <div className="w-full p-6 bg-white/50 rounded-3xl border border-dashed border-secondary/10 flex flex-col items-center justify-center text-center">
-                       <p className="text-xs font-bold text-secondary/40">No link cards added yet.</p>
+                       <p className="text-xs font-semibold text-secondary/40">No link cards added yet.</p>
                     </div>
                   )}
               </div>
@@ -283,7 +283,7 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-0.5 md:mb-1 gap-2">
-                           <h3 className="font-black text-base md:text-lg text-secondary truncate">
+                           <h3 className="font-extrabold text-base md:text-lg text-secondary truncate">
                              {link.title}
                            </h3>
                            <div className="flex items-center gap-4 shrink-0">

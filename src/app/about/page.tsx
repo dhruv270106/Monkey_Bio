@@ -59,10 +59,10 @@ const HeroSection = () => (
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         className="z-10 text-center lg:text-left"
       >
-        <span className="inline-block px-4 py-1.5 rounded-full bg-[#d8ef2c] text-[#4d5700] text-xs font-bold tracking-widest uppercase mb-6">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-[#d8ef2c] text-[#4d5700] text-xs font-semibold tracking-widest uppercase mb-6">
           The Community Wall
         </span>
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tighter text-[#2d2f2f] mb-6 md:mb-8 leading-[1.1] uppercase">
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter text-[#2d2f2f] mb-6 md:mb-8 leading-[1.1] uppercase">
           EMPOWERING <br/> <span className="text-[#576100] italic">DIGITAL SOULS.</span>
         </h1>
         <p className="text-lg md:text-2xl text-[#5a5c5c] max-w-xl mx-auto lg:mx-0 leading-relaxed mb-8 md:mb-10 font-medium">
@@ -75,7 +75,7 @@ const HeroSection = () => (
              <img className="w-10 h-10 md:w-12 md:h-12 rounded-full border-4 border-white object-cover" src="https://i.pravatar.cc/150?u=3" alt="avatar" />
           </div>
           <div className="flex flex-col justify-center text-left">
-            <span className="text-sm font-bold text-[#2d2f2f]">Join 40M+ creators</span>
+            <span className="text-sm font-semibold text-[#2d2f2f]">Join 40M+ creators</span>
             <span className="text-xs text-[#5a5c5c]">Global creative community</span>
           </div>
         </div>
@@ -94,7 +94,7 @@ const HeroSection = () => (
           alt="Mosaic Hub"
         />
         <div className="absolute -bottom-6 -right-6 md:-bottom-8 md:-left-8 bg-white p-4 md:p-6 rounded-lg shadow-xl max-w-[200px] md:max-w-xs border border-gray-100">
-          <p className="text-[#576100] font-bold mb-1 md:mb-2 text-xs md:text-base">Since 2016</p>
+          <p className="text-[#576100] font-semibold mb-1 md:mb-2 text-xs md:text-base">Since 2016</p>
           <p className="text-[10px] md:text-sm text-[#5a5c5c] font-medium italic">"We started with a simple link and a dream for the world."</p>
         </div>
       </motion.div>
@@ -113,7 +113,7 @@ const MissionVision = () => (
           <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#d8ef2c] flex items-center justify-center mb-6 md:mb-8">
             <Rocket className="text-[#576100] w-6 h-6 md:w-8 md:h-8" />
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 tracking-tight text-[#2d2f2f] uppercase">Our Mission</h3>
+          <h3 className="text-2xl md:text-3xl font-semibold mb-4 md:mb-6 tracking-tight text-[#2d2f2f] uppercase">Our Mission</h3>
           <p className="text-base md:text-lg text-[#5a5c5c] leading-relaxed font-medium">
              Providing a seamless and intelligent home for your entire digital existence. Complexity shouldn't be a barrier to sharing your passion.
           </p>
@@ -126,7 +126,7 @@ const MissionVision = () => (
           <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#d3cbff] flex items-center justify-center mb-6 md:mb-8">
             <Eye className="text-[#572ff4] w-6 h-6 md:w-8 md:h-8" />
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 tracking-tight text-[#2d2f2f] uppercase">Our Vision</h3>
+          <h3 className="text-2xl md:text-3xl font-semibold mb-4 md:mb-6 tracking-tight text-[#2d2f2f] uppercase">Our Vision</h3>
           <p className="text-base md:text-lg text-[#5a5c5c] leading-relaxed font-medium">
              To become the most reliable and beautiful bridge between creators and their world—where every creative journey flourishes.
           </p>
@@ -139,7 +139,7 @@ const MissionVision = () => (
 const CoreValues = () => (
   <section className="py-20 md:py-32 px-6 bg-white">
     <div className="max-w-7xl mx-auto text-center mb-16 md:mb-20">
-      <h2 className="text-3xl md:text-4xl font-black tracking-tighter mb-4 uppercase">The Values We Live By</h2>
+      <h2 className="text-3xl md:text-4xl font-extrabold tracking-tighter mb-4 uppercase">The Values We Live By</h2>
       <div className="h-1.5 w-16 md:w-24 bg-[#576100] mx-auto rounded-full"></div>
     </div>
     <motion.div 
@@ -161,7 +161,7 @@ const CoreValues = () => (
                 {React.cloneElement(value.icon as React.ReactElement, { size: 28 })}
             </div>
           </div>
-          <h4 className="text-lg md:text-xl font-bold mb-2 md:mb-3 uppercase tracking-tighter">{value.title}</h4>
+          <h4 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 uppercase tracking-tighter">{value.title}</h4>
           <p className="text-[#5a5c5c] text-xs md:text-sm px-4 leading-relaxed font-medium">{value.desc}</p>
         </motion.div>
       ))}
@@ -184,7 +184,7 @@ const StatsSection = () => (
             {...scaleIn}
             transition={{ delay: i * 0.1 }}
           >
-            <div className="text-4xl md:text-6xl font-black text-[#d8ef2c] mb-2 tracking-tighter">{stat.val}</div>
+            <div className="text-4xl md:text-6xl font-extrabold text-[#d8ef2c] mb-2 tracking-tighter">{stat.val}</div>
             <div className="text-sm md:text-lg font-medium text-gray-400 uppercase tracking-widest">{stat.label}</div>
           </motion.div>
         ))}
@@ -198,8 +198,8 @@ const TeamSection = () => (
     <div className="max-w-7xl mx-auto">
       <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-12 md:mb-16 gap-6">
         <div className="text-center lg:text-left">
-          <span className="text-[#576100] font-bold tracking-widest uppercase text-xs md:text-sm">Our People</span>
-          <h2 className="text-3xl md:text-5xl font-black tracking-tighter mt-2 uppercase">Meet Our Team</h2>
+          <span className="text-[#576100] font-semibold tracking-widest uppercase text-xs md:text-sm">Our People</span>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tighter mt-2 uppercase">Meet Our Team</h2>
         </div>
         <p className="text-[#5a5c5c] max-w-md mx-auto lg:mx-0 text-center lg:text-left text-base md:text-lg leading-snug font-medium">The diverse group of innovators and creators dedicated to building the future of the creator economy.</p>
       </div>
@@ -228,8 +228,8 @@ const TeamSection = () => (
                 </div>
               </div>
             </div>
-            <h4 className="text-lg md:text-xl font-bold uppercase tracking-tighter text-center lg:text-left">{member.name}</h4>
-            <p className="text-[#576100] font-bold text-xs uppercase tracking-widest text-center lg:text-left">{member.role}</p>
+            <h4 className="text-lg md:text-xl font-semibold uppercase tracking-tighter text-center lg:text-left">{member.name}</h4>
+            <p className="text-[#576100] font-semibold text-xs uppercase tracking-widest text-center lg:text-left">{member.role}</p>
           </motion.div>
         ))}
       </div>
@@ -242,11 +242,11 @@ const CommunityImpact = () => (
     <div className="max-w-7xl mx-auto">
       <div className="grid lg:grid-cols-3 gap-12 items-center">
         <div className="lg:col-span-1 text-center lg:text-left">
-          <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-6 uppercase">Community Impact</h2>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-6 uppercase">Community Impact</h2>
           <p className="text-[#5a5c5c] leading-relaxed text-base md:text-lg mb-8 font-medium">
              We don't just build software; we build platforms for success. Here's what some of our creators have to say.
           </p>
-          <div className="flex items-center justify-center lg:justify-start gap-2 text-[#576100] font-bold cursor-pointer hover:gap-4 transition-all group">
+          <div className="flex items-center justify-center lg:justify-start gap-2 text-[#576100] font-semibold cursor-pointer hover:gap-4 transition-all group">
             <span className="uppercase tracking-widest text-xs md:text-sm">Read all stories</span>
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </div>
@@ -271,8 +271,8 @@ const CommunityImpact = () => (
                   <img src={`https://i.pravatar.cc/100?u=${t.n}`} alt={t.n} />
                 </div>
                 <div>
-                  <p className="font-bold text-xs md:text-sm uppercase tracking-tighter">{t.n}</p>
-                  <p className="text-[10px] md:text-xs text-[#5a5c5c] uppercase font-bold">{t.r}</p>
+                  <p className="font-semibold text-xs md:text-sm uppercase tracking-tighter">{t.n}</p>
+                  <p className="text-[10px] md:text-xs text-[#5a5c5c] uppercase font-semibold">{t.r}</p>
                 </div>
               </div>
             </motion.div>
@@ -292,14 +292,14 @@ const FinalCTA = () => (
       >
         <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         <div className="relative z-10">
-          <h2 className="text-3xl md:text-6xl font-black text-[#4d5700] tracking-tighter mb-8 leading-tight uppercase">
+          <h2 className="text-3xl md:text-6xl font-extrabold text-[#4d5700] tracking-tighter mb-8 leading-tight uppercase">
             Ready to showcase your<br className="hidden md:block"/>best self to the world?
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/signup" className="w-full sm:w-auto bg-[#4d5700] text-[#d8ef2c] px-8 py-4 md:px-10 md:py-5 rounded-full font-black text-lg md:text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl uppercase tracking-widest">
+            <Link href="/signup" className="w-full sm:w-auto bg-[#4d5700] text-[#d8ef2c] px-8 py-4 md:px-10 md:py-5 rounded-full font-extrabold text-lg md:text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl uppercase tracking-widest">
                 Create Your Profile
             </Link>
-            <p className="text-[#4d5700] font-bold uppercase tracking-wide text-xs md:text-sm underline decoration-2 underline-offset-4 cursor-pointer">Join the Pulse Today</p>
+            <p className="text-[#4d5700] font-semibold uppercase tracking-wide text-xs md:text-sm underline decoration-2 underline-offset-4 cursor-pointer">Join the Pulse Today</p>
           </div>
         </div>
       </motion.div>

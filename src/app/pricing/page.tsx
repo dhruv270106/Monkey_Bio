@@ -276,7 +276,7 @@ export default function PricingPage() {
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl md:text-7xl font-black text-[#1e1e1e] tracking-tight mb-8"
+          className="text-5xl md:text-7xl font-extrabold text-[#1e1e1e] tracking-tight mb-8"
         >
           Pick your plan. <br />
           <span className="text-[#502274] italic">Grow your world.</span>
@@ -286,7 +286,7 @@ export default function PricingPage() {
         <div className="flex items-center justify-center gap-4 mt-12 bg-gray-100 p-1.5 rounded-full w-fit mx-auto border border-gray-200">
           <button 
             onClick={() => setBillingCycle('monthly')}
-            className={`px-8 py-2.5 rounded-full text-sm font-bold transition-all ${
+            className={`px-8 py-2.5 rounded-full text-sm font-semibold transition-all ${
               billingCycle === 'monthly' ? 'bg-white shadow-md text-[#1e1e1e]' : 'text-gray-500'
             }`}
           >
@@ -294,11 +294,11 @@ export default function PricingPage() {
           </button>
           <button 
             onClick={() => setBillingCycle('yearly')}
-            className={`px-8 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${
+            className={`px-8 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${
               billingCycle === 'yearly' ? 'bg-[#502274] shadow-md text-white' : 'text-gray-500'
             }`}
           >
-            Annually <span className={`${billingCycle === 'yearly' ? 'text-white/80' : 'text-[#2665D6]'} text-[10px] font-black uppercase`}>Save up to 30%</span>
+            Annually <span className={`${billingCycle === 'yearly' ? 'text-white/80' : 'text-[#2665D6]'} text-[10px] font-extrabold uppercase`}>Save up to 30%</span>
           </button>
         </div>
       </section>
@@ -315,23 +315,23 @@ export default function PricingPage() {
               className={`relative flex flex-col p-8 rounded-[40px] border transition-all duration-300 bg-white ${plan.theme}`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#502274] text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#502274] text-white text-[10px] font-extrabold uppercase tracking-widest px-4 py-1.5 rounded-full">
                   Recommended
                 </div>
               )}
               
               <div className="mb-8">
-                <h3 className="text-2xl font-black text-[#1e1e1e] mb-2">{plan.name}</h3>
+                <h3 className="text-2xl font-extrabold text-[#1e1e1e] mb-2">{plan.name}</h3>
                 <p className="text-sm text-gray-500 font-medium h-10">{plan.description}</p>
               </div>
 
               <div className="mb-8 flex items-baseline gap-1">
-                <span className="text-4xl font-black text-[#1e1e1e]">
+                <span className="text-4xl font-extrabold text-[#1e1e1e]">
                   ₹{billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
                 </span>
-                <span className="text-gray-400 font-bold text-sm">/mo</span>
+                <span className="text-gray-400 font-semibold text-sm">/mo</span>
                 {plan.monthlyPrice > 0 && billingCycle === 'yearly' && (
-                   <span className="block text-[10px] text-gray-500 font-bold uppercase mt-1">Billed annually</span>
+                   <span className="block text-[10px] text-gray-500 font-semibold uppercase mt-1">Billed annually</span>
                 )}
               </div>
 
@@ -339,7 +339,7 @@ export default function PricingPage() {
                 {plan.features.map((feature, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <Check size={18} className="text-[#502274] shrink-0 mt-0.5" />
-                    <span className="text-sm font-bold text-gray-700">{feature}</span>
+                    <span className="text-sm font-semibold text-gray-700">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -347,7 +347,7 @@ export default function PricingPage() {
               <button 
                 onClick={() => handleUpgradeRequest(plan)}
                 disabled={plan.monthlyPrice === 0}
-                className={`w-full py-4 rounded-full font-black text-sm transition-all active:scale-95 ${
+                className={`w-full py-4 rounded-full font-extrabold text-sm transition-all active:scale-95 ${
                   plan.popular 
                     ? 'bg-[#E9C300] text-[#1e1e1e] hover:shadow-xl hover:shadow-[#E9C300]/20' 
                     : plan.monthlyPrice === 0 
@@ -367,10 +367,10 @@ export default function PricingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center gap-16">
             <div className="flex-1">
-              <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-extrabold mb-8 leading-tight">
                 Get more ways <br /> to <span className="text-[#D2E823]">earn money.</span>
               </h2>
-              <p className="text-gray-400 font-bold mb-12 max-w-md">
+              <p className="text-gray-400 font-semibold mb-12 max-w-md">
                 Make more and manage less by adding digital stores to your Linktree. No more jumping between apps.
               </p>
               
@@ -385,7 +385,7 @@ export default function PricingPage() {
                     <div className="w-10 h-10 rounded-full bg-[#D2E823] flex items-center justify-center text-black">
                       <DollarSign size={20} />
                     </div>
-                    <span className="font-bold text-lg">{item}</span>
+                    <span className="font-semibold text-lg">{item}</span>
                   </div>
                 ))}
               </div>
@@ -395,24 +395,24 @@ export default function PricingPage() {
                <div className="absolute inset-0 bg-[#D2E823] rounded-[60px] rotate-3 opacity-20"></div>
                <div className="absolute inset-0 bg-white rounded-[60px] -rotate-3 p-12 text-black flex flex-col justify-between">
                   <div>
-                    <h4 className="text-gray-400 font-black uppercase text-[10px] tracking-widest mb-6">Comparison</h4>
+                    <h4 className="text-gray-400 font-extrabold uppercase text-[10px] tracking-widest mb-6">Comparison</h4>
                     <div className="space-y-8">
                        <div className="flex items-center justify-between border-b pb-4">
-                          <span className="font-black text-xl">Digital Products</span>
-                          <span className="text-[#502274] font-black">Linktree Earn</span>
+                          <span className="font-extrabold text-xl">Digital Products</span>
+                          <span className="text-[#502274] font-extrabold">Linktree Earn</span>
                        </div>
                        <div className="flex items-center justify-between border-b pb-4">
-                          <span className="font-bold text-gray-400">Setup Time</span>
-                          <span className="font-black">Minutes</span>
+                          <span className="font-semibold text-gray-400">Setup Time</span>
+                          <span className="font-extrabold">Minutes</span>
                        </div>
                        <div className="flex items-center justify-between border-b pb-4">
-                          <span className="font-bold text-gray-400">Transaction Fee</span>
-                          <span className="font-black">0% - 5%</span>
+                          <span className="font-semibold text-gray-400">Transaction Fee</span>
+                          <span className="font-extrabold">0% - 5%</span>
                        </div>
                     </div>
                   </div>
                   <div className="bg-black text-white p-8 rounded-[32px] flex items-center justify-between">
-                     <span className="font-black">Start selling today</span>
+                     <span className="font-extrabold">Start selling today</span>
                      <ChevronRight />
                   </div>
                </div>
@@ -424,7 +424,7 @@ export default function PricingPage() {
       {/* All Features Section */}
       <section className="py-24 px-6 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-black text-center mb-16">Compare every feature</h2>
+          <h2 className="text-4xl font-extrabold text-center mb-16">Compare every feature</h2>
           
           <div className="flex flex-col lg:flex-row gap-12">
             {/* Sidebar Tabs */}
@@ -433,7 +433,7 @@ export default function PricingPage() {
                 <button
                   key={cat.id}
                   onClick={() => setActiveFeatureTab(cat.id)}
-                  className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-left transition-all ${
+                  className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-extrabold text-left transition-all ${
                     activeFeatureTab === cat.id 
                       ? 'bg-white shadow-lg text-[#502274]' 
                       : 'text-gray-400 hover:text-[#1e1e1e]'
@@ -448,7 +448,7 @@ export default function PricingPage() {
             {/* Feature Table */}
             <div className="lg:w-3/4 bg-white rounded-[40px] shadow-2xl p-8 lg:p-12 overflow-x-auto">
                <div className="min-w-[600px]">
-                 <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] border-b pb-8 mb-8 text-center text-[10px] font-black uppercase tracking-widest text-gray-400">
+                 <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] border-b pb-8 mb-8 text-center text-[10px] font-extrabold uppercase tracking-widest text-gray-400">
                     <div className="text-left">Feature</div>
                     <div>Free</div>
                     <div>Starter</div>
@@ -466,9 +466,9 @@ export default function PricingPage() {
                     >
                       {FEATURE_CATEGORIES.find(c => c.id === activeFeatureTab)?.features.map((f, i) => (
                         <div key={i} className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] items-center text-center">
-                           <div className="text-left font-bold text-[#1e1e1e] text-sm">{f.name}</div>
+                           <div className="text-left font-semibold text-[#1e1e1e] text-sm">{f.name}</div>
                            {f.plans.map((p, idx) => (
-                             <div key={idx} className="flex justify-center text-sm font-black text-[#502274]">
+                             <div key={idx} className="flex justify-center text-sm font-extrabold text-[#502274]">
                                {typeof p === 'boolean' ? (
                                  p ? <CheckCircle2 size={18} className="text-[#502274]" /> : <Minus size={18} className="text-gray-200" />
                                ) : (
@@ -500,15 +500,15 @@ export default function PricingPage() {
                className="relative bg-white w-full max-w-xl rounded-[48px] shadow-3xl p-10 lg:p-16 overflow-y-auto max-h-[90vh]"
              >
                 <div className="text-center">
-                  <h2 className="text-3xl font-black text-secondary mb-3">Upgrade to {selectedPlan.name}</h2>
-                  <p className="text-gray-400 font-bold text-sm mb-12 uppercase">
-                    Amount: <span className="text-[#502274] font-black ml-2">₹{billingCycle === 'monthly' ? selectedPlan.monthlyPrice : selectedPlan.yearlyPrice} {billingCycle}</span>
+                  <h2 className="text-3xl font-extrabold text-secondary mb-3">Upgrade to {selectedPlan.name}</h2>
+                  <p className="text-gray-400 font-semibold text-sm mb-12 uppercase">
+                    Amount: <span className="text-[#502274] font-extrabold ml-2">₹{billingCycle === 'monthly' ? selectedPlan.monthlyPrice : selectedPlan.yearlyPrice} {billingCycle}</span>
                   </p>
                   
                   <div className="space-y-8 text-left">
                     <div className="bg-gray-50 p-6 rounded-[32px] border">
-                       <h4 className="text-[10px] font-black text-gray-400 uppercase mb-4">Payment Instructions</h4>
-                       <p className="text-xs font-bold mb-4">Pay using UPI or Scan: <span className="text-[#502274]">monkeybio@upi</span></p>
+                       <h4 className="text-[10px] font-extrabold text-gray-400 uppercase mb-4">Payment Instructions</h4>
+                       <p className="text-xs font-semibold mb-4">Pay using UPI or Scan: <span className="text-[#502274]">monkeybio@upi</span></p>
                        <div className="w-full aspect-square bg-white rounded-2xl border mb-4 flex items-center justify-center">
                           <span className="text-gray-200">QR CODE HERE</span>
                        </div>
@@ -516,23 +516,23 @@ export default function PricingPage() {
 
                     <div className="space-y-4">
                        <div>
-                          <label className="text-[10px] font-black text-gray-400 uppercase px-2">Transaction ID</label>
+                          <label className="text-[10px] font-extrabold text-gray-400 uppercase px-2">Transaction ID</label>
                           <input 
                             type="text"
                             value={transactionId}
                             onChange={(e) => setTransactionId(e.target.value)}
                             placeholder="TXN12345678" 
-                            className="w-full bg-gray-50 border rounded-2xl p-4 font-bold text-secondary outline-none focus:ring-2 focus:ring-[#502274]/20" 
+                            className="w-full bg-gray-50 border rounded-2xl p-4 font-semibold text-secondary outline-none focus:ring-2 focus:ring-[#502274]/20" 
                           />
                        </div>
                        <div>
-                          <label className="text-[10px] font-black text-gray-400 uppercase px-2">Screenshot URL</label>
+                          <label className="text-[10px] font-extrabold text-gray-400 uppercase px-2">Screenshot URL</label>
                           <input 
                             type="text" 
                             value={proofUrl}
                             onChange={(e) => setProofUrl(e.target.value)}
                             placeholder="https://imgur.com/example.jpg" 
-                            className="w-full bg-gray-50 border rounded-2xl p-4 font-bold text-secondary outline-none focus:ring-2 focus:ring-[#502274]/20" 
+                            className="w-full bg-gray-50 border rounded-2xl p-4 font-semibold text-secondary outline-none focus:ring-2 focus:ring-[#502274]/20" 
                           />
                        </div>
                     </div>
@@ -540,11 +540,11 @@ export default function PricingPage() {
                     <button 
                       disabled={loading}
                       onClick={submitPayment}
-                      className="w-full py-5 bg-[#502274] text-white rounded-full font-black text-sm hover:shadow-2xl transition-all disabled:opacity-50"
+                      className="w-full py-5 bg-[#502274] text-white rounded-full font-extrabold text-sm hover:shadow-2xl transition-all disabled:opacity-50"
                     >
                       {loading ? 'Processing...' : 'Submit Payment Proof'}
                     </button>
-                    <p className="text-[10px] text-center text-gray-400 font-bold uppercase flex items-center justify-center gap-2">
+                    <p className="text-[10px] text-center text-gray-400 font-semibold uppercase flex items-center justify-center gap-2">
                       <Clock size={12} /> Verification within 24 hours
                     </p>
                   </div>
@@ -556,11 +556,11 @@ export default function PricingPage() {
 
       {/* Footer CTA */}
       <section className="bg-[#D2E823] py-24 text-center px-6">
-         <h2 className="text-5xl md:text-7xl font-black text-[#1e1e1e] mb-12">
+         <h2 className="text-5xl md:text-7xl font-extrabold text-[#1e1e1e] mb-12">
            Ready to start? <br /> It's free.
          </h2>
          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="px-12 py-5 bg-[#1e1e1e] text-white rounded-full font-black text-lg hover:scale-105 transition-transform">
+            <button className="px-12 py-5 bg-[#1e1e1e] text-white rounded-full font-extrabold text-lg hover:scale-105 transition-transform">
                Get started for free
             </button>
          </div>

@@ -108,13 +108,13 @@ export default function Home() {
            <div className="max-w-[1400px] mx-auto w-full h-full grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] items-start lg:items-center gap-4 lg:gap-12 relative z-20">
               <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-2 md:gap-10 z-30 relative pt-4 lg:pt-0">
                 <Reveal delay={0.05} width="100%">
-                  <h1 className="text-[clamp(44px,9vw,100px)] font-black leading-[0.9] lg:leading-[0.85] tracking-[-0.07em] uppercase pb-1">
+                  <h1 className="text-[clamp(44px,9vw,100px)] font-extrabold leading-[0.9] lg:leading-[0.85] tracking-[-0.07em] uppercase pb-1">
                     Everything <br /> You Are. <br /> One Link.
                   </h1>
                 </Reveal>
                 
                 <Reveal delay={0.15} width="100%">
-                  <p className="text-lg md:text-2xl font-bold tracking-tight opacity-70 max-w-xl leading-relaxed uppercase mb-2">
+                  <p className="text-lg md:text-2xl font-semibold tracking-tight opacity-70 max-w-xl leading-relaxed uppercase mb-2">
                     The original link in bio, trusted by <span className="relative inline-block px-1">40M+<span className="absolute left-0 bottom-0 w-full h-1 bg-[#502274] blur-[2px] opacity-20" /></span> creators.
                   </p>
                 </Reveal>
@@ -123,19 +123,19 @@ export default function Home() {
                   <div className={`relative transition-all duration-700 ${isClaimed ? 'scale-95 opacity-50 pointer-events-none' : 'scale-100'}`}>
                     <div className="absolute inset-0 bg-white/40 blur-3xl rounded-full" />
                     <div className="relative flex flex-col sm:flex-row items-center gap-3 bg-white/95 backdrop-blur-3xl p-2 sm:p-3 pl-6 sm:pl-8 rounded-[32px] sm:rounded-[40px] shadow-[0_30px_80px_rgba(0,0,0,0.12)] border border-white">
-                      <span className="text-lg sm:text-xl font-black text-black/30">linktr.ee/</span>
+                      <span className="text-lg sm:text-xl font-extrabold text-black/30">linktr.ee/</span>
                       <input 
                         type="text" 
                         placeholder="yourname"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="bg-transparent text-lg sm:text-xl font-black outline-none w-full placeholder:text-gray-300 uppercase tracking-tighter"
+                        className="bg-transparent text-lg sm:text-xl font-extrabold outline-none w-full placeholder:text-gray-300 uppercase tracking-tighter"
                       />
                       <motion.button 
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => username && setIsClaimed(true)}
-                        className="w-full sm:w-auto bg-[#422066] text-white px-8 py-4 sm:px-10 sm:py-6 rounded-[24px] sm:rounded-[32px] font-black text-lg sm:text-xl hover:bg-black transition-all shadow-2xl uppercase tracking-tighter whitespace-nowrap leading-none min-w-[160px] sm:min-w-[200px]"
+                        className="w-full sm:w-auto bg-[#422066] text-white px-8 py-4 sm:px-10 sm:py-6 rounded-[24px] sm:rounded-[32px] font-extrabold text-lg sm:text-xl hover:bg-black transition-all shadow-2xl uppercase tracking-tighter whitespace-nowrap leading-none min-w-[160px] sm:min-w-[200px]"
                       >
                         Claim Yours
                       </motion.button>
@@ -143,7 +143,7 @@ export default function Home() {
                   </div>
                   
                   {isClaimed && (
-                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 bg-white text-green-600 px-8 py-4 rounded-3xl font-black text-sm uppercase self-center sm:self-start shadow-xl border border-green-50">
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 bg-white text-green-600 px-8 py-4 rounded-3xl font-extrabold text-sm uppercase self-center sm:self-start shadow-xl border border-green-50">
                        <Check className="w-5 h-5" /> Username {username} reserved!
                     </motion.div>
                   )}
@@ -162,60 +162,60 @@ export default function Home() {
 
         {/* CUSTOMIZE SECTION - IMAGE LEFT */}
         <Section id="features" imageSide="left" bgClass="bg-gradient-to-br from-[#2665D6] via-[#4F8BF8] to-[#1E4FAF] text-white" imageSrc="/images/customize.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-black leading-tight uppercase mb-4 md:mb-8 font-black">Personalize Everything.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-black text-white/60 mb-4 md:mb-10 uppercase tracking-widest font-black">Your Brand. Style. No Code.</p></Reveal>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Personalize Everything.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/60 mb-4 md:mb-10 uppercase tracking-widest font-extrabold">Your Brand. Style. No Code.</p></Reveal>
              <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
-                <Link href="/signup" className="bg-[#D2E823] text-[#2665D6] font-black text-sm md:text-lg px-8 py-4 rounded-[18px] shadow-2xl inline-block hover:bg-white transition-colors uppercase tracking-widest font-black">DISCOVER ↗</Link>
+                <Link href="/signup" className="bg-[#D2E823] text-[#2665D6] font-extrabold text-sm md:text-lg px-8 py-4 rounded-[18px] shadow-2xl inline-block hover:bg-white transition-colors uppercase tracking-widest font-extrabold">DISCOVER ↗</Link>
              </motion.div>
         </Section>
 
         {/* SHARE SECTION - IMAGE RIGHT */}
         <Section id="share" imageSide="right" bgClass="bg-gradient-to-br from-[#780011] via-[#B50019] to-[#54000C] text-white" imageSrc="/images/share.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-black leading-tight uppercase mb-4 md:mb-8 font-black">Share Everywhere.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-black text-white/50 mb-4 md:mb-10 uppercase italic font-black">One Link. All Socials.</p></Reveal>
-             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><Link href="/signup" className="bg-white text-[#780011] font-black text-sm md:text-lg px-8 py-4 rounded-full shadow-2xl inline-flex items-center gap-4 hover:bg-[#D2E823] transition-colors font-black">GET YOURS 🔥</Link></motion.div>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Share Everywhere.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/50 mb-4 md:mb-10 uppercase italic font-extrabold">One Link. All Socials.</p></Reveal>
+             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><Link href="/signup" className="bg-white text-[#780011] font-extrabold text-sm md:text-lg px-8 py-4 rounded-full shadow-2xl inline-flex items-center gap-4 hover:bg-[#D2E823] transition-colors font-extrabold">GET YOURS 🔥</Link></motion.div>
         </Section>
 
         {/* ANALYZE SECTION - IMAGE LEFT */}
         <Section id="analyze" imageSide="left" bgClass="bg-gradient-to-br from-[#1E1E1E] via-[#2D2D2D] to-[#0D0D0D] text-white" imageSrc="/images/analyze.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-black uppercase leading-tight mb-3 md:mb-6 font-black">Smart Data.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-black text-white/50 mb-4 md:mb-10 uppercase tracking-widest font-black">Growth. Clicks. Insights.</p></Reveal>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold uppercase leading-tight mb-3 md:mb-6 font-extrabold">Smart Data.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/50 mb-4 md:mb-10 uppercase tracking-widest font-extrabold">Growth. Clicks. Insights.</p></Reveal>
              <motion.div whileHover={{ scale: 1.1, y: -5 }} whileTap={{ scale: 0.9 }}>
-                <Link href="/signup" className="bg-[#D2E823] text-black font-black text-sm md:text-lg px-10 py-5 rounded-[20px] shadow-xl inline-block hover:bg-white transition-all uppercase font-black">GO PRO ↗</Link>
+                <Link href="/signup" className="bg-[#D2E823] text-black font-extrabold text-sm md:text-lg px-10 py-5 rounded-[20px] shadow-xl inline-block hover:bg-white transition-all uppercase font-extrabold">GO PRO ↗</Link>
              </motion.div>
         </Section>
 
         {/* MARKETPLACE SECTION - IMAGE RIGHT */}
         <Section id="marketplace" imageSide="right" bgClass="bg-gradient-to-br from-[#8000FF] via-[#A84FFF] to-[#5000AF] text-white" imageSrc="/images/marketplace.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-black leading-tight uppercase mb-4 md:mb-8 font-black">Creator Shop.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-black text-white/40 mb-4 md:mb-10 uppercase font-black">Sell Digital. Direct. Fast.</p></Reveal>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Creator Shop.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/40 mb-4 md:mb-10 uppercase font-extrabold">Sell Digital. Direct. Fast.</p></Reveal>
              <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
-                <Link href="/templates" className="bg-[#D2E823] text-black font-black text-sm md:text-lg px-10 py-5 rounded-[24px] shadow-2xl inline-block hover:bg-white transition-all uppercase leading-none font-black">BROWSE ↗</Link>
+                <Link href="/templates" className="bg-[#D2E823] text-black font-extrabold text-sm md:text-lg px-10 py-5 rounded-[24px] shadow-2xl inline-block hover:bg-white transition-all uppercase leading-none font-extrabold">BROWSE ↗</Link>
              </motion.div>
         </Section>
 
         {/* TEMPLATES SECTION - IMAGE LEFT */}
         <Section id="templates" imageSide="left" bgClass="bg-gradient-to-br from-[#FF0080] via-[#FF4FBC] to-[#AF0050] text-white" imageSrc="/images/templates.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-black leading-tight uppercase mb-4 md:mb-8 font-black">Beautiful Layouts.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-black text-white/60 mb-4 md:mb-10 uppercase tracking-tighter italic font-black">Design Beautifully.</p></Reveal>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Beautiful Layouts.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/60 mb-4 md:mb-10 uppercase tracking-tighter italic font-extrabold">Design Beautifully.</p></Reveal>
              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/templates" className="bg-black text-white font-black text-sm md:text-lg px-10 py-5 rounded-[24px] shadow-2xl inline-block hover:bg-[#8000FF] transition-all uppercase tracking-widest font-black">VIEW ALL ↗</Link>
+                <Link href="/templates" className="bg-black text-white font-extrabold text-sm md:text-lg px-10 py-5 rounded-[24px] shadow-2xl inline-block hover:bg-[#8000FF] transition-all uppercase tracking-widest font-extrabold">VIEW ALL ↗</Link>
              </motion.div>
         </Section>
 
         {/* MONETIZE SECTION - IMAGE RIGHT */}
         <Section id="monetize" imageSide="right" bgClass="bg-gradient-to-br from-[#FF6B00] via-[#FF9E00] to-[#E65100] text-white" imageSrc="/images/monetize.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-black leading-tight uppercase mb-4 md:mb-8 font-black">Monetize Audience.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-black text-white/50 mb-4 md:mb-10 uppercase tracking-widest font-black">Support. Tips. Sales.</p></Reveal>
-             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="bg-white text-[#FF6B00] font-black text-sm md:text-lg px-10 py-5 rounded-3xl shadow-2xl transition-all uppercase tracking-widest font-black">EARN NOW</motion.button>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Monetize Audience.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/50 mb-4 md:mb-10 uppercase tracking-widest font-extrabold">Support. Tips. Sales.</p></Reveal>
+             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="bg-white text-[#FF6B00] font-extrabold text-sm md:text-lg px-10 py-5 rounded-3xl shadow-2xl transition-all uppercase tracking-widest font-extrabold">EARN NOW</motion.button>
         </Section>
 
         {/* EMBED SECTION - IMAGE LEFT */}
         <Section id="integrations" imageSide="left" bgClass="bg-gradient-to-br from-[#00C2FF] via-[#00E0FF] to-[#0085FF] text-white" imageSrc="/images/integrations.png">
-             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-black leading-tight uppercase mb-4 md:mb-8 font-black">Embed Anything.</h2></Reveal>
-             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-black text-white/50 mb-4 md:mb-10 uppercase font-black">Spotify. Shopify. Connect.</p></Reveal>
+             <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Embed Anything.</h2></Reveal>
+             <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/50 mb-4 md:mb-10 uppercase font-extrabold">Spotify. Shopify. Connect.</p></Reveal>
              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Link href="/signup" className="bg-white text-[#0085FF] font-black text-sm md:text-lg px-10 py-5 rounded-[24px] shadow-2xl inline-block hover:bg-black hover:text-white transition-all uppercase leading-none font-black">PLUGINS ↗</Link>
+                <Link href="/signup" className="bg-white text-[#0085FF] font-extrabold text-sm md:text-lg px-10 py-5 rounded-[24px] shadow-2xl inline-block hover:bg-black hover:text-white transition-all uppercase leading-none font-extrabold">PLUGINS ↗</Link>
              </motion.div>
         </Section>
 
@@ -224,16 +224,16 @@ export default function Home() {
            <FloatingBubble top="top-20" left="left-20" size="w-64 h-64 md:w-96 md:h-96" color="bg-linktree-purple/10" />
            <div className="max-w-7xl mx-auto text-center px-4 md:px-8 flex flex-col items-center justify-center relative z-20">
               <Reveal delay={0.1} width="100%">
-                 <h2 className="text-[clamp(48px,11vw,120px)] font-black leading-tight md:leading-[0.75] uppercase italic mb-8 md:mb-16 tracking-tighter font-black">
+                 <h2 className="text-[clamp(48px,11vw,120px)] font-extrabold leading-tight md:leading-[0.75] uppercase italic mb-8 md:mb-16 tracking-tighter font-extrabold">
                     Finish <br className="hidden md:block" /> Strong.
                   </h2>
               </Reveal>
               <div className="flex flex-row justify-center gap-3 sm:gap-6 md:gap-8 w-full max-w-4xl">
                  <motion.div whileHover={{ scale: 1.08, y: -5 }} className="flex-1">
-                    <Link href="/signup" className="block w-full bg-linktree-purple text-white font-black text-sm sm:text-2xl md:text-4xl px-2 py-5 rounded-2xl md:rounded-[40px] shadow-3xl text-center">SIGN UP</Link>
+                    <Link href="/signup" className="block w-full bg-linktree-purple text-white font-extrabold text-sm sm:text-2xl md:text-4xl px-2 py-5 rounded-2xl md:rounded-[40px] shadow-3xl text-center">SIGN UP</Link>
                  </motion.div>
                  <motion.div whileHover={{ scale: 1.08, y: -5 }} className="flex-1">
-                    <Link href="/login" className="block w-full bg-white text-black font-black text-sm sm:text-2xl md:text-4xl px-2 py-5 rounded-2xl md:rounded-[40px] shadow-3xl text-center">LOG IN</Link>
+                    <Link href="/login" className="block w-full bg-white text-black font-extrabold text-sm sm:text-2xl md:text-4xl px-2 py-5 rounded-2xl md:rounded-[40px] shadow-3xl text-center">LOG IN</Link>
                  </motion.div>
               </div>
            </div>

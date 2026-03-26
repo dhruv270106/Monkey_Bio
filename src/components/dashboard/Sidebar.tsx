@@ -98,9 +98,9 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
       <div className="md:hidden flex items-center justify-between p-6 pb-2">
          <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-               <span className="text-primary font-black text-sm">MB</span>
+               <span className="text-primary font-extrabold text-sm">MB</span>
             </div>
-            <span className="font-black text-xs uppercase tracking-widest text-secondary">Dashboard</span>
+            <span className="font-extrabold text-xs uppercase tracking-widest text-secondary">Dashboard</span>
          </div>
          <button onClick={onClose} className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400">
             <i className="fi fi-rr-cross-small text-xl pt-1"></i>
@@ -122,7 +122,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
               )}
             </div>
             <div className="flex-1">
-              <p className="text-sm font-bold text-secondary flex items-center gap-1">
+              <p className="text-sm font-semibold text-secondary flex items-center gap-1">
                 {userProfile?.username || 'User'} <i className={`fi fi-rr-angle-small-${isDropdownOpen ? 'up' : 'down'} pt-1 text-gray-400 transition-transform`}></i>
               </p>
             </div>
@@ -148,7 +148,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
               className="absolute top-full left-0 w-full mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 p-2 z-[120]"
             >
                <div className="p-2 mb-2">
-                  <p className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] px-3 mb-2">Accounts</p>
+                  <p className="text-[10px] font-extrabold uppercase text-gray-400 tracking-[0.2em] px-3 mb-2">Accounts</p>
                   {accounts.map((acc, i) => (
                     <div 
                       key={i}
@@ -156,8 +156,8 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
                     >
                        <img src={acc?.avatar_url || `https://ui-avatars.com/api/?name=${acc?.username || 'User'}`} className="w-8 h-8 rounded-full" />
                        <div className="flex-1">
-                          <p className="text-xs font-black text-secondary">{acc?.username || 'User'}</p>
-                          {acc?.id === userProfile?.id && <p className="text-[8px] font-bold text-primary uppercase">Active now</p>}
+                          <p className="text-xs font-extrabold text-secondary">{acc?.username || 'User'}</p>
+                          {acc?.id === userProfile?.id && <p className="text-[8px] font-semibold text-primary uppercase">Active now</p>}
                        </div>
                     </div>
                   ))}
@@ -166,7 +166,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
                <div className="border-t border-gray-50 pt-2 space-y-1">
                   <button 
                     onClick={addAccount}
-                    className="w-full flex items-center gap-3 p-3 text-xs font-bold text-gray-500 hover:bg-gray-50 rounded-2xl transition-all"
+                    className="w-full flex items-center gap-3 p-3 text-xs font-semibold text-gray-500 hover:bg-gray-50 rounded-2xl transition-all"
                   >
                     <div className="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center">
                       <i className="fi fi-rr-plus-small text-lg"></i>
@@ -175,7 +175,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
                   </button>
                   <button 
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 p-3 text-xs font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all"
+                    className="w-full flex items-center gap-3 p-3 text-xs font-semibold text-red-500 hover:bg-red-50 rounded-2xl transition-all"
                   >
                     <div className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center">
                       <i className="fi fi-rr-exit"></i>
@@ -192,7 +192,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
       <nav className="px-4 flex-1 space-y-6 overflow-y-auto no-scrollbar">
         {navGroups.map((group, i) => (
           <div key={i}>
-            <p className="px-4 py-2 text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-1">
+            <p className="px-4 py-2 text-gray-400 font-semibold text-[10px] uppercase tracking-widest mb-1">
               {group.label}
             </p>
             <div className="space-y-1">
@@ -206,7 +206,7 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
                        onTabChange?.(item.id)
                        onClose?.()
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all rounded-xl font-bold text-sm ${
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all rounded-xl font-semibold text-sm ${
                       isActive 
                         ? 'bg-white text-secondary shadow-sm border border-gray-100' 
                         : 'text-gray-500 hover:bg-gray-100'
@@ -227,19 +227,19 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
         <div className="md:bg-white p-4 rounded-3xl md:border md:border-gray-100 md:shadow-sm space-y-3 bg-gray-50">
           <div className="flex items-center justify-between">
             <div className="w-10 h-10 rounded-full border-2 border-primary/20 relative flex items-center justify-center">
-              <span className="text-[10px] font-bold text-primary">33%</span>
+              <span className="text-[10px] font-semibold text-primary">33%</span>
             </div>
           </div>
-          <p className="text-xs font-bold text-gray-700 leading-tight">Your setup checklist</p>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">2 of 6 complete</p>
-          <button className="w-full py-2 bg-secondary text-white font-bold text-xs rounded-full hover:bg-gray-800 transition-all">Finish setup</button>
+          <p className="text-xs font-semibold text-gray-700 leading-tight">Your setup checklist</p>
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">2 of 6 complete</p>
+          <button className="w-full py-2 bg-secondary text-white font-semibold text-xs rounded-full hover:bg-gray-800 transition-all">Finish setup</button>
         </div>
       </div>
 
       {/* Sidebar Footer */}
       <div className="p-4 border-t border-gray-100">
          <div className="px-4 py-2">
-            <p className="text-[8px] font-black uppercase text-gray-300 tracking-[0.3em]">Monkey Bio v1.0</p>
+            <p className="text-[8px] font-extrabold uppercase text-gray-300 tracking-[0.3em]">Monkey Bio v1.0</p>
          </div>
       </div>
     </div>
