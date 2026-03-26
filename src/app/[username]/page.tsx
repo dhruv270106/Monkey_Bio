@@ -25,6 +25,24 @@ export default function PublicProfile() {
         setProfile(data)
         // Track Profile View
         trackEvent('view', data.id)
+
+        // Subscribe to real-time updates for THIS profile
+        const channel = supabase
+          .channel(`public-sync-${data.id}`)
+          .on('postgres_changes', { 
+            event: 'UPDATE', 
+            schema: 'public', 
+            table: 'monkey_bio',
+            filter: `id=eq.${data.id}`
+          }, (payload) => {
+            console.log('Public real-time sync applied:', payload.new)
+            setProfile(payload.new)
+          })
+          .subscribe()
+
+        return () => {
+          supabase.removeChannel(channel)
+        }
       }
       setLoading(false)
     }
@@ -101,6 +119,60 @@ export default function PublicProfile() {
     return baseStyle
   }
 
+  const getBackgroundStyle = () => {
+    if (profile?.theme !== 'custom') {
+       if (selectedTheme.image) return { backgroundImage: `url(${selectedTheme.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+       return {}
+    }
+
+    const type = profile?.custom_bg_type || 'color'
+    const value = profile?.custom_bg || '#6A373A'
+    const pattern = profile?.custom_bg_pattern || ''
+
+    let style: any = {}
+
+    // Base Layer
+    if (type === 'color') style.backgroundColor = value
+    else if (type === 'gradient') {
+      if (typeof value === 'string' && value.includes('linear-gradient')) style.backgroundImage = value
+      else {
+        const direction = profile?.custom_bg_direction || 'linear-up'
+        const dirMap: any = { 'linear-up': 'to top', 'linear-down': 'to bottom', 'radial': 'radial' }
+        const dir = dirMap[direction] || 'to top'
+        const endColor = profile?.custom_bg_end || '#00000066'
+        if (dir === 'radial') style.backgroundImage = `radial-gradient(circle, ${value}, ${endColor})`
+        else style.backgroundImage = `linear-gradient(${dir}, ${value}, ${endColor})`
+      }
+    }
+    else if (type === 'image') {
+      style.backgroundImage = `url(${value})`
+      style.backgroundSize = 'cover'
+      style.backgroundPosition = 'center'
+    }
+
+    // Pattern Overlay
+    const PATTERNS = [
+      { id: 'grid', css: 'radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px)', size: '20px 20px' },
+      { id: 'dots', css: 'radial-gradient(rgba(0,0,0,0.2) 2px, transparent 2px)', size: '30px 30px' },
+      { id: 'diagonal', css: 'linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.05) 75%, transparent 75%, transparent)', size: '20px 20px' },
+      { id: 'waves', css: 'repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.05) 10px), repeating-radial-gradient(circle at 100% 100%, transparent 0, rgba(0,0,0,0.05) 10px)', size: '40px 40px' }
+    ]
+    if (pattern) {
+      const p = PATTERNS.find(pat => pat.id === pattern)
+      if (p) {
+        if (style.backgroundImage) {
+          style.backgroundImage = `${p.css}, ${style.backgroundImage}`
+          style.backgroundSize = `${p.size}, ${style.backgroundSize || 'auto'}`
+        } else {
+          style.backgroundImage = p.css
+          style.backgroundSize = p.size
+        }
+      }
+    }
+
+    return style
+  }
+
   return (
     <div 
       className={`min-h-screen w-full flex flex-col items-center transition-colors duration-500 relative overflow-x-hidden ${selectedTheme.text}`}
@@ -112,31 +184,24 @@ export default function PublicProfile() {
           filter: profile?.bg_blur ? `blur(${profile.bg_blur}px)` : 'none',
           transform: profile?.bg_blur ? 'scale(1.1)' : 'scale(1)',
           willChange: 'transform, filter',
-          ...(selectedTheme.grid && !selectedTheme.video ? {
-            backgroundImage: selectedTheme.text.includes('white') 
-              ? 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)'
-              : 'linear-gradient(#0000000a 1px, transparent 1px), linear-gradient(90deg, #0000000a 1px, transparent 1px)',
-            backgroundSize: '30px 30px'
-          } : selectedTheme.image ? {
-            backgroundImage: `url(${selectedTheme.image})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          } : selectedTheme.id === 'custom' ? {
-            backgroundColor: profile.custom_bg || '#ffffff',
-            backgroundImage: 'none'
-          } : {})
+          ...getBackgroundStyle()
         }}
       >
-        {selectedTheme.video && (
+        {/* Noise Grain Overlay */}
+        {profile?.custom_bg_noise && (
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay z-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat"></div>
+        )}
+        {((profile?.theme === 'custom' && profile?.custom_bg_type === 'video') || selectedTheme.video) && (
           <video
             autoPlay
             loop
             muted
             playsInline
-            poster={selectedTheme.image}
+            poster={profile?.theme === 'custom' ? undefined : (selectedTheme.image || undefined)}
             className="absolute inset-0 w-full h-full object-cover"
+            key={(profile?.theme === 'custom' ? profile?.custom_bg : selectedTheme.video) || 'no-video'}
           >
-            <source src={selectedTheme.video} type="video/mp4" />
+            <source src={profile?.theme === 'custom' ? profile?.custom_bg : selectedTheme.video} type="video/mp4" />
           </video>
         )}
       </div>
