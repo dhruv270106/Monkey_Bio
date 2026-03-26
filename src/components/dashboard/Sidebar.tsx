@@ -21,21 +21,31 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
 
   useEffect(() => {
     // Load accounts from localStorage
-    const savedAccounts = localStorage.getItem('monkey_accounts')
-    if (savedAccounts) {
-      const parsed = JSON.parse(savedAccounts)
-      setAccounts(parsed)
-      
-      // Update current account info if it's already in the list
-      if (userProfile && !parsed.find((a: any) => a.id === userProfile.id)) {
-        const newList = [...parsed, userProfile]
+    try {
+      const savedAccounts = localStorage.getItem('monkey_accounts')
+      if (savedAccounts) {
+        let parsed = JSON.parse(savedAccounts)
+        if (!Array.isArray(parsed)) parsed = []
+        setAccounts(parsed)
+        
+        // Update current account info if it's already in the list
+        if (userProfile && !parsed.find((a: any) => a?.id === userProfile.id)) {
+          const newList = [...parsed, userProfile].filter(Boolean)
+          localStorage.setItem('monkey_accounts', JSON.stringify(newList))
+          setAccounts(newList)
+        }
+      } else if (userProfile) {
+        const newList = [userProfile]
         localStorage.setItem('monkey_accounts', JSON.stringify(newList))
         setAccounts(newList)
       }
-    } else if (userProfile) {
-      const newList = [userProfile]
-      localStorage.setItem('monkey_accounts', JSON.stringify(newList))
-      setAccounts(newList)
+    } catch (e) {
+      console.error("Error loading accounts:", e)
+      if (userProfile) {
+        const newList = [userProfile]
+        localStorage.setItem('monkey_accounts', JSON.stringify(newList))
+        setAccounts(newList)
+      }
     }
   }, [userProfile])
 
@@ -142,12 +152,12 @@ export default function Sidebar({ userProfile, activeTab, onTabChange, isOpen, o
                   {accounts.map((acc, i) => (
                     <div 
                       key={i}
-                      className={`flex items-center gap-3 p-3 rounded-2xl transition-all ${acc.id === userProfile?.id ? 'bg-gray-50' : 'hover:bg-gray-50'}`}
+                      className={`flex items-center gap-3 p-3 rounded-2xl transition-all ${acc?.id === userProfile?.id ? 'bg-gray-50' : 'hover:bg-gray-50'}`}
                     >
-                       <img src={acc.avatar_url || `https://ui-avatars.com/api/?name=${acc.username}`} className="w-8 h-8 rounded-full" />
+                       <img src={acc?.avatar_url || `https://ui-avatars.com/api/?name=${acc?.username || 'User'}`} className="w-8 h-8 rounded-full" />
                        <div className="flex-1">
-                          <p className="text-xs font-black text-secondary">{acc.username}</p>
-                          {acc.id === userProfile?.id && <p className="text-[8px] font-bold text-primary uppercase">Active now</p>}
+                          <p className="text-xs font-black text-secondary">{acc?.username || 'User'}</p>
+                          {acc?.id === userProfile?.id && <p className="text-[8px] font-bold text-primary uppercase">Active now</p>}
                        </div>
                     </div>
                   ))}

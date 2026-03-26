@@ -81,27 +81,32 @@ function DashboardContent() {
   }, [])
 
   const fetchData = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
-      window.location.href = '/login'
-      return
-    }
-
-    const { data: profileData } = await supabase
-      .from('monkey_bio')
-      .select('*')
-      .eq('id', session.user.id)
-      .single()
-
-    if (profileData) {
-      if (!profileData.onboarding_completed) {
-        window.location.href = '/onboarding'
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        window.location.href = '/login'
         return
       }
-      setProfile(profileData)
-      setLinks(profileData.links || [])
+
+      const { data: profileData } = await supabase
+        .from('monkey_bio')
+        .select('*')
+        .eq('id', session.user.id)
+        .single()
+
+      if (profileData) {
+        if (!profileData.onboarding_completed) {
+          window.location.href = '/onboarding'
+          return
+        }
+        setProfile(profileData)
+        setLinks(profileData.links || [])
+      }
+    } catch (e) {
+      console.error("Dashboard error:", e)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   useEffect(() => {
@@ -137,7 +142,7 @@ function DashboardContent() {
   }
 
   return (
-    <div className="h-screen bg-white flex flex-col overflow-hidden">
+    <div className="h-[100dvh] bg-white flex flex-col overflow-hidden">
       {/* Top Banner */}
       <div className="bg-[#1e293b] text-white py-2 px-4 md:px-8 flex justify-center items-center gap-4 text-xs md:text-sm font-medium shrink-0 z-[160]">
           <span className="truncate text-center">Unlock more tools to grow your audience faster.</span>
@@ -180,10 +185,10 @@ function DashboardContent() {
                  transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                  className="absolute bottom-[90%] left-6 right-6 bg-white/95 backdrop-blur-xl border border-gray-100 rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] p-2 z-[200] flex flex-col gap-1"
                >
-                  <p className="text-[9px] font-black uppercase text-gray-300 tracking-[0.3em] px-4 py-3 border-b border-gray-50">
-                    {NAV_GROUPS.find(g => g.id === openGroup)?.label} tools
+                  <p className="text-[9px] font-black uppercase text-gray-400 tracking-[0.3em] px-4 py-3 border-b border-gray-50">
+                    {NAV_GROUPS.find(g => g.id === openGroup)?.label || 'Menu'} tools
                   </p>
-                  {NAV_GROUPS.find(g => g.id === openGroup)?.items.map(item => (
+                  {NAV_GROUPS.find(g => g.id === openGroup)?.items?.map(item => (
                     <button 
                       key={item.id} 
                       onClick={() => handleTabChange(item.id)}

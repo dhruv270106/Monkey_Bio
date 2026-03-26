@@ -455,7 +455,7 @@ function StyleSettings({ profile, activeSubTab, setActiveSubTab, updateProfile, 
              </div>
           )}
           {(isDesktop || activeSubTab === 'Colors') && (
-            <div className={`space-y-8 font-inter ${isDesktop ? 'mt-12' : ''}`}>
+            <div className={`space-y-8 ${isDesktop ? 'mt-12' : ''}`}>
                <div className="flex items-center justify-between p-8 bg-gray-50/50 rounded-[40px] border border-gray-100">
                   <div className="flex flex-col"><span className="font-extrabold text-secondary">Font Color</span><span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Global text color tone</span></div>
                   <input type="color" value={profile?.font_color || '#000000'} onChange={(e) => updateProfile({ font_color: e.target.value })} className="w-16 h-16 rounded-[24px] cursor-pointer border-4 border-white shadow-2xl" />
