@@ -35,6 +35,7 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
   const [isCropperOpen, setIsCropperOpen] = useState(false)
   const [selectedImageSrc, setSelectedImageSrc] = useState('')
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
 
   const updateLinks = async (newLinks: Link[]) => {
     const sortedLinks = [...newLinks].sort((a, b) => {
@@ -52,12 +53,20 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
       }
     })
     
+    setSaveStatus('saving')
     const { data: { session } } = await supabase.auth.getSession()
     if (session) {
-      await supabase
+      const { error } = await supabase
         .from('monkey_bio')
         .update({ links: sortedLinks })
         .eq('id', session.user.id)
+      
+      if (!error) {
+        setSaveStatus('saved')
+        setTimeout(() => setSaveStatus('idle'), 2000)
+      } else {
+        setSaveStatus('idle')
+      }
     }
   }
 
@@ -143,6 +152,20 @@ export default function LinksSection({ profile, links, setLinks, setProfile, ref
       <div className="h-16 px-4 md:px-8 flex items-center justify-between bg-white border-b border-gray-50 flex-shrink-0 sticky top-0 md:relative z-[60]">
          <h1 className="font-extrabold text-lg md:text-xl uppercase tracking-tighter">Links</h1>
          <div className="flex items-center gap-2 md:gap-3">
+              <AnimatePresence mode="wait">
+                {saveStatus === 'saving' && (
+                  <motion.div key="saving" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1.5 text-primary font-bold text-[10px] md:text-xs bg-primary/5 px-3 py-1.5 rounded-full border border-primary/10">
+                     <i className="fi fi-rr-spinner animate-spin"></i>
+                     <span className="hidden xs:inline">Saving...</span>
+                  </motion.div>
+                )}
+                {saveStatus === 'saved' && (
+                  <motion.div key="saved" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1.5 text-green-500 font-bold text-[10px] md:text-xs bg-green-50 px-3 py-1.5 rounded-full border border-green-100">
+                     <i className="fi fi-rr-check"></i>
+                     <span className="hidden xs:inline">Updated</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
               <button 
                 onClick={() => {
                   const url = `https://${domain}/${profile?.username}`

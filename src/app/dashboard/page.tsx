@@ -147,7 +147,7 @@ function DashboardContent() {
       case 'links':
         return <LinksSection profile={profile} links={links} setLinks={setLinks} setProfile={setProfile} refreshData={fetchData} />
       case 'design':
-        return <DesignSection profile={profile} setProfile={setProfile} hasChanges={hasDesignChanges} setHasChanges={setHasDesignChanges} links={links} onBack={() => handleTabChange('links')} />
+        return <DesignSection profile={profile} setProfile={setProfile} links={links} onBack={() => handleTabChange('links')} />
       case 'audience':
         return <AudienceSection profile={profile} />
       case 'insights':

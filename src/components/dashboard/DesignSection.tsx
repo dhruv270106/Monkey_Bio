@@ -13,13 +13,11 @@ import DeviceMockup from './DeviceMockup'
 interface DesignSectionProps {
   profile: any
   setProfile: (profile: any) => void
-  hasChanges: boolean
-  setHasChanges: (hasChanges: boolean) => void
   links: any[]
   onBack: () => void
 }
 
-export default function DesignSection({ profile, setProfile, hasChanges, setHasChanges, links, onBack }: DesignSectionProps) {
+export default function DesignSection({ profile, setProfile, links, onBack }: DesignSectionProps) {
   const [showCropper, setShowCropper] = useState(false)
   const [selectedImage, setSelectedImage] = useState('')
   const [activeSheet, setActiveSheet] = useState<string | null>(null)
@@ -27,6 +25,9 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
   const [activeCategory, setActiveCategory] = useState('All')
   const [activeSubTab, setActiveSubTab] = useState('Text')
   const [pendingColor, setPendingColor] = useState('#6A373A')
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
+  const [pendingChanges, setPendingChanges] = useState<any>({})
+  const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null)
   
   // Desktop specific state
   const [activeDesktopTab, setActiveDesktopTab] = useState('Header')
@@ -72,16 +73,56 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
     { id: 'Wallpaper', icon: 'fi-ss-picture', label: 'WALLPAPER' },
   ]
 
+  const commitToDB = async (updates: any) => {
+    setSaveStatus('saving')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        const { error } = await supabase.from('monkey_bio').update(updates).eq('id', session.user.id)
+        if (error) throw error
+        setSaveStatus('saved')
+        setTimeout(() => setSaveStatus('idle'), 2000)
+        setPendingChanges({})
+      }
+    } catch (err) {
+      console.error("Auto-save error:", err)
+      setSaveStatus('idle')
+    }
+  }
+
   const updateProfile = async (updates: any) => {
     if (!profile) return
+    
+    // 1. Immediate Visual Update
     const newProfile = { ...profile, ...updates }
     setProfile(newProfile)
-    setHasChanges(true)
 
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session) {
-      await supabase.from('monkey_bio').update(updates).eq('id', session.user.id)
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+
+    if (isMobile) {
+      // 2a. Mobile: Accumulate changes until manual Save
+      setPendingChanges((prev: any) => ({ ...prev, ...updates }))
+    } else {
+      // 2b. Laptop: Auto-save with Debounce
+      if (saveTimeout) clearTimeout(saveTimeout)
+      
+      const newChanges = { ...pendingChanges, ...updates }
+      setPendingChanges(newChanges)
+      setSaveStatus('saving') 
+
+      const timeout = setTimeout(() => {
+        commitToDB(newChanges)
+      }, 1000) // 1 second debounce
+      
+      setSaveTimeout(timeout)
     }
+  }
+
+  const handleMobileSave = async () => {
+     if (Object.keys(pendingChanges).length > 0) {
+        await commitToDB(pendingChanges)
+     }
+     setActiveSheet(null)
   }
 
   const [cropTarget, setCropTarget] = useState<'avatar' | 'wallpaper'>('avatar')
@@ -170,12 +211,20 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                 <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Live Customization ΓÇó {activeDesktopTab}</span>
              </div>
              <div className="flex items-center gap-6">
-                <AnimatePresence>
-                   {hasChanges && <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-xs font-bold text-orange-500 italic bg-orange-50 px-4 py-2 rounded-full">Unsaved changes</motion.span>}
+                <AnimatePresence mode="wait">
+                   {saveStatus === 'saving' && (
+                     <motion.div key="saving" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-primary font-bold text-xs bg-primary/5 px-4 py-2 rounded-full border border-primary/10">
+                        <i className="fi fi-rr-spinner animate-spin"></i>
+                        <span>Saving...</span>
+                     </motion.div>
+                   )}
+                   {saveStatus === 'saved' && (
+                     <motion.div key="saved" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-green-500 font-bold text-xs bg-green-50 px-4 py-2 rounded-full border border-green-100">
+                        <i className="fi fi-rr-check"></i>
+                        <span>Updated</span>
+                     </motion.div>
+                   )}
                 </AnimatePresence>
-                <button onClick={() => window.location.reload()} className="font-black px-10 py-3.5 bg-secondary text-white rounded-full text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-xl">
-                   Publish Changes
-                </button>
              </div>
           </div>
 
@@ -286,10 +335,17 @@ export default function DesignSection({ profile, setProfile, hasChanges, setHasC
                   <div className="flex-1 overflow-hidden px-2">{renderSheetContent()}</div>
                   <div className="flex justify-end mt-4 mb-2">
                      <button 
-                       onClick={() => setActiveSheet(null)} 
-                       className="px-10 py-4 bg-secondary text-white rounded-2xl font-extrabold text-sm shadow-xl active:scale-95 transition-all"
+                       onClick={handleMobileSave} 
+                       className="px-10 py-4 bg-secondary text-white rounded-2xl font-extrabold text-sm shadow-xl active:scale-95 transition-all flex items-center gap-2"
                      >
-                       Save
+                       {saveStatus === 'saving' ? (
+                          <>
+                             <i className="fi fi-rr-spinner animate-spin"></i>
+                             <span>Saving...</span>
+                          </>
+                       ) : (
+                          'Save'
+                       )}
                      </button>
                   </div>
                </motion.div>
