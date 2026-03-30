@@ -133,14 +133,19 @@ export default function Navbar() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        setUser(session.user)
-        // Set loading false early so icon shows up using metadata immediately
+      // Use getUser() instead of getSession() to verify the user actually exists in the DB
+      const { data: { user }, error } = await supabase.auth.getUser()
+      
+      if (user && !error) {
+        setUser(user)
         setLoading(false)
-        const { data } = await supabase.from('monkey_bio').select('*').eq('id', session.user.id).single()
-        if (data) setProfile(data)
+        const { data: profileData } = await supabase.from('monkey_bio').select('*').eq('id', user.id).single()
+        if (profileData) setProfile(profileData)
       } else {
+        // Clear stale local sessions if the user was deleted in the DB
+        if (error) await supabase.auth.signOut()
+        setUser(null)
+        setProfile(null)
         setLoading(false)
       }
     }
