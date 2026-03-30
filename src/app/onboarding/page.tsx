@@ -93,8 +93,6 @@ export default function Onboarding() {
       bio: bio,
       avatar_url: avatar,
       theme: selectedTheme,
-      custom_bg: selectedTheme === 'custom' ? customColor : null,
-      custom_bg_type: selectedTheme === 'custom' ? 'color' : null,
       social_links: socialLinksObj,
       onboarding_completed: true,
       links: []
