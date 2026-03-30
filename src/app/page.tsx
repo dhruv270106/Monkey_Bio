@@ -205,8 +205,8 @@ export default function Home() {
 
 
 
-        {/* EMBED SECTION - IMAGE LEFT */}
-        <Section id="integrations" imageSide="left" bgClass="bg-gradient-to-br from-[#00C2FF] via-[#00E0FF] to-[#0085FF] text-white" imageSrc="/images/integrations.png">
+        {/* EMBED SECTION - IMAGE RIGHT */}
+        <Section id="integrations" imageSide="right" bgClass="bg-gradient-to-br from-[#00C2FF] via-[#00E0FF] to-[#0085FF] text-white" imageSrc="/images/integrations.png">
              <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Embed Anything.</h2></Reveal>
              <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/50 mb-4 md:mb-10 uppercase font-extrabold">Spotify. Shopify. Connect.</p></Reveal>
              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>

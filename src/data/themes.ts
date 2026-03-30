@@ -22,8 +22,8 @@ export const THEMES: Theme[] = [
   { id: 'retro-80s', name: 'Retro 80s', bg: 'bg-[#2b0057]', image: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1000', text: 'text-[#ff00ff]', button: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white font-black italic shadow-2xl', accent: '#00ffff' },
   { id: 'urban-street', name: 'Urban Street', bg: 'bg-zinc-900', image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&q=80&w=1000', text: 'text-white', button: 'bg-primary text-secondary font-black border-none px-8 py-5', accent: 'primary' },
   { id: 'bliss', name: 'Bliss', bg: 'bg-white', image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000', text: 'text-secondary', button: 'bg-white/90 backdrop-blur-md shadow-2xl border border-gray-100', accent: 'gray' },
-  { id: 'matcha', name: 'Matcha Zen', bg: 'bg-[#e8f3e8]', text: 'text-[#2d5a27]', button: 'bg-[#2d5a27] text-white rounded-2xl shadow-xl', accent: '#2d5a27' },
-  { id: 'lavender', name: 'Soft Lavender', bg: 'bg-[#f3e8ff]', text: 'text-[#581c87]', button: 'bg-[#581c87] text-white rounded-full shadow-lg', accent: '#a855f7' },
+  { id: 'matcha', name: 'Matcha Zen', bg: 'bg-[#e8f3e8]', image: 'https://images.unsplash.com/photo-1582733315364-84bb9045ea72?auto=format&fit=crop&q=80&w=1000', text: 'text-[#2d5a27]', button: 'bg-[#2d5a27] text-white rounded-2xl shadow-xl', accent: '#2d5a27' },
+  { id: 'lavender', name: 'Soft Lavender', bg: 'bg-[#f3e8ff]', image: 'https://images.unsplash.com/photo-1541336032412-2048a678540d?auto=format&fit=crop&q=80&w=1000', text: 'text-[#581c87]', button: 'bg-[#581c87] text-white rounded-full shadow-lg', accent: '#a855f7' },
   { id: 'dark-glass', name: 'Glass Dark', bg: 'bg-[#121212]', text: 'text-white', button: 'bg-white/5 backdrop-blur-md border border-white/10 text-white rounded-3xl pb-1', accent: 'white' },
   
   // --- PREMIUM THEMES (Cinematic & High-End Asset Focus) ---

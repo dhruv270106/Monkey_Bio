@@ -8,7 +8,8 @@ import { usePathname } from 'next/navigation'
 export default function Footer() {
   const pathname = usePathname()
 
-  if (pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin')) {
+  const HIDDEN_PATHS = ['/dashboard', '/admin', '/login', '/signup', '/onboarding', '/auth']
+  if (HIDDEN_PATHS.some(path => pathname?.startsWith(path))) {
     return null
   }
 

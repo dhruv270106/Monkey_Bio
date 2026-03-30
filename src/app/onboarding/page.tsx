@@ -27,6 +27,8 @@ export default function Onboarding() {
   const [avatar, setAvatar] = useState<string | null>(null)
   const [showCropper, setShowCropper] = useState(false)
   const [selectedImage, setSelectedImage] = useState('')
+  const [customColor, setCustomColor] = useState('#8B5CF6')
+  const [isSyncing, setIsSyncing] = useState(false)
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -83,6 +85,7 @@ export default function Onboarding() {
       return acc
     }, {} as any)
 
+    setIsSyncing(true)
     const { error } = await supabase.from('monkey_bio').insert({
       id: user.id,
       username: username.toLowerCase(),
@@ -90,12 +93,20 @@ export default function Onboarding() {
       bio: bio,
       avatar_url: avatar,
       theme: selectedTheme,
+      custom_bg: selectedTheme === 'custom' ? customColor : null,
+      custom_bg_type: selectedTheme === 'custom' ? 'color' : null,
       social_links: socialLinksObj,
       onboarding_completed: true,
       links: []
     })
 
-    if (!error) window.location.href = '/dashboard'
+    if (!error) {
+       window.location.replace('/dashboard')
+    } else {
+       console.error("Onboarding Error:", error)
+       setIsSyncing(false)
+       alert(error.message)
+    }
   }
 
   return (
@@ -116,14 +127,14 @@ export default function Onboarding() {
                 </div>
                 
                 <div className="space-y-4">
-                  <div className="relative">
-                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary/30 font-bold">{domain}/</span>
+                  <div className={`flex items-center bg-white rounded-3xl border-2 px-6 py-5 transition-all ${usernameError ? 'border-red-400' : isUsernameValid ? 'border-primary' : 'border-transparent focus-within:border-primary/50'}`}>
+                    <span className="text-secondary/30 font-bold whitespace-nowrap">{domain}/</span>
                     <input 
                       type="text" 
                       value={username}
                       onChange={(e) => checkUsername(e.target.value)}
                       placeholder="username"
-                      className={`w-full pl-[92px] pr-6 py-5 bg-white rounded-3xl border-2 transition-all outline-none font-bold text-lg ${usernameError ? 'border-red-400' : isUsernameValid ? 'border-primary' : 'border-transparent focus:border-primary/50'}`}
+                      className="flex-1 bg-transparent border-none outline-none font-bold text-lg ml-1"
                     />
                   </div>
                   {usernameError && <p className="text-red-500 text-sm font-bold pl-2">{usernameError}</p>}
@@ -148,31 +159,72 @@ export default function Onboarding() {
             )}
 
             {step === 2 && (
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="flex flex-col h-[70vh]">
                 <div>
-                   <h1 className="text-4xl font-black text-secondary leading-tight mb-4">Select a theme for your profile</h1>
-                   <p className="text-secondary/60 font-bold">50+ Premium themes available</p>
+                   <h1 className="text-4xl font-black text-secondary leading-tight mb-2">Select a theme</h1>
+                   <p className="text-secondary/60 font-bold mb-8">50+ Premium themes available</p>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                  {(THEMES as Theme[]).map(theme => (
-                    <button 
-                      key={theme.id}
-                      onClick={() => setSelectedTheme(theme.id)}
-                      className={`p-4 rounded-3xl border-4 transition-all flex flex-col items-center gap-3 ${selectedTheme === theme.id ? 'border-primary bg-white' : 'border-transparent bg-white/50 hover:bg-white'}`}
-                    >
-                       <div 
-                         className={`w-full h-24 rounded-2xl ${theme.bg} shadow-inner bg-cover bg-center`}
-                         style={theme.image ? { backgroundImage: `url(${theme.image})` } : {}}
-                       ></div>
-                       <span className="font-bold text-sm">{theme.name}</span>
-                    </button>
-                  ))}
+                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-8">
+                  <div className="grid grid-cols-2 gap-4">
+                    {(THEMES as Theme[]).map(theme => (
+                      <button 
+                        key={theme.id}
+                        onClick={() => setSelectedTheme(theme.id)}
+                        className={`p-4 rounded-3xl border-4 transition-all flex flex-col items-center gap-3 ${selectedTheme === theme.id ? 'border-primary bg-white' : 'border-transparent bg-white/50 hover:bg-white'}`}
+                      >
+                         <div 
+                           className={`w-full h-24 rounded-2xl ${theme.bg} shadow-inner bg-cover bg-center flex items-center justify-center`}
+                           style={{
+                              ...(theme.image ? { backgroundImage: `url(${theme.image})` } : {}),
+                              ...(theme.id === 'custom' ? { backgroundColor: customColor } : {})
+                           }}
+                         >
+                            {theme.id === 'custom' && <i className="fi fi-rr-palette text-2xl text-white/50"></i>}
+                         </div>
+                         <span className="font-bold text-sm">{theme.name}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {selectedTheme === 'custom' && (
+                    <div className="p-8 bg-white rounded-[40px] border border-gray-100 shadow-sm animate-fade-in">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="font-black text-secondary">Custom Palette</h3>
+                            <div className="w-10 h-10 rounded-full border-4 border-gray-50 shadow-sm" style={{ backgroundColor: customColor }} />
+                        </div>
+                        <div className="grid grid-cols-6 gap-3 mb-8">
+                           {['#8B5CF6', '#EC4899', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#000000', '#6366F1', '#14B8A6', '#F43F5E', '#84cc16', '#ffedd5'].map(c => (
+                             <button 
+                               key={c} 
+                               onClick={() => setCustomColor(c)} 
+                               className={`aspect-square rounded-2xl transition-all border-4 ${customColor === c ? 'border-primary ring-2 ring-primary/20 scale-110' : 'border-transparent hover:scale-105'}`} 
+                               style={{ backgroundColor: c }}
+                             />
+                           ))}
+                        </div>
+                        <div className="flex items-center gap-4">
+                           <input 
+                             type="color" 
+                             value={customColor} 
+                             onChange={(e) => setCustomColor(e.target.value)}
+                             className="w-12 h-12 rounded-xl cursor-pointer border-none bg-transparent"
+                           />
+                           <input 
+                             type="text" 
+                             value={customColor} 
+                             onChange={(e) => setCustomColor(e.target.value)}
+                             className="flex-1 px-6 py-4 bg-gray-50 rounded-2xl font-black text-sm outline-none focus:ring-2 ring-primary/20"
+                             placeholder="Hex Color (e.g. #8B5CF6)"
+                           />
+                        </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex gap-4">
-                  <button onClick={() => setStep(1)} className="flex-1 py-5 bg-white text-secondary font-black rounded-full border-2 border-secondary/5">Back</button>
-                  <button onClick={() => setStep(3)} className="flex-[2] py-5 bg-secondary text-white font-black rounded-full shadow-xl">Select Theme</button>
+                <div className="flex gap-4 mt-8 pt-6 border-t border-secondary/5">
+                  <button onClick={() => setStep(1)} className="flex-1 py-5 bg-white text-secondary font-black rounded-full border-2 border-secondary/5 hover:bg-gray-50 active:scale-95 transition-all">Back</button>
+                  <button onClick={() => setStep(3)} className="flex-[2] py-5 bg-secondary text-white font-black rounded-full shadow-xl hover:scale-[1.02] active:scale-95 transition-all">Next</button>
                 </div>
               </motion.div>
             )}
@@ -280,10 +332,14 @@ export default function Onboarding() {
                    </div>
                 </div>
 
-                <div className="flex gap-4">
-                  <button onClick={() => setStep(3)} className="flex-1 py-5 bg-white text-secondary font-black rounded-full border-2 border-secondary/5">Back</button>
-                  <button onClick={completeOnboarding} className="flex-[2] py-5 bg-primary text-secondary font-black rounded-full shadow-xl">Launch Profile</button>
-                </div>
+                <button 
+                  disabled={isSyncing}
+                  onClick={completeOnboarding} 
+                  className="w-full py-5 bg-primary text-secondary font-black rounded-full shadow-xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
+                >
+                  {isSyncing ? <i className="fi fi-rr-spinner animate-spin"></i> : null}
+                  Launch Profile
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -295,7 +351,7 @@ export default function Onboarding() {
         <div 
           className={`w-[320px] h-[650px] rounded-[52px] border-[12px] border-secondary shadow-2xl relative overflow-hidden flex flex-col items-center p-8 transition-all duration-500 ${(THEMES.find(t => t.id === selectedTheme) || THEMES[0]).bg} ${(THEMES.find(t => t.id === selectedTheme) || THEMES[0]).text}`}
           style={{
-            ...((THEMES.find(t => t.id === selectedTheme) || THEMES[0]).id === 'grid-mocha' ? {
+            ...(selectedTheme === 'custom' ? { backgroundColor: customColor } : (THEMES.find(t => t.id === selectedTheme) || THEMES[0]).id === 'grid-mocha' ? {
               backgroundImage: 'linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(90deg, #ffffff1a 1px, transparent 1px)',
               backgroundSize: '30px 30px'
             } : (THEMES.find(t => t.id === selectedTheme) || THEMES[0]).image ? {
