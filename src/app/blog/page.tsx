@@ -9,7 +9,6 @@ import Footer from '@/components/Footer'
 export default function BlogPage() {
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
       
       <main className="pt-40 pb-20 px-6 max-w-7xl mx-auto">
         <motion.div 
@@ -47,7 +46,6 @@ export default function BlogPage() {
         </div>
       </main>
 
-      <Footer />
     </div>
   )
 }

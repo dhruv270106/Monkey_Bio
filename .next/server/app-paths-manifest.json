@@ -1,6 +1,8 @@
 {
-  "/templates/page": "app/templates/page.js",
-  "/page": "app/page.js",
-  "/[username]/page": "app/[username]/page.js",
-  "/signup/page": "app/signup/page.js"
+  "/products/[slug]/page": "app/products/[slug]/page.js",
+  "/solutions/manage-your-social-media/page": "app/solutions/manage-your-social-media/page.js",
+  "/features/ai-content-generator/page": "app/features/ai-content-generator/page.js",
+  "/features/instagram-auto-reply/page": "app/features/instagram-auto-reply/page.js",
+  "/features/canva-integration/page": "app/features/canva-integration/page.js",
+  "/[username]/page": "app/[username]/page.js"
 }

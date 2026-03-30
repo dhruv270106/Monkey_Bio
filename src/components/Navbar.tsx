@@ -17,7 +17,7 @@ const PRODUCTS_MENU = [
       { title: 'Link in bio', desc: 'Customize your Monkey Bio', href: '/products/link-in-bio' },
       { title: 'Link shortener', desc: 'Create trackable, shareable short links', href: '/products/link-shortener' },
       { title: 'QR code generator', desc: 'Turn links into scannable QR codes', href: '/products/qr-generator' },
-      { title: 'Canva Background Editor', desc: 'Import your custom designs from Canva', href: '/products/canva-editor' },
+      { title: 'Canva Background Editor', desc: 'Import your custom designs from Canva', href: '/features/canva-integration' },
     ],
     featured: {
       image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop',
@@ -29,12 +29,12 @@ const PRODUCTS_MENU = [
     id: 'manage-social',
     title: 'Manage your social media',
     icon: 'fi-rr-share-square',
-    href: '/products/social-media',
+    href: '/solutions/manage-your-social-media',
     subOptions: [
-      { title: 'Schedule and auto-post', desc: 'Hands-free, hassle-free social media planning', href: '/products/scheduler' },
-      { title: 'Instagram auto reply', desc: 'Automated replies and DMs triggered by comments', href: '/products/auto-reply' },
-      { title: 'AI content generator', desc: 'Instant AI-powered post ideas and captions', href: '/products/ai-generator' },
-      { title: 'Hashtag generator', desc: 'Trending hashtag suggestions for better reach', href: '/products/hashtag-generator' },
+      { title: 'Schedule and auto-post', desc: 'Hands-free, hassle-free social media planning', href: '/features/social-planner' },
+      { title: 'Instagram auto reply', desc: 'Automated replies and DMs triggered by comments', href: '/features/instagram-auto-reply' },
+      { title: 'AI content generator', desc: 'Instant AI-powered post ideas and captions', href: '/features/ai-content-generator' },
+      { title: 'Hashtag generator', desc: 'Trending hashtag suggestions for better reach', href: '/features/hashtag-generator' },
     ],
     featured: {
       image: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?q=80&w=600&auto=format&fit=crop',
@@ -46,9 +46,9 @@ const PRODUCTS_MENU = [
     id: 'grow-audience',
     title: 'Grow and engage your audience',
     icon: 'fi-rr-users',
-    href: '/products/grow-audience',
+    href: '/solutions/grow-and-engage',
     subOptions: [
-      { title: 'Collect leads', desc: 'Turn visitors into subscribers', href: '/products/lead-capture' },
+      { title: 'Collect leads', desc: 'Turn visitors into subscribers', href: '/features/collect-leads' },
       { title: 'Manage audience', desc: 'Organize, tag, and track contacts', href: '/products/audience-manager' },
       { title: 'Send to email tools', desc: 'Sync with Mailchimp, Klaviyo, Kit & more', href: '/products/email-integration' },
     ],
@@ -120,8 +120,16 @@ export default function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
 
-  const HIDDEN_PATHS = ['/dashboard', '/admin', '/login', '/signup', '/onboarding', '/auth']
-  if (HIDDEN_PATHS.some(path => pathname?.startsWith(path))) {
+  const STATIC_PAGES = ['about', 'pricing', 'templates', 'blog', 'help', 'contact', 'social-good', 'learn', 'marketplace', 'footer', 'features', 'products', 'design', 'wallpaper', 'solutions']
+  
+  const isDashboard = pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin') || pathname?.startsWith('/auth')
+  const isAuth = pathname === '/login' || pathname === '/signup' || pathname === '/onboarding'
+  
+  // If it's a root level path that isn't one of our static pages, it's likely a profile or a 404
+  const pathParts = pathname?.split('/').filter(Boolean) || []
+  const isProfile = pathParts.length === 1 && !STATIC_PAGES.includes(pathParts[0])
+  
+  if (isDashboard || isAuth || isProfile) {
     return null
   }
 

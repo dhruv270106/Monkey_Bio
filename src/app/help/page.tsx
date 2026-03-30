@@ -9,8 +9,6 @@ import Footer from '@/components/Footer'
 export default function HelpPage() {
   return (
     <div className="min-h-screen bg-gray-50/20">
-      <Navbar />
-      
       <main className="pt-40 pb-20 px-6 max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -57,7 +55,6 @@ export default function HelpPage() {
         </div>
       </main>
 
-      <Footer />
     </div>
   )
 }

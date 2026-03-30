@@ -7,16 +7,54 @@ import { usePathname } from 'next/navigation'
 
 export default function Footer() {
   const pathname = usePathname()
+  
+  const STATIC_PAGES = ['about', 'pricing', 'templates', 'blog', 'help', 'contact', 'social-good', 'learn', 'marketplace', 'footer', 'features', 'products', 'design', 'wallpaper', 'solutions']
+  
+  const isDashboard = pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin') || pathname?.startsWith('/auth')
+  const isAuth = pathname === '/login' || pathname === '/signup' || pathname === '/onboarding'
+  
+  // If it's a root level path that isn't one of our static pages, it's likely a profile or a 404
+  const pathParts = pathname?.split('/').filter(Boolean) || []
+  const isProfile = pathParts.length === 1 && !STATIC_PAGES.includes(pathParts[0])
+  
+  if (isDashboard || isAuth || isProfile || pathname === '/') {
+    // We actually want Navbar/Footer on home page!
+    // Wait, if pathname === '/', isProfile will be false because pathParts will be empty.
+    // So if length === 1, it's NOT home page.
+  }
 
-  const HIDDEN_PATHS = ['/dashboard', '/admin', '/login', '/signup', '/onboarding', '/auth']
-  if (HIDDEN_PATHS.some(path => pathname?.startsWith(path))) {
+  if (isDashboard || isAuth || isProfile) {
     return null
   }
 
   return (
     <footer className="relative bg-white pt-24 pb-16 px-6 md:px-12 lg:px-24 z-30 overflow-hidden border-t border-gray-100">
        <div className="max-w-[1400px] mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24 mb-24">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-16 mb-24">
+             {/* COLUMN PRODUCTS */}
+             <div className="flex flex-col gap-6">
+                <h4 className="font-extrabold text-[15px] uppercase tracking-wider text-black">Products</h4>
+                <ul className="flex flex-col gap-4">
+                   {[
+                     { l: 'Collect leads', h: '/features/collect-leads' },
+                     { l: 'Social Planner', h: '/features/social-planner' },
+                     { l: 'Instagram Auto-reply', h: '/features/instagram-auto-reply' },
+                     { l: 'AI Caption Generator', h: '/features/ai-content-generator' },
+                     { l: 'Hashtag Generator', h: '/features/hashtag-generator' },
+                     { l: 'Grow and engage', h: '/solutions/grow-and-engage' },
+                     { l: 'Link in Bio', h: '/features/link-in-bio' }
+                   ].map(item => (
+                      <li key={item.l}>
+                         <Link 
+                            href={item.h} 
+                            className="text-sm font-bold text-gray-500 hover:text-black transition-colors"
+                         >
+                            {item.l}
+                         </Link>
+                      </li>
+                   ))}
+                </ul>
+             </div>
              {/* COLUMN 1: COMPANY */}
              <div className="flex flex-col gap-6">
                 <h4 className="font-extrabold text-[15px] uppercase tracking-wider text-black">Company</h4>
