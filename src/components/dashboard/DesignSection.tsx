@@ -213,7 +213,7 @@ export default function DesignSection({ profile, setProfile, links, onBack }: De
                       <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-[22px] flex items-center justify-center transition-all ${activeDesktopTab === tab.id ? 'bg-secondary text-white shadow-lg md:shadow-xl rotate-12' : 'bg-transparent'}`}>
                          <i className={`fi ${tab.icon} text-lg md:text-xl`}></i>
                       </div>
-                      <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] ${activeDesktopTab === tab.id ? 'opacity-100' : 'opacity-40'}`}>{tab.label.slice(0, 4)}</span>
+                      <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] ${activeDesktopTab === tab.id ? 'opacity-100' : 'opacity-40'}`}>{tab.label}</span>
                    </button>
                 ))}
              </div>
@@ -400,7 +400,7 @@ function StyleSettings({ profile, activeSubTab, setActiveSubTab, updateProfile, 
           </div>
        )}
        <div className={`${isDesktop ? '' : 'flex-1 overflow-y-auto no-scrollbar pb-10 pt-4'}`}>
-          {(isDesktop || activeSubTab === 'Text') && (
+          {activeSubTab === 'Text' && (
             <div className="space-y-6 h-full">
                <label className="text-[10px] font-extrabold uppercase text-gray-400 tracking-[0.4em] pl-2">Font Family</label>
                <div className="grid grid-cols-2 gap-3 pb-20">
@@ -437,7 +437,7 @@ function StyleSettings({ profile, activeSubTab, setActiveSubTab, updateProfile, 
                 </div>
              </div>
           )}
-          {(isDesktop || activeSubTab === 'Colors') && (
+          {(isDesktop || activeSubTab === 'Colors' || activeSubTab === 'Buttons') && (
             <div className={`space-y-8 ${isDesktop ? 'mt-12' : ''}`}>
                <div className="flex items-center justify-between p-8 bg-gray-50/50 rounded-[40px] border border-gray-100">
                   <div className="flex flex-col"><span className="font-extrabold text-secondary">Font Color</span><span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Global text color tone</span></div>
