@@ -136,10 +136,13 @@ export default function Navbar() {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         setUser(session.user)
+        // Set loading false early so icon shows up using metadata immediately
+        setLoading(false)
         const { data } = await supabase.from('monkey_bio').select('*').eq('id', session.user.id).single()
-        setProfile(data)
+        if (data) setProfile(data)
+      } else {
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     fetchUser()
@@ -147,8 +150,9 @@ export default function Navbar() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session) {
         setUser(session.user)
+        // Try to get profile if not already there
         const { data } = await supabase.from('monkey_bio').select('*').eq('id', session.user.id).single()
-        setProfile(data)
+        if (data) setProfile(data)
       } else {
         setUser(null)
         setProfile(null)

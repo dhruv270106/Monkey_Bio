@@ -91,15 +91,19 @@ function DashboardContent() {
         return
       }
 
-      const { data: profileData } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from('monkey_bio')
         .select('*')
         .eq('id', session.user.id)
         .single()
 
+      if (profileError && profileError.code !== 'PGRST116') {
+        console.error("Profile Fetch Error:", profileError)
+      }
+
       if (profileData) {
         if (!profileData.onboarding_completed) {
-          window.location.href = '/onboarding'
+          window.location.replace('/onboarding')
           return
         }
         setProfile(profileData)
@@ -114,15 +118,10 @@ function DashboardContent() {
             table: 'monkey_bio',
             filter: `id=eq.${session.user.id}`
           }, (payload) => {
-            // ONLY update if we are NOT currently pushed an update ourselves 
-            // OR if the update is significantly newer than our last push
             const now = Date.now()
             if (!isUpdatingRef.current && (now - lastUpdateRef.current > 2000)) {
-               console.log('Real-time sync applied:', payload.new)
                setProfile(payload.new)
                if (payload.new.links) setLinks(payload.new.links)
-            } else {
-               console.log('Real-time sync ignored (local changes pending)')
             }
           })
           .subscribe()
@@ -130,6 +129,10 @@ function DashboardContent() {
         return () => {
           supabase.removeChannel(channel)
         }
+      } else {
+        // No profile found, must finish onboarding
+        window.location.replace('/onboarding')
+        return
       }
     } catch (e) {
       console.error("Dashboard error:", e)
@@ -172,7 +175,7 @@ function DashboardContent() {
     setActiveTab(tabFromQuery)
   }, [searchParams])
 
-  if (loading) {
+  if (loading || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <i className="fi fi-rr-spinner animate-spin text-3xl text-primary"></i>
