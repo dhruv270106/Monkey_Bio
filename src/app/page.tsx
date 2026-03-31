@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar'
 import HeroScroll from '@/components/HeroScroll'
 import { Reveal } from '@/components/Reveal'
 import { Instagram, Facebook, Linkedin, Disc, Check } from 'lucide-react'
+import { useUser } from '@/hooks/useUser'
 import Lenis from 'lenis'
 
 // REUSABLE DECORATIVE BUBBLE
@@ -87,6 +88,8 @@ function Section({ id, children, imageSide = "right", bgClass = "", imageSrc = "
 export default function Home() {
   const [username, setUsername] = useState('')
   const [isClaimed, setIsClaimed] = useState(false)
+  const { user } = useUser()
+  const targetLink = user ? '/dashboard' : '/signup'
 
   useEffect(() => {
     const lenis = new Lenis()
@@ -165,7 +168,7 @@ export default function Home() {
              <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Personalize Everything.</h2></Reveal>
              <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/60 mb-4 md:mb-10 uppercase tracking-widest font-extrabold">Your Brand. Style. No Code.</p></Reveal>
              <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}>
-                <Link href="/signup" className="bg-[#D2E823] text-[#2665D6] font-extrabold text-sm md:text-lg px-8 py-4 rounded-[18px] shadow-2xl inline-block hover:bg-white transition-colors uppercase tracking-widest font-extrabold">DISCOVER ↗</Link>
+                <Link href={targetLink} className="bg-[#D2E823] text-[#2665D6] font-extrabold text-sm md:text-lg px-8 py-4 rounded-[18px] shadow-2xl inline-block hover:bg-white transition-colors uppercase tracking-widest font-extrabold">DISCOVER ↗</Link>
              </motion.div>
         </Section>
 
@@ -173,7 +176,7 @@ export default function Home() {
         <Section id="share" imageSide="right" bgClass="bg-gradient-to-br from-[#780011] via-[#B50019] to-[#54000C] text-white" imageSrc="/images/share.png">
              <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Share Everywhere.</h2></Reveal>
              <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/50 mb-4 md:mb-10 uppercase italic font-extrabold">One Link. All Socials.</p></Reveal>
-             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><Link href="/signup" className="bg-white text-[#780011] font-extrabold text-sm md:text-lg px-8 py-4 rounded-full shadow-2xl inline-flex items-center gap-4 hover:bg-[#D2E823] transition-colors font-extrabold">GET YOURS 🔥</Link></motion.div>
+             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}><Link href={targetLink} className="bg-white text-[#780011] font-extrabold text-sm md:text-lg px-8 py-4 rounded-full shadow-2xl inline-flex items-center gap-4 hover:bg-[#D2E823] transition-colors font-extrabold">GET YOURS 🔥</Link></motion.div>
         </Section>
 
         {/* ANALYZE SECTION - IMAGE LEFT */}
@@ -181,7 +184,7 @@ export default function Home() {
              <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold uppercase leading-tight mb-3 md:mb-6 font-extrabold">Smart Data.</h2></Reveal>
              <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/50 mb-4 md:mb-10 uppercase tracking-widest font-extrabold">Growth. Clicks. Insights.</p></Reveal>
              <motion.div whileHover={{ scale: 1.1, y: -5 }} whileTap={{ scale: 0.9 }}>
-                <Link href="/signup" className="bg-[#D2E823] text-black font-extrabold text-sm md:text-lg px-10 py-5 rounded-[20px] shadow-xl inline-block hover:bg-white transition-all uppercase font-extrabold">GO PRO ↗</Link>
+                <Link href={targetLink} className="bg-[#D2E823] text-black font-extrabold text-sm md:text-lg px-10 py-5 rounded-[20px] shadow-xl inline-block hover:bg-white transition-all uppercase font-extrabold">GO PRO ↗</Link>
              </motion.div>
         </Section>
 
@@ -210,7 +213,7 @@ export default function Home() {
              <Reveal delay={0.1} width="100%"><h2 className="text-[clamp(36px,6.5vw,72px)] font-extrabold leading-tight uppercase mb-4 md:mb-8 font-extrabold">Embed Anything.</h2></Reveal>
              <Reveal delay={0.2} width="100%"><p className="text-base md:text-xl font-extrabold text-white/50 mb-4 md:mb-10 uppercase font-extrabold">Spotify. Shopify. Connect.</p></Reveal>
              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Link href="/signup" className="bg-white text-[#0085FF] font-extrabold text-sm md:text-lg px-10 py-5 rounded-[24px] shadow-2xl inline-block hover:bg-black hover:text-white transition-all uppercase leading-none font-extrabold">PLUGINS ↗</Link>
+                <Link href={targetLink} className="bg-white text-[#0085FF] font-extrabold text-sm md:text-lg px-10 py-5 rounded-[24px] shadow-2xl inline-block hover:bg-black hover:text-white transition-all uppercase leading-none font-extrabold">PLUGINS ↗</Link>
              </motion.div>
         </Section>
 
@@ -225,7 +228,7 @@ export default function Home() {
               </Reveal>
               <div className="flex flex-row justify-center gap-3 sm:gap-6 md:gap-8 w-full max-w-4xl">
                  <motion.div whileHover={{ scale: 1.08, y: -5 }} className="flex-1">
-                    <Link href="/signup" className="block w-full bg-linktree-purple text-white font-extrabold text-sm sm:text-2xl md:text-4xl px-2 py-5 rounded-2xl md:rounded-[40px] shadow-3xl text-center">SIGN UP</Link>
+                    <Link href={targetLink} className="block w-full bg-linktree-purple text-white font-extrabold text-sm sm:text-2xl md:text-4xl px-2 py-5 rounded-2xl md:rounded-[40px] shadow-3xl text-center">SIGN UP</Link>
                  </motion.div>
                  <motion.div whileHover={{ scale: 1.08, y: -5 }} className="flex-1">
                     <Link href="/login" className="block w-full bg-white text-black font-extrabold text-sm sm:text-2xl md:text-4xl px-2 py-5 rounded-2xl md:rounded-[40px] shadow-3xl text-center">LOG IN</Link>

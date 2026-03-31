@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useUser } from '@/hooks/useUser'
 import { Reveal } from '@/components/Reveal'
 import { 
   Plus, 
@@ -141,6 +143,8 @@ function LeadAnalyticsBg() {
 }
 
 export default function CollectLeadsPage() {
+  const { user } = useUser()
+  const targetLink = user ? '/dashboard' : '/signup'
   return (
     <div className="min-h-screen bg-white text-black font-sans selection:bg-[#FF9313] selection:text-white overflow-x-hidden">
 
@@ -156,13 +160,15 @@ export default function CollectLeadsPage() {
             />
             <Reveal delay={0.3} width="100%" overflowVisible>
                 <div className="flex justify-center lg:justify-start w-full">
-                    <motion.button 
-                        whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#FF9313' }} 
-                        whileTap={{ scale: 0.95 }}
-                        className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
-                    >
-                        Get started for free
-                    </motion.button>
+                    <Link href={targetLink}>
+                        <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#FF9313' }} 
+                            whileTap={{ scale: 0.95 }}
+                            className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
+                        >
+                            Get started for free
+                        </motion.button>
+                    </Link>
                 </div>
             </Reveal>
           </div>
@@ -208,12 +214,14 @@ export default function CollectLeadsPage() {
                />
                <Reveal delay={0.3} width="100%" overflowVisible>
                   <div className="flex justify-center lg:justify-start w-full">
-                      <motion.button 
-                        whileHover={{ scale: 1.05, backgroundColor: '#000', color: '#FFF' }}
-                        className="px-14 py-7 bg-white text-black rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
-                      >
-                        Get started today
-                      </motion.button>
+                      <Link href={targetLink}>
+                          <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: '#000', color: '#FFF' }}
+                            className="px-14 py-7 bg-white text-black rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
+                          >
+                            Get started today
+                          </motion.button>
+                      </Link>
                   </div>
                </Reveal>
             </div>
@@ -232,12 +240,14 @@ export default function CollectLeadsPage() {
                />
                <Reveal delay={0.3} width="100%" overflowVisible>
                   <div className="flex justify-center lg:justify-start w-full">
-                      <motion.button 
-                        whileHover={{ scale: 1.05, backgroundColor: '#D2E823', color: '#000' }}
-                        className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
-                      >
-                        Get started today
-                      </motion.button>
+                      <Link href={targetLink}>
+                          <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: '#D2E823', color: '#000' }}
+                            className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
+                          >
+                            Get started today
+                          </motion.button>
+                      </Link>
                   </div>
                </Reveal>
             </div>
@@ -299,12 +309,14 @@ export default function CollectLeadsPage() {
                />
                <Reveal delay={0.4} width="100%" overflowVisible>
                   <div className="flex justify-center lg:justify-start w-full">
-                      <motion.button 
-                        whileHover={{ scale: 1.05, backgroundColor: '#000', color: '#FFF' }}
-                        className="px-14 py-7 bg-white text-black rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
-                      >
-                        View Integrations
-                      </motion.button>
+                      <Link href={targetLink}>
+                          <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: '#000', color: '#FFF' }}
+                            className="px-14 py-7 bg-white text-black rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
+                          >
+                            View Integrations
+                          </motion.button>
+                      </Link>
                   </div>
                </Reveal>
             </div>
@@ -323,12 +335,14 @@ export default function CollectLeadsPage() {
                />
                <Reveal delay={0.3} width="100%" overflowVisible>
                   <div className="flex justify-center lg:justify-start w-full">
-                      <motion.button 
-                        whileHover={{ scale: 1.05, backgroundColor: '#D2E823', color: '#000' }}
-                        className="px-14 py-7 bg-white text-black rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
-                      >
-                        Get started today
-                      </motion.button>
+                      <Link href={targetLink}>
+                          <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: '#D2E823', color: '#000' }}
+                            className="px-14 py-7 bg-white text-black rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
+                          >
+                            Get started today
+                          </motion.button>
+                      </Link>
                   </div>
                </Reveal>
             </div>
@@ -381,13 +395,15 @@ export default function CollectLeadsPage() {
                </h2>
             </Reveal>
             <Reveal width="100%" delay={0.2} overflowVisible>
-               <motion.button 
-                  whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#502274' }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-16 py-8 bg-[#D3E923] text-black rounded-full font-extrabold uppercase text-sm shadow-3xl transition-all"
-               >
-                  Get started for free
-               </motion.button>
+                <Link href={targetLink}>
+                   <motion.button 
+                      whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#502274' }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-16 py-8 bg-[#D3E923] text-black rounded-full font-extrabold uppercase text-sm shadow-3xl transition-all"
+                   >
+                      Get started for free
+                   </motion.button>
+                </Link>
             </Reveal>
          </div>
          {/* Background Decoration */}

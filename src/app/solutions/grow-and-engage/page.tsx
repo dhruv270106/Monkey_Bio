@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Reveal } from '@/components/Reveal'
+import { SectionBadge } from '@/components/SectionBadge'
 import { 
   Users, 
   Target, 
@@ -114,14 +115,14 @@ function GrowHeroMockup() {
         </div>
     )
 }
-
 export default function GrowAndEngagePage() {
   return (
     <div className="min-h-screen bg-white text-black font-sans selection:bg-[#2665D6] selection:text-white overflow-x-hidden">
 
       {/* 1. HERO SECTION - ROYAL BLUE (#2665D6) */}
-      <section className="pt-48 pb-32 px-6 md:px-20 relative overflow-hidden bg-[#2665D6] text-white">
-        <div className="max-w-7xl mx-auto relative z-10 text-center space-y-12">
+      <section className="pt-48 pb-32 px-6 md:px-20 relative overflow-visible bg-[#2665D6] text-white text-center">
+        <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center gap-12">
+          <SectionBadge icon={Users} title="Grow and Engage" light />
           <SectionHeading 
             subtitle="YOUR AUDIENCE, EVERYWHERE"
             title="Grow and engage your audience" 
@@ -130,22 +131,27 @@ export default function GrowAndEngagePage() {
             centered
           />
           <Reveal delay={0.3} width="100%" overflowVisible>
-              <motion.button 
-                  whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#2665D6' }} 
-                  whileTap={{ scale: 0.95 }}
-                  className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
-              >
-                  Get started for free
-              </motion.button>
+             <div className="flex justify-center w-full">
+                <motion.button 
+                    whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#2665D6' }} 
+                    whileTap={{ scale: 0.95 }}
+                    className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
+                >
+                    Get started for free
+                </motion.button>
+             </div>
           </Reveal>
           
           <motion.div 
-             initial={{ opacity: 0, y: 100 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 1.2, delay: 0.5 }}
-             className="mt-32 flex justify-center"
+             initial={{ opacity: 0, scale: 0.9, y: 50 }}
+             animate={{ opacity: 1, scale: 1, y: 0 }}
+             transition={{ duration: 1.2, delay: 0.4 }}
+             className="w-full flex justify-center mt-12 overflow-visible"
           >
-             <GrowHeroMockup />
+             <div className="aspect-video w-full max-w-4xl bg-white rounded-[60px] md:rounded-[80px] shadow-5xl border-[15px] border-white/5 overflow-hidden relative group">
+                <img src="/solutions/stack.png" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" alt="Engagement Mockup" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+             </div>
           </motion.div>
         </div>
       </section>

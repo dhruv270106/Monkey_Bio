@@ -20,7 +20,7 @@ const PRODUCTS_MENU = [
       { title: 'Canva Background Editor', desc: 'Import your custom designs from Canva', href: '/features/canva-integration' },
     ],
     featured: {
-      image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop',
+      image: '/products/link-in-bio-hero.png',
       title: 'Join 70M+ using Monkey Bio as their link in bio',
       desc: 'One link to share everything you create, curate, and sell across all your socials.'
     }
@@ -37,7 +37,7 @@ const PRODUCTS_MENU = [
       { title: 'Hashtag generator', desc: 'Trending hashtag suggestions for better reach', href: '/features/hashtag-generator' },
     ],
     featured: {
-      image: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?q=80&w=600&auto=format&fit=crop',
+      image: '/solutions/hero.png',
       title: 'Boost sales with Instagram Auto-reply',
       desc: 'Instantly reply to comments, send traffic to your offers, and turn engagement into sales.'
     }
@@ -53,7 +53,7 @@ const PRODUCTS_MENU = [
       { title: 'Send to email tools', desc: 'Sync with Mailchimp, Klaviyo, Kit & more', href: '/products/email-integration' },
     ],
     featured: {
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop',
+      image: '/solutions/stack.png',
       title: 'Connect your email tools, activate your audience',
       desc: 'Send new contacts straight from Monkey Bio to Mailchimp, Klaviyo, and more.'
     }
@@ -85,7 +85,7 @@ const LEARN_MENU = [
       { title: 'Success Stories', desc: 'Real people, real results on Monkey Bio', href: '/success-stories' },
     ],
     featured: {
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=800&auto=format&fit=crop',
+      image: '/images/about_mosaic_hero.png',
       title: 'Learn with Monkey Bio',
       desc: 'Create & sell your own online Course. If you\'ve got something to share, you\'ve got something to sell.'
     }

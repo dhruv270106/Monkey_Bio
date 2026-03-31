@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useState, useRef } from 'react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useUser } from '@/hooks/useUser'
 import { Reveal } from '@/components/Reveal'
 import { 
   Plus, 
@@ -262,6 +264,8 @@ function GridFeedPreview() {
 }
 
 export default function SocialPlannerPage() {
+  const { user } = useUser()
+  const targetLink = user ? '/dashboard' : '/signup'
   const carouselRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: 'left' | 'right') => {
@@ -286,12 +290,14 @@ export default function SocialPlannerPage() {
             />
             <Reveal delay={0.3} width="fit-content" overflowVisible>
                 <div className="flex flex-col sm:flex-row gap-6">
-                    <motion.button 
-                        whileHover={{ scale: 1.05, backgroundColor: '#DEF141', color: '#000' }} 
-                        className="px-14 py-7 bg-[#DEF141] text-black rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
-                    >
-                        Get started for free
-                    </motion.button>
+                    <Link href={targetLink}>
+                        <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: '#DEF141', color: '#000' }} 
+                            className="px-14 py-7 bg-[#DEF141] text-black rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
+                        >
+                            Get started for free
+                        </motion.button>
+                    </Link>
                 </div>
             </Reveal>
           </div>
@@ -383,12 +389,14 @@ export default function SocialPlannerPage() {
                   light
                />
                <Reveal delay={0.3} width="fit-content" overflowVisible>
-                  <motion.button 
-                    whileHover={{ scale: 1.05, backgroundColor: '#FF6B6B', color: '#FFF' }}
-                    className="px-14 py-7 bg-[#FF6B6B] text-white rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
-                  >
-                    Get started for free
-                  </motion.button>
+                  <Link href={targetLink}>
+                      <motion.button 
+                        whileHover={{ scale: 1.05, backgroundColor: '#FF6B6B', color: '#FFF' }}
+                        className="px-14 py-7 bg-[#FF6B6B] text-white rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
+                      >
+                        Get started for free
+                      </motion.button>
+                  </Link>
                </Reveal>
             </div>
             <motion.div 
@@ -452,13 +460,15 @@ export default function SocialPlannerPage() {
                </h2>
             </Reveal>
             <Reveal width="100%" delay={0.2} overflowVisible>
-               <motion.button 
-                  whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#502274' }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-16 py-8 bg-[#DEF141] text-black rounded-full font-extrabold uppercase text-sm shadow-3xl transition-all"
-               >
-                  Try Monkey Bio for free
-               </motion.button>
+               <Link href={targetLink}>
+                   <motion.button 
+                      whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#502274' }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-16 py-8 bg-[#DEF141] text-black rounded-full font-extrabold uppercase text-sm shadow-3xl transition-all"
+                   >
+                      Try Monkey Bio for free
+                   </motion.button>
+               </Link>
             </Reveal>
          </div>
          {/* Background Decoration */}

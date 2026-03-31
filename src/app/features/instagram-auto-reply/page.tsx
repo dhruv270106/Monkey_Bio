@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useUser } from '@/hooks/useUser'
 import { Reveal } from '@/components/Reveal'
 import { 
   Plus, 
@@ -123,6 +125,8 @@ function AutoReplyCardBg() {
 }
 
 export default function InstagramAutoReplyPage() {
+  const { user } = useUser()
+  const targetLink = user ? '/dashboard' : '/signup'
   return (
     <div className="min-h-screen bg-white text-black font-sans selection:bg-[#D22BD2] selection:text-white overflow-x-hidden">
 
@@ -138,23 +142,31 @@ export default function InstagramAutoReplyPage() {
             />
             <Reveal width="100%" delay={0.3} overflowVisible>
                 <div className="flex justify-center lg:justify-start w-full">
-                    <motion.button 
-                        whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#D22BD2' }} 
-                        whileTap={{ scale: 0.95 }}
-                        className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
-                    >
-                        Send your first Auto-Reply
-                    </motion.button>
+                    <Link href={targetLink}>
+                        <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#D22BD2' }} 
+                            whileTap={{ scale: 0.95 }}
+                            className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
+                        >
+                            Send your first Auto-Reply
+                        </motion.button>
+                    </Link>
                 </div>
             </Reveal>
           </div>
           <motion.div 
-             initial={{ opacity: 0, scale: 0.9 }}
-             animate={{ opacity: 1, scale: 1 }}
+             initial={{ opacity: 0, scale: 0.9, y: 50 }}
+             animate={{ opacity: 1, scale: 1, y: 0 }}
              transition={{ duration: 1.2, delay: 0.4 }}
              className="w-full lg:w-1/2 flex justify-center lg:justify-end"
           >
-             <AutoReplyHeroMockup />
+             <div className="aspect-square w-full max-w-md bg-white rounded-[60px] md:rounded-[80px] shadow-5xl border-[15px] border-white/5 overflow-hidden relative group">
+                <img src="/images/share.png" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" alt="Instagram Auto Reply" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                   <AutoReplyHeroMockup />
+                </div>
+             </div>
           </motion.div>
         </div>
       </section>
@@ -185,12 +197,14 @@ export default function InstagramAutoReplyPage() {
                />
                <Reveal width="100%" delay={0.4} overflowVisible>
                   <div className="flex justify-center lg:justify-start w-full">
-                      <motion.button 
-                        whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#000' }}
-                        className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
-                      >
-                        Start Automating
-                      </motion.button>
+                      <Link href={targetLink}>
+                          <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#000' }}
+                            className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
+                          >
+                            Start Automating
+                          </motion.button>
+                      </Link>
                   </div>
                </Reveal>
             </div>
@@ -258,12 +272,14 @@ export default function InstagramAutoReplyPage() {
                />
                <Reveal width="100%" delay={0.3} overflowVisible>
                   <div className="flex justify-center lg:justify-start w-full">
-                      <motion.button 
-                        whileHover={{ scale: 1.05, backgroundColor: '#000', color: '#FFF' }}
-                        className="px-14 py-7 bg-white text-black rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
-                      >
-                        Set Up List Growth
-                      </motion.button>
+                      <Link href={targetLink}>
+                          <motion.button 
+                            whileHover={{ scale: 1.05, backgroundColor: '#000', color: '#FFF' }}
+                            className="px-14 py-7 bg-white text-black rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
+                          >
+                            Set Up List Growth
+                          </motion.button>
+                      </Link>
                   </div>
                </Reveal>
             </div>
@@ -299,13 +315,15 @@ export default function InstagramAutoReplyPage() {
                </h2>
             </Reveal>
             <Reveal width="100%" delay={0.2} overflowVisible>
-               <motion.button 
-                  whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#502274' }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-16 py-8 bg-[#D2E823] text-black rounded-full font-extrabold uppercase text-sm shadow-3xl transition-all"
-               >
-                  Get started for free
-               </motion.button>
+               <Link href={targetLink}>
+                   <motion.button 
+                      whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#502274' }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-16 py-8 bg-[#D2E823] text-black rounded-full font-extrabold uppercase text-sm shadow-3xl transition-all"
+                   >
+                      Get started for free
+                   </motion.button>
+               </Link>
             </Reveal>
          </div>
          {/* Background Decoration */}

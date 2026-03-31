@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { Reveal } from '@/components/Reveal'
-import { CheckCircle2, ArrowRight, Plus, Minus } from 'lucide-react'
+import { CheckCircle2, ArrowRight, Plus, Minus, Link as LinkIcon, Zap, Smartphone, Hash } from 'lucide-react'
+import { SectionBadge } from '@/components/SectionBadge'
 
 // FAQ ITEM COMPONENT
 function FAQItem({ question, answer, activeColor }: { question: string, answer: string, activeColor: string }) {
@@ -69,7 +70,7 @@ const PRODUCT_DATA: any = {
   'link-in-bio': {
     title: "Everything you are in one simple link",
     subtitle: 'THE ORIGINAL BIO',
-    heroImg: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1200&auto=format&fit=crop',
+    heroImg: '/products/link-in-bio-hero.png',
     desc: 'Join 40M+ people using Monkey Bio as their link in bio to share everything they create, curate and sell across Instagram, TikTok, Twitter, YouTube and more.',
     color: 'bg-[#D2E823]',
     secondaryColor: 'text-black',
@@ -78,21 +79,21 @@ const PRODUCT_DATA: any = {
       { 
         title: 'One link to help you do it all', 
         desc: 'Monkey Bio is the launchpad for your online home. Connect your audience with all you do.',
-        img: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=1200&auto=format&fit=crop',
+        img: '/products/link-in-bio-1.png',
         bgColor: 'bg-[#254F1A]',
         light: true
       },
       { 
         title: 'Connect your fans instantly', 
         desc: 'Monkey Bio is the only link you’ll ever need. Connect your audience with all you do, wherever you are.',
-        img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1200&auto=format&fit=crop',
+        img: '/products/link-in-bio-2.png',
         bgColor: 'bg-[#FF9313]',
         light: true
       },
       { 
         title: 'Keep your followers engaged', 
         desc: 'Don’t lose your audience to search algorithms. Monkey Bio is a platform you own and control, so your followers always stay with you.',
-        img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=800&auto=format&fit=crop',
+        img: '/products/link-in-bio-3.png',
         bgColor: 'bg-[#1E2330]',
         light: true
       }
@@ -106,25 +107,25 @@ const PRODUCT_DATA: any = {
   'link-shortener': {
     title: 'Powerful short links with huge potential',
     subtitle: 'SMART SHORTENING',
-    heroImg: 'https://images.unsplash.com/photo-1551288049-bbbda536639a?q=80&w=1200&auto=format&fit=crop',
-    desc: 'Create, track and brand your short links. Drive conversions and build deep trust with your audience, all from one dashboard.',
-    color: 'bg-[#4037FF]',
+    heroImg: '/products/link-shortener-hero.png',
+    desc: 'Create, share and track world-class short links with our powerful optimization tools. Get more clicks and better insights with every link you share.',
+    color: 'bg-[#1E2330]',
     secondaryColor: 'text-white',
     accentColor: '#D2E823',
     sections: [
       { 
-        title: 'More than just a short link', 
-        desc: 'Our link shortener gives you total control over how your audience perceives your brand across all channels.',
-        img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop',
-        bgColor: 'bg-[#254F1A]',
+        title: 'Shorten links, grow faster', 
+        desc: 'Customized short links that reflect your brand identity and inspire confidence in your audience.',
+        img: '/products/link-shortener-1.png',
+        bgColor: 'bg-[#502274]',
         light: true
       },
       { 
-        title: 'Deep dive into performance', 
-        desc: 'Know exactly where your audience is coming from. Our analytics help you master every campaign with precision.',
-        img: 'https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=1200&auto=format&fit=crop',
-        bgColor: 'bg-[#EA580C]',
-        light: true
+        title: 'Advanced tracking and data', 
+        desc: 'Get real-time insights into who is clicking your links and why. Optimize your strategy with deep audience analytics.',
+        img: '/products/link-shortener-2.png',
+        bgColor: 'bg-[#D2E823]',
+        light: false
       }
     ],
     faqs: [
@@ -136,23 +137,23 @@ const PRODUCT_DATA: any = {
   'qr-generator': {
     title: 'The QR code that makes things happen',
     subtitle: 'ADVANCED QR CODES',
-    heroImg: 'https://images.unsplash.com/photo-1595079676339-1534801ad6cf?q=80&w=1200&auto=format&fit=crop',
-    desc: 'Create, customize, and track branded QR codes. Turn every real-world interaction into a digital connection in seconds.',
-    color: 'bg-[#7C3AED]',
+    heroImg: '/products/qr-generator-hero.png',
+    desc: 'Create trackable QR codes that connect your physical marketing to your digital world. Scan, track, and optimize every touchpoint.',
+    color: 'bg-[#FF9313]',
     secondaryColor: 'text-white',
-    accentColor: '#DEF141',
+    accentColor: '#1E2330',
     sections: [
       { 
-        title: 'Bridge the offline gap', 
-        desc: 'From business cards to huge billboards, Monkey Bio QR codes make it effortless for your audience to find you.',
-        img: 'https://images.unsplash.com/photo-1595079676339-1534801ad6cf?q=80&w=800&auto=format&fit=crop',
+        title: 'Scan your way to success', 
+        desc: 'Dynamic QR codes that allow you to change the destination URL even after they are printed.',
+        img: '/products/qr-generator-1.png',
         bgColor: 'bg-[#254F1A]',
         light: true
       },
       { 
         title: 'Total creative freedom', 
         desc: 'Customize every detail of your QR code to ensure it reflects your unique brand identity perfectly.',
-        img: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=800&auto=format&fit=crop',
+        img: '/products/qr-generator-2.png',
         bgColor: 'bg-[#2665D6]',
         light: true
       }
@@ -184,11 +185,17 @@ export default function ProductDetail() {
     <div className="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white overflow-x-hidden">
       
       {/* 1. HERO SECTION - BRANDED VIBRANT COLOR */}
-      <section className={`pt-48 pb-32 px-6 md:px-20 relative overflow-hidden ${data.color} ${data.secondaryColor}`}>
+      <section className={`pt-48 pb-32 px-6 md:px-20 relative overflow-visible ${data.color} ${data.secondaryColor}`}>
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-24 relative z-10 text-center lg:text-left">
            <div className="w-full lg:w-1/2 space-y-12 flex flex-col items-center lg:items-start text-center lg:text-left">
+              <Reveal width="100%" overflowVisible>
+                 <SectionBadge 
+                   icon={slug === 'link-in-bio' ? LinkIcon : slug === 'link-shortener' ? Hash : Smartphone} 
+                   title={data.subtitle} 
+                   light={data.secondaryColor === 'text-white'} 
+                 />
+              </Reveal>
               <SectionHeading 
-                 subtitle={data.subtitle}
                  title={data.title}
                  description={data.desc}
                  light={data.secondaryColor === 'text-white'}

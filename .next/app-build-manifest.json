@@ -1,65 +1,75 @@
 {
   "pages": {
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
-    ],
     "/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/[username]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/[username]/page.js"
-    ],
     "/products/[slug]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/products/[slug]/page.js"
     ],
-    "/features/ai-content-generator/page": [
+    "/[username]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/features/ai-content-generator/page.js"
+      "static/chunks/app/[username]/page.js"
     ],
-    "/features/instagram-auto-reply/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/features/instagram-auto-reply/page.js"
-    ],
-    "/features/hashtag-generator/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/features/hashtag-generator/page.js"
-    ],
-    "/features/collect-leads/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/features/collect-leads/page.js"
-    ],
-    "/features/social-planner/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/features/social-planner/page.js"
+      "static/chunks/app/page.js"
     ],
     "/features/canva-integration/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/features/canva-integration/page.js"
     ],
-    "/solutions/manage-your-social-media/page": [
+    "/features/social-planner/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/solutions/manage-your-social-media/page.js"
+      "static/chunks/app/features/social-planner/page.js"
+    ],
+    "/features/instagram-auto-reply/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/features/instagram-auto-reply/page.js"
+    ],
+    "/features/ai-content-generator/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/features/ai-content-generator/page.js"
+    ],
+    "/features/hashtag-generator/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/features/hashtag-generator/page.js"
     ],
     "/solutions/grow-and-engage/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/solutions/grow-and-engage/page.js"
+    ],
+    "/features/collect-leads/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/features/collect-leads/page.js"
+    ],
+    "/solutions/manage-your-social-media/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/solutions/manage-your-social-media/page.js"
+    ],
+    "/products/audience-manager/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/products/audience-manager/page.js"
+    ],
+    "/products/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/products/page.js"
     ]
   }
 }

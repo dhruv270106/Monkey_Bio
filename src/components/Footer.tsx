@@ -4,9 +4,12 @@ import React from 'react'
 import Link from 'next/link'
 import { Instagram, Facebook, Linkedin, Disc } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import { useUser } from '@/hooks/useUser'
 
 export default function Footer() {
   const pathname = usePathname()
+  const { user } = useUser()
+  const targetLink = user ? '/dashboard' : '/signup'
   
   const STATIC_PAGES = ['about', 'pricing', 'templates', 'blog', 'help', 'contact', 'social-good', 'learn', 'marketplace', 'footer', 'features', 'products', 'design', 'wallpaper', 'solutions']
   
@@ -114,7 +117,7 @@ export default function Footer() {
           <div className="flex flex-col lg:flex-row justify-between items-center gap-12 pt-12 border-t border-gray-100">
              <div className="flex items-center gap-4">
                 <Link href="/login" className="bg-[#F3F3F1] text-black font-black text-xs uppercase px-10 py-5 rounded-[20px] shadow-sm hover:bg-gray-200 transition-colors tracking-widest">Log in</Link>
-                <Link href="/signup" className="bg-[#D2E823] text-black font-black text-xs uppercase px-8 py-5 rounded-full shadow-lg hover:scale-105 transition-all tracking-widest">Get started for free</Link>
+                <Link href={targetLink} className="bg-[#D2E823] text-black font-black text-xs uppercase px-8 py-5 rounded-full shadow-lg hover:scale-105 transition-all tracking-widest">Get started for free</Link>
              </div>
 
              <div className="flex items-center gap-4 flex-wrap justify-center">

@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useUser } from '@/hooks/useUser'
 import { Reveal } from '@/components/Reveal'
 import { 
   Plus, 
@@ -125,6 +127,8 @@ function AIFeatureCardBg({ color = "#502274" }) {
 }
 
 export default function AIContentGeneratorPage() {
+  const { user } = useUser()
+  const targetLink = user ? '/dashboard' : '/signup'
   return (
     <div className="min-h-screen bg-white text-black font-sans selection:bg-[#061492] selection:text-white overflow-x-hidden">
 
@@ -139,13 +143,15 @@ export default function AIContentGeneratorPage() {
             centered
           />
           <Reveal delay={0.3} width="100%" overflowVisible>
-              <motion.button 
-                  whileHover={{ scale: 1.05, backgroundColor: '#DEF141', color: '#000' }} 
-                  whileTap={{ scale: 0.95 }}
-                  className="px-14 py-7 bg-[#DEF141] text-black rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
-              >
-                  Get started for free
-              </motion.button>
+              <Link href={targetLink}>
+                  <motion.button 
+                      whileHover={{ scale: 1.05, backgroundColor: '#DEF141', color: '#000' }} 
+                      whileTap={{ scale: 0.95 }}
+                      className="px-14 py-7 bg-[#DEF141] text-black rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
+                  >
+                      Get started for free
+                  </motion.button>
+              </Link>
           </Reveal>
           
           <motion.div 
@@ -223,12 +229,14 @@ export default function AIContentGeneratorPage() {
                   description="Discover your next social media post with our AI ideation tool. Enter a few details about your niche and get a list of creative social post ideas instantly."
                />
                <Reveal width="fit-content" delay={0.3} overflowVisible>
-                  <motion.button 
-                    whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#000' }}
-                    className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
-                  >
-                    Get started for free
-                  </motion.button>
+                  <Link href={targetLink}>
+                      <motion.button 
+                        whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#000' }}
+                        className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
+                      >
+                        Get started for free
+                      </motion.button>
+                  </Link>
                </Reveal>
             </div>
          </div>
@@ -245,12 +253,14 @@ export default function AIContentGeneratorPage() {
                   light
                />
                <Reveal width="fit-content" delay={0.3} overflowVisible>
-                  <motion.button 
-                    whileHover={{ scale: 1.05, backgroundColor: '#D2E823', color: '#000' }}
-                    className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
-                  >
-                    Get started for free
-                  </motion.button>
+                  <Link href={targetLink}>
+                      <motion.button 
+                        whileHover={{ scale: 1.05, backgroundColor: '#D2E823', color: '#000' }}
+                        className="px-14 py-7 bg-black text-white rounded-full font-extrabold uppercase text-sm shadow-xl transition-all"
+                      >
+                        Get started for free
+                      </motion.button>
+                  </Link>
                </Reveal>
             </div>
             <motion.div 
@@ -282,13 +292,15 @@ export default function AIContentGeneratorPage() {
                centered
             />
             <Reveal delay={0.3} width="100%" overflowVisible>
-                <motion.button 
-                    whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#2665D6' }} 
-                    whileTap={{ scale: 0.95 }}
-                    className="px-14 py-7 bg-[#D2E823] text-black rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
-                >
-                    Get started for free
-                </motion.button>
+                <Link href={targetLink}>
+                    <motion.button 
+                        whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#2665D6' }} 
+                        whileTap={{ scale: 0.95 }}
+                        className="px-14 py-7 bg-[#D2E823] text-black rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
+                    >
+                        Get started for free
+                    </motion.button>
+                </Link>
             </Reveal>
          </div>
       </section>
@@ -323,13 +335,15 @@ export default function AIContentGeneratorPage() {
                </h2>
             </Reveal>
             <Reveal width="100%" delay={0.2} overflowVisible>
-               <motion.button 
-                  whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#1E2330' }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-16 py-8 bg-[#D2E823] text-black rounded-full font-extrabold uppercase text-sm shadow-3xl transition-all"
-               >
-                  Get started for free
-               </motion.button>
+               <Link href={targetLink}>
+                   <motion.button 
+                      whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#1E2330' }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-16 py-8 bg-[#D2E823] text-black rounded-full font-extrabold uppercase text-sm shadow-3xl transition-all"
+                   >
+                      Get started for free
+                   </motion.button>
+               </Link>
             </Reveal>
          </div>
       </section>

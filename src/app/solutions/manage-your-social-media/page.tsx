@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Reveal } from '@/components/Reveal'
+import { SectionBadge } from '@/components/SectionBadge'
 import { 
   Calendar, 
   Clock, 
@@ -75,50 +76,49 @@ export default function SocialMediaManagementPage() {
   return (
     <div className="min-h-screen bg-white text-black font-sans selection:bg-[#4037FF] selection:text-white overflow-x-hidden">
 
-      {/* HERO SECTION - DARK NAVY (#1E2330) */}
-      <section className="pt-40 pb-24 px-6 md:px-20 relative overflow-hidden bg-[#1E2330] text-white">
-        <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
-            <Reveal>
-                <div className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 backdrop-blur-xl rounded-full border border-white/10 mb-8 shadow-2xl">
-                   <div className="w-6 h-6 rounded-full bg-[#DEF141] flex items-center justify-center">
-                     <Calendar size={12} className="text-black" />
-                   </div>
-                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 leading-none">Social Media Scheduling</span>
+      {/* 1. HERO SECTION - ROYAL PURPLE (#502274) */}
+      <section className="pt-48 pb-32 px-6 md:px-20 relative overflow-visible bg-[#502274] text-white">
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-12 relative z-10 text-center">
+            <Reveal width="100%" overflowVisible>
+                <div className="flex justify-center w-full">
+                    <SectionBadge icon={Zap} title="Manage Your Social Media" light />
                 </div>
             </Reveal>
+            <div className="space-y-4 mb-8 text-center items-center flex flex-col">
+                <Reveal delay={0.1}>
+                    <h1 className="text-5xl md:text-[9rem] font-black tracking-tighter leading-none uppercase mb-4">
+                        Schedule <br className="hidden md:block" /><span className="text-[#DEF141]">posts & grow.</span>
+                    </h1>
+                </Reveal>
+                <Reveal delay={0.2}>
+                    <p className="text-lg md:text-2xl text-white/60 font-medium max-w-3xl leading-relaxed mb-4 uppercase italic">
+                        Create, schedule and publish content across all your platforms from Monkey Bio. Stay consistent and drive engagement on autopilot.
+                    </p>
+                </Reveal>
+            </div>
+            <Reveal delay={0.3} width="100%" overflowVisible>
+               <div className="flex justify-center w-full">
+                  <motion.button 
+                      whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#502274' }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-14 py-7 bg-[#DEF141] text-black rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
+                  >
+                      Get started for free
+                  </motion.button>
+               </div>
+            </Reveal>
             
-            <Reveal delay={0.1}>
-                <h1 className="text-5xl md:text-[9rem] font-black tracking-tighter leading-none uppercase mb-8">
-                    Schedule <br className="hidden md:block" /><span className="text-[#DEF141]">posts & grow.</span>
-                </h1>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-                <p className="text-lg md:text-2xl text-white/60 font-medium max-w-3xl leading-relaxed mb-12 uppercase italic">
-                    Create, schedule and publish content across all your platforms from Monkey Bio. Stay consistent and drive engagement on autopilot.
-                </p>
-            </Reveal>
-
-            <Reveal delay={0.3} overflowVisible>
-                <motion.button 
-                    whileHover={{ scale: 1.05, boxShadow: '0 30px 60px rgba(222,241,65,0.2)', backgroundColor: '#FFF', color: '#000' }} 
-                    whileTap={{ scale: 0.95 }}
-                    className="px-14 py-7 bg-[#DEF141] text-black rounded-full font-black uppercase text-sm shadow-2xl transition-all"
-                >
-                    Plan your next post
-                </motion.button>
-            </Reveal>
-
             <motion.div 
                initial={{ opacity: 0, y: 100 }}
                animate={{ opacity: 1, y: 0 }}
                transition={{ duration: 1.2, delay: 0.5 }}
                className="mt-20 w-full max-w-6xl relative"
             >
-                <div className="aspect-video bg-gradient-to-t from-white/10 to-transparent rounded-[80px] overflow-hidden border border-white/10 p-2 shadow-[0_100px_100px_rgba(0,0,0,0.5)]">
+                <div className="aspect-video bg-gradient-to-t from-white/10 to-transparent rounded-[80px] overflow-hidden border border-white/10 p-2 shadow-[0_100px_100px_rgba(0,0,0,0.5)] bg-white">
                    <img 
                     src="/solutions/hero.png" 
-                    className="w-full h-full object-cover rounded-[75px] opacity-90 scale-105" 
+                    className="w-full h-full object-cover rounded-[75px] opacity-95 scale-105" 
+                    alt="Social Media Management Dashboard"
                    />
                 </div>
                 
@@ -154,8 +154,8 @@ export default function SocialMediaManagementPage() {
                  { title: 'Business Owners', desc: 'Leave direct feedback and manage approval pipelines inside your calendar.', icon: <Twitter size={32} /> },
                  { title: 'Social Managers', desc: 'Share content previews with clients and partners for instant sign-off.', icon: <Linkedin size={32} /> },
                ].map((card, idx) => (
-                 <Reveal key={idx} delay={idx * 0.1}>
-                    <div className="p-16 bg-white rounded-[70px] border border-black/5 hover:-translate-y-4 hover:shadow-3xl transition-all duration-700 group text-center md:text-left flex flex-col items-center md:items-start">
+                 <Reveal key={idx} delay={idx * 0.1} overflowVisible>
+                    <div className="p-16 bg-white rounded-[70px] border border-black/5 hover:-translate-y-4 hover:shadow-3xl transition-all duration-700 group text-center md:text-left flex flex-col items-center md:items-start group">
                        <div className="w-20 h-20 rounded-[30px] bg-black/5 flex items-center justify-center text-black mb-12 group-hover:scale-110 group-hover:rotate-6 transition-transform">
                           {card.icon}
                        </div>

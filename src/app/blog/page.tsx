@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
@@ -22,25 +23,34 @@ export default function BlogPage() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+          {[
+            { img: '/images/analyze.png', category: 'Strategy', title: 'Dominate the algorithm in 2026' },
+            { img: '/images/customize.png', category: 'Design', title: 'Why your profile needs a makeover' },
+            { img: '/images/share.png', category: 'Growth', title: 'The secret to viral link-sharing' },
+            { img: '/solutions/hero.png', category: 'Creator', title: 'Stories from top Monkey Bio users' },
+            { img: '/solutions/stack.png', category: 'Productivity', title: 'Organize your digital life' },
+            { img: '/products/link-in-bio-hero.png', category: 'Insights', title: 'What data tells us about your fans' }
+          ].map((post, i) => (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
               className="group cursor-pointer"
             >
-              <div className="aspect-[1.5/1] bg-gray-100 rounded-[40px] overflow-hidden mb-6 relative shadow-sm group-hover:shadow-2xl transition-all duration-500">
+              <div className="aspect-[4/3] bg-gray-50 rounded-[50px] overflow-hidden mb-8 relative shadow-sm group-hover:shadow-4xl transition-all duration-700 border border-black/5">
                 <img 
-                  src={`https://images.unsplash.com/photo-${1500000000000 + i}?auto=format&fit=crop&q=80&w=800`}
-                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
-                  alt="Blog post"
+                  src={post.img}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000"
+                  alt={post.title}
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Strategy</p>
-              <h3 className="text-2xl font-black text-black leading-tight mb-4 group-hover:text-primary transition-colors italic">How to grow your Monkey Bio audience in 2026</h3>
-              <p className="text-sm text-gray-400 font-medium mb-6">Learn the latest secrets of the algorithm and how to dominate every feed...</p>
-              <span className="text-[10px] font-black uppercase tracking-widest text-black group-hover:translate-x-4 transition-transform inline-flex items-center gap-2">Read Now <i className="fi fi-rr-arrow-right"></i></span>
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-primary mb-4">{post.category}</p>
+              <h3 className="text-3xl font-black text-black leading-[1.1] mb-6 group-hover:text-primary transition-colors tracking-tighter uppercase">{post.title}</h3>
+              <p className="text-sm text-gray-400 font-medium leading-relaxed mb-8">Learn the latest secrets of the algorithm and how to dominate every feed...</p>
+              <span className="text-[11px] font-black uppercase tracking-widest text-black group-hover:gap-6 transition-all inline-flex items-center gap-3">Read Now <ArrowRight size={14} /></span>
             </motion.div>
           ))}
         </div>

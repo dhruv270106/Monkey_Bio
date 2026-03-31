@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Reveal } from '@/components/Reveal'
+import { SectionBadge } from '@/components/SectionBadge'
 import { 
   Plus, 
   Minus, 
@@ -128,9 +129,14 @@ export default function HashtagGeneratorPage() {
     <div className="min-h-screen bg-white text-black font-sans selection:bg-[#CC01DD] selection:text-white overflow-x-hidden">
 
       {/* 1. HERO SECTION - MAGENTA */}
-      <section className="pt-48 pb-32 px-6 md:px-20 relative overflow-hidden bg-[#CC01DD] text-white text-center">
+      <section className="pt-48 pb-32 px-6 md:px-20 relative overflow-visible bg-[#CC01DD] text-white text-center">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20 relative z-10 text-center lg:text-left">
           <div className="w-full lg:w-1/2 space-y-12 flex flex-col items-center lg:items-start text-center lg:text-left">
+            <Reveal width="100%" overflowVisible>
+                <div className="flex justify-center lg:justify-start w-full">
+                  <SectionBadge icon={Hash} title="Hashtag Generator" light />
+                </div>
+            </Reveal>
             <SectionHeading 
               subtitle="HASHTAGS MADE EASY"
               title="Viral-worthy Instagram hashtag generator" 
@@ -150,12 +156,18 @@ export default function HashtagGeneratorPage() {
             </Reveal>
           </div>
           <motion.div 
-             initial={{ opacity: 0, x: 100 }}
-             animate={{ opacity: 1, x: 0 }}
+             initial={{ opacity: 0, scale: 0.9, y: 50 }}
+             animate={{ opacity: 1, scale: 1, y: 0 }}
              transition={{ duration: 1.2, delay: 0.4 }}
              className="w-full lg:w-1/2 flex justify-center lg:justify-end"
           >
-             <HashtagHeroMockup />
+             <div className="aspect-square w-full max-w-md bg-white rounded-[60px] md:rounded-[80px] shadow-5xl border-[15px] border-white/5 overflow-hidden relative group">
+                <img src="/images/analyze.png" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" alt="Hashtag Analytics" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                   <HashtagHeroMockup />
+                </div>
+             </div>
           </motion.div>
         </div>
       </section>

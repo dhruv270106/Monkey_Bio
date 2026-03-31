@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useUser } from '@/hooks/useUser'
 import Lenis from 'lenis'
 import { 
   Rocket, 
@@ -283,7 +284,7 @@ const CommunityImpact = () => (
   </section>
 )
 
-const FinalCTA = () => (
+const FinalCTA = ({ targetLink }: { targetLink: string }) => (
   <section className="py-20 md:py-32 px-6 bg-white">
     <div className="max-w-7xl mx-auto">
       <motion.div 
@@ -296,7 +297,7 @@ const FinalCTA = () => (
             Ready to showcase your<br className="hidden md:block"/>best self to the world?
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/signup" className="w-full sm:w-auto bg-[#4d5700] text-[#d8ef2c] px-8 py-4 md:px-10 md:py-5 rounded-full font-extrabold text-lg md:text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl uppercase tracking-widest">
+            <Link href={targetLink} className="w-full sm:w-auto bg-[#4d5700] text-[#d8ef2c] px-8 py-4 md:px-10 md:py-5 rounded-full font-extrabold text-lg md:text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl uppercase tracking-widest">
                 Create Your Profile
             </Link>
             <p className="text-[#4d5700] font-semibold uppercase tracking-wide text-xs md:text-sm underline decoration-2 underline-offset-4 cursor-pointer">Join the Pulse Today</p>
@@ -308,6 +309,8 @@ const FinalCTA = () => (
 )
 
 export default function AboutPage() {
+  const { user } = useUser()
+  const targetLink = user ? '/dashboard' : '/signup'
   useEffect(() => {
     const lenis = new Lenis()
     function raf(time: number) {
@@ -327,7 +330,7 @@ export default function AboutPage() {
         <StatsSection />
         <TeamSection />
         <CommunityImpact />
-        <FinalCTA />
+        <FinalCTA targetLink={targetLink} />
       </main>
     </div>
   )

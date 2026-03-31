@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useUser } from '@/hooks/useUser'
 import { Reveal } from '@/components/Reveal'
 import { 
   Check, 
@@ -214,6 +216,8 @@ function SyncBgMockup() {
 }
 
 export default function CanvaIntegrationPage() {
+  const { user } = useUser()
+  const targetLink = user ? '/dashboard' : '/signup'
   return (
     <div className="min-h-screen bg-white text-black font-sans selection:bg-[#00C4CC] selection:text-white overflow-x-hidden">
 
@@ -237,13 +241,15 @@ export default function CanvaIntegrationPage() {
             />
 
             <Reveal delay={0.3} width="100%" overflowVisible>
-                <motion.button 
-                    whileHover={{ scale: 1.05, backgroundColor: '#00C4CC', color: '#FFF' }} 
-                    whileTap={{ scale: 0.95 }}
-                    className="px-14 py-7 bg-white text-black rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
-                >
-                    Connect Canva
-                </motion.button>
+                <Link href={targetLink}>
+                    <motion.button 
+                        whileHover={{ scale: 1.05, backgroundColor: '#00C4CC', color: '#FFF' }} 
+                        whileTap={{ scale: 0.95 }}
+                        className="px-14 py-7 bg-white text-black rounded-full font-extrabold uppercase text-sm shadow-2xl transition-all"
+                    >
+                        Connect Canva
+                    </motion.button>
+                </Link>
             </Reveal>
 
             <motion.div 
@@ -387,13 +393,15 @@ export default function CanvaIntegrationPage() {
                </h2>
             </Reveal>
             <Reveal width="100%" delay={0.2} overflowVisible>
-               <motion.button 
-                  whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#502274' }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-16 py-8 bg-[#D2E823] text-black rounded-full font-extrabold uppercase text-sm shadow-3xl transition-all"
-               >
-                  Connect Canva Now
-               </motion.button>
+                <Link href={targetLink}>
+                   <motion.button 
+                      whileHover={{ scale: 1.05, backgroundColor: '#FFFFFF', color: '#502274' }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-16 py-8 bg-[#D2E823] text-black rounded-full font-extrabold uppercase text-sm shadow-3xl transition-all"
+                   >
+                      Connect Canva Now
+                   </motion.button>
+                </Link>
             </Reveal>
          </div>
          {/* Background Decoration */}

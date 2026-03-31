@@ -24,6 +24,8 @@ import {
   ChevronDown
 } from 'lucide-react'
 import { sendNotification } from '@/lib/notifications'
+import { useUser } from '@/hooks/useUser'
+import Link from 'next/link'
 
 // Types
 interface Plan {
@@ -205,6 +207,8 @@ export default function PricingPage() {
   const [proofUrl, setProofUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [profile, setProfile] = useState<any>(null)
+  const { user } = useUser()
+  const targetLink = user ? '/dashboard' : '/signup'
 
   useEffect(() => {
     fetchProfile()
@@ -560,9 +564,11 @@ export default function PricingPage() {
            Ready to start? <br /> It's free.
          </h2>
          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="px-12 py-5 bg-[#1e1e1e] text-white rounded-full font-extrabold text-lg hover:scale-105 transition-transform">
-               Get started for free
-            </button>
+            <Link href={targetLink}>
+              <button className="px-12 py-5 bg-[#1e1e1e] text-white rounded-full font-extrabold text-lg hover:scale-105 transition-transform">
+                 Get started for free
+              </button>
+            </Link>
          </div>
       </section>
     </div>
