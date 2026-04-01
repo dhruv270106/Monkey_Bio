@@ -162,7 +162,7 @@ export default function HashtagGeneratorPage() {
              className="w-full lg:w-1/2 flex justify-center lg:justify-end"
           >
              <div className="aspect-square w-full max-w-md bg-white rounded-[60px] md:rounded-[80px] shadow-5xl border-[15px] border-white/5 overflow-hidden relative group">
-                <img src="/images/analyze.png" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" alt="Hashtag Analytics" />
+                <img src="/images/social_good_tools.png" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" alt="Hashtag Analytics" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
                    <HashtagHeroMockup />

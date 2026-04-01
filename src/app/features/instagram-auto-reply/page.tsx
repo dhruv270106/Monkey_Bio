@@ -161,7 +161,7 @@ export default function InstagramAutoReplyPage() {
              className="w-full lg:w-1/2 flex justify-center lg:justify-end"
           >
              <div className="aspect-square w-full max-w-md bg-white rounded-[60px] md:rounded-[80px] shadow-5xl border-[15px] border-white/5 overflow-hidden relative group">
-                <img src="/images/share.png" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" alt="Instagram Auto Reply" />
+                <img src="/images/about_solution_3d_glow.png" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" alt="Instagram Auto Reply" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
                    <AutoReplyHeroMockup />

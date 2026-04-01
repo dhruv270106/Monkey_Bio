@@ -74,7 +74,7 @@ function SectionHeading({ subtitle, title, description, light = false, centered 
     <div className={`space-y-6 mb-12 ${centered ? 'text-center items-center' : 'text-center md:text-left flex flex-col items-center md:items-start'}`}>
         {!subtitle && null} { /* Subtitle handled by Badge now */ }
         <Reveal delay={0.1} width={centered ? '100%' : 'fit-content'}>
-            <h2 className={`text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase leading-[0.95] ${light ? 'text-white' : 'text-black'}`}>
+            <h2 className={`text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter uppercase leading-[1.1] ${light ? 'text-white' : 'text-black'}`}>
                 {title}
             </h2>
         </Reveal>
@@ -191,7 +191,7 @@ export default function AudienceManagerPage() {
             </Reveal>
             
             <Reveal delay={0.1}>
-                <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.85] uppercase">
+                <h1 className="text-5xl md:text-[7rem] font-extrabold tracking-tighter leading-[1.1] uppercase">
                   Collect <br className="hidden md:block" /><span className="text-[#D2E823]">grow & scale.</span>
                 </h1>
             </Reveal>

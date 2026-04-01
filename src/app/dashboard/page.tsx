@@ -3,45 +3,13 @@
 import { useState, useEffect, Suspense, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import Sidebar from '@/components/dashboard/Sidebar'
 import Preview from '@/components/dashboard/Preview'
 import LinksSection from '@/components/dashboard/LinksSection'
 import DesignSection from '@/components/dashboard/DesignSection'
 import AudienceSection from '@/components/dashboard/AudienceSection'
 import InsightsSection from '@/components/dashboard/InsightsSection'
-import PlannerSection from '@/components/dashboard/PlannerSection'
-import AutoReplySection from '@/components/dashboard/AutoReplySection'
+import AddLinkModal from '@/components/dashboard/AddLinkModal'
 import { motion, AnimatePresence } from 'framer-motion'
-
-const NAV_GROUPS = [
-  {
-    id: 'linktree',
-    label: 'My Linktree',
-    icon: 'fi-rr-link',
-    items: [
-      { id: 'links', label: 'Links', icon: 'fi-rr-link', color: 'text-purple-500' },
-      { id: 'design', label: 'Design', icon: 'fi-rr-palette', color: 'text-pink-500' },
-    ]
-  },
-  {
-    id: 'analytics',
-    label: 'Analytics',
-    icon: 'fi-rr-stats',
-    items: [
-      { id: 'audience', label: 'Audience', icon: 'fi-rr-users', color: 'text-orange-500' },
-      { id: 'insights', label: 'Insights', icon: 'fi-rr-stats', color: 'text-cyan-500' },
-    ]
-  },
-  {
-    id: 'tools',
-    label: 'Tools',
-    icon: 'fi-rr-apps',
-    items: [
-      { id: 'planner', label: 'Social planner', icon: 'fi-rr-calendar', color: 'text-blue-500' },
-      { id: 'autoreply', label: 'Auto-reply', icon: 'fi-rr-comment-alt', color: 'text-primary' },
-    ]
-  }
-]
 
 function DashboardContent() {
   const router = useRouter()
@@ -52,30 +20,24 @@ function DashboardContent() {
   const [links, setLinks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState(tabFromQuery)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [openGroup, setOpenGroup] = useState<string | null>(null)
+  const [showAddModal, setShowAddModal] = useState(false)
+  
+  // Handle action parameter
+  useEffect(() => {
+    if (searchParams.get('action') === 'create') {
+      setShowAddModal(true)
+      // Clean up URL so it doesn't reopen on refresh
+      const newPath = window.location.pathname + (tabFromQuery ? `?tab=${tabFromQuery}` : '')
+      window.history.replaceState({}, '', newPath)
+    }
+  }, [searchParams])
   
   // Real-time synchronization lock
   const isUpdatingRef = useRef(false)
   const lastUpdateRef = useRef<number>(0)
-  
-  const bottomNavRef = useRef<HTMLDivElement>(null)
-
-  // Close group menu when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (bottomNavRef.current && !bottomNavRef.current.contains(event.target as Node)) {
-        setOpenGroup(null)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
 
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab)
-    setIsSidebarOpen(false)
-    setOpenGroup(null)
     router.replace(`/dashboard?tab=${newTab}`, { scroll: false })
   }
 
@@ -97,19 +59,11 @@ function DashboardContent() {
         .eq('id', session.user.id)
         .single()
 
-      if (profileError && profileError.code !== 'PGRST116') {
-        console.error("Profile Fetch Error:", profileError)
-      }
-
       if (profileData) {
-        if (!profileData.onboarding_completed) {
-          window.location.replace('/onboarding')
-          return
-        }
         setProfile(profileData)
         setLinks(profileData.links || [])
 
-        // Subscribe to real-time updates for THIS profile
+        // Subscribe to real-time updates
         const channel = supabase
           .channel(`sync-${session.user.id}`)
           .on('postgres_changes', { 
@@ -130,9 +84,7 @@ function DashboardContent() {
           supabase.removeChannel(channel)
         }
       } else {
-        // No profile found, must finish onboarding
         window.location.replace('/onboarding')
-        return
       }
     } catch (e) {
       console.error("Dashboard error:", e)
@@ -143,17 +95,12 @@ function DashboardContent() {
 
   const globalUpdateProfile = async (updates: any) => {
     if (!profile) return
-    
-    // 1. Update local state immediately
     const newProfile = { ...profile, ...updates }
     setProfile(newProfile)
     if (updates.links) setLinks(updates.links)
-
-    // 2. Set the lock
     isUpdatingRef.current = true
     lastUpdateRef.current = Date.now()
 
-    // 3. Commit to DB
     try {
        const { data: { session } } = await supabase.auth.getSession()
        if (session) {
@@ -163,10 +110,7 @@ function DashboardContent() {
     } catch (err) {
        console.error("Global update error:", err)
     } finally {
-       // Release lock after a short delay to allow DB state to stabilize
-       setTimeout(() => {
-          isUpdatingRef.current = false
-       }, 1000)
+       setTimeout(() => { isUpdatingRef.current = false }, 1000)
     }
   }
 
@@ -177,7 +121,7 @@ function DashboardContent() {
 
   if (loading || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="flex-1 flex items-center justify-center bg-white h-full">
         <i className="fi fi-rr-spinner animate-spin text-3xl text-primary"></i>
       </div>
     )
@@ -193,114 +137,96 @@ function DashboardContent() {
         return <AudienceSection profile={profile} />
       case 'insights':
         return <InsightsSection profile={profile} />
-      case 'planner':
-        return <PlannerSection profile={profile} />
-      case 'autoreply':
-        return <AutoReplySection profile={profile} />
       default:
         return <LinksSection profile={profile} links={links} setLinks={setLinks} setProfile={globalUpdateProfile} refreshData={fetchData} />
     }
   }
 
+  const tabs = [
+    { id: 'links', label: 'Links', icon: 'fi-rr-link' },
+    { id: 'design', label: 'Design', icon: 'fi-rr-palette' },
+    { id: 'audience', label: 'Audience', icon: 'fi-rr-users' },
+    { id: 'insights', label: 'Insights', icon: 'fi-rr-stats' },
+  ]
+
+  const handleQuickAdd = async (linkData: { title: string; url: string; platform: string }) => {
+    const newLinks = [...links, { ...linkData, id: Date.now(), active: true, clicks: 0 }]
+    setLinks(newLinks)
+    await globalUpdateProfile({ links: newLinks })
+    setShowAddModal(false)
+  }
+
   return (
-    <div className="h-[100dvh] bg-white flex flex-col overflow-hidden">
-      {/* Top Banner */}
-      <div className="bg-[#1e293b] text-white py-2 px-4 md:px-8 flex justify-center items-center gap-4 text-xs md:text-sm font-semibold shrink-0 z-[160]">
-          <span className="truncate text-center">Unlock more tools to grow your audience faster.</span>
-          <button className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 px-3 py-1 rounded-full flex items-center gap-2 transition-all shrink-0">
-              <i className="fi fi-rr-bolt text-xs"></i> <span>Claim week</span>
-          </button>
+    <div className="h-full flex flex-col overflow-hidden">
+      {/* Local Navigation Tabs */}
+      <div className="px-8 border-b border-gray-50 bg-white/80 backdrop-blur-md flex items-center justify-between shrink-0">
+         <div className="flex items-center gap-8">
+           {tabs.map((tab) => (
+             <button 
+               key={tab.id}
+               onClick={() => handleTabChange(tab.id)}
+               className={`py-5 text-[10px] font-black uppercase tracking-[0.2em] relative transition-colors ${activeTab === tab.id ? 'text-primary' : 'text-gray-400 hover:text-secondary'}`}
+             >
+                <div className="flex items-center gap-2">
+                   <i className={`${tab.icon} text-sm pt-0.5`}></i>
+                   {tab.label}
+                </div>
+                {activeTab === tab.id && (
+                  <motion.div layoutId="activeTabUnderline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                )}
+             </button>
+           ))}
+         </div>
+
+         <button 
+           onClick={() => setShowAddModal(true)}
+           className="hidden md:flex items-center gap-2 px-6 py-2 bg-secondary text-white rounded-full text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg"
+         >
+            <i className="fi fi-rr-plus"></i> New Link
+         </button>
       </div>
 
-      {/* Mobile Top Header - HIDE IF IN DESIGN TAB */}
-      {!activeTab?.includes('design') && (
-        <div className="flex md:hidden items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-[36px] z-[150]">
-            <div className="flex items-center gap-3">
-               <button onClick={() => setIsSidebarOpen(true)} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-secondary border border-gray-100"><i className="fi fi-rr-menu-burger text-lg"></i></button>
-               <p className="font-extrabold text-xs md:text-sm uppercase tracking-[0.2em] text-secondary">{activeTab}</p>
-            </div>
-            <div className="w-8 h-8 rounded-full bg-primary/10 overflow-hidden border border-primary/20">
-               <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
-            </div>
-        </div>
-      )}
-
-      <div className="flex-1 flex overflow-hidden relative">
-        <Sidebar userProfile={profile} activeTab={activeTab} onTabChange={handleTabChange} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-
-        <main className="flex-1 overflow-hidden min-w-0 bg-white relative">
-          <div className="w-full h-full flex flex-col lg:flex-row overflow-hidden">
-            <div className="flex-1 overflow-hidden flex flex-col">
-              {renderSection()}
+      <div className="flex-1 overflow-hidden min-w-0 bg-[#fcfcfc] relative">
+         <div className="w-full h-full flex flex-col lg:flex-row overflow-hidden">
+            <div className="flex-1 overflow-y-auto no-scrollbar pb-24 md:pb-0">
+               <motion.div
+                 key={activeTab}
+                 initial={{ opacity: 0, x: -10 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 className="h-full"
+               >
+                 {renderSection()}
+               </motion.div>
             </div>
             
-            {/* Unified Preview - Hidden on mobile when NOT in Design tab to save space, but accessible */}
-            <div className={`${activeTab === 'design' ? 'flex' : 'hidden lg:flex'} w-full lg:w-[480px] h-[50dvh] lg:h-full shrink-0`}>
+            {/* Unified Preview */}
+            <div className={`${activeTab === 'design' ? 'flex' : 'hidden lg:flex'} w-full lg:w-[480px] h-[50dvh] lg:h-full shrink-0 border-l border-gray-100 bg-white`}>
                <Preview userProfile={profile} links={links} socialLinks={profile?.social_links} />
             </div>
-          </div>
-        </main>
+         </div>
+      </div>
 
-        {/* REFINED MOBILE BOTTOM NAVIGATION - CATEGORY BASED POPUP */}
-        <div ref={bottomNavRef} className="fixed bottom-0 left-0 right-0 z-[160] md:hidden">
-           {/* POPUP MENU */}
-           <AnimatePresence>
-             {openGroup && (
-               <motion.div 
-                 initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                 exit={{ opacity: 0, y: 20, scale: 0.9 }}
-                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                 className="absolute bottom-[90%] left-6 right-6 bg-white/95 backdrop-blur-xl border border-gray-100 rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] p-2 z-[200] flex flex-col gap-1"
+      <AddLinkModal 
+        isOpen={showAddModal} 
+        onClose={() => setShowAddModal(false)} 
+        onAdd={handleQuickAdd}
+        linksCount={links.length}
+      />
+      
+      {/* Mobile Sticky Tab Bar (Bottom of main area, but not viewport bottom) */}
+      <div className="md:hidden fixed bottom-6 left-6 right-6 z-[170]">
+         <div className="bg-secondary text-white rounded-full px-4 py-2 shadow-2xl flex items-center justify-around">
+            {tabs.map(tab => (
+               <button 
+                key={tab.id} 
+                onClick={() => handleTabChange(tab.id)}
+                className={`flex flex-col items-center gap-1 p-2 transition-all ${activeTab === tab.id ? 'text-primary' : 'text-white/40'}`}
                >
-                  <p className="text-[9px] font-extrabold uppercase text-gray-400 tracking-[0.3em] px-4 py-3 border-b border-gray-50">
-                    {NAV_GROUPS.find(g => g.id === openGroup)?.label || 'Menu'} tools
-                  </p>
-                  {NAV_GROUPS.find(g => g.id === openGroup)?.items?.map(item => (
-                    <button 
-                      key={item.id} 
-                      onClick={() => handleTabChange(item.id)}
-                      className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${activeTab === item.id ? 'bg-primary/10 text-primary' : 'hover:bg-gray-50 text-gray-500'}`}
-                    >
-                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${activeTab === item.id ? 'bg-primary text-white' : 'bg-gray-50'}`}>
-                          <i className={`fi ${item.icon} text-lg`}></i>
-                       </div>
-                       <span className="font-extrabold text-xs uppercase tracking-widest">{item.label}</span>
-                       {activeTab === item.id && <i className="fi fi-rr-check text-xs ml-auto"></i>}
-                    </button>
-                  ))}
-               </motion.div>
-             )}
-           </AnimatePresence>
-
-           {/* MAIN BOTTOM BAR - HIDE IF IN DESIGN TAB */}
-           {!activeTab?.includes('design') && (
-            <div className="bg-white/95 backdrop-blur-xl border-t border-gray-100 flex items-center justify-around py-4 px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] relative z-[160]">
-                {NAV_GROUPS.map(group => {
-                  const isItemInGroupActive = group.items.some(i => i.id === activeTab)
-                  const isGroupOpen = openGroup === group.id
-
-                  return (
-                    <button
-                      key={group.id}
-                      onClick={() => setOpenGroup(isGroupOpen ? null : group.id)}
-                      className={`flex flex-col items-center gap-1.5 transition-all relative ${isItemInGroupActive ? 'text-primary' : 'text-gray-300'}`}
-                    >
-                      <div className={`w-14 h-12 rounded-[22px] flex items-center justify-center transition-all ${isItemInGroupActive ? 'bg-primary/10' : ''}`}>
-                        <i className={`fi ${group.icon} text-xl md:text-2xl`}></i>
-                      </div>
-                      <span className="text-[9px] font-extrabold uppercase tracking-[0.2em]">{group.label}</span>
-                      {isItemInGroupActive && !isGroupOpen && (
-                        <motion.div layoutId="active-dot" className="absolute -top-1 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_10px_#502274]" />
-                      )}
-                    </button>
-                  )
-                })}
-            </div>
-           )}
-        </div>
-
-
+                  <i className={`${tab.icon} text-lg`}></i>
+                  {/* <span className="text-[7px] font-black uppercase tracking-widest">{tab.label}</span> */}
+               </button>
+            ))}
+         </div>
       </div>
     </div>
   )
@@ -309,7 +235,7 @@ function DashboardContent() {
 export default function Dashboard() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="h-full flex items-center justify-center bg-white">
         <i className="fi fi-rr-spinner animate-spin text-3xl text-primary"></i>
       </div>
     }>

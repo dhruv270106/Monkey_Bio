@@ -64,7 +64,7 @@ function SectionHeading({ subtitle, title, light = false, centered = false }: { 
             <span className={`text-[11px] font-black uppercase tracking-[0.4em] ${light ? 'text-white/40' : 'text-black/40'}`}>{subtitle}</span>
         </Reveal>
         <Reveal delay={0.1} width={centered ? '100%' : 'fit-content'}>
-            <h2 className={`text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.9] ${light ? 'text-white' : 'text-black'}`}>
+            <h2 className={`text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter uppercase leading-[1.1] ${light ? 'text-white' : 'text-black'}`}>
                 {title}
             </h2>
         </Reveal>
@@ -86,7 +86,7 @@ export default function SocialMediaManagementPage() {
             </Reveal>
             <div className="space-y-4 mb-8 text-center items-center flex flex-col">
                 <Reveal delay={0.1}>
-                    <h1 className="text-5xl md:text-[9rem] font-black tracking-tighter leading-none uppercase mb-4">
+                    <h1 className="text-5xl md:text-[7rem] font-extrabold tracking-tighter leading-[1.1] uppercase mb-4">
                         Schedule <br className="hidden md:block" /><span className="text-[#DEF141]">posts & grow.</span>
                     </h1>
                 </Reveal>

@@ -67,7 +67,7 @@ function SectionHeading({ subtitle, title, description, light = false, centered 
           </Reveal>
         )}
         <Reveal delay={0.1} width={centered ? '100%' : 'fit-content'}>
-            <h2 className={`text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter uppercase leading-[1.1] ${light ? 'text-white' : 'text-black'}`}>
+            <h2 className={`text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter uppercase leading-[1.1] ${light ? 'text-white' : 'text-black'}`}>
                 {title}
             </h2>
         </Reveal>

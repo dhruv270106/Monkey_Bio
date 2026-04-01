@@ -1,7 +1,7 @@
 {
+  "/products/analytics/page": "app/products/analytics/page.js",
+  "/about/page": "app/about/page.js",
+  "/products/audience-manager/page": "app/products/audience-manager/page.js",
   "/products/[slug]/page": "app/products/[slug]/page.js",
-  "/solutions/grow-and-engage/page": "app/solutions/grow-and-engage/page.js",
-  "/features/hashtag-generator/page": "app/features/hashtag-generator/page.js",
-  "/features/canva-integration/page": "app/features/canva-integration/page.js",
-  "/solutions/manage-your-social-media/page": "app/solutions/manage-your-social-media/page.js"
+  "/products/email-integration/page": "app/products/email-integration/page.js"
 }
