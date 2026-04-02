@@ -47,7 +47,8 @@ function DashboardContent() {
 
   const fetchData = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
+      const { data } = await supabase.auth.getSession()
+      const session = data?.session
       if (!session) {
         window.location.href = '/login'
         return
@@ -102,7 +103,8 @@ function DashboardContent() {
     lastUpdateRef.current = Date.now()
 
     try {
-       const { data: { session } } = await supabase.auth.getSession()
+       const { data } = await supabase.auth.getSession()
+       const session = data?.session
        if (session) {
           const { error } = await supabase.from('monkey_bio').update(updates).eq('id', session.user.id)
           if (error) throw error

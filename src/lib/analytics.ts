@@ -15,23 +15,32 @@ export const trackActivity = async (eventType: string, description: string, user
                    userAgent.includes('Android') ? 'Android' : 
                    userAgent.includes('iPhone') ? 'iOS' : 'Web'
 
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data } = await supabase.auth.getSession()
+    const session = data?.session
     const finalUserId = userId || session?.user?.id
 
     // Insert into activity logs
-    await supabase.from('activity_logs').insert({
-      user_id: finalUserId,
-      event_type: eventType,
-      description: description,
-      device_info: userAgent.substring(0, 100),
-      // IP is handled better by Supabase backend, but we can log basic device too
-    })
+    try {
+      await supabase.from('activity_logs').insert({
+        user_id: finalUserId,
+        event_type: eventType,
+        description: description,
+        device_info: userAgent.substring(0, 100),
+        // IP is handled better by Supabase backend, but we can log basic device too
+      })
+    } catch (dbErr) {
+      console.warn("Could not log to activity_logs:", dbErr)
+    }
 
     // Update user's last seen info in monkey_bio
     if (finalUserId) {
+        // Safe split for device info
+        const uaParts = userAgent.includes(' (') ? userAgent.split(') ')[0].split(' (') : []
+        const deviceDetail = uaParts.length > 1 ? uaParts[1] : 'Unknown'
+        
         await supabase.from('monkey_bio').update({
             last_login: new Date().toISOString(),
-            device_info: `${device} / ${userAgent.split(') ')[0].split(' (')[1]}`,
+            device_info: `${device} / ${deviceDetail}`,
             // Potentially update IP if you have a public IP service
         }).eq('id', finalUserId)
     }

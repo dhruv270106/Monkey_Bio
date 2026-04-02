@@ -188,7 +188,7 @@ export default function DeviceMockup({ userProfile, links = [], socialLinks = {}
 
             {/* Social Icons Row */}
             <div className="flex flex-wrap justify-center gap-4 mb-10 w-full animate-fade-in">
-              {socialLinks && typeof socialLinks === 'object' && Object.entries(socialLinks).slice(0, 5).map(([platform, url]: [string, any]) => (
+              {socialLinks && typeof socialLinks === 'object' && !Array.isArray(socialLinks) && Object.entries(socialLinks).slice(0, 5).map(([platform, url]: [string, any]) => (
                 url && (
                   <div 
                     key={platform} 

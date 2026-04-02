@@ -9,18 +9,27 @@ export function useUser() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      setLoading(false)
+      try {
+        const { data, error } = await supabase.auth.getUser()
+        if (error) throw error
+        setUser(data?.user || null)
+      } catch (err) {
+        console.error("useUser fetch error:", err)
+        setUser(null)
+      } finally {
+        setLoading(false)
+      }
     }
 
     fetchUser()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      if (data?.subscription) data.subscription.unsubscribe()
+    }
   }, [])
 
   return { user, loading }

@@ -141,26 +141,31 @@ export default function Navbar() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      // Use getUser() instead of getSession() to verify the user actually exists in the DB
-      const { data: { user }, error } = await supabase.auth.getUser()
-      
-      if (user && !error) {
-        setUser(user)
-        setLoading(false)
-        const { data: profileData } = await supabase.from('monkey_bio').select('*').eq('id', user.id).single()
-        if (profileData) setProfile(profileData)
-      } else {
-        // Clear stale local sessions if the user was deleted in the DB
-        if (error) await supabase.auth.signOut()
-        setUser(null)
-        setProfile(null)
+      try {
+        const { data, error } = await supabase.auth.getUser()
+        const user = data?.user
+        
+        if (user && !error) {
+          setUser(user)
+          setLoading(false)
+          const { data: profileData } = await supabase.from('monkey_bio').select('*').eq('id', user.id).single()
+          if (profileData) setProfile(profileData)
+        } else {
+          // Clear stale local sessions if the user was deleted in the DB
+          if (error) await supabase.auth.signOut()
+          setUser(null)
+          setProfile(null)
+          setLoading(false)
+        }
+      } catch (err) {
+        console.error("fetchUser error:", err)
         setLoading(false)
       }
     }
 
     fetchUser()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session) {
         setUser(session.user)
         // Try to get profile if not already there
@@ -172,7 +177,9 @@ export default function Navbar() {
       }
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      if (data?.subscription) data.subscription.unsubscribe()
+    }
   }, [])
 
   const handleLogout = async () => {

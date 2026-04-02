@@ -24,19 +24,20 @@ export default function DashboardLayout({
 
   const fetchProfile = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
+      const { data } = await supabase.auth.getSession()
+      const session = data?.session
       if (!session) {
         router.replace('/login')
         return
       }
 
-      const { data: profileData } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from('monkey_bio')
         .select('*')
         .eq('id', session.user.id)
         .single()
 
-      if (profileData) {
+      if (profileData && !profileError) {
         setProfile(profileData)
       } else {
         router.replace('/onboarding')

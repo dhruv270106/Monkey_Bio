@@ -215,10 +215,11 @@ export default function PricingPage() {
   }, [])
 
   const fetchProfile = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data } = await supabase.auth.getSession()
+    const session = data?.session
     if (session) {
-      const { data } = await supabase.from('monkey_bio').select('*').eq('id', session.user.id).single()
-      setProfile(data)
+      const { data: profileRecord } = await supabase.from('monkey_bio').select('*').eq('id', session.user.id).single()
+      setProfile(profileRecord)
     }
   }
 
@@ -238,9 +239,13 @@ export default function PricingPage() {
     }
 
     setLoading(true)
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data } = await supabase.auth.getSession()
+    const session = data?.session
     
-    if (!session) return
+    if (!session) {
+      setLoading(false)
+      return
+    }
 
     const { error } = await supabase.from('payments').insert({
       user_id: session.user.id,

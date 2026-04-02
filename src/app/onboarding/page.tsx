@@ -32,7 +32,8 @@ export default function Onboarding() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data } = await supabase.auth.getUser()
+      const user = data?.user
       if (user) {
         setDisplayName(user.user_metadata.full_name || '')
         const base = user.user_metadata.full_name?.toLowerCase().replace(/\s/g, '_') || 'user'
@@ -77,7 +78,8 @@ export default function Onboarding() {
   }
 
   const completeOnboarding = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data } = await supabase.auth.getUser()
+    const user = data?.user
     if (!user) return
 
     const socialLinksObj = socialLinks.reduce((acc, curr) => {
