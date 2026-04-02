@@ -17,10 +17,10 @@ const PRODUCTS_MENU = [
       { title: 'Link in bio', desc: 'Customize your Monkey Bio', href: '/products/link-in-bio' },
       { title: 'Link shortener', desc: 'Create trackable, shareable short links', href: '/products/link-shortener' },
       { title: 'QR code generator', desc: 'Turn links into scannable QR codes', href: '/products/qr-generator' },
-      { title: 'Canva Background Editor', desc: 'Import your custom designs from Canva', href: '/features/canva-integration' },
+      { title: 'Canva Background Editor', desc: 'Import your custom designs from Canva', href: '/products/canva-editor' },
     ],
     featured: {
-      image: '/products/link-in-bio-hero.png',
+      image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop',
       title: 'Join 70M+ using Monkey Bio as their link in bio',
       desc: 'One link to share everything you create, curate, and sell across all your socials.'
     }
@@ -29,15 +29,15 @@ const PRODUCTS_MENU = [
     id: 'manage-social',
     title: 'Manage your social media',
     icon: 'fi-rr-share-square',
-    href: '/solutions/manage-your-social-media',
+    href: '/products/social-media',
     subOptions: [
-      { title: 'Schedule and auto-post', desc: 'Hands-free, hassle-free social media planning', href: '/features/social-planner' },
-      { title: 'Instagram auto reply', desc: 'Automated replies and DMs triggered by comments', href: '/features/instagram-auto-reply' },
-      { title: 'AI content generator', desc: 'Instant AI-powered post ideas and captions', href: '/features/ai-content-generator' },
-      { title: 'Hashtag generator', desc: 'Trending hashtag suggestions for better reach', href: '/features/hashtag-generator' },
+      { title: 'Schedule and auto-post', desc: 'Hands-free, hassle-free social media planning', href: '/products/scheduler' },
+      { title: 'Instagram auto reply', desc: 'Automated replies and DMs triggered by comments', href: '/products/auto-reply' },
+      { title: 'AI content generator', desc: 'Instant AI-powered post ideas and captions', href: '/products/ai-generator' },
+      { title: 'Hashtag generator', desc: 'Trending hashtag suggestions for better reach', href: '/products/hashtag-generator' },
     ],
     featured: {
-      image: '/solutions/hero.png',
+      image: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?q=80&w=600&auto=format&fit=crop',
       title: 'Boost sales with Instagram Auto-reply',
       desc: 'Instantly reply to comments, send traffic to your offers, and turn engagement into sales.'
     }
@@ -46,14 +46,14 @@ const PRODUCTS_MENU = [
     id: 'grow-audience',
     title: 'Grow and engage your audience',
     icon: 'fi-rr-users',
-    href: '/solutions/grow-and-engage',
+    href: '/products/grow-audience',
     subOptions: [
-      { title: 'Collect leads', desc: 'Turn visitors into subscribers', href: '/features/collect-leads' },
+      { title: 'Collect leads', desc: 'Turn visitors into subscribers', href: '/products/lead-capture' },
       { title: 'Manage audience', desc: 'Organize, tag, and track contacts', href: '/products/audience-manager' },
       { title: 'Send to email tools', desc: 'Sync with Mailchimp, Klaviyo, Kit & more', href: '/products/email-integration' },
     ],
     featured: {
-      image: '/solutions/stack.png',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop',
       title: 'Connect your email tools, activate your audience',
       desc: 'Send new contacts straight from Monkey Bio to Mailchimp, Klaviyo, and more.'
     }
@@ -85,7 +85,7 @@ const LEARN_MENU = [
       { title: 'Success Stories', desc: 'Real people, real results on Monkey Bio', href: '/success-stories' },
     ],
     featured: {
-      image: '/images/about_mosaic_hero.png',
+      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=800&auto=format&fit=crop',
       title: 'Learn with Monkey Bio',
       desc: 'Create & sell your own online Course. If you\'ve got something to share, you\'ve got something to sell.'
     }
@@ -120,16 +120,8 @@ export default function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
 
-  const STATIC_PAGES = ['about', 'pricing', 'templates', 'blog', 'help', 'contact', 'social-good', 'learn', 'marketplace', 'footer', 'features', 'products', 'design', 'wallpaper', 'solutions']
-  
-  const isDashboard = pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin') || pathname?.startsWith('/auth')
-  const isAuth = pathname === '/login' || pathname === '/signup' || pathname === '/onboarding'
-  
-  // If it's a root level path that isn't one of our static pages, it's likely a profile or a 404
-  const pathParts = pathname?.split('/').filter(Boolean) || []
-  const isProfile = pathParts.length === 1 && !STATIC_PAGES.includes(pathParts[0])
-  
-  if (isDashboard || isAuth || isProfile) {
+  const HIDDEN_PATHS = ['/dashboard', '/admin', '/login', '/signup', '/onboarding', '/auth']
+  if (HIDDEN_PATHS.some(path => pathname?.startsWith(path))) {
     return null
   }
 
@@ -141,24 +133,20 @@ export default function Navbar() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const { data, error } = await supabase.auth.getUser()
-        const user = data?.user
-        
-        if (user && !error) {
-          setUser(user)
-          setLoading(false)
-          const { data: profileData } = await supabase.from('monkey_bio').select('*').eq('id', user.id).single()
-          if (profileData) setProfile(profileData)
-        } else {
-          // Clear stale local sessions if the user was deleted in the DB
-          if (error) await supabase.auth.signOut()
-          setUser(null)
-          setProfile(null)
-          setLoading(false)
-        }
-      } catch (err) {
-        console.error("fetchUser error:", err)
+      // Use getUser() instead of getSession() to verify the user actually exists in the DB
+      const { data, error } = await supabase.auth.getUser()
+      const user = data?.user
+      
+      if (user && !error) {
+        setUser(user)
+        setLoading(false)
+        const { data: profileData } = await supabase.from('monkey_bio').select('*').eq('id', user.id).single()
+        if (profileData) setProfile(profileData)
+      } else {
+        // Clear stale local sessions if the user was deleted in the DB
+        if (error) await supabase.auth.signOut()
+        setUser(null)
+        setProfile(null)
         setLoading(false)
       }
     }

@@ -14,49 +14,39 @@ export default function PublicProfile() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let channel: any;
-
     const fetchProfile = async () => {
-      try {
-        const { data: sessionData } = await supabase.auth.getSession()
-        const session = sessionData?.session
-        const { data, error } = await supabase
-          .from('monkey_bio')
-          .select('*')
-          .eq('username', (username as string).toLowerCase())
-          .single()
-        
-        if (data) {
-          setProfile(data)
-          // Track Profile View
-          trackEvent('view', data.id)
+      const { data, error } = await supabase
+        .from('monkey_bio')
+        .select('*')
+        .eq('username', (username as string).toLowerCase())
+        .single()
+      
+      if (data) {
+        setProfile(data)
+        // Track Profile View
+        trackEvent('view', data.id)
 
-          // Subscribe to real-time updates for THIS profile
-          channel = supabase
-            .channel(`public-sync-${data.id}`)
-            .on('postgres_changes', { 
-              event: 'UPDATE', 
-              schema: 'public', 
-              table: 'monkey_bio',
-              filter: `id=eq.${data.id}`
-            }, (payload) => {
-              console.log('Public real-time sync applied:', payload.new)
-              setProfile(payload.new)
-            })
-            .subscribe()
+        // Subscribe to real-time updates for THIS profile
+        const channel = supabase
+          .channel(`public-sync-${data.id}`)
+          .on('postgres_changes', { 
+            event: 'UPDATE', 
+            schema: 'public', 
+            table: 'monkey_bio',
+            filter: `id=eq.${data.id}`
+          }, (payload) => {
+            console.log('Public real-time sync applied:', payload.new)
+            setProfile(payload.new)
+          })
+          .subscribe()
+
+        return () => {
+          supabase.removeChannel(channel)
         }
-      } catch (e) {
-        console.error("Profile fetch error:", e)
-      } finally {
-        setLoading(false)
       }
+      setLoading(false)
     }
-    
     fetchProfile()
-
-    return () => {
-      if (channel) supabase.removeChannel(channel)
-    }
   }, [username])
 
   const trackEvent = async (type: string, profileId: string, linkId?: string) => {

@@ -10,37 +10,28 @@ export const trackActivity = async (eventType: string, description: string, user
     const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : 'Server/Unknown'
     
     // Simple way to get browser/OS from user agent
-    const device = userAgent.includes('Windows') ? 'Windows' : 
-                   userAgent.includes('Mac') ? 'MacOS' : 
-                   userAgent.includes('Android') ? 'Android' : 
-                   userAgent.includes('iPhone') ? 'iOS' : 'Web'
+    const deviceStrings = userAgent ? userAgent.split(' ') : ['Web', 'Client']
+    const device = deviceStrings.length > 2 ? deviceStrings[1].replace('(', '').replace(';', '') : 'Web'
 
     const { data } = await supabase.auth.getSession()
     const session = data?.session
+    if (!session) return
     const finalUserId = userId || session?.user?.id
 
     // Insert into activity logs
-    try {
-      await supabase.from('activity_logs').insert({
-        user_id: finalUserId,
-        event_type: eventType,
-        description: description,
-        device_info: userAgent.substring(0, 100),
-        // IP is handled better by Supabase backend, but we can log basic device too
-      })
-    } catch (dbErr) {
-      console.warn("Could not log to activity_logs:", dbErr)
-    }
+    await supabase.from('activity_logs').insert({
+      user_id: finalUserId,
+      event_type: eventType,
+      description: description,
+      device_info: userAgent.substring(0, 100),
+      // IP is handled better by Supabase backend, but we can log basic device too
+    })
 
     // Update user's last seen info in monkey_bio
     if (finalUserId) {
-        // Safe split for device info
-        const uaParts = userAgent.includes(' (') ? userAgent.split(') ')[0].split(' (') : []
-        const deviceDetail = uaParts.length > 1 ? uaParts[1] : 'Unknown'
-        
         await supabase.from('monkey_bio').update({
             last_login: new Date().toISOString(),
-            device_info: `${device} / ${deviceDetail}`,
+            device_info: `${device} / ${userAgent.split(') ')[0].split(' (')[1]}`,
             // Potentially update IP if you have a public IP service
         }).eq('id', finalUserId)
     }

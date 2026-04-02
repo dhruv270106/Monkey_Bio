@@ -6,8 +6,7 @@ import { supabase } from '@/lib/supabase'
 export default function AuthCallback() {
   useEffect(() => {
     const handleCallback = async () => {
-      const { data } = await supabase.auth.getSession()
-      const session = data?.session
+      const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         // Check if profile exists
         const { data: profile } = await supabase

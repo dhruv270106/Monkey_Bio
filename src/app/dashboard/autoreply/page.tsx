@@ -10,7 +10,8 @@ export default function DashboardAutoReply() {
 
   useEffect(() => {
     async function fetchProfile() {
-      const { data: { session } } = await supabase.auth.getSession()
+      const { data } = await supabase.auth.getSession()
+      const session = data?.session
       if (session) {
         const { data } = await supabase.from('monkey_bio').select('*').eq('id', session.user.id).single()
         setProfile(data)
