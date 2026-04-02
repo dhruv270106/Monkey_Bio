@@ -151,6 +151,7 @@ function DashboardContent() {
             <div className="px-3 space-y-1">
                {[
                  { id: 'profile', label: 'Profile', icon: 'fi-rr-user' },
+                 { id: 'avatar', label: 'Avatar', icon: 'fi-rr-user-robot' },
                  { id: 'themes', label: 'Themes', icon: 'fi-rr-palette' },
                  { id: 'buttons', label: 'Buttons', icon: 'fi-rr-apps-add' },
                  { id: 'font', label: 'Font', icon: 'fi-rr-text' },
@@ -209,6 +210,7 @@ function DashboardContent() {
   const renderMainSection = () => {
     switch (activeSubTab) {
       case 'profile':
+      case 'avatar':
       case 'themes':
       case 'buttons':
       case 'font':

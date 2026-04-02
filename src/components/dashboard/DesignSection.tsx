@@ -17,20 +17,43 @@ interface DesignSectionProps {
   subSection?: string
 }
 
+const AVATAR_CATEGORIES = [
+  { 
+    id: 'man', 
+    label: 'Man', 
+    avatars: ['/avatars/man1.png', '/avatars/man2.png'],
+  },
+  { 
+    id: 'woman', 
+    label: 'Woman', 
+    avatars: ['/avatars/woman1.png', '/avatars/woman2.png'],
+  },
+  { 
+    id: 'animal', 
+    label: 'Animals', 
+    avatars: ['/avatars/animal1.png'],
+  },
+  { 
+    id: 'bird', 
+    label: 'Birds', 
+    avatars: ['/avatars/bird1.png'],
+  },
+  { 
+    id: 'insect', 
+    label: 'Insects', 
+    avatars: ['/avatars/insect1.png'],
+  }
+]
+
 export default function DesignSection({ profile, setProfile, links, onBack, subSection }: DesignSectionProps) {
   const [showCropper, setShowCropper] = useState(false)
   const [selectedImage, setSelectedImage] = useState('')
-  const [themeTab, setThemeTab] = useState<'free' | 'premium'>('free')
-  const [activeCategory, setActiveCategory] = useState('All')
+  const [themeTab, setThemeTab ] = useState<'free' | 'premium'>('free')
   const [activeSubTab, setActiveSubTab] = useState('Text')
-  const [pendingColor, setPendingColor] = useState('#6A373A')
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null)
   
-  const [activeDesktopTab, setActiveDesktopTab] = useState(subSection ? subSection.charAt(0).toUpperCase() + subSection.slice(1) : 'Header')
   const [fontSearch, setFontSearch] = useState('')
-
-  const THEME_CATEGORIES = ['All', 'Simple', 'Creative', 'Professional', 'Anime', 'Business', 'Abstract']
 
   const FONTS = [
     'Inter', 'Roboto', 'Outfit', 'Playfair Display', 'Poppins', 'Montserrat', 'Open Sans', 'Lato', 'Ubuntu', 'Lora',
@@ -64,7 +87,7 @@ export default function DesignSection({ profile, setProfile, links, onBack, subS
 
   const updateProfile = async (updates: any) => {
     if (!profile) return
-    setProfile(updates)
+    setProfile({ ...profile, ...updates })
     setSaveStatus('saving')
     if (saveTimeout) clearTimeout(saveTimeout)
     const timeout = setTimeout(() => {
@@ -74,12 +97,9 @@ export default function DesignSection({ profile, setProfile, links, onBack, subS
     setSaveTimeout(timeout)
   }
 
-  const [cropTarget, setCropTarget] = useState<'avatar' | 'wallpaper'>('avatar')
-
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setCropTarget('avatar')
     const reader = new FileReader()
     reader.onloadend = () => {
       setSelectedImage(reader.result as string)
@@ -88,54 +108,31 @@ export default function DesignSection({ profile, setProfile, links, onBack, subS
     reader.readAsDataURL(file)
   }
 
-  const handleCustomBgUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (type === 'image') {
-       setCropTarget('wallpaper')
-       const reader = new FileReader()
-       reader.onloadend = () => {
-          setSelectedImage(reader.result as string)
-          setShowCropper(true)
-       }
-       reader.readAsDataURL(file)
-    } else {
-       const fileName = `bg-video-${Date.now()}.mp4`
-       const filePath = `${profile.id}/${fileName}`
-       const { error: uploadError } = await supabase.storage.from('bg-assets').upload(filePath, file, { upsert: true })
-       if (!uploadError) {
-          const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
-          updateProfile({ custom_bg: publicUrl, custom_bg_type: 'video', theme: 'custom' })
-       }
-    }
-  }
-
   const handleCropComplete = async (base64: string) => {
     try {
       const res = await fetch(base64)
       const blob = await res.blob()
-      const fileName = `${cropTarget}-${Date.now()}.jpg`
+      const fileName = `avatar-${Date.now()}.jpg`
       const filePath = `${profile.id}/${fileName}`
       const { error: uploadError } = await supabase.storage.from('bg-assets').upload(filePath, blob, { upsert: true })
       if (!uploadError) {
         const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
-        if (cropTarget === 'avatar') updateProfile({ avatar_url: publicUrl })
-        else updateProfile({ custom_bg: publicUrl, custom_bg_type: 'image', theme: 'custom' })
+        updateProfile({ avatar_url: publicUrl })
         setShowCropper(false)
       }
     } catch (e) { console.error(e) }
   }
 
   const renderContent = () => {
-    const currentTab = subSection || activeDesktopTab.toLowerCase()
-    
-    switch (currentTab) {
+    switch (subSection) {
       case 'profile':
-        return <HeaderSettings profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} isDesktop />
+        return <HeaderSettings profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} />
+      case 'avatar':
+        return <AvatarGallery profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} />
       case 'themes':
-        return <ThemeSettings profile={profile} themeTab={themeTab} setThemeTab={setThemeTab} activeCategory={activeCategory} setActiveCategory={setActiveCategory} THEME_CATEGORIES={THEME_CATEGORIES} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} isDesktop />
+        return <ThemeSettings profile={profile} themeTab={themeTab} setThemeTab={setThemeTab} updateProfile={updateProfile} />
       case 'buttons':
-        return <StyleSettings profile={profile} activeSubTab="Buttons" setActiveSubTab={() => {}} updateProfile={updateProfile} FONTS={FONTS} isDesktop />
+        return <StyleSettings profile={profile} updateProfile={updateProfile} />
       case 'font':
         return (
           <div className="space-y-6">
@@ -143,7 +140,7 @@ export default function DesignSection({ profile, setProfile, links, onBack, subS
                 <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest leading-none">Font Family</p>
                 <input type="text" placeholder="Search..." className="px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-[10px] font-bold outline-none focus:border-primary transition-all w-32" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} />
              </div>
-             <div className="grid grid-cols-1 gap-2 max-h-[500px] overflow-y-auto no-scrollbar pr-2">
+             <div className="grid grid-cols-1 gap-2 max-h-[500px] overflow-y-auto no-scrollbar pr-2 text-secondary">
                 {FONTS.filter(f => f.toLowerCase().includes(fontSearch.toLowerCase())).map(font => (
                    <button key={font} onClick={() => updateProfile({ font_family: font })} className={`p-4 rounded-xl text-left transition-all border-2 ${profile?.font_family === font ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-gray-50 border-transparent hover:bg-white hover:border-gray-100'}`} style={{ fontFamily: font }}>
                       <span className="text-base font-black">{font}</span>
@@ -153,41 +150,70 @@ export default function DesignSection({ profile, setProfile, links, onBack, subS
           </div>
         )
       case 'wallpaper':
-        return <WallpaperSettings profile={profile} pendingColor={pendingColor} setPendingColor={setPendingColor} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} PATTERNS={PATTERNS} PRESET_COLORS={PRESET_COLORS} PRESET_GRADIENTS={PRESET_GRADIENTS} isDesktop />
+        return <WallpaperSettings profile={profile} updateProfile={updateProfile} PATTERNS={PATTERNS} PRESET_COLORS={PRESET_COLORS} PRESET_GRADIENTS={PRESET_GRADIENTS} />
       default:
-        return <HeaderSettings profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} isDesktop />
+        return <HeaderSettings profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} />
     }
   }
 
-  // If subSection is provided, we only render the content part for the Right Panel
-  if (subSection) {
-    return (
-      <div className="p-6">
-         <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-black text-secondary uppercase tracking-tight italic">{subSection}</h2>
-            <div className="flex items-center gap-2">
-               {saveStatus === 'saving' && <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>}
-               {saveStatus === 'saved' && <i className="fi fi-rr-check text-green-500 text-xs"></i>}
-            </div>
-         </div>
-         {renderContent()}
-         <ImageCropperModal isOpen={showCropper} imageSrc={selectedImage} onClose={() => setShowCropper(false)} aspect={cropTarget === 'avatar' ? 1/1 : 9/16} circularCrop={cropTarget === 'avatar'} onCropComplete={handleCropComplete} />
-      </div>
-    )
-  }
-
   return (
-    <div className="flex-1 flex flex-col bg-white overflow-hidden h-full">
-        {/* Fallback for cases where subSection isn't provided */}
-        <div className="p-6">
-           {renderContent()}
-        </div>
-        <ImageCropperModal isOpen={showCropper} imageSrc={selectedImage} onClose={() => setShowCropper(false)} aspect={cropTarget === 'avatar' ? 1/1 : 9/16} circularCrop={cropTarget === 'avatar'} onCropComplete={handleCropComplete} />
+    <div className="p-6">
+       <div className="flex items-center justify-between mb-8">
+          <h2 className="text-xl font-black text-secondary uppercase tracking-tight italic">{subSection || 'Workspace'}</h2>
+          <div className="flex items-center gap-2">
+             {saveStatus === 'saving' && <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>}
+             {saveStatus === 'saved' && <i className="fi fi-rr-check text-green-500 text-xs"></i>}
+          </div>
+       </div>
+       {renderContent()}
+       <ImageCropperModal isOpen={showCropper} imageSrc={selectedImage} onClose={() => setShowCropper(false)} aspect={1/1} circularCrop={true} onCropComplete={handleCropComplete} />
     </div>
   )
 }
 
-function ThemeSettings({ profile, themeTab, setThemeTab, updateProfile, isDesktop }: any) {
+function AvatarGallery({ profile, updateProfile, handleAvatarUpload }: any) {
+  return (
+    <div className="space-y-10">
+       <div className="flex flex-col items-center gap-6 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
+          <div className="relative group">
+             <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-2xl relative bg-white">
+                <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
+                   <i className="fi fi-rr-camera text-white text-xl"></i>
+                   <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} />
+                </div>
+             </div>
+          </div>
+          <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest leading-none">Active Profile Avatar</p>
+       </div>
+
+       <div className="space-y-8">
+          {AVATAR_CATEGORIES.map(cat => (
+             <div key={cat.id} className="space-y-4">
+                <div className="flex items-center justify-between px-1">
+                   <h3 className="text-[10px] font-black uppercase text-secondary tracking-widest leading-none">{cat.label}</h3>
+                   <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest">{cat.avatars.length} READY</span>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                   {cat.avatars.map((url, i) => (
+                      <button 
+                        key={i} 
+                        onClick={() => updateProfile({ avatar_url: url })}
+                        className={`aspect-square rounded-[32px] overflow-hidden border-4 transition-all relative group ${profile?.avatar_url === url ? 'border-primary shadow-xl scale-105' : 'border-transparent bg-gray-50 hover:border-gray-100 hover:scale-102'}`}
+                      >
+                         <img src={url} className="w-full h-full object-cover" alt="" />
+                         <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-all"></div>
+                      </button>
+                   ))}
+                </div>
+             </div>
+          ))}
+       </div>
+    </div>
+  )
+}
+
+function ThemeSettings({ profile, themeTab, setThemeTab, updateProfile }: any) {
   return (
     <div className="flex flex-col gap-6">
        <div className="flex bg-gray-50 p-1 rounded-2xl shrink-0">
@@ -201,7 +227,7 @@ function ThemeSettings({ profile, themeTab, setThemeTab, updateProfile, isDeskto
                   {theme.image && <img src={theme.image} className="w-full h-full object-cover opacity-80" />}
                   <div className="absolute inset-0 flex items-center justify-center"><span className={`${theme.text.split(' ')[0]} font-extrabold text-xl`}>Aa</span></div>
                </div>
-               <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{theme.name}</span>
+               <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">{theme.name}</span>
             </button>
           ))}
        </div>
@@ -227,28 +253,6 @@ function HeaderSettings({ profile, updateProfile, handleAvatarUpload }: any) {
              <input type="text" value={profile?.display_name || ''} onChange={(e) => updateProfile({ display_name: e.target.value })} className="w-full h-14 px-6 rounded-2xl bg-gray-50 text-secondary font-black outline-none border-2 border-transparent focus:border-primary transition-all" />
           </div>
        </div>
-
-       <div className="space-y-6">
-          <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Or choose an Avatar</label>
-          <div className="grid grid-cols-5 gap-3">
-             {[
-               { id: 'man', icon: 'fi-rr-user', color: 'bg-blue-500' },
-               { id: 'female', icon: 'fi-rr-venus', color: 'bg-pink-500' },
-               { id: 'animal', icon: 'fi-rr-paw', color: 'bg-orange-500' },
-               { id: 'bird', icon: 'fi-rr-leaf', color: 'bg-green-500' },
-               { id: 'insect', icon: 'fi-rr-bug', color: 'bg-purple-500' }
-             ].map(cat => (
-               <button 
-                  key={cat.id}
-                  onClick={() => updateProfile({ avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${cat.id}` })}
-                  className="w-10 h-10 rounded-xl bg-gray-50 hover:bg-white flex items-center justify-center group transition-all border border-transparent hover:border-gray-100 shadow-sm"
-               >
-                  <i className={`fi ${cat.icon} text-gray-400 group-hover:text-secondary pt-0.5`}></i>
-               </button>
-             ))}
-          </div>
-       </div>
-
        <div className="space-y-2">
           <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Bio Description</label>
           <textarea value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full h-32 p-6 rounded-2xl bg-gray-50 text-secondary font-bold outline-none border-2 border-transparent focus:border-primary transition-all resize-none" placeholder="Add your bio..." />
@@ -273,7 +277,6 @@ function WallpaperSettings({ profile, updateProfile, PATTERNS, PRESET_COLORS, PR
             </button>
           ))}
        </div>
-       
        <div className="space-y-4">
           {profile?.custom_bg_type === 'color' && (
              <div className="grid grid-cols-5 gap-3">
