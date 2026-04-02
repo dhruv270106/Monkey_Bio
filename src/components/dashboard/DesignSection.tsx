@@ -327,10 +327,34 @@ function HeaderSettings({ profile, updateProfile, handleAvatarUpload, isDesktop 
              </div>
           </div>
        </div>
-       <div className="space-y-2">
-          <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Bio</label>
-          <textarea value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full h-32 p-6 rounded-2xl bg-gray-50 text-secondary font-bold outline-none border-2 border-transparent focus:border-secondary transition-all resize-none" placeholder="Tell the world who you are..." />
-       </div>
+        <div className="space-y-4">
+           <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Or choose an Avatar</label>
+           <div className="grid grid-cols-5 gap-3">
+              {[
+                { id: 'man', icon: 'fi-rr-user', label: 'Man', color: 'bg-blue-500' },
+                { id: 'female', icon: 'fi-rr-venus', label: 'Female', color: 'bg-pink-500' },
+                { id: 'animal', icon: 'fi-rr-paw', label: 'Animals', color: 'bg-orange-500' },
+                { id: 'bird', icon: 'fi-rr-leaf', label: 'Birds', color: 'bg-green-500' },
+                { id: 'insect', icon: 'fi-rr-bug', label: 'Insects', color: 'bg-purple-500' }
+              ].map(cat => (
+                <button 
+                   key={cat.id}
+                   onClick={() => updateProfile({ avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${cat.id}` })}
+                   className="flex flex-col items-center gap-2 p-3 bg-gray-50 rounded-2xl hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-gray-100 group"
+                >
+                   <div className={`w-10 h-10 rounded-xl ${cat.color} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                      <i className={`fi ${cat.icon} text-lg pt-1`}></i>
+                   </div>
+                   <span className="text-[8px] font-black uppercase text-gray-400 tracking-tighter">{cat.label}</span>
+                </button>
+              ))}
+           </div>
+        </div>
+
+        <div className="space-y-2">
+           <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Bio Description</label>
+           <textarea value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full h-32 p-6 rounded-2xl bg-gray-50 text-secondary font-bold outline-none border-2 border-transparent focus:border-secondary transition-all resize-none" placeholder="Tell the world who you are..." />
+        </div>
     </div>
   )
 }
