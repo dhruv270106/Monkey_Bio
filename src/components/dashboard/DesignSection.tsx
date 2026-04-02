@@ -8,29 +8,26 @@ import { PLATFORMS } from '@/data/platforms'
 import { APPS } from '@/data/apps'
 import ImageCropperModal from '@/components/modals/ImageCropperModal'
 import Link from 'next/link'
-import DeviceMockup from './DeviceMockup'
 
 interface DesignSectionProps {
   profile: any
   setProfile: (profile: any) => void
   links: any[]
-  onBack: () => void
+  onBack?: () => void
+  subSection?: string
 }
 
-export default function DesignSection({ profile, setProfile, links, onBack }: DesignSectionProps) {
+export default function DesignSection({ profile, setProfile, links, onBack, subSection }: DesignSectionProps) {
   const [showCropper, setShowCropper] = useState(false)
   const [selectedImage, setSelectedImage] = useState('')
-  const [activeSheet, setActiveSheet] = useState<string | null>(null)
   const [themeTab, setThemeTab] = useState<'free' | 'premium'>('free')
   const [activeCategory, setActiveCategory] = useState('All')
   const [activeSubTab, setActiveSubTab] = useState('Text')
   const [pendingColor, setPendingColor] = useState('#6A373A')
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
-  const [pendingChanges, setPendingChanges] = useState<any>({})
   const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null)
   
-  // Desktop specific state
-  const [activeDesktopTab, setActiveDesktopTab] = useState('Header')
+  const [activeDesktopTab, setActiveDesktopTab] = useState(subSection ? subSection.charAt(0).toUpperCase() + subSection.slice(1) : 'Header')
   const [fontSearch, setFontSearch] = useState('')
 
   const THEME_CATEGORIES = ['All', 'Simple', 'Creative', 'Professional', 'Anime', 'Business', 'Abstract']
@@ -65,43 +62,16 @@ export default function DesignSection({ profile, setProfile, links, onBack }: De
      { id: 'waves', css: 'repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,0.05) 10px), repeating-radial-gradient(circle at 100% 100%, transparent 0, rgba(0,0,0,0.05) 10px)', size: '40px 40px' }
   ]
 
-  const DESKTOP_TABS = [
-    { id: 'Header', icon: 'fi-ss-user', label: 'PROFILE' },
-    { id: 'Theme', icon: 'fi-ss-palette', label: 'THEMES' },
-    { id: 'Buttons', icon: 'fi-ss-apps-add', label: 'BUTTONS' },
-    { id: 'Fonts', icon: 'fi-ss-text', label: 'FONTS' },
-    { id: 'Wallpaper', icon: 'fi-ss-picture', label: 'WALLPAPER' },
-  ]
-
   const updateProfile = async (updates: any) => {
     if (!profile) return
-    
-    // 1. Update through parent (which handles sync and DB)
     setProfile(updates)
-
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-
-    if (isMobile) {
-      // For mobile, we just track that we are saving to show the spinner
-      setSaveStatus('saving')
-      setTimeout(() => {
-        setSaveStatus('saved')
-        setTimeout(() => setSaveStatus('idle'), 2000)
-      }, 800)
-    } else {
-      // For laptop, show auto-save status
-      setSaveStatus('saving')
-      if (saveTimeout) clearTimeout(saveTimeout)
-      const timeout = setTimeout(() => {
-        setSaveStatus('saved')
-        setTimeout(() => setSaveStatus('idle'), 2000)
-      }, 1000)
-      setSaveTimeout(timeout)
-    }
-  }
-
-  const handleMobileSave = async () => {
-     setActiveSheet(null)
+    setSaveStatus('saving')
+    if (saveTimeout) clearTimeout(saveTimeout)
+    const timeout = setTimeout(() => {
+      setSaveStatus('saved')
+      setTimeout(() => setSaveStatus('idle'), 2000)
+    }, 800)
+    setSaveTimeout(timeout)
   }
 
   const [cropTarget, setCropTarget] = useState<'avatar' | 'wallpaper'>('avatar')
@@ -156,323 +126,209 @@ export default function DesignSection({ profile, setProfile, links, onBack }: De
     } catch (e) { console.error(e) }
   }
 
-  const NAV_ITEMS = [
-    { id: 'theme', icon: 'Aa', label: 'Theme', isIcon: false },
-    { id: 'header', icon: 'fi-rr-user', label: 'Header', isIcon: true },
-    { id: 'wallpaper', icon: 'fi-rr-picture', label: 'Wallpaper', isIcon: true },
-    { id: 'style', icon: 'fi-rr-magic-wand', label: 'Style', isIcon: true },
-  ]
-
-  const selectedTheme = (THEMES.find(t => t.id === profile?.theme) || THEMES[0]) as Theme
-
-  const renderSheetContent = () => {
-    switch (activeSheet) {
-      case 'theme':
-        return <ThemeSettings profile={profile} themeTab={themeTab} setThemeTab={setThemeTab} activeCategory={activeCategory} setActiveCategory={setActiveCategory} THEME_CATEGORIES={THEME_CATEGORIES} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} />
-      case 'header':
-        return <HeaderSettings profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} />
+  const renderContent = () => {
+    const currentTab = subSection || activeDesktopTab.toLowerCase()
+    
+    switch (currentTab) {
+      case 'profile':
+        return <HeaderSettings profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} isDesktop />
+      case 'themes':
+        return <ThemeSettings profile={profile} themeTab={themeTab} setThemeTab={setThemeTab} activeCategory={activeCategory} setActiveCategory={setActiveCategory} THEME_CATEGORIES={THEME_CATEGORIES} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} isDesktop />
+      case 'buttons':
+        return <StyleSettings profile={profile} activeSubTab="Buttons" setActiveSubTab={() => {}} updateProfile={updateProfile} FONTS={FONTS} isDesktop />
+      case 'font':
+        return (
+          <div className="space-y-6">
+             <div className="flex items-center justify-between mb-4">
+                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest leading-none">Font Family</p>
+                <input type="text" placeholder="Search..." className="px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-[10px] font-bold outline-none focus:border-primary transition-all w-32" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} />
+             </div>
+             <div className="grid grid-cols-1 gap-2 max-h-[500px] overflow-y-auto no-scrollbar pr-2">
+                {FONTS.filter(f => f.toLowerCase().includes(fontSearch.toLowerCase())).map(font => (
+                   <button key={font} onClick={() => updateProfile({ font_family: font })} className={`p-4 rounded-xl text-left transition-all border-2 ${profile?.font_family === font ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-gray-50 border-transparent hover:bg-white hover:border-gray-100'}`} style={{ fontFamily: font }}>
+                      <span className="text-base font-black">{font}</span>
+                   </button>
+                ))}
+             </div>
+          </div>
+        )
       case 'wallpaper':
-        return <WallpaperSettings profile={profile} pendingColor={pendingColor} setPendingColor={setPendingColor} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} PATTERNS={PATTERNS} PRESET_COLORS={PRESET_COLORS} PRESET_GRADIENTS={PRESET_GRADIENTS} />
-      case 'style':
-        return <StyleSettings profile={profile} activeSubTab={activeSubTab} setActiveSubTab={setActiveSubTab} updateProfile={updateProfile} FONTS={FONTS} />
-      default: return null
+        return <WallpaperSettings profile={profile} pendingColor={pendingColor} setPendingColor={setPendingColor} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} PATTERNS={PATTERNS} PRESET_COLORS={PRESET_COLORS} PRESET_GRADIENTS={PRESET_GRADIENTS} isDesktop />
+      default:
+        return <HeaderSettings profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} isDesktop />
     }
+  }
+
+  // If subSection is provided, we only render the content part for the Right Panel
+  if (subSection) {
+    return (
+      <div className="p-6">
+         <div className="flex items-center justify-between mb-8">
+            <h2 className="text-xl font-black text-secondary uppercase tracking-tight italic">{subSection}</h2>
+            <div className="flex items-center gap-2">
+               {saveStatus === 'saving' && <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>}
+               {saveStatus === 'saved' && <i className="fi fi-rr-check text-green-500 text-xs"></i>}
+            </div>
+         </div>
+         {renderContent()}
+         <ImageCropperModal isOpen={showCropper} imageSrc={selectedImage} onClose={() => setShowCropper(false)} aspect={cropTarget === 'avatar' ? 1/1 : 9/16} circularCrop={cropTarget === 'avatar'} onCropComplete={handleCropComplete} />
+      </div>
+    )
   }
 
   return (
     <div className="flex-1 flex flex-col bg-white overflow-hidden h-full">
-      <div className="flex flex-col h-full bg-white">
-          <div className="px-4 md:px-8 py-4 md:py-6 flex items-center justify-between border-b border-gray-50 flex-shrink-0 bg-white z-[70]">
-             <div className="flex flex-col">
-                <h1 className="font-extrabold text-lg md:text-2xl text-secondary uppercase tracking-tighter shrink-0">Design Workspace</h1>
-                <span className="hidden md:block text-[10px] font-black uppercase text-gray-400 tracking-widest">Live Customization ΓÇó {activeDesktopTab}</span>
-             </div>
-             <div className="flex items-center gap-6">
-                <AnimatePresence mode="wait">
-                   {saveStatus === 'saving' && (
-                     <motion.div key="saving" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-primary font-bold text-[10px] md:text-xs bg-primary/5 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-primary/10">
-                        <i className="fi fi-rr-spinner animate-spin"></i>
-                        <span>Saving...</span>
-                     </motion.div>
-                   )}
-                   {saveStatus === 'saved' && (
-                     <motion.div key="saved" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-green-500 font-bold text-[10px] md:text-xs bg-green-50 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-green-100">
-                        <i className="fi fi-rr-check"></i>
-                        <span>Updated</span>
-                     </motion.div>
-                   )}
-                </AnimatePresence>
-             </div>
-          </div>
-
-          <div className="flex-1 flex overflow-hidden">
-             {/* Unified Navigation - Ribbon for desktop, simplified for mobile */}
-             <div className="w-16 md:w-24 border-r border-gray-50 flex flex-col items-center py-6 md:py-10 gap-6 md:gap-10 overflow-y-auto no-scrollbar bg-white z-[60]">
-                {DESKTOP_TABS.map(tab => (
-                   <button key={tab.id} onClick={() => setActiveDesktopTab(tab.id)} className={`flex flex-col items-center gap-1.5 md:gap-2 transition-all shrink-0 ${activeDesktopTab === tab.id ? 'text-secondary font-black' : 'text-gray-300 hover:text-gray-500'}`}>
-                      <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-[22px] flex items-center justify-center transition-all ${activeDesktopTab === tab.id ? 'bg-secondary text-white shadow-lg md:shadow-xl rotate-12' : 'bg-transparent'}`}>
-                         <i className={`fi ${tab.icon} text-lg md:text-xl`}></i>
-                      </div>
-                      <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] ${activeDesktopTab === tab.id ? 'opacity-100' : 'opacity-40'}`}>{tab.label}</span>
-                   </button>
-                ))}
-             </div>
-
-             {/* Dynamic Content Area */}
-             <div className="flex-1 bg-gray-50/20 overflow-hidden relative">
-                <div className="absolute inset-0 overflow-y-auto p-4 md:p-12 no-scrollbar pb-40">
-                   <div className="max-w-2xl mx-auto space-y-10 md:space-y-16">
-                      <AnimatePresence mode="wait">
-                         {activeDesktopTab === 'Header' && (
-                            <motion.section key="header" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 md:space-y-10">
-                               <h2 className="text-xl md:text-3xl font-black text-secondary uppercase tracking-tighter italic">Identity</h2>
-                               <div className="bg-white p-6 md:p-10 rounded-[30px] md:rounded-[50px] border border-gray-100 shadow-sm">
-                                  <HeaderSettings profile={profile} updateProfile={updateProfile} handleAvatarUpload={handleAvatarUpload} isDesktop />
-                               </div>
-                            </motion.section>
-                         )}
-                         {activeDesktopTab === 'Theme' && (
-                            <motion.section key="theme" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 md:space-y-10">
-                               <h2 className="text-xl md:text-3xl font-extrabold text-secondary uppercase tracking-tighter italic">Themes</h2>
-                               <ThemeSettings profile={profile} themeTab={themeTab} setThemeTab={setThemeTab} activeCategory={activeCategory} setActiveCategory={setActiveCategory} THEME_CATEGORIES={THEME_CATEGORIES} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} isDesktop />
-                            </motion.section>
-                         )}
-                         {activeDesktopTab === 'Buttons' && (
-                            <motion.section key="buttons" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 md:space-y-10">
-                               <h2 className="text-xl md:text-3xl font-black text-secondary uppercase tracking-tighter italic">Buttons</h2>
-                               <StyleSettings profile={profile} activeSubTab="Buttons" setActiveSubTab={() => {}} updateProfile={updateProfile} FONTS={FONTS} isDesktop />
-                            </motion.section>
-                         )}
-                         {activeDesktopTab === 'Fonts' && (
-                            <motion.section key="fonts" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 md:space-y-10">
-                               <div className="flex items-center justify-between">
-                                  <h2 className="text-xl md:text-3xl font-black text-secondary uppercase tracking-tighter italic">Typography</h2>
-                                  <input type="text" placeholder="Search..." className="w-24 md:w-auto px-4 py-2 bg-white border border-gray-100 rounded-full text-[10px] md:text-xs font-bold outline-none focus:border-secondary transition-all" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} />
-                               </div>
-                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 max-h-[400px] overflow-y-auto no-scrollbar bg-white p-4 md:p-6 rounded-[30px] md:rounded-[40px] border border-gray-100">
-                                  {FONTS.filter(f => f.toLowerCase().includes(fontSearch.toLowerCase())).map(font => (
-                                     <button key={font} onClick={() => updateProfile({ font_family: font })} className={`p-4 md:p-8 rounded-[20px] md:rounded-[28px] text-left transition-all border-2 ${profile?.font_family === font ? 'bg-secondary text-white border-secondary' : 'bg-gray-50 border-transparent'}`} style={{ fontFamily: font }}>
-                                        <span className="text-base md:text-xl font-black">{font}</span>
-                                     </button>
-                                  ))}
-                               </div>
-                            </motion.section>
-                         )}
-                         {activeDesktopTab === 'Wallpaper' && (
-                           <motion.section key="wallpaper" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 md:space-y-10">
-                              <h2 className="text-xl md:text-3xl font-black text-secondary uppercase tracking-tighter italic">Wallpaper Engine</h2>
-                              <div className="bg-white p-6 md:p-10 rounded-[30px] md:rounded-[50px] border border-gray-100 shadow-sm">
-                                 <WallpaperSettings profile={profile} pendingColor={pendingColor} setPendingColor={setPendingColor} updateProfile={updateProfile} handleCustomBgUpload={handleCustomBgUpload} PATTERNS={PATTERNS} PRESET_COLORS={PRESET_COLORS} PRESET_GRADIENTS={PRESET_GRADIENTS} isDesktop />
-                              </div>
-                           </motion.section>
-                         )}
-                      </AnimatePresence>
-                   </div>
-                </div>
-             </div>
-          </div>
-      </div>
-      <ImageCropperModal isOpen={showCropper} imageSrc={selectedImage} onClose={() => setShowCropper(false)} aspect={cropTarget === 'avatar' ? 1/1 : 9/16} circularCrop={cropTarget === 'avatar'} onCropComplete={handleCropComplete} />
+        {/* Fallback for cases where subSection isn't provided */}
+        <div className="p-6">
+           {renderContent()}
+        </div>
+        <ImageCropperModal isOpen={showCropper} imageSrc={selectedImage} onClose={() => setShowCropper(false)} aspect={cropTarget === 'avatar' ? 1/1 : 9/16} circularCrop={cropTarget === 'avatar'} onCropComplete={handleCropComplete} />
     </div>
   )
 }
 
-function ThemeSettings({ profile, themeTab, setThemeTab, activeCategory, setActiveCategory, THEME_CATEGORIES, updateProfile, handleCustomBgUpload, isDesktop }: any) {
+function ThemeSettings({ profile, themeTab, setThemeTab, updateProfile, isDesktop }: any) {
   return (
-    <div className={`flex flex-col ${isDesktop ? 'gap-6' : 'h-[350px]'}`}>
+    <div className="flex flex-col gap-6">
        <div className="flex bg-gray-50 p-1 rounded-2xl shrink-0">
           <button onClick={() => setThemeTab('free')} className={`flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'free' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Free</button>
           <button onClick={() => setThemeTab('premium')} className={`flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'premium' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Premium</button>
        </div>
-       {!isDesktop && (
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 shrink-0">
-             {THEME_CATEGORIES.map((cat: any) => (
-               <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest whitespace-nowrap transition-all ${activeCategory === cat ? 'bg-secondary text-white' : 'bg-gray-50 text-gray-400'}`}>{cat}</button>
-             ))}
-          </div>
-       )}
-       <div className={`overflow-y-auto no-scrollbar ${isDesktop ? '' : 'flex-1 pb-10'}`}>
-          <div className={`grid gap-4 ${isDesktop ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-3'}`}>
+       <div className="grid grid-cols-2 gap-4">
+          {THEMES.filter(t => (themeTab === 'premium' ? t.isPremium : !t.isPremium)).map(theme => (
+            <button key={theme.id} onClick={() => updateProfile({ theme: theme.id, custom_bg_type: '' })} className="flex flex-col items-center gap-2 group">
+               <div className={`aspect-[3/4] w-full rounded-[24px] overflow-hidden border-4 transition-all relative ${profile?.theme === theme.id ? 'border-primary shadow-xl' : 'border-transparent shadow-sm hover:border-gray-100'} ${theme.bg}`}>
+                  {theme.image && <img src={theme.image} className="w-full h-full object-cover opacity-80" />}
+                  <div className="absolute inset-0 flex items-center justify-center"><span className={`${theme.text.split(' ')[0]} font-extrabold text-xl`}>Aa</span></div>
+               </div>
+               <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{theme.name}</span>
+            </button>
+          ))}
+       </div>
+    </div>
+  )
+}
 
-             {THEMES.filter(t => (themeTab === 'premium' ? t.isPremium : !t.isPremium)).map(theme => (
-               <button key={theme.id} onClick={() => updateProfile({ theme: theme.id, custom_bg_type: '' })} className="flex flex-col items-center gap-2 group">
-                  <div className={`aspect-[3/4] w-full rounded-[24px] overflow-hidden border-2 transition-all relative ${profile?.theme === theme.id ? 'border-secondary shadow-xl' : 'border-transparent'} ${theme.bg}`}>
-                     {theme.image && <img src={theme.image} className="w-full h-full object-cover" />}
-                     <div className="absolute inset-0 flex items-center justify-center"><span className={`${theme.text.split(' ')[0]} font-extrabold text-xl`}>Aa</span></div>
-                  </div>
-                  <span className="text-[9px] font-semibold text-gray-500 uppercase">{theme.name}</span>
+function HeaderSettings({ profile, updateProfile, handleAvatarUpload }: any) {
+  return (
+    <div className="space-y-8">
+       <div className="flex flex-col items-center gap-6">
+          <div className="relative group">
+             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-2xl relative bg-gray-50">
+                <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
+                   <i className="fi fi-rr-camera text-white text-xl"></i>
+                   <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} />
+                </div>
+             </div>
+          </div>
+          <div className="w-full space-y-2">
+             <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Profile Name</label>
+             <input type="text" value={profile?.display_name || ''} onChange={(e) => updateProfile({ display_name: e.target.value })} className="w-full h-14 px-6 rounded-2xl bg-gray-50 text-secondary font-black outline-none border-2 border-transparent focus:border-primary transition-all" />
+          </div>
+       </div>
+
+       <div className="space-y-6">
+          <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Or choose an Avatar</label>
+          <div className="grid grid-cols-5 gap-3">
+             {[
+               { id: 'man', icon: 'fi-rr-user', color: 'bg-blue-500' },
+               { id: 'female', icon: 'fi-rr-venus', color: 'bg-pink-500' },
+               { id: 'animal', icon: 'fi-rr-paw', color: 'bg-orange-500' },
+               { id: 'bird', icon: 'fi-rr-leaf', color: 'bg-green-500' },
+               { id: 'insect', icon: 'fi-rr-bug', color: 'bg-purple-500' }
+             ].map(cat => (
+               <button 
+                  key={cat.id}
+                  onClick={() => updateProfile({ avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${cat.id}` })}
+                  className="w-10 h-10 rounded-xl bg-gray-50 hover:bg-white flex items-center justify-center group transition-all border border-transparent hover:border-gray-100 shadow-sm"
+               >
+                  <i className={`fi ${cat.icon} text-gray-400 group-hover:text-secondary pt-0.5`}></i>
                </button>
              ))}
           </div>
        </div>
-    </div>
-  )
-}
 
-function HeaderSettings({ profile, updateProfile, handleAvatarUpload, isDesktop }: any) {
-  return (
-    <div className={`space-y-8 ${isDesktop ? '' : 'pb-20 h-[400px] overflow-y-auto no-scrollbar'}`}>
-       <div className={`flex items-center gap-8 ${isDesktop ? 'flex-row' : 'flex-col sm:flex-row'}`}>
-          <div className="relative group shrink-0">
-             <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-xl relative bg-gray-50">
-                <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><i className="fi fi-rr-camera text-white"></i></div>
-                <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} />
-             </div>
-          </div>
-          <div className="flex-1 w-full space-y-4">
-             <div className="space-y-2">
-               <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Profile Name</label>
-               <input type="text" value={profile?.display_name || ''} onChange={(e) => updateProfile({ display_name: e.target.value })} className="w-full h-14 px-6 rounded-2xl bg-gray-50 text-secondary font-black outline-none border-2 border-transparent focus:border-secondary transition-all" />
-             </div>
-          </div>
+       <div className="space-y-2">
+          <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Bio Description</label>
+          <textarea value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full h-32 p-6 rounded-2xl bg-gray-50 text-secondary font-bold outline-none border-2 border-transparent focus:border-primary transition-all resize-none" placeholder="Add your bio..." />
        </div>
-        <div className="space-y-4">
-           <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Or choose an Avatar</label>
-           <div className="grid grid-cols-5 gap-3">
-              {[
-                { id: 'man', icon: 'fi-rr-user', label: 'Man', color: 'bg-blue-500' },
-                { id: 'female', icon: 'fi-rr-venus', label: 'Female', color: 'bg-pink-500' },
-                { id: 'animal', icon: 'fi-rr-paw', label: 'Animals', color: 'bg-orange-500' },
-                { id: 'bird', icon: 'fi-rr-leaf', label: 'Birds', color: 'bg-green-500' },
-                { id: 'insect', icon: 'fi-rr-bug', label: 'Insects', color: 'bg-purple-500' }
-              ].map(cat => (
-                <button 
-                   key={cat.id}
-                   onClick={() => updateProfile({ avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${cat.id}` })}
-                   className="flex flex-col items-center gap-2 p-3 bg-gray-50 rounded-2xl hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-gray-100 group"
-                >
-                   <div className={`w-10 h-10 rounded-xl ${cat.color} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                      <i className={`fi ${cat.icon} text-lg pt-1`}></i>
-                   </div>
-                   <span className="text-[8px] font-black uppercase text-gray-400 tracking-tighter">{cat.label}</span>
-                </button>
-              ))}
-           </div>
-        </div>
-
-        <div className="space-y-2">
-           <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Bio Description</label>
-           <textarea value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full h-32 p-6 rounded-2xl bg-gray-50 text-secondary font-bold outline-none border-2 border-transparent focus:border-secondary transition-all resize-none" placeholder="Tell the world who you are..." />
-        </div>
     </div>
   )
 }
 
-function WallpaperSettings({ profile, pendingColor, setPendingColor, updateProfile, handleCustomBgUpload, PATTERNS, PRESET_COLORS, PRESET_GRADIENTS, isDesktop }: any) {
+function WallpaperSettings({ profile, updateProfile, PATTERNS, PRESET_COLORS, PRESET_GRADIENTS }: any) {
   return (
-    <div className={`flex flex-col ${isDesktop ? 'gap-8' : 'h-[550px]'}`}>
-       <div className="grid grid-cols-5 gap-2 shrink-0">
+    <div className="space-y-8">
+       <div className="grid grid-cols-5 gap-2">
           {[
-            { id: 'color', label: 'Color', icon: 'fi-rr-palette' },
-            { id: 'gradient', label: 'Gradient', icon: 'fi-rr-swatchbook' },
-            { id: 'pattern', label: 'Pattern', icon: 'fi-rr-grid' },
-            { id: 'image', label: 'Image', icon: 'fi-rr-picture' },
-            { id: 'video', label: 'Video', icon: 'fi-rr-play-alt' },
+            { id: 'color', icon: 'fi-rr-palette' },
+            { id: 'gradient', icon: 'fi-rr-swatchbook' },
+            { id: 'pattern', icon: 'fi-rr-grid' },
+            { id: 'image', icon: 'fi-rr-picture' },
+            { id: 'video', icon: 'fi-rr-play-alt' },
           ].map(type => (
-            <button key={type.id} onClick={() => updateProfile({ custom_bg_type: type.id, theme: 'custom' })} className={`flex flex-col items-center gap-1.5 p-2 rounded-2xl border-2 transition-all ${profile?.custom_bg_type === type.id ? 'border-secondary bg-secondary/5' : 'border-gray-50'}`}>
-               <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center ${profile?.custom_bg_type === type.id ? 'bg-primary text-white' : 'bg-gray-50 text-gray-400'}`}><i className={`fi ${type.icon} text-sm sm:text-lg`}></i></div>
-               <span className="text-[8px] font-black uppercase tracking-widest hidden xs:block">{type.label}</span>
+            <button key={type.id} onClick={() => updateProfile({ custom_bg_type: type.id, theme: 'custom' })} className={`h-12 rounded-xl border-2 transition-all flex items-center justify-center ${profile?.custom_bg_type === type.id ? 'border-primary bg-primary/5 text-primary' : 'border-gray-50 text-gray-300'}`}>
+               <i className={`fi ${type.icon} text-lg pt-0.5`}></i>
             </button>
           ))}
        </div>
-       <div className={`${isDesktop ? '' : 'flex-1 overflow-y-auto no-scrollbar pb-10'}`}>
+       
+       <div className="space-y-4">
           {profile?.custom_bg_type === 'color' && (
-            <div className="space-y-6">
-               <div className={`grid gap-2 sm:gap-3 ${isDesktop ? 'grid-cols-10' : 'grid-cols-5'}`}>
-                  {PRESET_COLORS.map((c: any) => (
-                    <button key={c} onClick={() => { setPendingColor(c); updateProfile({ custom_bg: c, custom_bg_type: 'color', theme: 'custom' }) }} className={`aspect-square rounded-full border-4 transition-all ${profile?.custom_bg === c ? 'border-secondary' : 'border-white shadow-sm'}`} style={{ backgroundColor: c }} />
-                  ))}
-
-               </div>
-            </div>
+             <div className="grid grid-cols-5 gap-3">
+                {PRESET_COLORS.map((c: any) => (
+                  <button key={c} onClick={() => updateProfile({ custom_bg: c, custom_bg_type: 'color', theme: 'custom' })} className={`aspect-square rounded-full border-4 transition-all ${profile?.custom_bg === c ? 'border-primary scale-110' : 'border-white shadow-sm hover:scale-105'}`} style={{ backgroundColor: c }} />
+                ))}
+             </div>
           )}
           {profile?.custom_bg_type === 'gradient' && (
-             <div className={`grid gap-3 ${isDesktop ? 'grid-cols-4' : 'grid-cols-2'}`}>
+             <div className="grid grid-cols-2 gap-3">
                 {PRESET_GRADIENTS.map((g: any, i: number) => (
-                  <button key={i} onClick={() => updateProfile({ custom_bg: g, custom_bg_type: 'gradient', theme: 'custom' })} className={`w-full aspect-video rounded-2xl border-2 transition-all relative overflow-hidden ${profile?.custom_bg === g ? 'border-secondary' : 'border-transparent shadow-sm'}`}><div className="absolute inset-0" style={{ backgroundImage: g }} /></button>
+                  <button key={i} onClick={() => updateProfile({ custom_bg: g, custom_bg_type: 'gradient', theme: 'custom' })} className={`w-full aspect-video rounded-2xl border-2 transition-all relative overflow-hidden ${profile?.custom_bg === g ? 'border-primary shadow-lg' : 'border-transparent shadow-sm'}`}><div className="absolute inset-0" style={{ backgroundImage: g }} /></button>
                 ))}
              </div>
           )}
           {profile?.custom_bg_type === 'pattern' && (
-             <div className={`grid gap-3 ${isDesktop ? 'grid-cols-4' : 'grid-cols-2'}`}>
+             <div className="grid grid-cols-2 gap-3">
                 {PATTERNS.map((p: any) => (
-                  <button key={p.id} onClick={() => updateProfile({ custom_bg_pattern: p.id, custom_bg_type: 'pattern', theme: 'custom', custom_bg: profile?.custom_bg || '#6A373A' })} className={`w-full aspect-video rounded-2xl border-2 transition-all relative overflow-hidden bg-gray-50 ${profile?.custom_bg_pattern === p.id ? 'border-secondary shadow-lg' : 'border-transparent'}`}><div className="absolute inset-0 opacity-20" style={{ backgroundImage: p.css, backgroundSize: p.size }} /><span className="relative z-10 text-[9px] font-black uppercase text-gray-400">{p.id}</span></button>
+                  <button key={p.id} onClick={() => updateProfile({ custom_bg_pattern: p.id, custom_bg_type: 'pattern', theme: 'custom' })} className={`w-full aspect-video rounded-2xl border-2 bg-gray-50 transition-all relative overflow-hidden ${profile?.custom_bg_pattern === p.id ? 'border-primary shadow-lg' : 'border-transparent shadow-sm'}`}><div className="absolute inset-0 opacity-20" style={{ backgroundImage: p.css, backgroundSize: p.size }} /></button>
                 ))}
              </div>
-          )}
-          {(profile?.custom_bg_type === 'image' || profile?.custom_bg_type === 'video') && (
-            <div className="p-12 border-4 border-dashed border-gray-50 bg-gray-50/50 rounded-[40px] flex flex-col items-center gap-4 text-center relative group">
-               <div className="w-16 h-16 rounded-3xl bg-white shadow-xl flex items-center justify-center text-secondary"><i className={`fi ${profile?.custom_bg_type === 'image' ? 'fi-rr-picture' : 'fi-rr-play-alt'} text-3xl`}></i></div>
-               <p className="font-black text-secondary text-xs uppercase tracking-widest">Upload local {profile?.custom_bg_type} asset</p>
-               <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleCustomBgUpload(e, profile?.custom_bg_type as any)} accept={profile?.custom_bg_type === 'image' ? 'image/*' : 'video/*'} />
-            </div>
           )}
        </div>
     </div>
   )
 }
 
-function StyleSettings({ profile, activeSubTab, setActiveSubTab, updateProfile, FONTS, isDesktop }: any) {
+function StyleSettings({ profile, updateProfile }: any) {
   return (
-    <div className={`flex flex-col ${isDesktop ? 'gap-8' : 'h-[350px]'}`}>
-       {!isDesktop && (
-          <div className="flex border-b border-gray-100 shrink-0">
-             {['Text', 'Buttons', 'Colors'].map(t => (
-               <button key={t} onClick={() => setActiveSubTab(t)} className={`flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest ${activeSubTab === t ? 'border-b-4 border-secondary text-secondary' : 'text-gray-400'}`}>{t}</button>
+    <div className="space-y-10">
+       <div className="space-y-6">
+          <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] ml-1 leading-none block">Variant Style</label>
+          <div className="grid grid-cols-3 gap-3">
+            {['solid', 'outline', 'glass'].map(v => (
+              <button key={v} onClick={() => updateProfile({ button_variant: v })} className={`h-14 rounded-2xl border-2 flex items-center justify-center font-black uppercase text-[10px] tracking-widest transition-all ${profile?.button_variant === v ? 'border-primary text-primary bg-primary/5 shadow-lg shadow-primary/10' : 'border-gray-50 text-gray-400 bg-gray-50/50'}`}>{v}</button>
+            ))}
+          </div>
+       </div>
+       <div className="space-y-6">
+          <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] ml-1 leading-none block">Curvature</label>
+          <div className="grid grid-cols-4 gap-2">
+             {['none', 'md', 'xl', 'full'].map(r => (
+               <button key={r} onClick={() => updateProfile({ button_radius: r })} className={`h-11 rounded-xl border-2 flex items-center justify-center text-[10px] font-black transition-all ${profile?.button_radius === r ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-300'}`}>{r.toUpperCase()}</button>
              ))}
           </div>
-       )}
-       <div className={`${isDesktop ? '' : 'flex-1 overflow-y-auto no-scrollbar pb-10 pt-4'}`}>
-          {activeSubTab === 'Text' && (
-            <div className="space-y-6 h-full">
-               <label className="text-[10px] font-extrabold uppercase text-gray-400 tracking-[0.4em] pl-2">Font Family</label>
-               <div className="grid grid-cols-2 gap-3 pb-20">
-                  {FONTS.map((font: string) => (
-                    <button 
-                      key={font} 
-                      onClick={() => updateProfile({ font_family: font })} 
-                      className={`p-4 rounded-xl border-2 text-left transition-all ${profile?.font_family === font ? 'border-secondary bg-secondary/5' : 'border-gray-50'}`}
-                      style={{ fontFamily: font }}
-                    >
-                       <span className="text-sm font-extrabold">{font}</span>
-                    </button>
-                  ))}
-               </div>
-            </div>
-          )}
-          {(isDesktop || activeSubTab === 'Buttons') && (
-             <div className="space-y-10">
-                <div className="space-y-6">
-                   <label className="text-[10px] font-extrabold uppercase text-gray-400 tracking-[0.4em] pl-2">Variant Style</label>
-                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                     {['solid', 'outline', 'glass'].map(v => (
-                       <button key={v} onClick={() => updateProfile({ button_variant: v })} className={`h-14 rounded-2xl border-2 flex items-center justify-center font-extrabold uppercase text-[10px] tracking-widest transition-all ${profile?.button_variant === v ? 'border-secondary text-secondary bg-secondary/5 shadow-lg' : 'border-gray-50 text-gray-400 bg-gray-50/50'}`}>{v}</button>
-                     ))}
-                   </div>
-                </div>
-                <div className="space-y-6">
-                   <label className="text-[10px] font-extrabold uppercase text-gray-400 tracking-[0.4em] pl-2">Curvature Settings</label>
-                   <div className="flex gap-3">
-                      {['none', 'md', 'xl', 'full'].map(r => (
-                        <button key={r} onClick={() => updateProfile({ button_radius: r })} className={`flex-1 h-12 rounded-xl border-2 flex items-center justify-center text-[10px] font-extrabold transition-all ${profile?.button_radius === r ? 'bg-secondary text-white border-secondary shadow-lg' : 'bg-white text-gray-400 border-gray-100'}`}>{r.toUpperCase()}</button>
-                      ))}
-                   </div>
-                </div>
-             </div>
-          )}
-          {(isDesktop || activeSubTab === 'Colors' || activeSubTab === 'Buttons') && (
-            <div className={`space-y-8 ${isDesktop ? 'mt-12' : ''}`}>
-               <div className="flex items-center justify-between p-8 bg-gray-50/50 rounded-[40px] border border-gray-100">
-                  <div className="flex flex-col"><span className="font-extrabold text-secondary">Font Color</span><span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Global text color tone</span></div>
-                  <input type="color" value={profile?.font_color || '#000000'} onChange={(e) => updateProfile({ font_color: e.target.value })} className="w-16 h-16 rounded-[24px] cursor-pointer border-4 border-white shadow-2xl" />
-               </div>
-               <div className="flex items-center justify-between p-8 bg-gray-50/50 rounded-[40px] border border-gray-100">
-                  <div className="flex flex-col"><span className="font-extrabold text-secondary">Button Color</span><span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Override theme color</span></div>
-                  <input type="color" value={profile?.custom_button_bg || '#ffffff'} onChange={(e) => updateProfile({ custom_button_bg: e.target.value })} className="w-16 h-16 rounded-[24px] cursor-pointer border-4 border-white shadow-2xl" />
-               </div>
-            </div>
-          )}
+       </div>
+       <div className="space-y-6 pt-4">
+          <div className="flex items-center justify-between p-6 bg-gray-50/50 rounded-3xl border border-gray-100">
+             <div className="flex flex-col"><span className="font-extrabold text-secondary text-xs">Font Color</span><span className="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-1">Global text tone</span></div>
+             <input type="color" value={profile?.font_color || '#000000'} onChange={(e) => updateProfile({ font_color: e.target.value })} className="w-10 h-10 rounded-xl cursor-pointer border-2 border-white shadow-lg" />
+          </div>
+          <div className="flex items-center justify-between p-6 bg-gray-50/50 rounded-3xl border border-gray-100">
+             <div className="flex flex-col"><span className="font-extrabold text-secondary text-xs">Button Fill</span><span className="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-1">Button background</span></div>
+             <input type="color" value={profile?.custom_button_bg || '#ffffff'} onChange={(e) => updateProfile({ custom_button_bg: e.target.value })} className="w-10 h-10 rounded-xl cursor-pointer border-2 border-white shadow-lg" />
+          </div>
        </div>
     </div>
   )

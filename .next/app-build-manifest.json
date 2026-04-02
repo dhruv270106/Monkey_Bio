@@ -6,30 +6,31 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/about/page": [
+    "/dashboard/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/about/page.js"
+      "static/css/app/dashboard/page.css",
+      "static/chunks/app/dashboard/page.js"
     ],
-    "/products/audience-manager/page": [
+    "/[username]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/products/audience-manager/page.js"
+      "static/chunks/app/[username]/page.js"
     ],
-    "/products/email-integration/page": [
+    "/login/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/products/email-integration/page.js"
+      "static/chunks/app/login/page.js"
     ],
-    "/products/[slug]/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/products/[slug]/page.js"
+      "static/chunks/app/page.js"
     ],
-    "/products/analytics/page": [
+    "/auth/callback/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/products/analytics/page.js"
+      "static/chunks/app/auth/callback/page.js"
     ]
   }
 }

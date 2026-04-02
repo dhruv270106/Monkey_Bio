@@ -1,7 +1,5 @@
 {
-  "/products/analytics/page": "app/products/analytics/page.js",
-  "/about/page": "app/about/page.js",
-  "/products/audience-manager/page": "app/products/audience-manager/page.js",
-  "/products/[slug]/page": "app/products/[slug]/page.js",
-  "/products/email-integration/page": "app/products/email-integration/page.js"
+  "/auth/callback/page": "app/auth/callback/page.js",
+  "/[username]/page": "app/[username]/page.js",
+  "/login/page": "app/login/page.js"
 }
