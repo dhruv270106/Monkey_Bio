@@ -17,38 +17,18 @@ interface DesignSectionProps {
   subSection?: string
 }
 
-const AVATAR_CATEGORIES = [
-  { 
-    id: 'man', 
-    label: 'Man', 
-    avatars: ['/avatars/man1.png', '/avatars/man2.png'],
-  },
-  { 
-    id: 'woman', 
-    label: 'Woman', 
-    avatars: ['/avatars/woman1.png', '/avatars/woman2.png'],
-  },
-  { 
-    id: 'animal', 
-    label: 'Animals', 
-    avatars: ['/avatars/animal1.png'],
-  },
-  { 
-    id: 'bird', 
-    label: 'Birds', 
-    avatars: ['/avatars/bird1.png'],
-  },
-  { 
-    id: 'insect', 
-    label: 'Insects', 
-    avatars: ['/avatars/insect1.png'],
-  }
+const ALL_LOCAL_AVATARS = [
+  '/avatars/man1.png', '/avatars/man2.png', '/avatars/man3.png', '/avatars/man4.png', '/avatars/man5.png', '/avatars/man6.png',
+  '/avatars/woman1.png', '/avatars/woman2.png', '/avatars/woman3.png', '/avatars/woman4.png', '/avatars/woman5.png', '/avatars/woman6.png',
+  '/avatars/animal1.png', '/avatars/animal2.png', '/avatars/animal3.png', '/avatars/animal4.png', '/avatars/animal5.png', '/avatars/animal6.png',
+  '/avatars/bird1.png', '/avatars/bird2.png', '/avatars/bird3.png', '/avatars/bird4.png', '/avatars/bird5.png', '/avatars/bird6.png',
+  '/avatars/insect1.png', '/avatars/insect2.png', '/avatars/insect3.png', '/avatars/insect4.png', '/avatars/insect5.png', '/avatars/insect6.png',
 ]
 
 export default function DesignSection({ profile, setProfile, links, onBack, subSection }: DesignSectionProps) {
   const [showCropper, setShowCropper] = useState(false)
   const [selectedImage, setSelectedImage] = useState('')
-  const [themeTab, setThemeTab ] = useState<'free' | 'premium'>('free')
+  const [themeTab, setThemeTab] = useState<'free' | 'premium'>('free')
   const [activeSubTab, setActiveSubTab] = useState('Text')
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null)
@@ -187,27 +167,31 @@ function AvatarGallery({ profile, updateProfile, handleAvatarUpload }: any) {
           <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest leading-none">Active Profile Avatar</p>
        </div>
 
-       <div className="space-y-8">
-          {AVATAR_CATEGORIES.map(cat => (
-             <div key={cat.id} className="space-y-4">
-                <div className="flex items-center justify-between px-1">
-                   <h3 className="text-[10px] font-black uppercase text-secondary tracking-widest leading-none">{cat.label}</h3>
-                   <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest">{cat.avatars.length} READY</span>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                   {cat.avatars.map((url, i) => (
-                      <button 
-                        key={i} 
-                        onClick={() => updateProfile({ avatar_url: url })}
-                        className={`aspect-square rounded-[32px] overflow-hidden border-4 transition-all relative group ${profile?.avatar_url === url ? 'border-primary shadow-xl scale-105' : 'border-transparent bg-gray-50 hover:border-gray-100 hover:scale-102'}`}
-                      >
-                         <img src={url} className="w-full h-full object-cover" alt="" />
-                         <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-all"></div>
-                      </button>
-                   ))}
-                </div>
-             </div>
-          ))}
+       <div className="space-y-6">
+          <div className="flex items-center justify-between px-1">
+             <h3 className="text-[10px] font-black uppercase text-secondary tracking-widest leading-none">Mixed Selection</h3>
+             <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest">30 TOTAL IMAGES</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+             {ALL_LOCAL_AVATARS.map((url, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => updateProfile({ avatar_url: url })}
+                  className={`aspect-square rounded-[32px] overflow-hidden border-4 transition-all relative group ${profile?.avatar_url === url ? 'border-primary shadow-xl scale-105' : 'border-transparent bg-gray-50 hover:border-gray-100 hover:scale-102 flex items-center justify-center'}`}
+                >
+                   <img 
+                    src={url} 
+                    className="w-full h-full object-cover" 
+                    onError={(e: any) => { 
+                      e.target.style.display='none'; 
+                      e.target.parentElement.innerHTML = '<div class="flex flex-col items-center gap-1"><i class="fi fi-rr-user-robot text-gray-200 text-2xl"></i><span class="text-[6px] font-black text-gray-200 uppercase tracking-widest">Coming Soon</span></div>' 
+                    }} 
+                    alt="" 
+                   />
+                   <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-all"></div>
+                </button>
+             ))}
+          </div>
        </div>
     </div>
   )
