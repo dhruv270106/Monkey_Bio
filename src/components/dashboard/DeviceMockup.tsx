@@ -65,34 +65,37 @@ export default function DeviceMockup({ userProfile, links = [], socialLinks = {}
   }
 
   const getBackgroundStyle = () => {
-    if (userProfile?.theme !== 'custom') {
-       if (selectedTheme.image) return { backgroundImage: `url(${selectedTheme.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-       return {}
-    }
-
-    const type = userProfile?.custom_bg_type || 'color'
-    const value = userProfile?.custom_bg || '#6A373A'
+    let style: any = {}
     const pattern = userProfile?.custom_bg_pattern || ''
 
-    let style: any = {}
+    if (userProfile?.theme !== 'custom') {
+       if (selectedTheme.image) {
+         style.backgroundImage = `url(${selectedTheme.image})`
+         style.backgroundSize = 'cover'
+         style.backgroundPosition = 'center'
+       }
+    } else {
+      const type = userProfile?.custom_bg_type || 'color'
+      const value = userProfile?.custom_bg || '#6A373A'
 
-    // Base Layer (Color/Gradient/Image)
-    if (type === 'color') style.backgroundColor = value
-    else if (type === 'gradient') {
-      if (typeof value === 'string' && value.includes('linear-gradient')) style.backgroundImage = value
-      else {
-        const direction = userProfile?.custom_bg_direction || 'linear-up'
-        const dirMap: any = { 'linear-up': 'to top', 'linear-down': 'to bottom', 'radial': 'radial' }
-        const dir = dirMap[direction] || 'to top'
-        const endColor = userProfile?.custom_bg_end || '#00000066'
-        if (dir === 'radial') style.backgroundImage = `radial-gradient(circle, ${value}, ${endColor})`
-        else style.backgroundImage = `linear-gradient(${dir}, ${value}, ${endColor})`
+      // Base Layer (Color/Gradient/Image)
+      if (type === 'color') style.backgroundColor = value
+      else if (type === 'gradient') {
+        if (typeof value === 'string' && value.includes('linear-gradient')) style.backgroundImage = value
+        else {
+          const direction = userProfile?.custom_bg_direction || 'linear-up'
+          const dirMap: any = { 'linear-up': 'to top', 'linear-down': 'to bottom', 'radial': 'radial' }
+          const dir = dirMap[direction] || 'to top'
+          const endColor = userProfile?.custom_bg_end || '#00000066'
+          if (dir === 'radial') style.backgroundImage = `radial-gradient(circle, ${value}, ${endColor})`
+          else style.backgroundImage = `linear-gradient(${dir}, ${value}, ${endColor})`
+        }
       }
-    }
-    else if (type === 'image') {
-      style.backgroundImage = `url(${value})`
-      style.backgroundSize = 'cover'
-      style.backgroundPosition = 'center'
+      else if (type === 'image') {
+        style.backgroundImage = `url(${value})`
+        style.backgroundSize = 'cover'
+        style.backgroundPosition = 'center'
+      }
     }
 
     // Pattern Overlay (Additive)

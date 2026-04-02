@@ -246,6 +246,28 @@ function HeaderSettings({ profile, updateProfile, handleAvatarUpload }: any) {
 }
 
 function WallpaperSettings({ profile, updateProfile, PATTERNS, PRESET_COLORS, PRESET_GRADIENTS }: any) {
+  const [activeCategory, setActiveCategory] = useState(profile?.custom_bg_type || 'color')
+  const [uploading, setUploading] = useState(false)
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    try {
+      const fileName = `${type}-${Date.now()}${file.name.substring(file.name.lastIndexOf('.'))}`
+      const filePath = `${profile.id}/${fileName}`
+      const { error: uploadError } = await supabase.storage.from('bg-assets').upload(filePath, file, { upsert: true })
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('bg-assets').getPublicUrl(filePath)
+        updateProfile({ custom_bg: publicUrl, custom_bg_type: type, theme: 'custom' })
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setUploading(false)
+    }
+  }
+
   return (
     <div className="space-y-8">
        <div className="grid grid-cols-5 gap-2">
@@ -256,31 +278,103 @@ function WallpaperSettings({ profile, updateProfile, PATTERNS, PRESET_COLORS, PR
             { id: 'image', icon: 'fi-rr-picture' },
             { id: 'video', icon: 'fi-rr-play-alt' },
           ].map(type => (
-            <button key={type.id} onClick={() => updateProfile({ custom_bg_type: type.id, theme: 'custom' })} className={`h-12 rounded-xl border-2 transition-all flex items-center justify-center ${profile?.custom_bg_type === type.id ? 'border-primary bg-primary/5 text-primary' : 'border-gray-50 text-gray-300'}`}>
+            <button key={type.id} onClick={() => setActiveCategory(type.id)} className={`h-12 rounded-xl border-2 transition-all flex items-center justify-center ${activeCategory === type.id ? 'border-primary bg-primary/5 text-primary' : 'border-gray-50 text-gray-300'}`}>
                <i className={`fi ${type.icon} text-lg pt-0.5`}></i>
             </button>
           ))}
        </div>
+
        <div className="space-y-4">
-          {profile?.custom_bg_type === 'color' && (
-             <div className="grid grid-cols-5 gap-3">
-                {PRESET_COLORS.map((c: any) => (
-                  <button key={c} onClick={() => updateProfile({ custom_bg: c, custom_bg_type: 'color', theme: 'custom' })} className={`aspect-square rounded-full border-4 transition-all ${profile?.custom_bg === c ? 'border-primary scale-110' : 'border-white shadow-sm hover:scale-105'}`} style={{ backgroundColor: c }} />
-                ))}
+          {activeCategory === 'color' && (
+             <div className="space-y-4">
+                <div className="grid grid-cols-5 gap-3">
+                   {PRESET_COLORS.map((c: any) => (
+                     <button key={c} onClick={() => updateProfile({ custom_bg: c, custom_bg_type: 'color', theme: 'custom' })} className={`aspect-square rounded-full border-4 transition-all ${profile?.custom_bg === c && profile?.custom_bg_type === 'color' ? 'border-primary scale-110' : 'border-white shadow-sm hover:scale-105'}`} style={{ backgroundColor: c }} />
+                   ))}
+                   <div className="relative aspect-square">
+                      <input type="color" className="absolute inset-0 opacity-0 w-full h-full cursor-pointer" onChange={(e) => updateProfile({ custom_bg: e.target.value, custom_bg_type: 'color', theme: 'custom' })} />
+                      <div className="w-full h-full rounded-full border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-300 pointer-events-none">
+                         <i className="fi fi-rr-plus text-xs"></i>
+                      </div>
+                   </div>
+                </div>
              </div>
           )}
-          {profile?.custom_bg_type === 'gradient' && (
+
+          {activeCategory === 'gradient' && (
              <div className="grid grid-cols-2 gap-3">
                 {PRESET_GRADIENTS.map((g: any, i: number) => (
-                  <button key={i} onClick={() => updateProfile({ custom_bg: g, custom_bg_type: 'gradient', theme: 'custom' })} className={`w-full aspect-video rounded-2xl border-2 transition-all relative overflow-hidden ${profile?.custom_bg === g ? 'border-primary shadow-lg' : 'border-transparent shadow-sm'}`}><div className="absolute inset-0" style={{ backgroundImage: g }} /></button>
+                  <button key={i} onClick={() => updateProfile({ custom_bg: g, custom_bg_type: 'gradient', theme: 'custom' })} className={`w-full aspect-video rounded-2xl border-2 transition-all relative overflow-hidden ${profile?.custom_bg === g && profile?.custom_bg_type === 'gradient' ? 'border-primary shadow-lg' : 'border-transparent shadow-sm'}`}><div className="absolute inset-0" style={{ backgroundImage: g }} /></button>
                 ))}
              </div>
           )}
-          {profile?.custom_bg_type === 'pattern' && (
+
+          {activeCategory === 'pattern' && (
              <div className="grid grid-cols-2 gap-3">
+                <button onClick={() => updateProfile({ custom_bg_pattern: '' })} className={`w-full aspect-video rounded-2xl border-2 bg-gray-50 transition-all flex items-center justify-center text-[10px] font-black uppercase tracking-widest ${!profile?.custom_bg_pattern ? 'border-primary text-primary' : 'border-transparent text-gray-400'}`}>None</button>
                 {PATTERNS.map((p: any) => (
-                  <button key={p.id} onClick={() => updateProfile({ custom_bg_pattern: p.id, custom_bg_type: 'pattern', theme: 'custom' })} className={`w-full aspect-video rounded-2xl border-2 bg-gray-50 transition-all relative overflow-hidden ${profile?.custom_bg_pattern === p.id ? 'border-primary shadow-lg' : 'border-transparent shadow-sm'}`}><div className="absolute inset-0 opacity-20" style={{ backgroundImage: p.css, backgroundSize: p.size }} /></button>
+                  <button key={p.id} onClick={() => updateProfile({ custom_bg_pattern: p.id })} className={`w-full aspect-video rounded-2xl border-2 bg-gray-50 transition-all relative overflow-hidden ${profile?.custom_bg_pattern === p.id ? 'border-primary shadow-lg' : 'border-transparent shadow-sm'}`}><div className="absolute inset-0 opacity-20" style={{ backgroundImage: p.css, backgroundSize: p.size }} /></button>
                 ))}
+             </div>
+          )}
+
+          {activeCategory === 'image' && (
+             <div className="flex flex-col items-center justify-center aspect-video rounded-[32px] border-4 border-dashed border-gray-100 bg-gray-50/50 relative group overflow-hidden">
+                {profile?.custom_bg_type === 'image' && profile?.custom_bg ? (
+                   <>
+                      <img src={profile.custom_bg} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-4">
+                         <label className="w-10 h-10 rounded-full bg-white flex items-center justify-center cursor-pointer hover:scale-110 transition-all">
+                            <i className="fi fi-rr-camera text-secondary"></i>
+                            <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, 'image')} />
+                         </label>
+                         <button onClick={() => updateProfile({ custom_bg: '', custom_bg_type: 'color', theme: 'custom' })} className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center hover:scale-110 transition-all">
+                            <i className="fi fi-rr-trash text-white"></i>
+                         </button>
+                      </div>
+                   </>
+                ) : (
+                   <label className="flex flex-col items-center gap-3 cursor-pointer p-8 w-full h-full justify-center">
+                      <div className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center text-primary">
+                         {uploading ? <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div> : <i className="fi fi-rr-cloud-upload-alt text-xl"></i>}
+                      </div>
+                      <div className="text-center">
+                         <p className="text-[10px] font-black uppercase text-secondary tracking-widest">Upload Image</p>
+                         <p className="text-[8px] font-bold text-gray-400 mt-1 uppercase">JPG, PNG up to 5MB</p>
+                      </div>
+                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, 'image')} disabled={uploading} />
+                   </label>
+                )}
+             </div>
+          )}
+
+          {activeCategory === 'video' && (
+             <div className="flex flex-col items-center justify-center aspect-video rounded-[32px] border-4 border-dashed border-gray-100 bg-gray-50/50 relative group overflow-hidden">
+                {profile?.custom_bg_type === 'video' && profile?.custom_bg ? (
+                   <>
+                      <video src={profile.custom_bg} className="w-full h-full object-cover" autoPlay muted loop />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-4">
+                         <label className="w-10 h-10 rounded-full bg-white flex items-center justify-center cursor-pointer hover:scale-110 transition-all">
+                            <i className="fi fi-rr-play-alt text-secondary"></i>
+                            <input type="file" className="hidden" accept="video/*" onChange={(e) => handleUpload(e, 'video')} />
+                         </label>
+                         <button onClick={() => updateProfile({ custom_bg: '', custom_bg_type: 'color', theme: 'custom' })} className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center hover:scale-110 transition-all">
+                            <i className="fi fi-rr-trash text-white"></i>
+                         </button>
+                      </div>
+                   </>
+                ) : (
+                   <label className="flex flex-col items-center gap-3 cursor-pointer p-8 w-full h-full justify-center">
+                      <div className="w-12 h-12 rounded-2xl bg-white shadow-xl flex items-center justify-center text-primary">
+                         {uploading ? <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div> : <i className="fi fi-rr-video-camera-alt text-xl"></i>}
+                      </div>
+                      <div className="text-center">
+                         <p className="text-[10px] font-black uppercase text-secondary tracking-widest">Upload Video</p>
+                         <p className="text-[8px] font-bold text-gray-400 mt-1 uppercase">MP4 up to 10MB</p>
+                      </div>
+                      <input type="file" className="hidden" accept="video/*" onChange={(e) => handleUpload(e, 'video')} disabled={uploading} />
+                   </label>
+                )}
              </div>
           )}
        </div>
