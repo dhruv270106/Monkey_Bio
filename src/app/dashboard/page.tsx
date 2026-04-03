@@ -13,6 +13,8 @@ import PlannerSection from '@/components/dashboard/PlannerSection'
 import AutoReplySection from '@/components/dashboard/AutoReplySection'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PLATFORMS } from '@/data/platforms'
+import AddLinkModal from '@/components/dashboard/AddLinkModal'
+import SocialSelectorModal from '@/components/dashboard/SocialSelectorModal'
 
 function DashboardContent() {
   const router = useRouter()
@@ -22,6 +24,9 @@ function DashboardContent() {
   const [activeMainTab, setActiveMainTab] = useState('monkeybio')
   const [activeSubTab, setActiveSubTab] = useState('links')
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isSocialSelectorOpen, setIsSocialSelectorOpen] = useState(false)
+  const [zoom, setZoom] = useState(90)
   
   const [profile, setProfile] = useState<any>(null)
   const [links, setLinks] = useState<any[]>([])
@@ -102,6 +107,23 @@ function DashboardContent() {
     } finally {
        setTimeout(() => { isUpdatingRef.current = false }, 1000)
     }
+  }
+
+  const handleAddNewLink = async (linkData: { title: string; url: string; platform: string }) => {
+    if (links.length >= 20) {
+      alert('Maximum 20 links allowed!')
+      return
+    }
+    const newLink = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: linkData.title,
+      url: linkData.url,
+      active: true,
+      platform: linkData.platform,
+      layout: 'classic' as const
+    }
+    const newLinks = [newLink, ...links]
+    await globalUpdateProfile({ links: newLinks })
   }
 
   const renderSecondaryPanel = () => {
@@ -194,7 +216,7 @@ function DashboardContent() {
                               <i className="fi fi-rr-settings-sliders text-[10px]"></i>
                            </button>
                            <button 
-                             onClick={() => setActiveSubTab('profile')}
+                             onClick={() => setIsSocialSelectorOpen(true)}
                              className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center hover:scale-110 transition-all shadow-lg shadow-primary/20"
                              title="Add Link"
                            >
@@ -305,6 +327,11 @@ function DashboardContent() {
     }
   }
 
+  const handleSocialSelect = (platform: string) => {
+    const newSocial = { ...profile.social_links, [platform]: '' }
+    globalUpdateProfile({ social_links: newSocial })
+  }
+
   if (loading || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -363,28 +390,47 @@ function DashboardContent() {
                  <button onClick={() => setIsDarkMode(true)} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isDarkMode ? 'bg-white shadow-sm text-indigo-500' : 'text-gray-400'}`}><i className="fi fi-rr-moon text-sm"></i></button>
               </div>
               <button className="p-2.5 rounded-xl border border-gray-100 text-gray-400 hover:text-primary transition-all"><i className="fi fi-rr-eye text-sm pt-0.5"></i></button>
-              <button className="px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-2">
-                 Publish <i className="fi fi-rr-angle-small-down"></i>
-              </button>
            </div>
         </header>
 
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden bg-gray-50/50">
-           {/* Middle Content - Centered Phone Mockup */}
-           <div className="flex-1 overflow-hidden flex items-center justify-center p-4 md:p-8 relative">
-              <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center bg-white/80 backdrop-blur rounded-full px-4 py-1.5 border border-gray-100 shadow-sm z-10 gap-4">
-                 <button className="text-gray-400 hover:text-primary transition-colors text-xs font-black"><i className="fi fi-rr-minus"></i></button>
-                 <span className="text-[10px] font-black text-secondary min-w-[30px] text-center">90%</span>
-                 <button className="text-gray-400 hover:text-primary transition-colors text-xs font-black"><i className="fi fi-rr-plus"></i></button>
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden bg-[#121212]">
+           {/* Middle Content - Centered Phone Mockup with Design Canvas */}
+           <div className="flex-1 overflow-hidden flex items-center justify-center p-4 md:p-8 relative bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:20px_20px]">
+              
+              {/* Zoom Controls at Bottom */}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center bg-zinc-900 border border-zinc-800 rounded-2xl p-1 gap-1 z-50 shadow-2xl">
+                 <button 
+                   onClick={() => setZoom(prev => Math.max(50, prev - 10))}
+                   className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl transition-all font-black"
+                 >
+                    <i className="fi fi-rr-minus text-xs"></i>
+                 </button>
+                 <div className="px-3 min-w-[60px] text-center border-x border-zinc-800">
+                    <span className="text-[10px] font-black text-white tracking-widest uppercase">{zoom}%</span>
+                 </div>
+                 <button 
+                    onClick={() => setZoom(prev => Math.min(150, prev + 10))}
+                    className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl transition-all font-black"
+                 >
+                    <i className="fi fi-rr-plus text-xs"></i>
+                 </button>
               </div>
               
-              <div className="relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.25)] rounded-[60px] transform scale-[0.85] sm:scale-95 lg:scale-100 transition-transform origin-center">
+              <motion.div 
+                animate={{ scale: zoom / 100 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                className="relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] rounded-[60px] bg-black"
+              >
                  <Preview userProfile={profile} links={links} socialLinks={profile?.social_links} />
-              </div>
+              </motion.div>
 
               {/* Sidebar toggle for tablet as shown in UI */}
-              <button className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-16 bg-gray-200 rounded-l-lg hidden md:flex items-center justify-center text-[8px] text-gray-500 hover:bg-primary hover:text-white transition-all">
-                 <i className="fi fi-rr-angle-small-left"></i>
+              <button 
+                 onClick={() => setZoom(90)}
+                 title="Reset Zoom"
+                 className="absolute right-8 bottom-8 w-10 h-10 bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center rounded-xl shadow-2xl transition-all active:scale-95"
+              >
+                  <i className="fi fi-rr-refresh text-xs"></i>
               </button>
            </div>
 
@@ -396,6 +442,20 @@ function DashboardContent() {
            </div>
         </div>
       </div>
+      
+      <AddLinkModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        onAdd={handleAddNewLink}
+        linksCount={links.length}
+      />
+
+      <SocialSelectorModal
+        isOpen={isSocialSelectorOpen}
+        onClose={() => setIsSocialSelectorOpen(false)}
+        onSelect={handleSocialSelect}
+        existingSocials={Object.keys(profile?.social_links || {})}
+      />
     </div>
   )
 }
