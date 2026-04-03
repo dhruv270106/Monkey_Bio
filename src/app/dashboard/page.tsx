@@ -14,7 +14,6 @@ import AutoReplySection from '@/components/dashboard/AutoReplySection'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PLATFORMS } from '@/data/platforms'
 import AddLinkModal from '@/components/dashboard/AddLinkModal'
-import SocialSelectorModal from '@/components/dashboard/SocialSelectorModal'
 
 function DashboardContent() {
   const router = useRouter()
@@ -25,7 +24,6 @@ function DashboardContent() {
   const [activeSubTab, setActiveSubTab] = useState('profile')
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isSocialSelectorOpen, setIsSocialSelectorOpen] = useState(false)
   const [zoom, setZoom] = useState(90)
   
   const [profile, setProfile] = useState<any>(null)
@@ -124,14 +122,14 @@ function DashboardContent() {
         return (
           <div className="flex flex-col h-full bg-white border-r border-gray-100 w-64 animate-in slide-in-from-left duration-300">
             <div className="p-6 border-b border-gray-50 mb-4">
-               <p className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-4">My Account</p>
+               <p className="text-[10px] font-medium uppercase text-gray-400 tracking-[0.2em] mb-4">My Account</p>
                <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-100">
                      <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
                   </div>
                   <div className="min-w-0">
-                     <p className="text-xs font-black text-secondary truncate">@{profile?.username}</p>
-                     <p className="text-[8px] font-bold text-primary uppercase tracking-widest mt-0.5">Free Plan</p>
+                     <p className="text-xs font-medium text-secondary truncate">@{profile?.username}</p>
+                     <p className="text-[8px] font-medium text-primary uppercase tracking-widest mt-0.5">Free Plan</p>
                   </div>
                </div>
             </div>
@@ -146,13 +144,13 @@ function DashboardContent() {
                ].map((item, i) => (
                  <button key={i} onClick={item.action} className="w-full text-left p-3 rounded-xl hover:bg-gray-50 flex items-center gap-3 transition-colors group">
                     <i className={`fi ${item.icon} text-gray-400 group-hover:text-primary transition-colors pt-0.5`}></i>
-                    <span className="text-[10px] font-black uppercase text-gray-600 tracking-wider whitespace-nowrap">{item.label}</span>
+                    <span className="text-[10px] font-medium uppercase text-gray-600 tracking-wider whitespace-nowrap">{item.label}</span>
                  </button>
                ))}
                <div className="h-px bg-gray-50 my-4 mx-3"></div>
-               <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')} className="w-full text-left p-3 rounded-xl hover:bg-red-50 flex items-center gap-3 transition-colors group text-red-500">
+               <button onClick={() => supabase.auth.signOut().then(() => window.location.href = '/')} className="w-full text-left p-3 rounded-xl hover:bg-red-50 flex items-center gap-3 transition-colors group text-red-400 hover:text-red-500">
                   <i className="fi fi-rr-exit pt-0.5 opacity-70"></i>
-                  <span className="text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Log Out</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wider whitespace-nowrap">Log Out</span>
                </button>
             </div>
           </div>
@@ -161,7 +159,7 @@ function DashboardContent() {
         return (
           <div className="flex flex-col h-full bg-white border-r border-gray-100 w-64 animate-in slide-in-from-left duration-300 overflow-hidden">
             <div className="p-8 pb-4 flex items-center justify-between">
-                <p className="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em]">My MonkeyBio</p>
+                <p className="text-[10px] font-medium uppercase text-gray-400 tracking-[0.3em]">My MonkeyBio</p>
             </div>
             
             <div className="flex-1 flex flex-col min-h-0">
@@ -186,7 +184,7 @@ function DashboardContent() {
                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${activeSubTab === item.id ? 'bg-white/20' : 'bg-gray-50'}`}>
                          <i className={`fi ${item.icon} text-sm pt-1`}></i>
                        </div>
-                       <span className="text-[11px] font-black uppercase tracking-widest">{item.label}</span>
+                       <span className="text-[11px] font-medium uppercase tracking-widest">{item.label}</span>
                     </button>
                   ))}
                </div>
@@ -196,8 +194,8 @@ function DashboardContent() {
                   <div className="bg-gray-50/50 rounded-[32px] border border-gray-100 p-5 space-y-4 shadow-sm">
                      <div className="flex items-center justify-between px-1">
                         <div className="flex flex-col">
-                           <h4 className="text-[10px] font-black uppercase text-secondary tracking-widest">Social Media</h4>
-                           <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Quick Links</span>
+                           <h4 className="text-[10px] font-medium uppercase text-gray-600 tracking-widest group-hover:text-primary transition-colors">Social Media</h4>
+                           <span className="text-[8px] font-medium text-gray-400 uppercase tracking-widest mt-0.5">Quick Links</span>
                         </div>
                         <div className="flex items-center gap-2">
                            <button 
@@ -208,9 +206,9 @@ function DashboardContent() {
                               <i className="fi fi-rr-settings-sliders text-[10px]"></i>
                            </button>
                            <button 
-                             onClick={() => setIsSocialSelectorOpen(true)}
+                             onClick={() => setIsAddModalOpen(true)}
                              className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center hover:scale-110 transition-all shadow-lg shadow-primary/20"
-                             title="Add Link"
+                             title="Add Asset"
                            >
                               <i className="fi fi-rr-plus text-[10px]"></i>
                            </button>
@@ -238,10 +236,10 @@ function DashboardContent() {
                                          const newSocial = { ...profile.social_links, [platform]: e.target.value }
                                          globalUpdateProfile({ social_links: newSocial })
                                       }}
-                                      className="w-full bg-transparent text-[9px] font-black text-secondary outline-none truncate placeholder:text-gray-300"
+                                      className="w-full bg-transparent text-[9px] font-medium text-secondary outline-none truncate placeholder:text-gray-300"
                                       placeholder={`${platform} link...`}
                                     />
-                                    <p className="text-[7px] font-black uppercase text-gray-300 tracking-widest truncate leading-none mt-0.5">{platform}</p>
+                                    <p className="text-[7px] font-medium uppercase text-gray-300 tracking-widest truncate leading-none mt-0.5">{platform}</p>
                                  </div>
                                  <button 
                                    onClick={() => {
@@ -256,8 +254,8 @@ function DashboardContent() {
                            )
                         ))}
                         {(!profile?.social_links || Object.values(profile.social_links).every(v => !v)) && (
-                           <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-2xl">
-                              <p className="text-[8px] font-black text-gray-300 uppercase tracking-widest">No Links Added</p>
+                           <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-primary/20 transition-colors">
+                              <p className="text-[8px] font-medium text-gray-300 uppercase tracking-widest group-hover:text-primary/40 transition-colors">No Links Added</p>
                            </div>
                         )}
                      </div>
@@ -270,7 +268,7 @@ function DashboardContent() {
         return (
           <div className="flex flex-col h-full bg-white border-r border-gray-100 w-64 animate-in slide-in-from-left duration-300">
             <div className="p-8 pb-4">
-                <p className="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em] mb-4">Powerful Tools</p>
+                <p className="text-[10px] font-medium uppercase text-gray-400 tracking-[0.3em] mb-4">Powerful Tools</p>
             </div>
             <div className="px-3 space-y-1">
                {[
@@ -281,7 +279,7 @@ function DashboardContent() {
                ].map((item, i) => (
                  <button key={i} onClick={item.action} className="w-full text-left p-4 rounded-2xl flex items-center gap-4 transition-all hover:bg-gray-50 text-gray-500">
                     <div className={`w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-primary`}><i className={`fi ${item.icon} text-sm pt-1`}></i></div>
-                    <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+                    <span className="text-[10px] font-medium uppercase tracking-widest">{item.label}</span>
                  </button>
                ))}
             </div>
@@ -312,7 +310,7 @@ function DashboardContent() {
           <div className="flex-1 flex items-center justify-center text-gray-300">
              <div className="text-center">
                 <i className="fi fi-rr-rocket text-4xl mb-4 block"></i>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em]">Select a section to begin</p>
+                <p className="text-[10px] font-medium uppercase tracking-[0.2em]">Select a section to begin</p>
              </div>
           </div>
         )
@@ -367,7 +365,7 @@ function DashboardContent() {
               </div>
               <div className="h-8 w-px bg-gray-100"></div>
               <div className="bg-gray-50 border border-gray-100 px-4 py-2 rounded-xl flex items-center gap-3">
-                 <span className="text-[10px] font-bold text-gray-400 select-none tracking-tight">monkey-bio.live/{profile?.username}</span>
+                 <span className="text-[10px] font-medium text-gray-400 select-none tracking-tight">monkey-bio.live/{profile?.username}</span>
                  <button className="text-primary hover:scale-110 transition-transform"><i className="fi fi-rr-copy text-[10px]"></i></button>
               </div>
            </div>
@@ -393,16 +391,16 @@ function DashboardContent() {
               <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center bg-white border border-gray-100 rounded-2xl p-1 gap-1 z-50 shadow-xl">
                  <button 
                    onClick={() => setZoom(prev => Math.max(50, prev - 10))}
-                   className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-primary hover:bg-gray-50 rounded-xl transition-all font-black"
+                   className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-primary hover:bg-gray-50 rounded-xl transition-all font-medium"
                  >
                     <i className="fi fi-rr-minus text-xs"></i>
                  </button>
                  <div className="px-3 min-w-[60px] text-center border-x border-gray-100">
-                    <span className="text-[10px] font-black text-secondary tracking-widest uppercase">{zoom}%</span>
+                    <span className="text-[10px] font-medium text-secondary tracking-widest uppercase">{zoom}%</span>
                  </div>
                  <button 
                     onClick={() => setZoom(prev => Math.min(150, prev + 10))}
-                    className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-primary hover:bg-gray-50 rounded-xl transition-all font-black"
+                    className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-primary hover:bg-gray-50 rounded-xl transition-all font-medium"
                  >
                     <i className="fi fi-rr-plus text-xs"></i>
                  </button>
@@ -441,13 +439,6 @@ function DashboardContent() {
         onAdd={handleAddNewLink}
         linksCount={links.length}
       />
-
-      <SocialSelectorModal
-        isOpen={isSocialSelectorOpen}
-        onClose={() => setIsSocialSelectorOpen(false)}
-        onSelect={handleSocialSelect}
-        existingSocials={Object.keys(profile?.social_links || {})}
-      />
     </div>
   )
 }
@@ -463,3 +454,4 @@ export default function Dashboard() {
     </Suspense>
   )
 }
+

@@ -117,13 +117,13 @@ export default function DesignSection({ profile, setProfile, links, onBack, subS
         return (
           <div className="space-y-6">
              <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest leading-none">Font Family</p>
-                <input type="text" placeholder="Search..." className="px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-[10px] font-bold outline-none focus:border-primary transition-all w-32" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} />
+                <p className="text-[10px] font-medium uppercase text-gray-400 tracking-widest leading-none">Font Family</p>
+                <input type="text" placeholder="Search..." className="px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-[10px] font-medium outline-none focus:border-primary transition-all w-32" value={fontSearch} onChange={(e) => setFontSearch(e.target.value)} />
              </div>
              <div className="grid grid-cols-1 gap-2 max-h-[500px] overflow-y-auto no-scrollbar pr-2 text-secondary">
                 {FONTS.filter(f => f.toLowerCase().includes(fontSearch.toLowerCase())).map(font => (
                    <button key={font} onClick={() => updateProfile({ font_family: font })} className={`p-4 rounded-xl text-left transition-all border-2 ${profile?.font_family === font ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-gray-50 border-transparent hover:bg-white hover:border-gray-100'}`} style={{ fontFamily: font }}>
-                      <span className="text-base font-black">{font}</span>
+                      <span className="text-base font-medium">{font}</span>
                    </button>
                 ))}
              </div>
@@ -139,7 +139,7 @@ export default function DesignSection({ profile, setProfile, links, onBack, subS
   return (
     <div className="p-6">
        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-black text-secondary uppercase tracking-tight italic">{subSection || 'Workspace'}</h2>
+          <h2 className="text-xl font-medium text-secondary uppercase tracking-tight italic">{subSection || 'Workspace'}</h2>
           <div className="flex items-center gap-2">
              {saveStatus === 'saving' && <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>}
              {saveStatus === 'saved' && <i className="fi fi-rr-check text-green-500 text-xs"></i>}
@@ -167,21 +167,21 @@ function AvatarGallery({ profile, updateProfile, handleAvatarUpload }: any) {
                 </div>
              </div>
              <div>
-                <p className="text-[10px] font-black uppercase text-secondary tracking-widest leading-none">Active Avatar</p>
-                <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-1">Currently Visible</p>
+                <p className="text-[10px] font-medium uppercase text-secondary tracking-widest leading-none">Active Avatar</p>
+                <p className="text-[8px] font-medium text-gray-400 uppercase tracking-widest mt-1">Currently Visible</p>
              </div>
           </div>
           
-          <button className="h-10 px-4 bg-gray-50 hover:bg-white hover:shadow-md border border-gray-100 rounded-xl transition-all relative overflow-hidden group">
-             <span className="text-[9px] font-black uppercase tracking-widest text-primary relative z-10">Upload Custom</span>
+          <button className="h-10 px-4 bg-gray-50 hover:bg-primary/5 border border-gray-100 rounded-xl transition-all relative overflow-hidden group">
+             <span className="text-[9px] font-medium uppercase tracking-widest text-primary relative z-10">Upload Custom</span>
              <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={handleAvatarUpload} />
           </button>
        </div>
 
        <div className="space-y-6">
           <div className="flex items-center justify-between px-1">
-             <h3 className="text-[10px] font-black uppercase text-secondary tracking-widest leading-none">Avatar Library</h3>
-             <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest">30 TOTAL IMAGES</span>
+             <h3 className="text-[10px] font-medium uppercase text-secondary tracking-widest leading-none">Avatar Library</h3>
+             <span className="text-[8px] font-medium text-gray-300 uppercase tracking-widest">30 TOTAL IMAGES</span>
           </div>
           <div className="grid grid-cols-2 gap-4 pb-20">
              {ALL_LOCAL_AVATARS.map((url, i) => (
@@ -195,7 +195,7 @@ function AvatarGallery({ profile, updateProfile, handleAvatarUpload }: any) {
                     className="w-full h-full object-cover" 
                     onError={(e: any) => { 
                       e.target.style.display='none'; 
-                      e.target.parentElement.innerHTML = '<div class="flex flex-col items-center gap-1"><i class="fi fi-rr-user-robot text-gray-200 text-2xl"></i><span class="text-[6px] font-black text-gray-200 uppercase tracking-widest">Coming Soon</span></div>' 
+                      e.target.parentElement.innerHTML = '<div class="flex flex-col items-center gap-1"><i class="fi fi-rr-user-robot text-gray-200 text-2xl"></i><span class="text-[6px] font-medium text-gray-200 uppercase tracking-widest">Coming Soon</span></div>' 
                     }} 
                     alt="" 
                    />
@@ -212,17 +212,17 @@ function ThemeSettings({ profile, themeTab, setThemeTab, updateProfile }: any) {
   return (
     <div className="flex flex-col gap-6">
        <div className="flex bg-gray-50 p-1 rounded-2xl shrink-0">
-          <button onClick={() => setThemeTab('free')} className={`flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'free' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Free</button>
-          <button onClick={() => setThemeTab('premium')} className={`flex-1 py-2.5 text-[10px] font-extrabold uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'premium' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Premium</button>
+          <button onClick={() => setThemeTab('free')} className={`flex-1 py-2.5 text-[10px] font-medium uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'free' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Free</button>
+          <button onClick={() => setThemeTab('premium')} className={`flex-1 py-2.5 text-[10px] font-medium uppercase tracking-widest rounded-[14px] transition-all ${themeTab === 'premium' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400'}`}>Premium</button>
        </div>
        <div className="grid grid-cols-2 gap-4">
           {THEMES.filter(t => (themeTab === 'premium' ? t.isPremium : !t.isPremium)).map(theme => (
-            <button key={theme.id} onClick={() => updateProfile({ theme: theme.id, custom_bg_type: '' })} className="flex flex-col items-center gap-2 group">
-               <div className={`aspect-[3/4] w-full rounded-[24px] overflow-hidden border-4 transition-all relative ${profile?.theme === theme.id ? 'border-primary shadow-xl' : 'border-transparent shadow-sm hover:border-gray-100'} ${theme.bg}`}>
+            <button key={theme.id} onClick={() => updateProfile({ theme: theme.id, custom_bg_type: '' })} className={`flex flex-col items-center gap-2 group transition-all ${profile?.theme === theme.id ? 'scale-105' : 'hover:scale-102'}`}>
+               <div className={`aspect-[3/4] w-full rounded-[24px] overflow-hidden border-4 transition-all relative ${profile?.theme === theme.id ? 'border-primary shadow-xl ring-4 ring-primary/10' : 'border-transparent shadow-sm hover:border-gray-100'} ${theme.bg}`}>
                   {theme.image && <img src={theme.image} className="w-full h-full object-cover opacity-80" />}
-                  <div className="absolute inset-0 flex items-center justify-center"><span className={`${theme.text.split(' ')[0]} font-extrabold text-xl`}>Aa</span></div>
+                  <div className="absolute inset-0 flex items-center justify-center"><span className={`${theme.text.split(' ')[0]} font-medium text-xl`}>Aa</span></div>
                </div>
-               <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">{theme.name}</span>
+               <span className={`text-[9px] font-medium uppercase tracking-widest leading-none transition-colors ${profile?.theme === theme.id ? 'text-primary' : 'text-gray-400 group-hover:text-secondary'}`}>{theme.name}</span>
             </button>
           ))}
        </div>
@@ -244,13 +244,13 @@ function HeaderSettings({ profile, updateProfile, handleAvatarUpload }: any) {
              </div>
           </div>
           <div className="w-full space-y-2">
-             <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Profile Name</label>
-             <input type="text" value={profile?.display_name || ''} onChange={(e) => updateProfile({ display_name: e.target.value })} className="w-full h-14 px-6 rounded-2xl bg-gray-50 text-secondary font-black outline-none border-2 border-transparent focus:border-primary transition-all" />
+             <label className="text-[9px] font-medium uppercase text-gray-400 tracking-widest ml-1">Profile Name</label>
+             <input type="text" value={profile?.display_name || ''} onChange={(e) => updateProfile({ display_name: e.target.value })} className="w-full h-14 px-6 rounded-2xl bg-gray-50 text-secondary font-medium outline-none border-2 border-transparent focus:border-primary transition-all shadow-inner" />
           </div>
        </div>
        <div className="space-y-2">
-          <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest ml-1">Bio Description</label>
-          <textarea value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full h-32 p-6 rounded-2xl bg-gray-50 text-secondary font-bold outline-none border-2 border-transparent focus:border-primary transition-all resize-none" placeholder="Add your bio..." />
+          <label className="text-[9px] font-medium uppercase text-gray-400 tracking-widest ml-1">Bio Description</label>
+          <textarea value={profile?.bio || ''} onChange={(e) => updateProfile({ bio: e.target.value })} className="w-full h-32 p-6 rounded-2xl bg-gray-50 text-secondary font-medium outline-none border-2 border-transparent focus:border-primary transition-all resize-none" placeholder="Add your bio..." />
        </div>
     </div>
   )
@@ -322,7 +322,7 @@ function WallpaperSettings({ profile, updateProfile, PATTERNS, PRESET_COLORS, PR
 
           {activeCategory === 'pattern' && (
              <div className="grid grid-cols-2 gap-3">
-                <button onClick={() => updateProfile({ custom_bg_pattern: '' })} className={`w-full aspect-video rounded-2xl border-2 bg-gray-50 transition-all flex items-center justify-center text-[10px] font-black uppercase tracking-widest ${!profile?.custom_bg_pattern ? 'border-primary text-primary' : 'border-transparent text-gray-400'}`}>None</button>
+                <button onClick={() => updateProfile({ custom_bg_pattern: '' })} className={`w-full aspect-video rounded-2xl border-2 bg-gray-50 transition-all flex items-center justify-center text-[10px] font-medium uppercase tracking-widest ${!profile?.custom_bg_pattern ? 'border-primary text-primary' : 'border-transparent text-gray-400'}`}>None</button>
                 {PATTERNS.map((p: any) => (
                   <button key={p.id} onClick={() => updateProfile({ custom_bg_pattern: p.id })} className={`w-full aspect-video rounded-2xl border-2 bg-gray-50 transition-all relative overflow-hidden ${profile?.custom_bg_pattern === p.id ? 'border-primary shadow-lg' : 'border-transparent shadow-sm'}`}><div className="absolute inset-0 opacity-20" style={{ backgroundImage: p.css, backgroundSize: p.size }} /></button>
                 ))}
@@ -350,8 +350,8 @@ function WallpaperSettings({ profile, updateProfile, PATTERNS, PRESET_COLORS, PR
                          {uploading ? <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div> : <i className="fi fi-rr-cloud-upload-alt text-xl"></i>}
                       </div>
                       <div className="text-center">
-                         <p className="text-[10px] font-black uppercase text-secondary tracking-widest">Upload Image</p>
-                         <p className="text-[8px] font-bold text-gray-400 mt-1 uppercase">JPG, PNG up to 5MB</p>
+                         <p className="text-[10px] font-medium uppercase text-secondary tracking-widest">Upload Image</p>
+                         <p className="text-[8px] font-medium text-gray-400 mt-1 uppercase">JPG, PNG up to 5MB</p>
                       </div>
                       <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, 'image')} disabled={uploading} />
                    </label>
@@ -380,8 +380,8 @@ function WallpaperSettings({ profile, updateProfile, PATTERNS, PRESET_COLORS, PR
                          {uploading ? <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div> : <i className="fi fi-rr-video-camera-alt text-xl"></i>}
                       </div>
                       <div className="text-center">
-                         <p className="text-[10px] font-black uppercase text-secondary tracking-widest">Upload Video</p>
-                         <p className="text-[8px] font-bold text-gray-400 mt-1 uppercase">MP4 up to 10MB</p>
+                         <p className="text-[10px] font-medium uppercase text-secondary tracking-widest">Upload Video</p>
+                         <p className="text-[8px] font-medium text-gray-400 mt-1 uppercase">MP4 up to 10MB</p>
                       </div>
                       <input type="file" className="hidden" accept="video/*" onChange={(e) => handleUpload(e, 'video')} disabled={uploading} />
                    </label>
@@ -396,32 +396,33 @@ function WallpaperSettings({ profile, updateProfile, PATTERNS, PRESET_COLORS, PR
 function StyleSettings({ profile, updateProfile }: any) {
   return (
     <div className="space-y-10">
-       <div className="space-y-6">
-          <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] ml-1 leading-none block">Variant Style</label>
+        <div className="space-y-6">
+          <label className="text-[10px] font-medium uppercase text-gray-400 tracking-[0.4em] ml-1 leading-none block">Variant Style</label>
           <div className="grid grid-cols-3 gap-3">
             {['solid', 'outline', 'glass'].map(v => (
-              <button key={v} onClick={() => updateProfile({ button_variant: v })} className={`h-14 rounded-2xl border-2 flex items-center justify-center font-black uppercase text-[10px] tracking-widest transition-all ${profile?.button_variant === v ? 'border-primary text-primary bg-primary/5 shadow-lg shadow-primary/10' : 'border-gray-50 text-gray-400 bg-gray-50/50'}`}>{v}</button>
+              <button key={v} onClick={() => updateProfile({ button_variant: v })} className={`h-14 rounded-2xl border-2 flex items-center justify-center font-medium uppercase text-[10px] tracking-widest transition-all ${profile?.button_variant === v ? 'border-primary text-primary bg-primary/5 shadow-lg shadow-primary/10' : 'border-gray-50 text-gray-400 bg-gray-50/50 hover:bg-white hover:border-gray-200'}`}>{v}</button>
             ))}
           </div>
        </div>
        <div className="space-y-6">
-          <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.4em] ml-1 leading-none block">Curvature</label>
+          <label className="text-[10px] font-medium uppercase text-gray-400 tracking-[0.4em] ml-1 leading-none block">Curvature</label>
           <div className="grid grid-cols-4 gap-2">
              {['none', 'md', 'xl', 'full'].map(r => (
-               <button key={r} onClick={() => updateProfile({ button_radius: r })} className={`h-11 rounded-xl border-2 flex items-center justify-center text-[10px] font-black transition-all ${profile?.button_radius === r ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-300'}`}>{r.toUpperCase()}</button>
+               <button key={r} onClick={() => updateProfile({ button_radius: r })} className={`h-11 rounded-xl border-2 flex items-center justify-center text-[10px] font-medium transition-all ${profile?.button_radius === r ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-300'}`}>{r.toUpperCase()}</button>
              ))}
           </div>
        </div>
        <div className="space-y-6 pt-4">
           <div className="flex items-center justify-between p-6 bg-gray-50/50 rounded-3xl border border-gray-100">
-             <div className="flex flex-col"><span className="font-extrabold text-secondary text-xs">Font Color</span><span className="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-1">Global text tone</span></div>
+             <div className="flex flex-col"><span className="font-medium text-secondary text-xs">Font Color</span><span className="text-[8px] font-medium text-gray-400 uppercase tracking-widest mt-1">Global text tone</span></div>
              <input type="color" value={profile?.font_color || '#000000'} onChange={(e) => updateProfile({ font_color: e.target.value })} className="w-10 h-10 rounded-xl cursor-pointer border-2 border-white shadow-lg" />
           </div>
           <div className="flex items-center justify-between p-6 bg-gray-50/50 rounded-3xl border border-gray-100">
-             <div className="flex flex-col"><span className="font-extrabold text-secondary text-xs">Button Fill</span><span className="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-1">Button background</span></div>
+             <div className="flex flex-col"><span className="font-medium text-secondary text-xs">Button Fill</span><span className="text-[8px] font-medium text-gray-400 uppercase tracking-widest mt-1">Button background</span></div>
              <input type="color" value={profile?.custom_button_bg || '#ffffff'} onChange={(e) => updateProfile({ custom_button_bg: e.target.value })} className="w-10 h-10 rounded-xl cursor-pointer border-2 border-white shadow-lg" />
           </div>
        </div>
     </div>
   )
 }
+

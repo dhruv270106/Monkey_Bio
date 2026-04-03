@@ -31,7 +31,7 @@ export default function Sidebar({ userProfile, activeMainTab, onMainTabChange, i
     <aside className="w-[72px] bg-black h-full flex flex-col items-center py-6 shrink-0 z-[200]">
       {/* Branding / Logo */}
       <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center mb-10 shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-        <span className="text-black font-black text-xs uppercase italic tracking-tighter">M</span>
+        <span className="text-black font-medium text-xs uppercase italic tracking-tighter">M</span>
       </div>
 
       <nav className="flex-1 flex flex-col items-center gap-6 w-full">
@@ -46,17 +46,17 @@ export default function Sidebar({ userProfile, activeMainTab, onMainTabChange, i
             >
               <div className={`w-12 h-12 rounded-[18px] flex items-center justify-center transition-all duration-500 overflow-hidden ${
                 isActive 
-                  ? 'bg-primary text-white shadow-[0_10px_30px_#502274]' 
-                  : 'text-white/40 hover:text-white hover:bg-white/5'
+                  ? 'bg-primary/20 text-primary shadow-[0_10px_30px_rgba(139,62,255,0.15)] ring-1 ring-primary/30' 
+                  : 'text-white/40 hover:text-white hover:bg-white/10'
               }`}>
                 {tab.id === 'user' ? (
                   <img 
                     src={userProfile?.avatar_url || `https://ui-avatars.com/api/?name=${userProfile?.username || 'U'}&background=6cf383&color=0f172a`} 
-                    className={`w-full h-full object-cover transition-transform duration-500 ${isActive ? 'scale-110' : ''}`} 
+                    className={`w-full h-full object-cover transition-transform duration-500 ${isActive ? 'scale-110 opacity-100' : 'opacity-80'}`} 
                     alt="" 
                   />
                 ) : (
-                  <i className={`fi ${tab.icon} text-xl pt-0 transition-transform duration-500 ${isActive ? 'scale-110 rotate-12' : 'group-hover:rotate-12'}`}></i>
+                  <i className={`fi ${tab.icon} text-xl pt-0 transition-transform duration-500 ${isActive ? 'scale-110' : 'group-hover:scale-110 group-hover:text-primary'}`}></i>
                 )}
               </div>
               
@@ -89,3 +89,4 @@ export default function Sidebar({ userProfile, activeMainTab, onMainTabChange, i
     </aside>
   )
 }
+

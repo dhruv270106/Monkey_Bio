@@ -129,8 +129,8 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
           <div className="px-10 pt-10 pb-6 border-b border-gray-100 bg-white shadow-sm z-20">
             <div className="flex items-center justify-between mb-8">
                <div>
-                  <h2 className="text-2xl font-black">Add New Asset</h2>
-                  <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-1">Select what you want to add to your Monkey Bio</p>
+                  <h2 className="text-2xl font-medium">Add New Asset</h2>
+                  <p className="text-[10px] font-medium uppercase text-gray-400 tracking-widest mt-1">Select what you want to add to your Monkey Bio</p>
                </div>
                <button onClick={onClose} className="w-12 h-12 bg-gray-50 flex items-center justify-center rounded-2xl hover:bg-gray-100 transition-all text-secondary">
                   <i className="fi fi-rr-cross-small text-2xl"></i>
@@ -144,18 +144,18 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                 placeholder="Search services, platforms, apps..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-16 pr-8 py-5 bg-gray-50 rounded-3xl outline-none border-2 border-transparent focus:border-primary/20 font-bold transition-all shadow-inner text-secondary"
+                className="w-full pl-16 pr-8 py-5 bg-gray-100 rounded-3xl outline-none border-2 border-transparent focus:border-primary/20 font-medium transition-all text-secondary"
               />
             </div>
           </div>
 
           <div className="flex-1 flex overflow-hidden bg-white">
             {/* Sidebar */}
-            <div className="w-64 bg-gray-50/50 border-r border-gray-100 overflow-y-auto p-6 space-y-2">
-               <p className="text-[9px] font-black uppercase text-gray-400 tracking-[0.2em] px-4 mb-4">Categories</p>
+            <div className="w-72 bg-gray-50/50 border-r border-gray-100 overflow-y-auto p-6 space-y-2 no-scrollbar">
+               <p className="text-[9px] font-medium uppercase text-gray-400 tracking-[0.2em] px-4 mb-4">Categories</p>
                <button
                   onClick={() => { setActiveCategory('suggested'); setSearch('') }}
-                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-[22px] font-black text-[11px] uppercase tracking-widest transition-all ${
+                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-[22px] font-medium text-[11px] uppercase tracking-widest transition-all ${
                     activeCategory === 'suggested' && !search ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'hover:bg-white text-gray-400 hover:text-secondary'
                   }`}
                >
@@ -169,8 +169,8 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                     setActiveCategory(cat.id)
                     setSearch('')
                   }}
-                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-[22px] font-black text-[11px] uppercase tracking-widest transition-all ${
-                    activeCategory === cat.id && !search ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'hover:bg-white text-gray-400 hover:text-secondary'
+                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-[22px] font-medium text-[11px] uppercase tracking-widest transition-all ${
+                    activeCategory === cat.id && !search ? `${cat.bg} text-white shadow-xl shadow-current/20` : `hover:bg-white text-gray-400 hover:${cat.color}`
                   }`}
                 >
                   <i className={`fi ${cat.icon} text-sm`}></i>
@@ -180,7 +180,7 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
               <div className="pt-4 mt-6 border-t border-gray-100">
                 <button 
                   onClick={() => { setActiveCategory('all'); setSearch('') }}
-                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-[22px] font-black text-[11px] uppercase tracking-widest transition-all ${
+                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-[22px] font-medium text-[11px] uppercase tracking-widest transition-all ${
                     activeCategory === 'all' && !search ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'hover:bg-white text-gray-400 hover:text-secondary'
                   }`}
                 >
@@ -196,7 +196,7 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                  {filteredAppsGrouped.map((group, groupIdx) => (
                    <div key={groupIdx} className="space-y-6">
                      {group.name && (
-                       <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 px-2">{group.name}</h3>
+                       <h3 className="text-[10px] font-medium uppercase tracking-[0.3em] text-gray-300 px-2">{group.name}</h3>
                      )}
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                        {group.apps.map((app) => (
@@ -210,8 +210,8 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                                 <i className={`fi ${app.icon} text-2xl ${app.color}`}></i>
                              </div>
                              <div className="min-w-0 pr-4">
-                               <h4 className="font-black text-secondary group-hover:text-primary transition-colors truncate">{app.title}</h4>
-                               <p className="text-[10px] font-bold text-gray-400 truncate opacity-80">{app.description}</p>
+                               <h4 className="font-medium text-secondary group-hover:text-primary transition-colors truncate">{app.title}</h4>
+                               <p className="text-[10px] font-medium text-gray-400 truncate opacity-80">{app.description}</p>
                              </div>
                            </div>
                            <div className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-300 group-hover:bg-primary group-hover:text-white transition-all">
@@ -228,7 +228,7 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                      <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 opacity-40">
                         <i className="fi fi-rr-search text-4xl text-gray-300"></i>
                      </div>
-                     <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">No matches found for "{search}"</p>
+                     <p className="text-gray-400 font-medium uppercase tracking-widest text-[10px]">No matches found for "{search}"</p>
                    </div>
                  )}
                </div>
@@ -263,8 +263,8 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                    <i className={`fi ${selectedApp.icon} text-5xl ${selectedApp.color}`}></i>
                  </div>
                  
-                 <h3 className="text-3xl font-black mb-2 tracking-tight">Add {selectedApp.title}</h3>
-                 <p className="text-sm font-bold text-gray-400 mb-10 px-8 opacity-80">{selectedApp.description}</p>
+                 <h3 className="text-3xl font-medium mb-2 tracking-tight">Add {selectedApp.title}</h3>
+                 <p className="text-sm font-medium text-gray-400 mb-10 px-8 opacity-80">{selectedApp.description}</p>
 
                  <div className="space-y-6 w-full">
                     {/* TYPED INPUTS */}
@@ -276,12 +276,12 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                             placeholder={selectedApp.placeholder}
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            className="w-full px-10 py-6 bg-gray-50 rounded-[32px] border-2 border-transparent focus:border-primary/20 outline-none font-black text-xl transition-all shadow-inner placeholder:text-gray-300"
+                            className="w-full px-10 py-6 bg-gray-50 rounded-[32px] border-2 border-transparent focus:border-primary/20 outline-none font-medium text-xl transition-all shadow-inner placeholder:text-gray-300"
                           />
                           {selectedApp.prefix && !inputValue.startsWith('http') && (
                              <div className="mt-4 px-6 py-3 bg-primary/5 rounded-2xl flex items-center gap-3">
-                                <span className="text-[10px] font-black text-primary uppercase tracking-widest">Platform Prefix:</span>
-                                <span className="text-[10px] font-bold text-gray-400">{selectedApp.prefix}</span>
+                                <span className="text-[10px] font-medium text-primary uppercase tracking-widest">Platform Prefix:</span>
+                                <span className="text-[10px] font-medium text-gray-400">{selectedApp.prefix}</span>
                              </div>
                           )}
                        </div>
@@ -297,7 +297,7 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                                 <div className="w-full h-48 rounded-3xl overflow-hidden relative">
                                    <img src={filePreview} className="w-full h-full object-cover" />
                                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                                      <span className="text-white font-black text-xs uppercase tracking-widest">Change File</span>
+                                      <span className="text-white font-medium text-xs uppercase tracking-widest">Change File</span>
                                    </div>
                                 </div>
                              ) : (
@@ -306,8 +306,8 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                                       <i className="fi fi-rr-cloud-upload-alt text-2xl"></i>
                                    </div>
                                    <div>
-                                      <p className="font-black text-secondary">Upload your {selectedApp.type}</p>
-                                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Recommended: 1080x1080px</p>
+                                      <p className="font-medium text-secondary">Upload your {selectedApp.type}</p>
+                                      <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest mt-1">Recommended: 1080x1080px</p>
                                    </div>
                                 </>
                              )}
@@ -323,13 +323,13 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                             placeholder={selectedApp.placeholder}
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            className="w-full px-10 py-5 bg-gray-50 rounded-3xl border-2 border-transparent focus:border-primary/20 outline-none font-black text-xl transition-all"
+                            className="w-full px-10 py-5 bg-gray-50 rounded-3xl border-2 border-transparent focus:border-primary/20 outline-none font-medium text-xl transition-all"
                           />
                           <textarea 
                             placeholder="Enter the body text for your profile..."
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            className="w-full h-40 p-10 bg-gray-50 rounded-[40px] border-2 border-transparent focus:border-primary/20 outline-none font-bold text-secondary transition-all resize-none shadow-inner"
+                            className="w-full h-40 p-10 bg-gray-50 rounded-[40px] border-2 border-transparent focus:border-primary/20 outline-none font-medium text-secondary transition-all resize-none shadow-inner"
                           />
                        </div>
                     )}
@@ -341,15 +341,15 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                             placeholder="Form Title (e.g., Get my Newsletter)"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            className="w-full px-10 py-5 bg-gray-50 rounded-3xl border-2 border-transparent focus:border-primary/20 outline-none font-black text-xl transition-all"
+                            className="w-full px-10 py-5 bg-gray-50 rounded-3xl border-2 border-transparent focus:border-primary/20 outline-none font-medium text-xl transition-all"
                           />
                           <div className="grid grid-cols-2 gap-4">
                              <div className="p-4 bg-gray-50 rounded-2xl border-2 border-primary/20 flex items-center justify-between">
-                                <span className="text-xs font-black text-secondary">Email Field</span>
+                                <span className="text-xs font-medium text-secondary">Email Field</span>
                                 <i className="fi fi-rr-check-circle text-primary"></i>
                              </div>
                              <div className="p-4 bg-gray-50 rounded-2xl border-2 border-transparent flex items-center justify-between opacity-40">
-                                <span className="text-xs font-black text-secondary">Name Field</span>
+                                <span className="text-xs font-medium text-secondary">Name Field</span>
                                 <i className="fi fi-rr-circle"></i>
                              </div>
                           </div>
@@ -360,13 +360,13 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                     <div className="pt-6 grid grid-cols-2 gap-4">
                        <button 
                          onClick={() => setSelectedApp(null)}
-                         className="w-full py-5 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-secondary transition-all"
+                         className="w-full py-5 text-[11px] font-medium uppercase tracking-widest text-gray-400 hover:text-secondary transition-all"
                        >
                          Cancel
                        </button>
                        <button 
                          onClick={handleAddLink}
-                         className="w-full py-5 bg-primary text-white font-black rounded-full shadow-[0_15px_30px_rgba(139,62,255,0.3)] hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em] text-[11px]"
+                         className="w-full py-5 bg-primary text-white font-medium rounded-full shadow-[0_15px_30px_rgba(139,62,255,0.3)] hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em] text-[11px]"
                        >
                          Add to Bio
                        </button>
@@ -380,3 +380,4 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
     </AnimatePresence>
   )
 }
+
