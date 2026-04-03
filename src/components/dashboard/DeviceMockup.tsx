@@ -205,47 +205,86 @@ export default function DeviceMockup({ userProfile, links = [], socialLinks = {}
             </div>
 
             {/* Regular Links */}
-            <div className="w-full space-y-3">
+            {/* All Links and Content Assets */}
+            <div className="w-full space-y-4">
               {Array.isArray(links) && links.filter((l: any) => l.active).map((link: any, i: number) => {
-                const isFeatured = link.layout === 'featured'
+                const appInfo = APPS.find(a => a.id === link.platform)
+                const type = appInfo?.type || 'link'
+                
+                // FEATURED MEDIA / FILE
+                if (type === 'media' || type === 'file' || link.layout === 'featured') {
+                  return (
+                    <div key={link.id || i} className="w-full rounded-[24px] overflow-hidden shadow-sm border border-black/5 flex flex-col bg-white/5 backdrop-blur-sm" style={getButtonStyle()}>
+                       <div className="w-full aspect-video bg-black/5 overflow-hidden">
+                          <img src={link.thumbnail || 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400'} className="w-full h-full object-cover" />
+                       </div>
+                       <div className="p-4 text-center">
+                          <p className="text-[11px] font-black">{link.title}</p>
+                       </div>
+                    </div>
+                  )
+                }
+
+                // TEXT ASSET
+                if (type === 'text') {
+                   return (
+                      <div key={link.id || i} className="w-full p-6 bg-white/5 backdrop-blur-sm rounded-[24px] text-center" style={{ color: userProfile?.font_color || 'inherit' }}>
+                         <h4 className="text-[12px] font-black uppercase tracking-widest mb-2">{link.title}</h4>
+                         <p className="text-[10px] font-bold opacity-70 leading-relaxed">{link.description || 'Custom text content...'}</p>
+                      </div>
+                   )
+                }
+
+                // FORM ASSET
+                if (type === 'form') {
+                   return (
+                      <div key={link.id || i} className="w-full p-5 bg-white/5 backdrop-blur-sm rounded-[24px] space-y-3" style={getButtonStyle()}>
+                         <p className="text-[11px] font-black text-center">{link.title}</p>
+                         <div className="h-10 bg-black/5 rounded-xl border border-black/5 flex items-center px-4">
+                            <span className="text-[9px] font-bold opacity-30">Enter your email...</span>
+                         </div>
+                         <button className="w-full py-2.5 rounded-xl bg-black/10 text-[10px] font-black uppercase tracking-widest">Submit</button>
+                      </div>
+                   )
+                }
+
+                // AUDIO ASSET
+                if (type === 'audio') {
+                   return (
+                      <div key={link.id || i} className="w-full p-4 flex items-center gap-4 bg-white/5 backdrop-blur-sm rounded-[24px]" style={getButtonStyle()}>
+                         <div className="w-10 h-10 rounded-xl bg-black/10 flex items-center justify-center">
+                            <i className="fi fi-rr-play text-xs"></i>
+                         </div>
+                         <div className="flex-1 text-left min-w-0">
+                            <p className="text-[11px] font-black truncate">{link.title}</p>
+                            <p className="text-[9px] font-bold opacity-50 uppercase tracking-widest">Listen on {appInfo?.title || 'Platform'}</p>
+                         </div>
+                         <i className={`fi ${appInfo?.icon || 'fi-rr-music'} opacity-30`}></i>
+                      </div>
+                   )
+                }
+
+                // STANDARD LINK
                 return (
                   <a 
-                    key={i} 
+                    key={link.id || i} 
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    className={`w-full transition-all text-[11px] font-bold shadow-sm flex ${isFeatured ? 'flex-col overflow-hidden' : 'items-center py-2.5 px-3'} group cursor-pointer`}
+                    className="w-full transition-all text-[11px] font-bold shadow-sm flex items-center py-3 px-4 group cursor-pointer"
                     style={getButtonStyle()}
                   >
-                    {isFeatured ? (
-                      <>
-                        {link.thumbnail && (
-                          <div className="w-full aspect-video overflow-hidden border-b border-black/5">
-                             <img src={link.thumbnail} className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                        <div className="p-3 text-center relative">
-                           {link.title}
-                           <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-30">
-                              <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
-                           </div>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0 border border-black/5 bg-black/5">
+                        <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0 border border-black/5 bg-black/10">
                            {link.thumbnail ? (
                              <img src={link.thumbnail} className="w-full h-full object-cover" />
                            ) : (
-                             <i className={`fi ${APPS.find((a: any) => a.id === link.platform)?.icon || 'fi-rr-link'} text-[12px] opacity-70`}></i>
+                             <i className={`fi ${appInfo?.icon || 'fi-rr-link'} text-[12px] opacity-70`}></i>
                            )}
                         </div>
                         <span className="flex-1 text-center truncate px-2">{link.title}</span>
                         <div className="w-5 opacity-30 flex items-center justify-center">
                            <i className="fi fi-rr-menu-dots-vertical text-[10px]"></i>
                         </div>
-                      </>
-                    )}
                   </a>
                 )
               })}

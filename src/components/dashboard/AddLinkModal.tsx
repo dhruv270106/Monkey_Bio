@@ -7,7 +7,7 @@ import { APPS, CATEGORIES, SUGGESTED_APPS, AppConfig } from '@/data/apps'
 interface AddLinkModalProps {
   isOpen: boolean
   onClose: () => void
-  onAdd: (linkData: { title: string; url: string; platform: string }) => void
+  onAdd: (linkData: any) => void
   linksCount: number
 }
 
@@ -15,7 +15,12 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
   const [activeCategory, setActiveCategory] = useState('suggested')
   const [search, setSearch] = useState('')
   const [selectedApp, setSelectedApp] = useState<AppConfig | null>(null)
+  
+  // Input states for different types
   const [inputValue, setInputValue] = useState('')
+  const [description, setDescription] = useState('')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [filePreview, setFilePreview] = useState<string | null>(null)
 
   const filteredAppsGrouped = useMemo(() => {
     if (search) {
@@ -26,7 +31,7 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
     }
 
     if (activeCategory === 'all') {
-      return CATEGORIES.filter(c => c.id !== 'suggested').map(cat => ({
+      return CATEGORIES.map(cat => ({
         name: cat.name,
         apps: APPS.filter(a => a.category === cat.id)
       }))
@@ -46,38 +51,59 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
     }]
   }, [activeCategory, search])
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setSelectedFile(file)
+    const reader = new FileReader()
+    reader.onload = (event) => setFilePreview(event.target?.result as string)
+    reader.readAsDataURL(file)
+  }
+
   const handleAddLink = () => {
-    if (!selectedApp || !inputValue) return
+    if (!selectedApp) return
     
-    if (linksCount >= 20) {
-      alert('Maximum 20 links reached!')
+    if (linksCount >= 30) {
+      alert('Maximum 30 items reached!')
       return
     }
     
-    let finalUrl = inputValue
-    
-    // Validation: Check if it matches the platform's domain
-    if (selectedApp.domain) {
-      const isUrl = inputValue.toLowerCase().startsWith('http') || inputValue.toLowerCase().startsWith('www.')
-      if (isUrl && !inputValue.toLowerCase().includes(selectedApp.domain.toLowerCase())) {
-        alert(`Please enter a valid ${selectedApp.title} link. Example: ${selectedApp.placeholder}`)
-        return
-      }
+    let finalLinkData: any = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: inputValue || selectedApp.title,
+      platform: selectedApp.id,
+      active: true,
+      layout: 'classic'
     }
 
-    if (selectedApp.prefix && !inputValue.startsWith('http')) {
-      finalUrl = selectedApp.prefix + inputValue.replace('@', '')
+    if (selectedApp.type === 'file' || selectedApp.type === 'media') {
+       if (!filePreview) { alert('Please select a file'); return }
+       finalLinkData.thumbnail = filePreview
+       finalLinkData.url = filePreview // Store preview URL for now
+    } else if (selectedApp.type === 'text') {
+       finalLinkData.description = description
+       finalLinkData.url = '#'
+    } else {
+       if (!inputValue) { alert('Please enter a value'); return }
+       let finalUrl = inputValue
+       if (selectedApp.prefix && !inputValue.startsWith('http')) {
+         finalUrl = selectedApp.prefix + inputValue.replace('@', '')
+       }
+       finalLinkData.url = finalUrl
     }
 
-    onAdd({
-      title: selectedApp.title,
-      url: finalUrl,
-      platform: selectedApp.id
-    })
-
-    setInputValue('')
-    setSelectedApp(null)
+    onAdd(finalLinkData)
+    resetModal()
     onClose()
+  }
+
+  const resetModal = () => {
+    setInputValue('')
+    setDescription('')
+    setSelectedFile(null)
+    setFilePreview(null)
+    setSelectedApp(null)
+    setSearch('')
   }
 
   if (!isOpen) return null
@@ -97,32 +123,45 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-4xl bg-white rounded-[32px] shadow-2xl overflow-hidden flex flex-col h-[80vh]"
+          className="relative w-full max-w-5xl bg-white rounded-[40px] shadow-2xl overflow-hidden flex flex-col h-[85vh]"
         >
           {/* Header & Search */}
-          <div className="px-8 pt-8 pb-4 border-b border-gray-100 bg-white">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-black">Add Link</h2>
-              <button onClick={onClose} className="p-2 hover:bg-gray-50 rounded-full transition-colors">
-                 <i className="fi fi-rr-cross-small text-xl text-gray-400"></i>
-              </button>
+          <div className="px-10 pt-10 pb-6 border-b border-gray-100 bg-white shadow-sm z-20">
+            <div className="flex items-center justify-between mb-8">
+               <div>
+                  <h2 className="text-2xl font-black">Add New Asset</h2>
+                  <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-1">Select what you want to add to your Monkey Bio</p>
+               </div>
+               <button onClick={onClose} className="w-12 h-12 bg-gray-50 flex items-center justify-center rounded-2xl hover:bg-gray-100 transition-all text-secondary">
+                  <i className="fi fi-rr-cross-small text-2xl"></i>
+               </button>
             </div>
             
             <div className="relative">
-              <i className="fi fi-rr-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <i className="fi fi-rr-search absolute left-6 top-1/2 -translate-y-1/2 text-gray-400"></i>
               <input 
                 type="text" 
-                placeholder="Paste or search a link"
+                placeholder="Search services, platforms, apps..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-6 py-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-primary/20 border border-transparent focus:border-primary/50 font-medium transition-all"
+                className="w-full pl-16 pr-8 py-5 bg-gray-50 rounded-3xl outline-none border-2 border-transparent focus:border-primary/20 font-bold transition-all shadow-inner text-secondary"
               />
             </div>
           </div>
 
-          <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 flex overflow-hidden bg-white">
             {/* Sidebar */}
-            <div className="w-56 bg-white border-r border-gray-50 overflow-y-auto p-4 space-y-1">
+            <div className="w-64 bg-gray-50/50 border-r border-gray-100 overflow-y-auto p-6 space-y-2">
+               <p className="text-[9px] font-black uppercase text-gray-400 tracking-[0.2em] px-4 mb-4">Categories</p>
+               <button
+                  onClick={() => { setActiveCategory('suggested'); setSearch('') }}
+                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-[22px] font-black text-[11px] uppercase tracking-widest transition-all ${
+                    activeCategory === 'suggested' && !search ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'hover:bg-white text-gray-400 hover:text-secondary'
+                  }`}
+               >
+                  <i className="fi fi-rr-star text-sm"></i>
+                  <span>Suggested</span>
+               </button>
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.id}
@@ -130,74 +169,54 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                     setActiveCategory(cat.id)
                     setSearch('')
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
-                    activeCategory === cat.id && !search ? 'bg-primary/10 text-primary' : 'hover:bg-gray-50 text-gray-400'
+                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-[22px] font-black text-[11px] uppercase tracking-widest transition-all ${
+                    activeCategory === cat.id && !search ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'hover:bg-white text-gray-400 hover:text-secondary'
                   }`}
                 >
-                  <i className={`fi ${cat.icon} transition-colors`}></i>
+                  <i className={`fi ${cat.icon} text-sm`}></i>
                   <span>{cat.name}</span>
                 </button>
               ))}
-              <div className="pt-4 mt-4 border-t border-gray-50">
+              <div className="pt-4 mt-6 border-t border-gray-100">
                 <button 
-                  onClick={() => {
-                    setActiveCategory('all')
-                    setSearch('')
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
-                    activeCategory === 'all' && !search ? 'bg-primary/10 text-primary' : 'hover:bg-gray-50 text-gray-400'
+                  onClick={() => { setActiveCategory('all'); setSearch('') }}
+                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-[22px] font-black text-[11px] uppercase tracking-widest transition-all ${
+                    activeCategory === 'all' && !search ? 'bg-primary text-white shadow-xl shadow-primary/20' : 'hover:bg-white text-gray-400 hover:text-secondary'
                   }`}
                 >
-                  <i className="fi fi-rr-apps"></i>
+                  <i className="fi fi-rr-apps text-sm"></i>
                   <span>View all</span>
                 </button>
               </div>
             </div>
 
             {/* List Content */}
-            <div className="flex-1 overflow-y-auto p-8 bg-gray-50/30 auto-scrollbar">
-               {/* Quick Feature Cards (Only if suggested and no search) */}
-               {!search && activeCategory === 'suggested' && (
-                 <div className="grid grid-cols-4 gap-4 mb-10">
-                    {[
-                      { title: 'Collection', icon: 'fi-rr-grid', color: 'bg-purple-100 text-purple-600' },
-                      { title: 'Link', icon: 'fi-rr-link', color: 'bg-blue-100 text-blue-600' },
-                      { title: 'Product', icon: 'fi-rr-shopping-bag', color: 'bg-pink-100 text-pink-600' },
-                      { title: 'Form', icon: 'fi-rr-form', color: 'bg-emerald-100 text-emerald-600' }
-                    ].map((f, i) => (
-                      <div key={i} className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center gap-2 cursor-pointer hover:scale-105 hover:shadow-md transition-all">
-                        <div className={`w-10 h-10 rounded-2xl ${f.color} flex items-center justify-center`}>
-                          <i className={`fi ${f.icon} text-lg`}></i>
-                        </div>
-                        <span className="text-[10px] font-black uppercase tracking-wider">{f.title}</span>
-                      </div>
-                    ))}
-                 </div>
-               )}
-
+            <div className="flex-1 overflow-y-auto p-10 bg-white no-scrollbar">
                <div className="space-y-12">
                  {filteredAppsGrouped.map((group, groupIdx) => (
-                   <div key={groupIdx} className="space-y-4">
+                   <div key={groupIdx} className="space-y-6">
                      {group.name && (
-                       <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 px-2">{group.name}</h3>
+                       <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 px-2">{group.name}</h3>
                      )}
-                     <div className="space-y-3">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                        {group.apps.map((app) => (
                          <div 
                           key={app.id} 
-                          onClick={() => setSelectedApp(app)}
-                          className="bg-white p-5 rounded-[24px] border border-gray-100 shadow-sm flex items-center justify-between hover:border-primary/30 hover:shadow-md transition-all cursor-pointer group"
+                          onClick={() => { setSelectedApp(app); setInputValue('') }}
+                          className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center justify-between hover:border-primary/20 hover:shadow-xl hover:translate-y-[-2px] transition-all cursor-pointer group"
                          >
-                           <div className="flex items-center gap-5">
-                             <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center transition-transform group-hover:scale-110">
+                           <div className="flex items-center gap-6">
+                             <div className="w-14 h-14 rounded-[24px] bg-gray-50 flex items-center justify-center transition-transform group-hover:scale-110 shadow-sm">
                                 <i className={`fi ${app.icon} text-2xl ${app.color}`}></i>
                              </div>
-                             <div>
-                               <h4 className="font-black text-secondary group-hover:text-primary transition-colors">{app.title}</h4>
-                               <p className="text-xs font-bold text-gray-400">{app.description}</p>
+                             <div className="min-w-0 pr-4">
+                               <h4 className="font-black text-secondary group-hover:text-primary transition-colors truncate">{app.title}</h4>
+                               <p className="text-[10px] font-bold text-gray-400 truncate opacity-80">{app.description}</p>
                              </div>
                            </div>
-                           <i className="fi fi-rr-angle-small-right text-gray-300 group-hover:text-primary transition-colors text-xl"></i>
+                           <div className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-300 group-hover:bg-primary group-hover:text-white transition-all">
+                              <i className="fi fi-rr-plus text-[10px]"></i>
+                           </div>
                          </div>
                        ))}
                      </div>
@@ -205,9 +224,11 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
                  ))}
                  
                  {filteredAppsGrouped.every(g => g.apps.length === 0) && (
-                   <div className="py-20 text-center">
-                     <i className="fi fi-rr-search text-4xl text-gray-200 mb-4 inline-block"></i>
-                     <p className="text-gray-400 font-bold">No apps found</p>
+                   <div className="py-24 text-center">
+                     <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 opacity-40">
+                        <i className="fi fi-rr-search text-4xl text-gray-300"></i>
+                     </div>
+                     <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">No matches found for "{search}"</p>
                    </div>
                  )}
                </div>
@@ -215,68 +236,141 @@ export default function AddLinkModal({ isOpen, onClose, onAdd, linksCount }: Add
           </div>
         </motion.div>
 
-        {/* SUB MODAL */}
+        {/* INPUT MODAL - CONTEXTUAL BASED ON TYPE */}
         <AnimatePresence>
           {selectedApp && (
             <motion.div 
                initial={{ opacity: 0 }} 
                animate={{ opacity: 1 }} 
                exit={{ opacity: 0 }}
-               className="fixed inset-0 z-[1100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+               className="fixed inset-0 z-[1100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl"
             >
                <motion.div 
-                 initial={{ scale: 0.9, y: 20 }}
-                 animate={{ scale: 1, y: 0 }}
-                 exit={{ scale: 0.9, y: 20 }}
-                 className="relative w-full max-w-md bg-white rounded-[40px] p-10 shadow-2xl text-center"
+                 initial={{ scale: 0.9, y: 50, opacity: 0 }}
+                 animate={{ scale: 1, y: 0, opacity: 1 }}
+                 exit={{ scale: 0.9, y: 30, opacity: 0 }}
+                 transition={{ type: 'spring', damping: 25 }}
+                 className="relative w-full max-w-xl bg-white rounded-[48px] p-12 shadow-[0_50px_100px_rgba(0,0,0,0.3)] text-center flex flex-col items-center"
                >
                  <button 
                    onClick={() => setSelectedApp(null)}
-                   className="absolute top-8 right-8 text-gray-300 hover:text-secondary transition-colors"
+                   className="absolute top-10 right-10 w-10 h-10 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center hover:bg-gray-100 transition-all hover:rotate-90"
                  >
-                   <i className="fi fi-rr-cross-small text-2xl"></i>
+                   <i className="fi fi-rr-cross-small text-xl"></i>
                  </button>
 
-                 <div className="w-20 h-20 rounded-[32px] bg-gray-50 flex items-center justify-center mx-auto mb-6 shadow-sm">
-                   <i className={`fi ${selectedApp.icon} text-4xl ${selectedApp.color}`}></i>
+                 <div className="w-24 h-24 rounded-[36px] bg-gray-50 flex items-center justify-center mb-8 shadow-xl shadow-black/5 ring-8 ring-white transform hover:scale-105 transition-all">
+                   <i className={`fi ${selectedApp.icon} text-5xl ${selectedApp.color}`}></i>
                  </div>
                  
-                 <h3 className="text-2xl font-black mb-2">Add {selectedApp.title}</h3>
-                 <p className="text-sm font-bold text-gray-400 mb-10">Enter your {selectedApp.title} username or link</p>
+                 <h3 className="text-3xl font-black mb-2 tracking-tight">Add {selectedApp.title}</h3>
+                 <p className="text-sm font-bold text-gray-400 mb-10 px-8 opacity-80">{selectedApp.description}</p>
 
-                 <div className="space-y-4">
-                   <div className="relative">
-                     {selectedApp.prefix && inputValue && !inputValue.startsWith('http') && (
-                       <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 font-bold text-sm pointer-events-none">
-                         {selectedApp.prefix.replace('https://', '')}
-                       </span>
-                     )}
-                     <input 
-                       autoFocus
-                       type="text" 
-                       placeholder={selectedApp.placeholder}
-                       value={inputValue}
-                       onChange={(e) => setInputValue(e.target.value)}
-                       className={`w-full ${selectedApp.prefix && inputValue && !inputValue.startsWith('http') ? 'pl-36' : 'px-6'} py-5 bg-gray-50 rounded-3xl border-2 border-transparent focus:border-primary/50 outline-none font-bold text-lg transition-all`}
-                     />
-                   </div>
+                 <div className="space-y-6 w-full">
+                    {/* TYPED INPUTS */}
+                    {selectedApp.type === 'link' && (
+                       <div className="relative">
+                          <input 
+                            autoFocus
+                            type="text" 
+                            placeholder={selectedApp.placeholder}
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            className="w-full px-10 py-6 bg-gray-50 rounded-[32px] border-2 border-transparent focus:border-primary/20 outline-none font-black text-xl transition-all shadow-inner placeholder:text-gray-300"
+                          />
+                          {selectedApp.prefix && !inputValue.startsWith('http') && (
+                             <div className="mt-4 px-6 py-3 bg-primary/5 rounded-2xl flex items-center gap-3">
+                                <span className="text-[10px] font-black text-primary uppercase tracking-widest">Platform Prefix:</span>
+                                <span className="text-[10px] font-bold text-gray-400">{selectedApp.prefix}</span>
+                             </div>
+                          )}
+                       </div>
+                    )}
 
-                   <button 
-                     onClick={handleAddLink}
-                     disabled={!inputValue}
-                     className="w-full py-5 bg-secondary text-white font-black rounded-full hover:bg-gray-800 disabled:opacity-50 transition-all shadow-xl active:scale-95"
-                   >
-                     Add Link
-                   </button>
-                    <button 
-                     onClick={() => {
-                        setInputValue('')
-                        setSelectedApp(null)
-                     }}
-                     className="w-full py-4 text-gray-400 font-bold hover:text-secondary transition-all"
-                   >
-                     Cancel
-                   </button>
+                    {(selectedApp.type === 'file' || selectedApp.type === 'media') && (
+                       <div className="space-y-4">
+                          <div 
+                            onClick={() => document.getElementById('asset-upload')?.click()}
+                            className="w-full p-10 border-4 border-dashed border-gray-100 rounded-[40px] flex flex-col items-center justify-center gap-4 hover:border-primary/30 transition-all cursor-pointer group bg-gray-50/50"
+                          >
+                             {filePreview ? (
+                                <div className="w-full h-48 rounded-3xl overflow-hidden relative">
+                                   <img src={filePreview} className="w-full h-full object-cover" />
+                                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                                      <span className="text-white font-black text-xs uppercase tracking-widest">Change File</span>
+                                   </div>
+                                </div>
+                             ) : (
+                                <>
+                                   <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-primary shadow-xl group-hover:scale-110 transition-all">
+                                      <i className="fi fi-rr-cloud-upload-alt text-2xl"></i>
+                                   </div>
+                                   <div>
+                                      <p className="font-black text-secondary">Upload your {selectedApp.type}</p>
+                                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Recommended: 1080x1080px</p>
+                                   </div>
+                                </>
+                             )}
+                             <input id="asset-upload" type="file" className="hidden" onChange={handleFileUpload} accept={selectedApp.type === 'media' ? 'image/*,video/*' : '*'} />
+                          </div>
+                       </div>
+                    )}
+
+                    {selectedApp.type === 'text' && (
+                       <div className="space-y-4">
+                          <input 
+                            type="text" 
+                            placeholder={selectedApp.placeholder}
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            className="w-full px-10 py-5 bg-gray-50 rounded-3xl border-2 border-transparent focus:border-primary/20 outline-none font-black text-xl transition-all"
+                          />
+                          <textarea 
+                            placeholder="Enter the body text for your profile..."
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            className="w-full h-40 p-10 bg-gray-50 rounded-[40px] border-2 border-transparent focus:border-primary/20 outline-none font-bold text-secondary transition-all resize-none shadow-inner"
+                          />
+                       </div>
+                    )}
+
+                    {selectedApp.type === 'form' && (
+                       <div className="space-y-4">
+                          <input 
+                            type="text" 
+                            placeholder="Form Title (e.g., Get my Newsletter)"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            className="w-full px-10 py-5 bg-gray-50 rounded-3xl border-2 border-transparent focus:border-primary/20 outline-none font-black text-xl transition-all"
+                          />
+                          <div className="grid grid-cols-2 gap-4">
+                             <div className="p-4 bg-gray-50 rounded-2xl border-2 border-primary/20 flex items-center justify-between">
+                                <span className="text-xs font-black text-secondary">Email Field</span>
+                                <i className="fi fi-rr-check-circle text-primary"></i>
+                             </div>
+                             <div className="p-4 bg-gray-50 rounded-2xl border-2 border-transparent flex items-center justify-between opacity-40">
+                                <span className="text-xs font-black text-secondary">Name Field</span>
+                                <i className="fi fi-rr-circle"></i>
+                             </div>
+                          </div>
+                       </div>
+                    )}
+
+                    {/* ACTIONS */}
+                    <div className="pt-6 grid grid-cols-2 gap-4">
+                       <button 
+                         onClick={() => setSelectedApp(null)}
+                         className="w-full py-5 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-secondary transition-all"
+                       >
+                         Cancel
+                       </button>
+                       <button 
+                         onClick={handleAddLink}
+                         className="w-full py-5 bg-primary text-white font-black rounded-full shadow-[0_15px_30px_rgba(139,62,255,0.3)] hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em] text-[11px]"
+                       >
+                         Add to Bio
+                       </button>
+                    </div>
                  </div>
                </motion.div>
             </motion.div>

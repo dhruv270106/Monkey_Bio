@@ -22,7 +22,7 @@ function DashboardContent() {
   
   // States for new UI
   const [activeMainTab, setActiveMainTab] = useState('monkeybio')
-  const [activeSubTab, setActiveSubTab] = useState('links')
+  const [activeSubTab, setActiveSubTab] = useState('profile')
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isSocialSelectorOpen, setIsSocialSelectorOpen] = useState(false)
@@ -109,20 +109,12 @@ function DashboardContent() {
     }
   }
 
-  const handleAddNewLink = async (linkData: { title: string; url: string; platform: string }) => {
-    if (links.length >= 20) {
-      alert('Maximum 20 links allowed!')
+  const handleAddNewLink = async (linkData: any) => {
+    if (links.length >= 30) {
+      alert('Maximum 30 items allowed!')
       return
     }
-    const newLink = {
-      id: Math.random().toString(36).substr(2, 9),
-      title: linkData.title,
-      url: linkData.url,
-      active: true,
-      platform: linkData.platform,
-      layout: 'classic' as const
-    }
-    const newLinks = [newLink, ...links]
+    const newLinks = [linkData, ...links]
     await globalUpdateProfile({ links: newLinks })
   }
 
@@ -393,24 +385,24 @@ function DashboardContent() {
            </div>
         </header>
 
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden bg-[#121212]">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden bg-white">
            {/* Middle Content - Centered Phone Mockup with Design Canvas */}
-           <div className="flex-1 overflow-hidden flex items-center justify-center p-4 md:p-8 relative bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:20px_20px]">
+           <div className="flex-1 overflow-hidden flex items-center justify-center p-4 md:p-8 relative bg-[radial-gradient(#f1f1f1_1px,transparent_1px)] [background-size:24px_24px]">
               
               {/* Zoom Controls at Bottom */}
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center bg-zinc-900 border border-zinc-800 rounded-2xl p-1 gap-1 z-50 shadow-2xl">
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center bg-white border border-gray-100 rounded-2xl p-1 gap-1 z-50 shadow-xl">
                  <button 
                    onClick={() => setZoom(prev => Math.max(50, prev - 10))}
-                   className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl transition-all font-black"
+                   className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-primary hover:bg-gray-50 rounded-xl transition-all font-black"
                  >
                     <i className="fi fi-rr-minus text-xs"></i>
                  </button>
-                 <div className="px-3 min-w-[60px] text-center border-x border-zinc-800">
-                    <span className="text-[10px] font-black text-white tracking-widest uppercase">{zoom}%</span>
+                 <div className="px-3 min-w-[60px] text-center border-x border-gray-100">
+                    <span className="text-[10px] font-black text-secondary tracking-widest uppercase">{zoom}%</span>
                  </div>
                  <button 
                     onClick={() => setZoom(prev => Math.min(150, prev + 10))}
-                    className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl transition-all font-black"
+                    className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-primary hover:bg-gray-50 rounded-xl transition-all font-black"
                  >
                     <i className="fi fi-rr-plus text-xs"></i>
                  </button>
@@ -419,16 +411,16 @@ function DashboardContent() {
               <motion.div 
                 animate={{ scale: zoom / 100 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] rounded-[60px] bg-black"
+                className="relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] rounded-[60px] bg-white"
               >
                  <Preview userProfile={profile} links={links} socialLinks={profile?.social_links} />
               </motion.div>
 
-              {/* Sidebar toggle for tablet as shown in UI */}
+              {/* Reset Zoom Button */}
               <button 
                  onClick={() => setZoom(90)}
                  title="Reset Zoom"
-                 className="absolute right-8 bottom-8 w-10 h-10 bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center rounded-xl shadow-2xl transition-all active:scale-95"
+                 className="absolute right-8 bottom-8 w-10 h-10 bg-white border border-gray-100 text-gray-400 hover:text-primary flex items-center justify-center rounded-xl shadow-xl transition-all active:scale-95"
               >
                   <i className="fi fi-rr-refresh text-xs"></i>
               </button>
