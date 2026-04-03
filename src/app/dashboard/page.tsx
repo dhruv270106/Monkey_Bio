@@ -12,6 +12,7 @@ import InsightsSection from '@/components/dashboard/InsightsSection'
 import PlannerSection from '@/components/dashboard/PlannerSection'
 import AutoReplySection from '@/components/dashboard/AutoReplySection'
 import { motion, AnimatePresence } from 'framer-motion'
+import { PLATFORMS } from '@/data/platforms'
 
 function DashboardContent() {
   const router = useRouter()
@@ -145,39 +146,109 @@ function DashboardContent() {
       case 'monkeybio':
         return (
           <div className="flex flex-col h-full bg-white border-r border-gray-100 w-64 animate-in slide-in-from-left duration-300 overflow-hidden">
-            <div className="p-8 pb-4">
-                <p className="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em] mb-6">My MonkeyBio</p>
-            </div>
-            <div className="px-3 space-y-1">
-               {[
-                 { id: 'profile', label: 'Profile', icon: 'fi-rr-user' },
-                 { id: 'avatar', label: 'Avatar', icon: 'fi-rr-user-robot' },
-                 { id: 'themes', label: 'Themes', icon: 'fi-rr-palette' },
-                 { id: 'buttons', label: 'Buttons', icon: 'fi-rr-apps-add' },
-                 { id: 'font', label: 'Font', icon: 'fi-rr-text' },
-                 { id: 'wallpaper', label: 'Wallpaper', icon: 'fi-rr-picture' },
-               ].map((item) => (
-                 <button 
-                    key={item.id} 
-                    onClick={() => {
-                      setActiveSubTab(item.id)
-                      setActiveMainTab('monkeybio')
-                    }} 
-                    className={`w-full text-left p-4 rounded-2xl flex items-center gap-4 transition-all ${activeSubTab === item.id ? 'bg-primary text-white shadow-lg' : 'hover:bg-gray-50 text-gray-500 hover:translate-x-1'}`}
-                 >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${activeSubTab === item.id ? 'bg-white/20' : 'bg-gray-50'}`}>
-                      <i className={`fi ${item.icon} text-sm pt-1`}></i>
-                    </div>
-                    <span className="text-[11px] font-black uppercase tracking-widest">{item.label}</span>
-                 </button>
-               ))}
+            <div className="p-8 pb-4 flex items-center justify-between">
+                <p className="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em]">My MonkeyBio</p>
             </div>
             
-            <div className="mt-auto p-6">
-                <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10">
-                   <p className="text-[8px] font-black text-primary uppercase tracking-[0.2em] mb-1">Editing Mode</p>
-                   <p className="text-[11px] font-black text-secondary">@{profile?.username}</p>
-                </div>
+            <div className="flex-1 flex flex-col min-h-0">
+               {/* Primary Navigation */}
+               <div className="px-3 space-y-1 mb-8">
+                  {[
+                    { id: 'profile', label: 'Profile', icon: 'fi-rr-user' },
+                    { id: 'avatar', label: 'Avatar', icon: 'fi-rr-user-robot' },
+                    { id: 'themes', label: 'Themes', icon: 'fi-rr-palette' },
+                    { id: 'buttons', label: 'Buttons', icon: 'fi-rr-apps-add' },
+                    { id: 'font', label: 'Font', icon: 'fi-rr-text' },
+                    { id: 'wallpaper', label: 'Wallpaper', icon: 'fi-rr-picture' },
+                  ].map((item) => (
+                    <button 
+                       key={item.id} 
+                       onClick={() => {
+                         setActiveSubTab(item.id)
+                         setActiveMainTab('monkeybio')
+                       }} 
+                       className={`w-full text-left p-4 rounded-2xl flex items-center gap-4 transition-all ${activeSubTab === item.id ? 'bg-primary text-white shadow-lg' : 'hover:bg-gray-50 text-gray-500 hover:translate-x-1'}`}
+                    >
+                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${activeSubTab === item.id ? 'bg-white/20' : 'bg-gray-50'}`}>
+                         <i className={`fi ${item.icon} text-sm pt-1`}></i>
+                       </div>
+                       <span className="text-[11px] font-black uppercase tracking-widest">{item.label}</span>
+                    </button>
+                  ))}
+               </div>
+
+               {/* Add Social Link / Details Section */}
+               <div className="mt-auto px-4 pb-6 space-y-4">
+                  <div className="bg-gray-50/50 rounded-[32px] border border-gray-100 p-5 space-y-4 shadow-sm">
+                     <div className="flex items-center justify-between px-1">
+                        <div className="flex flex-col">
+                           <h4 className="text-[10px] font-black uppercase text-secondary tracking-widest">Social Media</h4>
+                           <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Quick Links</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                           <button 
+                             onClick={() => setActiveSubTab('profile')}
+                             className="w-7 h-7 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-primary transition-all shadow-sm"
+                             title="Details"
+                           >
+                              <i className="fi fi-rr-settings-sliders text-[10px]"></i>
+                           </button>
+                           <button 
+                             onClick={() => setActiveSubTab('profile')}
+                             className="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center hover:scale-110 transition-all shadow-lg shadow-primary/20"
+                             title="Add Link"
+                           >
+                              <i className="fi fi-rr-plus text-[10px]"></i>
+                           </button>
+                        </div>
+                     </div>
+                     
+                     <div className="max-h-[160px] overflow-y-auto no-scrollbar space-y-2 pr-1">
+                        {Object.entries(profile?.social_links || {}).map(([platform, url]: [string, any], i) => (
+                           url && (
+                              <motion.div 
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.05 }}
+                                key={platform} 
+                                className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-gray-50 group hover:border-primary/20 transition-all"
+                              >
+                                 <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-gray-50 group-hover:bg-primary/5 group-hover:text-primary transition-all overflow-hidden shrink-0">
+                                    <i className={`fi ${PLATFORMS[platform]?.icon || 'fi-rr-link'} text-xs`}></i>
+                                 </div>
+                                 <div className="flex-1 min-w-0">
+                                    <input 
+                                      type="text" 
+                                      value={url} 
+                                      onChange={(e) => {
+                                         const newSocial = { ...profile.social_links, [platform]: e.target.value }
+                                         globalUpdateProfile({ social_links: newSocial })
+                                      }}
+                                      className="w-full bg-transparent text-[9px] font-black text-secondary outline-none truncate placeholder:text-gray-300"
+                                      placeholder={`${platform} link...`}
+                                    />
+                                    <p className="text-[7px] font-black uppercase text-gray-300 tracking-widest truncate leading-none mt-0.5">{platform}</p>
+                                 </div>
+                                 <button 
+                                   onClick={() => {
+                                      const newSocial = { ...profile.social_links, [platform]: '' }
+                                      globalUpdateProfile({ social_links: newSocial })
+                                   }} 
+                                   className="w-6 h-6 rounded-lg bg-red-50 text-red-200 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white flex items-center justify-center"
+                                 >
+                                    <i className="fi fi-rr-trash text-[10px]"></i>
+                                 </button>
+                              </motion.div>
+                           )
+                        ))}
+                        {(!profile?.social_links || Object.values(profile.social_links).every(v => !v)) && (
+                           <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-2xl">
+                              <p className="text-[8px] font-black text-gray-300 uppercase tracking-widest">No Links Added</p>
+                           </div>
+                        )}
+                     </div>
+                  </div>
+               </div>
             </div>
           </div>
         )
@@ -248,9 +319,19 @@ function DashboardContent() {
         userProfile={profile} 
         activeMainTab={activeMainTab} 
         onMainTabChange={(tab) => {
+          if (tab === 'audience') {
+            router.push('/dashboard/audience')
+            return
+          }
+          if (tab === 'insights') {
+            router.push('/dashboard/insights')
+            return
+          }
+          if (tab === 'tools') {
+            router.push('/dashboard/tools')
+            return
+          }
           setActiveMainTab(tab)
-          if (tab === 'audience') setActiveSubTab('audience')
-          if (tab === 'insights') setActiveSubTab('insights')
           if (tab === 'settings') setActiveSubTab('account')
         }} 
       />

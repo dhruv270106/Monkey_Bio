@@ -153,26 +153,37 @@ export default function DesignSection({ profile, setProfile, links, onBack, subS
 
 function AvatarGallery({ profile, updateProfile, handleAvatarUpload }: any) {
   return (
-    <div className="space-y-10">
-       <div className="flex flex-col items-center gap-6 p-10 bg-gray-50/50 rounded-[40px] border border-gray-100">
-          <div className="relative group">
-             <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-2xl relative bg-white">
-                <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
-                   <i className="fi fi-rr-camera text-white text-xl"></i>
-                   <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} />
+    <div className="relative">
+       {/* Sticky Preview Header */}
+       <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-xl -mx-6 px-6 py-4 mb-8 border-b border-gray-50 flex items-center justify-between shadow-[0_10px_30px_rgba(0,0,0,0.02)]">
+          <div className="flex items-center gap-4">
+             <div className="relative group">
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-xl relative bg-white">
+                   <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}`} className="w-full h-full object-cover" />
+                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
+                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} />
+                      <i className="fi fi-rr-camera text-white text-xs"></i>
+                   </div>
                 </div>
              </div>
+             <div>
+                <p className="text-[10px] font-black uppercase text-secondary tracking-widest leading-none">Active Avatar</p>
+                <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-1">Currently Visible</p>
+             </div>
           </div>
-          <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest leading-none">Active Profile Avatar</p>
+          
+          <button className="h-10 px-4 bg-gray-50 hover:bg-white hover:shadow-md border border-gray-100 rounded-xl transition-all relative overflow-hidden group">
+             <span className="text-[9px] font-black uppercase tracking-widest text-primary relative z-10">Upload Custom</span>
+             <input type="file" className="absolute inset-0 opacity-0 cursor-pointer z-20" onChange={handleAvatarUpload} />
+          </button>
        </div>
 
        <div className="space-y-6">
           <div className="flex items-center justify-between px-1">
-             <h3 className="text-[10px] font-black uppercase text-secondary tracking-widest leading-none">Mixed Selection</h3>
+             <h3 className="text-[10px] font-black uppercase text-secondary tracking-widest leading-none">Avatar Library</h3>
              <span className="text-[8px] font-black text-gray-300 uppercase tracking-widest">30 TOTAL IMAGES</span>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 pb-20">
              {ALL_LOCAL_AVATARS.map((url, i) => (
                 <button 
                   key={i} 
